@@ -91,22 +91,29 @@ margin-bottom:6px;
 color:#22c55e;
 }
 body{
-font-family:Arial;
-margin:0;
-color:white;
-padding-bottom:50px;
+  font-family:Arial;
+  margin:0;
+  color:white;
+  padding-bottom:50px;
 
-/* fundo degradê animado */
-background: linear-gradient(-45deg, #1a0033, #2b0a4a, #3b0f66, #120022);
-background-size: 400% 400%;
-animation: gradientBG 12s ease infinite;
+  background-image:url("spotted-bg.jpg.pgn");
+  background-size:cover;
+  background-position:center;
+  background-repeat:no-repeat;
+  background-attachment:fixed;
+
+  min-height:100vh;
+  position:relative;
 }
 
-/* animação do fundo */
-@keyframes gradientBG {
-0% { background-position: 0% 50%; }
-50% { background-position: 100% 50%; }
-100% { background-position: 0% 50%; }
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+
+  background:rgba(8,0,20,0.55);
+
+  z-index:-1;
 }
 .menu{
 display:grid;
@@ -114,7 +121,6 @@ grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
 gap:12px;
 padding:16:px;
 }
-
 button{
 padding:16px;
 border:none;
@@ -129,13 +135,17 @@ text-shadow: 0 1px 2px rgba(0,0,0,0.35);
 
 cursor:pointer;
 
+opacity:0.75;
+
 /* 3D real */
 box-shadow:
 0 6px 0 rgba(0,0,0,0.35),   /* sombra base (profundidade) */
 0 10px 18px rgba(0,0,0,0.25);
 
-/* leve gradiente interno */
-background: linear-gradient(145deg, rgba(255,255,255,0.08), rgba(0,0,0,0.15));
+background: rgba(20,20,35,0.25);
+backdrop-filter: blur(10px);
+-webkit-backdrop-filter: blur(10px);
+border:1px solid rgba(255,255,255,0.12);
 
 transition: all 0.12s ease;
 transform: translateY(0);
@@ -406,13 +416,8 @@ function onYouTubeIframeAPIReady() {
 </head>
 
 <body>
-  <div id="aranduTag">🦉</div>
-  <div class="topo">
-  <h1 class="titulo-unila">Unila</h1>
-  <p class="subtitulo-unila">
-    Universidade Federal da Integração Latino-Americana
-  </p>
-</div>
+  <div id="aranduTag">💜</div>
+
 <button class="home-btn" onclick="goHome()">🏠</button
 ><button id="radioBtn" onclick="toggleRadioSimples(); scrollToRadio()">🎧</button>
 <button id="installBtn" class="install-btn">📲 Instalar App</button>
