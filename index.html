@@ -9,7 +9,6 @@
 <meta name="theme-color" content="#2b0a4a">
 
 <style>
-
 .topo{
   width:100%;
   text-align:center;
@@ -21,11 +20,8 @@
   font-size:52px;
   font-weight:1000;
   letter-spacing:5px;
-
   color:#5b21b6;
-
   text-transform: uppercase;
-
   /* 🎯 efeito 3D (camadas de profundidade) */
   text-shadow:
     0 1px 0 #2e1065,
@@ -33,7 +29,6 @@
     0 3px 0 #2e1065,
     0 4px 0 #1e093f,
     0 5px 0 #1e093f,
-
     /* sombra mais distante */
     0 8px 10px rgba(0,0,0,0.35);
 }
@@ -54,22 +49,21 @@
     filter: drop-shadow(0 0 12px rgba(56,189,248,0.4));
   }
 }
+
 #sendBtn{
   width:45px;
   height:45px;
   border-radius:50%;
   border:none;
-
   background:#25D366;
   color:white;
   font-size:18px;
-
   display:flex;
   align-items:center;
   justify-content:center;
-
   box-shadow:0 4px 10px rgba(0,0,0,0.3);
 }
+
 #chatInput{
   flex:1;
   height:45px; /* 👈 altura padrão WhatsApp */
@@ -81,15 +75,16 @@
 }
 
 .msg{
-background:#1e293b;
-padding:8px;
-border-radius:8px;
-margin-bottom:6px;
+  background:#1e293b;
+  padding:8px;
+  border-radius:8px;
+  margin-bottom:6px;
 }
 
 .msg strong{
-color:#22c55e;
+  color:#22c55e;
 }
+
 body::before{
   content:"";
   position:fixed;
@@ -97,9 +92,9 @@ body::before{
 
   background:linear-gradient(
     to bottom,
-    rgba(5,0,15,0.15),
-    rgba(10,0,20,0.55),
-    rgba(10,0,20,0.82)
+    rgba(5,0,15,0.08),
+    rgba(10,0,20,0.28),
+    rgba(10,0,20,0.52)
   );
 
   z-index:-1;
@@ -110,109 +105,97 @@ body{
   margin:0;
   color:white;
   padding-bottom:50px;
-
-  background-image:url("./spotted-bg.png");
-
+  background-image:url("spotted-bg.png");
   background-size:cover;
   background-position:top center;
   background-repeat:no-repeat;
-  background-attachment:fixed;
-
+  background-attachment:scroll;
   min-height:100vh;
 }
+
 .menu{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
-gap:12px;
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+  gap:12px;
 
-padding:16px;
-
-/* espaço para mostrar a arte */
-margin-top:420px;
+  padding:20px;
+  margin-top:58vh;
 }
+
 button{
-padding:16px;
-border:none;
-border-radius:14px;
-
-font-weight:700;
-font-size:16px;
-letter-spacing:0.3px;
-
-color:#f5f3ff; /* mais legível */
-text-shadow:
-0 3px 10px rgba(0,0,0,1),
-0 2px 4px rgba(0,0,0,1);
-
-cursor:pointer;
-
-opacity:0.45;
-
-/* 3D real */
-box-shadow:
-0 6px 0 rgba(0,0,0,0.35),   /* sombra base (profundidade) */
-0 10px 18px rgba(0,0,0,0.25);
-
-background: rgba(25,25,45,0.45);
-
-backdrop-filter: blur(12px);
--webkit-backdrop-filter: blur(12px);
-
-border:1px solid rgba(255,255,255,0.20);
-
-transition: all 0.12s ease;
-transform: translateY(0);
+  padding:16px;
+  border:none;
+  border-radius:14px;
+  font-weight:700;
+  font-size:16px;
+  letter-spacing:0.3px;
+  color:#f5f3ff; /* mais legível */
+  text-shadow:
+    0 3px 10px rgba(0,0,0,1),
+    0 2px 4px rgba(0,0,0,1);
+  cursor:pointer;
+  opacity:0.45;
+  /* 3D real */
+  box-shadow:
+    0 6px 0 rgba(0,0,0,0.35),   /* sombra base (profundidade) */
+    0 10px 18px rgba(0,0,0,0.25);
+  background: rgba(25,25,45,0.45);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border:1px solid rgba(255,255,255,0.20);
+  transition: all 0.12s ease;
+  transform: translateY(0);
 }
 
 /* hover leve (sensação premium) */
 button:hover{
-filter: brightness(1.08);
-transform: translateY(-1px);
+  filter: brightness(1.08);
+  transform: translateY(-1px);
 }
 
 /* clique real (efeito pressionado) */
 button:active{
-transform: translateY(4px);
-box-shadow:
-0 2px 0 rgba(0,0,0,0.35),
-0 5px 10px rgba(0,0,0,0.25);
+  transform: translateY(4px);
+  box-shadow:
+    0 2px 0 rgba(0,0,0,0.35),
+    0 5px 10px rgba(0,0,0,0.25);
 }
 
 .page{
-display:none;
-padding:20px;
-line-height:1.7;
+  display:none;
+  padding:20px;
+  line-height:1.7;
 }
 
 .home-btn{
-position:fixed;
-bottom:140px;
-right:15px;
-background:#22c55e;
-padding:14px;
-border-radius:50%;
-z-index:999;
+  position:fixed;
+  bottom:140px;
+  right:15px;
+  background:#22c55e;
+  padding:14px;
+  border-radius:50%;
+  z-index:999;
 }
 
 .install-btn{
-position:fixed;
-bottom:50px;
-left:50%;
-transform:translateX(-50%);
-background:#22c55e;
-padding:14px;
-border-radius:12px;
-display:none;
+  position:fixed;
+  bottom:50px;
+  left:50%;
+  transform:translateX(-50%);
+  background:#22c55e;
+  padding:14px;
+  border-radius:12px;
+  display:none;
 }
 
 .update-btn{
-position:fixed;
-bottom:80px;
-right:15px;
-background:#3b82f6;
-padding:8px 12px;
-border-radius:8px;
-font-size:12px;
+  position:fixed;
+  bottom:80px;
+  right:15px;
+  background:#3b82f6;
+  padding:8px 12px;
+  border-radius:8px;
+  font-size:12px;
 }
 
 /* CORES */
@@ -238,25 +221,26 @@ font-size:12px;
   background: #000;
   color: white;
 }
+
 /* NOTES */
 #notesPage textarea{
-width:100%;
-height:100px;
-border-radius:10px;
-border:none;
-padding:10px;
-font-size:16px;
-margin-bottom:10px;
+  width:100%;
+  height:100px;
+  border-radius:10px;
+  border:none;
+  padding:10px;
+  font-size:16px;
+  margin-bottom:10px;
 }
 
 .note-item{
-background:#1e293b;
-padding:12px;
-border-radius:10px;
-margin-bottom:10px;
-display:flex;
-justify-content:space-between;
-align-items:center;
+  background:#1e293b;
+  padding:12px;
+  border-radius:10px;
+  margin-bottom:10px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
 }
 
 .delete-btn{
@@ -267,16 +251,6 @@ align-items:center;
   border:none;
 }
 
-.topo{
-  width:100%;
-  text-align:center;
-  font-size:28px;
-  font-weight:900;
-  color:#ddd6fe;
-  margin-top:20px;
-  margin-bottom:10px;
-  letter-spacing:2px;
-}
 #dateBar{
   position:fixed;
   bottom:0;
@@ -289,13 +263,6 @@ align-items:center;
   font-size:13px;
   color:#e5e7eb;
   z-index:1000;
-}
-.msg{
-  background:#1e293b;
-  padding:10px 12px;
-  border-radius:12px;
-  margin-bottom:8px;
-  max-width:85%;
 }
 
 .msg strong{
@@ -312,112 +279,62 @@ align-items:center;
   margin-top:4px;
 }
 
-
-  width:50px;
-  height:50px;
-  border-radius:50%;
-  background:#22c55e;
-  border:none;
-  font-size:20px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  box-shadow:0 4px 10px rgba(0,0,0,0.3);
-}
 /* BARRA DO CHAT - ESTILO WHATSAPP */
-
-#chatInput{
-  flex:1;
-  height:15px;
-
-  border-radius:30px;
-  border:none;
-
-  padding:0 18px;
-  font-size:15px;
-
-  background:#e5e7eb;
-}
-
-#sendBtn{
-  width:50px;
-  height:50px;
-
-  border-radius:50%;
-  border:none;
-
-  background:#25D366;
-  color:white;
-  font-size:20px;
-
-  display:flex;
-  align-items:center;
-  justify-content:center;
-
-  flex-shrink:0;
-
-  box-shadow:0 4px 10px rgba(0,0,0,0.3);
-}
 #chatArea{
   display:flex;
   flex-direction:column;
   height:100vh;
-  overflow:hidden; /* 👈 IMPORTANTE */
+  overflow:hidden;
 }
 
 #chatBox{
   flex:1;
-  overflow-y:scroll; /* 👈 força scroll */
+  overflow-y:scroll;
   padding:10px;
   margin-bottom:70px;
+  height: calc(100vh - 120px);
 }
-#chatBox{
-  height: calc(100vh - 120px); /* 👈 garante espaço real */
-}
+
 #inputArea{
   position:fixed;
   bottom:63px;
   left:5px;
   right:5px;
-
   display:flex;
   align-items:center;
   gap:8px;
-
   z-index:999;
 }
+
 #radioBtn{
   position:fixed;
   bottom:5px;
   right:15px;
-
   width:55px;
   height:55px;
   border-radius:50%;
-
   background:#9333ea;
   color:white;
   font-size:22px;
-
   border:none;
   z-index:999;
-
   display:flex;
   align-items:center;
   justify-content:center;
-
   box-shadow:0 4px 10px rgba(0,0,0,0.4);
 }
 </style>
-  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
+
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <script src="https://www.youtube.com/iframe_api"></script>
+
 <script>
 let ytPlayer;
-
 function onYouTubeIframeAPIReady() {
   ytPlayer = new YT.Player("ytRadio", {
     events: {
@@ -429,842 +346,487 @@ function onYouTubeIframeAPIReady() {
 </head>
 
 <body>
-  <div id="aranduTag">💜</div>
+  <div id="aranduTag" style="position:fixed; top:10px; left:10px; font-size:24px; z-index:1000;">💜</div>
 
-<button class="home-btn" onclick="goHome()">🏠</button
-><button id="radioBtn" onclick="toggleRadioSimples(); scrollToRadio()">🎧</button>
-<button id="installBtn" class="install-btn">📲 Instalar App</button>
+  <button class="home-btn" onclick="goHome()">🏠</button>
+  <button id="radioBtn" onclick="toggleRadioSimples();">🎧</button>
+  <button id="installBtn" class="install-btn">📲 Instalar App</button>
 
-<div id="home" class="menu">
-  <button class="dev" onclick="openPage('chatPage')">Bate-papo 💬</button>
-
-<button class="unila" onclick="openLink('https://portal.unila.edu.br/')">🌐 Portal Oficial da UNILA</button>
-<button class="sigaa" onclick="openLink('https://sig.unila.edu.br/sigaa/verTelaLogin.do')">📚 Sistema Acadêmico SIGAA</button>
-<button class="gmail" onclick="openLink('https://mail.google.com/')">📧 E-mail Institucional</button>
-<button class="google" onclick="openLink('https://www.google.com/')">🔎 Pesquisa Google</button>
-<button class="instagram" onclick="openLink('https://www.instagram.com/instaunila/')">📸 Instagram UNILA</button>
-<button class="facebook" onclick="openLink('https://www.facebook.com/unila.oficial')">📘 Facebook UNILA</button>
-<button class="biblioteca" onclick="openLink('https://portal.unila.edu.br/biblioteca')">📖 Biblioteca UNILA</button>
-<button class="intercampi" onclick="openLink('https://portal.unila.edu.br/proagi/delog/arquivos/horario-intercampi/quadro-de-horario-intercampi.pdf')">🚌 Transporte Intercampi</button>
-<button class="smartec" onclick="openLink('https://www.facebook.com/profile.php?id=61562436416014')">💻 Smart Tech</button>
-<button class="editais" onclick="openLink('https://documentos.unila.edu.br/')">📄 Editais Oficiais</button>
-
-<button class="emergencia" onclick="openPage('emergenciaPage')">🚨 Telefones de Emergência</button>
-<button class="enderecos" onclick="openPage('enderecosPage')">🏫 Endereços dos Campus</button>
-<button class="ru" onclick="openPage('ruPage')">🍽️ Restaurantes Universitários</button>
-<button class="facebook" onclick="openLink('https://facebook.com/groups/1469303078173697/')">👥 Grupo no Facebook</button>
-<button class="dev" onclick="openPage('devPage')">👨‍💻 Desenvolvedor</button>
-<button class="notes" onclick="openPage('notesPage')">📝 Anotações</button>
-<button class="share" onclick="shareApp()">📤 Compartilhar App</button>
-<button class="internet" onclick="openPage('internetPage')">🌐 Internet UNILA</button>
-<button class="estude" onclick="openPage('estudPage')">🎓 Estude na UNILA</button>
-<button class="google" onclick="openLink('https://enem.inep.gov.br/participante/#!/')">📝 ENEM – Página do Participante</button>
-<button class="noticias" onclick="openPage('noticiasPage')">📰 Notícias</button>
-<button class="emergencia" onclick="openPage('upaPage')">🏥 Hospitais de Emergência 24h (UPA)</button>
-
-
-</div>
-
-<!-- EMERGÊNCIA -->
-<div id="emergenciaPage" class="page">
-<h2>🚨 Telefones de Emergência</h2>
-<p>
-Polícia Militar: 190<br>
-SAMU (Ambulância): 192<br>
-Bombeiros: 193<br><br>
-
-Hospital Municipal: (45) 2105-4100<br>
-Guarda Municipal: (45) 2105-5100<br>
-Delegacia da Mulher: (45) 3521-9200<br>
-Defesa Civil: 199<br><br>
-
-Polícia Federal: (45) 3522-1174<br>
-Polícia Rodoviária Federal: (45) 3576-1400<br><br>
-
-Prae-Unila: +55 45 3522-9983<br>
-Prograd-Unila: +55 (45) 3522-9766<br><br>
-
-Disque Denúncia: 181<br>
-Conselho Tutelar: (45) 3521-1112<br>
-Centro de Intoxicações: 0800 722 6001<br><br>
-
-⚠ Em situações graves, ligue imediatamente.
-</p>
-</div>
-
-<!-- ENDEREÇOS -->
-<div id="enderecosPage" class="page">
-<h2>🏫 Campus UNILA</h2>
-<p>
-📍 UNILA Jardim Universitário (JU)<br>
-Av. Tarquínio Joslin dos Santos, 1000 – Polo Universitário<br>
-CEP: 85870-901<br><br>
-
-📍 UNILA Parque Tecnológico Itaipu (Parque Tec)<br>
-Av. Tancredo Neves, 6731 – Jardim Itaipu<br>
-CEP: 85867-970<br><br>
-
-📍 Edifício Rio Almada<br>
-Av. Tancredo Neves, 3838 – Porto Belo<br>
-CEP: 85867-633<br><br>
-
-📍 Campus Integração<br>
-Av. Tancredo Neves, 3147 – Porto Belo<br><br>
-
-📍 Almoxarifado / Patrimônio<br>
-Rua Macucos, 131 – Portal da Foz<br><br>
-
-📍 Campus Arandu<br>
-Projeto em construção na Itaipu Binacional
-</p>
-</div>
-<div id="ruPage" class="page">
-
-<h2>🍽️ Restaurante Universitário (RU)</h2>
-
-<!-- COLE AQUI O TEXTO QUE TE ENVIEI -->
-<p>
-O Restaurante Universitário (RU) da UNILA oferece alimentação acessível para estudantes e servidores.
-</p>
-
-<p>
-📍 Unidade Jardim Universitário (JU)<br>
-Av. Tarquínio Joslin dos Santos, 1000<br><br>
-
-🕒 Horários:<br>
-Café: 06h45 – 08h00<br>
-Almoço: 11h00 – 14h00<br>
-Jantar: 17h30 – 19h30<br>
-</p>
-
-<p>
-📍 Unidade Itaipu Parquetec (PTI)<br>
-Bloco 3<br><br>
-
-🕒 Horários:<br>
-Almoço: 11h30 – 14h30<br>
-Jantar: 17h30 – 19h15<br>
-</p>
-
-<p>
-💰 Valor médio: R$ 4,00<br>
-Pode ser gratuito para bolsistas.
-</p>
-
-<p>
-⚠ Horários e valores podem sofrer alterações.
-</p>
-</div>
-
-<div id="internetPage" class="page">
-<h2>🌐 Internet UNILA</h2>
-
-<p>
-Para configurar a internet da UNILA (redes <b>UNILA</b> ou <b>eduroam</b>), conecte-se à rede e utilize as configurações abaixo:
-</p>
-
-<p>
-📶 Configuração geral:<br>
-• Método EAP: PEAP<br>
-• Autenticação Fase 2: MSCHAPV2<br>
-• Certificado CA: Não validar ou não especificado<br>
-• Identidade/Usuário: seu e-mail institucional (sem @unila.edu.br)<br>
-• Senha: senha do e-mail institucional
-</p>
-
-<p>
-📱 Android:<br>
-• Conecte na rede UNILA ou eduroam<br>
-• Use as configurações acima
-</p>
-
-<p>
-🍎 iPhone:<br>
-• Conecte na rede<br>
-• Insira login e aceite certificado
-</p>
-
-<p>
-⚠ Dispositivos Motorola precisa outras configurações. Problemas: procure suporte da UNILA
-</p>
-</div>
-
-<!-- ESTUDE -->
-<div id="estudPage" class="page">
-<h2>🎓 Estude na UNILA</h2>
-<p>
-A Universidade Federal da Integração Latino-Americana (UNILA), localizada em Foz do Iguaçu-PR, é uma instituição pública, gratuita e voltada à integração entre os países da América Latina.
-</p>
-
-<p>
-A universidade oferece cerca de 29 cursos de graduação presenciais em diversas áreas do conhecimento, com foco acadêmico e social voltado à realidade latino-americana.
-</p>
-<p>
-🏛 Estrutura acadêmica:<br>
-A UNILA é organizada em quatro institutos:<br>
-• ILAACH – Artes, Cultura e História<br>
-• ILACVN – Ciências da Vida e da Natureza<br>
-• ILAESP – Economia, Sociedade e Política<br>
-• ILATIT – Tecnologia, Infraestrutura e Território
-</p>
-
-<p>
-📚 Cursos de graduação por instituto:<br><br>
-
-<b>ILAACH:</b><br>
-Antropologia, Cinema e Audiovisual, História, Letras (Artes e Mediação Cultural), Música<br><br>
-
-<b>ILACVN:</b><br>
-Biotecnologia, Ciências Biológicas, Ciências da Natureza, Engenharia Física, Medicina, Química, Saúde Coletiva<br><br>
-
-<b>ILAESP:</b><br>
-Administração Pública, Ciência Política e Sociologia, Ciências Econômicas, Desenvolvimento Rural, Filosofia, Relações Internacionais, Serviço Social<br><br>
-
-<b>ILATIT:</b><br>
-Arquitetura e Urbanismo, Engenharia Civil de Infraestrutura, Engenharia de Energia, Engenharia de Materiais, Engenharia Química, Geografia
-</p>
-
-📌 Formas de ingresso:<br>
-• SiSU (nota do ENEM)<br>
-• Processo Seletivo Internacional (PSI)<br>
-• Processo Seletivo para Indígenas (PSIN)<br>
-• Curso de Música com seleção própria<br>
-• Vagas remanescentes
-</p>
-
-🔄 Outras formas de entrada:<br>
-• Transferência externa<br>
-• Reingresso<br>
-• Portador de diploma
-</p>
-
-⚠ Informações importantes:<br>
-• Não possui vestibular próprio<br>
-• Ingresso geralmente anual<br>
-• Ensino totalmente gratuito<br>
-• Cursos presenciais
-</p>
-
-🌎 Diferenciais da UNILA:<br>
-• Ambiente internacional com estudantes de vários países<br>
-• Integração cultural latino-americana<br>
-• Ensino público de qualidade
-</p>
-
-📊 Qualidade acadêmica:<br>
-A UNILA possui nota 4 (de 5) no Índice Geral de Cursos (IGC) do MEC.
-</p>
-
-🏛 Benefícios oferecidos:<br>
-• Restaurante Universitário (baixo custo)<br>
-• Bolsas de auxílio estudantil<br>
-• Biblioteca completa<br>
-• Laboratórios modernos<br>
-• Projetos de pesquisa e extensão
-</p>
-
-<p> 
-💡 Dicas para novos estudantes:<br>
-• Utilize o SIGAA para sua vida acadêmica<br>
-• Acompanhe os editais regularmente<br>
-• Participe de projetos e atividades da universidade
-</p>
-</div>
-<!-- NOTÍCIAS RECENTES -->
-<div id="noticiasPage" class="page">
-<h2>📰 Notícias</h2>
-<p>Comerciantes locais, Bares, Pessoal da Feirinha da Unila, etc, se tiver interesse em divulgar seu negócio aqui entre em contato com o Desenvolvedor do App<br><br> Por motivo que grupo o oficial da UNILA no Facebook com aproximadamente 20 mil Membros está desativado por motivo desconhecido, criamos outro que sera livre para postar. clique no botão "GRUPO NO FACEBOOK"e participe!<br><br>
-Para salvar o Email institucional neste App faça login no navegador do Google e salve a senha memorizada.
-
-<br><br>
-
-Após dois dias de paralisação que afetaram a rotina de milhares de passageiros, o transporte coletivo de Foz do Iguaçu voltou a operar integralmente na tarde desta terça-feira, 28, depois de um acordo mediado pelo Ministério Público do Trabalho..<br>
-
-<br>Estudantes não pagam transporte público em Foz.<br>
-
-<br> <br>Obras do Campus Arandú esta em fase final e será entregue em 2028.
-
-O investimento total para a construção do Campus Arandu da UNILA, em Foz do Iguaçu, está orçado em R$ 752 milhões. A obra, projetada por Oscar Niemeyer, teve a ordem de serviço assinada em junho de 2025, com financiamento garantido pela Itaipu Binacional e gestão do UNOPS (órgão da ONU). Detalhes do Projeto:
-Valor Principal: R$ 752 milhões destinados à retomada e conclusão das obras.
-Parcerias: Acordo entre a UNILA, Itaipu Binacional e Ministério da Educação (MEC).
-Cronograma: A primeira etapa, incluindo restaurante e biblioteca, tem previsão de entrega para março de 2026, com conclusão total do complexo planejada para 2027. O Campus Arandu será a sede definitiva da Universidade Federal da Integração Latino-Americana (UNILA) em Foz do Iguaçu. Mais do que apenas um prédio universitário, ele é considerado o último grande projeto assinado por Oscar Niemeyer antes de sua morte.
-O complexo foi desenhado para ser um marco arquitetônico e um centro de integração regional. O que ele incluirá:
-Estrutura Acadêmica: Salas de aula, laboratórios de ponta e centros de pesquisa voltados para o desenvolvimento da América Latina.
-Biblioteca Central: Projetada para ser uma das maiores da região, servindo como polo de conhecimento.
-Restaurante Universitário: Parte da primeira etapa de entrega, para atender a comunidade acadêmica.
-Espaços Culturais: Auditórios e áreas de convivência que seguem as curvas e o concreto armado característicos de Niemeyer.
-Polo de Inovação: Pela proximidade com a Itaipu e o Parque Tecnológico (Parque Tec), funcionará como um hub estratégico para ciência e tecnologia.
-O significado do nome:
-"Arandu", em guarani, significa sabedoria ou ouvir o tempo. O nome reflete a missão da universidade de valorizar os saberes ancestrais e promover o diálogo entre as diferentes culturas do continente.<br><br>
-
-Servidores das Universidades Federais em greve por tempo indeterminado, afetando bibliotecas, T.i. e outros setores, no entanto as aulas seguem normalmente.🌼🌼🌼</p>
-</div>
-<div id="chatPage" class="page">
-<h2>💬 Chat UNILA</h2>
-
-<div id="nickArea">
-<input id="nickInput" placeholder="Digite seu nick..." />
-<button onclick="saveNick()">Entrar</button>
-</div>
-<div id="chatArea" style="display:none;">
-
-  <div id="chatBox"></div>
-
-  <!-- BARRA DE MENSAGEM -->
-  <div id="inputArea">
-    <input id="chatInput" placeholder="Digite sua mensagem..." />
-    <button id="sendBtn" onclick="sendMessage()">➤</button>
+  <div id="home" class="menu">
+    <button class="dev" onclick="openPage('chatPage')">Bate-papo 💬</button>
+    <button class="unila" onclick="openLink('https://portal.unila.edu.br/')">🌐 Portal Oficial da UNILA</button>
+    <button class="sigaa" onclick="openLink('https://sig.unila.edu.br/sigaa/verTelaLogin.do')">📚 Sistema Acadêmico SIGAA</button>
+    <button class="gmail" onclick="openLink('https://mail.google.com/')">📧 E-mail Institucional</button>
+    <button class="google" onclick="openLink('https://www.google.com/')">🔎 Pesquisa Google</button>
+    <button class="instagram" onclick="openLink('https://www.instagram.com/instaunila/')">📸 Instagram UNILA</button>
+    <button class="facebook" onclick="openLink('https://www.facebook.com/unila.oficial')">📘 Facebook UNILA</button>
+    <button class="biblioteca" onclick="openLink('https://portal.unila.edu.br/biblioteca')">📖 Biblioteca UNILA</button>
+    <button class="intercampi" onclick="openLink('https://portal.unila.edu.br/proagi/delog/arquivos/horario-intercampi/quadro-de-horario-intercampi.pdf')">🚌 Transporte Intercampi</button>
+    <button class="smartec" onclick="openLink('https://www.facebook.com/profile.php?id=61562436416014')">💻 Smart Tech</button>
+    <button class="editais" onclick="openLink('https://documentos.unila.edu.br/')">📄 Editais Oficiais</button>
+    <button class="emergencia" onclick="openPage('emergenciaPage')">🚨 Telefones de Emergência</button>
+    <button class="enderecos" onclick="openPage('enderecosPage')">🏫 Endereços dos Campus</button>
+    <button class="ru" onclick="openPage('ruPage')">🍽️ Restaurantes Universitários</button>
+    <button class="facebook" onclick="openLink('https://facebook.com/groups/1469303078173697/')">👥 Grupo no Facebook</button>
+    <button class="dev" onclick="openPage('devPage')">👨‍💻 Desenvolvedor</button>
+    <button class="notes" onclick="openPage('notesPage')">📝 Anotações</button>
+    <button class="share" onclick="shareApp()">📤 Compartilhar App</button>
+    <button class="internet" onclick="openPage('internetPage')">🌐 Internet UNILA</button>
+    <button class="estude" onclick="openPage('estudPage')">🎓 Estude na UNILA</button>
+    <button class="google" onclick="openLink('https://enem.inep.gov.br/participante/#!/')">📝 ENEM – Página do Participante</button>
+    <button class="noticias" onclick="openPage('noticiasPage')">📰 Notícias</button>
+    <button class="emergencia" onclick="openPage('upaPage')">🏥 Hospitais de Emergência 24h (UPA)</button>
   </div>
 
-  <button id="changeNickBtn" onclick="changeNick()" style="display:none;">
-    🔄 Mudar Nick
-  </button>
-
-</div>
-</button>
-
-</div>
-</div>
-</div>
-
-<!-- DEV -->
-<div id="devPage" class="page">
-<h2>👨‍💻 Desenvolvedor</h2>Para trabalhos e parcerias entre em contato 
-<p>Fernando - Serviço Social<br>Contato: +55 45 99949-9759</p>
-</div>
-<div id="upaPage" class="page">
-<h2>🏥 Hospitais de Emergência 24h (UPA)</h2>
-
-<p>
-📍 UPA João Samek<br>
-Av. Gramado, 450 – Jardim Lancaster<br>
-📞 (45) 2105-8000<br><br>
-
-📍 UPA Morumbi<br>
-Av. Mário Filho, s/n – Morumbi<br>
-📞 (45) 2105-8200<br><br>
-
-📍 Hospital Municipal Padre Germano Lauck<br>
-Rua Adoniran Barbosa, 370 – Parque Presidente<br>
-📞 (45) 2105-4100<br><br>
-
-📍 UPA 24h Porto Meira<br>
-Rua Airton Moreira, s/n – Porto Meira<br>
-📞 (45) 2105-8300<br><br>
-
-⚠ Atendimento 24 horas para urgência e emergência.<br>
-
-Para outros tratamentos fora do contexto de urgência e emergência siga para  UBS mais próximo, UPA só atende urgência e emergência, UBS não são 24h atendem no máximo até as 18:30 algumas tem horários diferentes de outras, mais não são 24h e não atendem ao sábado e feriados.
-</p>
-</div>
-
-<!-- NOTES -->
-<div id="notesPage" class="page">
-<h2>📝 Anotações</h2>
-<textarea id="note"></textarea>
-<button onclick="saveNote()">Salvar</button>
-<div id="list"></div>
-</div>
-
-<script>
-const firebaseConfig = {
-  apiKey: "AIzaSyDCm8jh-gz3T8OkOH2J6ls66t5QizcKwu8",
-  authDomain: "app-unila.firebaseapp.com",
-  projectId: "app-unila",
-  storageBucket: "app-unila.firebasestorage.app",
-  messagingSenderId: "574505875323",
-  appId: "1:574505875323:web:fb885f0a2ae32b272fafde",
-  measurementId: "G-FJT3X93608"
-};
-
-const app = firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
-const ADMIN_NICK = "Fernando"; // coloque seu nick EXATO aqui
-db.enablePersistence()
-  .then(() => {
-    console.log("Offline ativado!");
-  })
-  .catch((err) => {
-    console.log("Erro ao ativar offline:", err);
-  });
-
-function openLink(u){window.open(u,"_blank");}
-
-function openPage(id){
-document.getElementById("home").style.display="none";
-document.querySelectorAll(".page").forEach(p=>p.style.display="none");
-document.getElementById(id).style.display="block";
-}
-
-function goHome(){
-document.getElementById("home").style.display="grid";
-document.querySelectorAll(".page").forEach(p=>p.style.display="none");
-}
-
-function shareApp(){
-  const texto = "📲 Baixe o App da UNILA:";
-  const url = "https://drive.google.com/file/d/1XgYsFJlnd8VuQGAyYopxNI2Huuknsugo/view?usp=drivesdk";
-  const mensagem = encodeURIComponent(texto + " " + url);
-  window.open("https://api.whatsapp.com/send?text=" + mensagem, "_system");
-}
-
-function loadNotes(){
-let list=document.getElementById("list");
-list.innerHTML="";
-let notes=JSON.parse(localStorage.getItem("notes")||"[]");
-
-notes.forEach((n,i)=>{
-let div=document.createElement("div");
-div.className="note-item";
-div.innerHTML=`${n} <button class="delete-btn" onclick="deleteNote(${i})">🗑</button>`;
-list.appendChild(div);
-});
-}
-
-function saveNote(){
-let t=document.getElementById("note").value;
-if(!t) return;
-let notes=JSON.parse(localStorage.getItem("notes")||"[]");
-notes.push(t);
-localStorage.setItem("notes",JSON.stringify(notes));
-document.getElementById("note").value="";
-loadNotes();
-}
-
-function deleteNote(i){
-let notes=JSON.parse(localStorage.getItem("notes")||"[]");
-notes.splice(i,1);
-localStorage.setItem("notes",JSON.stringify(notes));
-loadNotes();
-}
-
-function atualizarApp(){
-  const overlay = document.createElement("div");
-  overlay.style.position = "fixed";
-  overlay.style.top = "0";
-  overlay.style.left = "0";
-  overlay.style.width = "100%";
-  overlay.style.height = "100%";
-  overlay.style.background = "#0f172a";
-  overlay.style.display = "flex";
-  overlay.style.alignItems = "center";
-  overlay.style.justifyContent = "center";
-  overlay.style.flexDirection = "column";
-  overlay.style.zIndex = "9999";
-  overlay.style.color = "white";
-  overlay.style.fontSize = "20px";
-
-  overlay.innerHTML = `
-    <div style="font-size:40px;">🔄</div>
-    <div>Atualizando app...</div>
-  `;
-
-  document.body.appendChild(overlay);
-
-  if ("serviceWorker" in navigator) {
-    navigator.serviceWorker.getRegistration().then(reg => {
-
-      if (!reg) {
-        location.reload();
-        return;
-      }
-
-      // força buscar nova versão do SW
-      reg.update();
-
-      // se já tiver nova versão esperando
-      if (reg.waiting) {
-        reg.waiting.postMessage("SKIP_WAITING");
-      }
-
-      // escuta quando o novo SW assume
-      navigator.serviceWorker.addEventListener("controllerchange", () => {
-        window.location.reload();
-      });
-
-    });
-  } else {
-    location.reload();
-  }
-}
-function atualizarDataBar(){
-  const el = document.getElementById("dateBar");
-
-  function formatarData(){
-    const d = new Date();
-
-    const dias = ["Dom","Seg","Ter","Qua","Qui","Sex","Sáb"];
-    const meses = ["Jan","Fev","Mar","Abr","Mai","Jun","Jul","Ago","Set","Out","Nov","Dez"];
-
-    return `${dias[d.getDay()]}, ${d.getDate()} ${meses[d.getMonth()]} ${d.getFullYear()}`;
-  }
-  
-  function atualizar(){
-    if(el){
-      el.textContent = formatarData();
-    }
-  }
-
-  atualizar();
-
-  // atualiza a cada 1 minuto
-  setInterval(atualizar, 60000);
-}
-function formatarDataMensagem(timestamp){
-  const data = new Date(timestamp);
-  const agora = new Date();
-
-  const ontem = new Date();
-  ontem.setDate(agora.getDate() - 1);
-
-  const mesmoDia = data.toDateString() === agora.toDateString();
-  const ehOntem = data.toDateString() === ontem.toDateString();
-
-  const hora = data.toLocaleTimeString('pt-BR', {
-    hour: '2-digit',
-    minute: '2-digit'
-  });
-
-  if(mesmoDia){
-    return `Hoje às ${hora}`;
-  }
-
-  if(ehOntem){
-    return `Ontem às ${hora}`;
-  }
-
-  return data.toLocaleDateString('pt-BR') + ` às ${hora}`;
-}
-
-
-window.onload = () => {
-  loadNotes();
-  atualizarDataBar();
-
-  if(nick){
-    document.getElementById("nickArea").style.display="none";
-    document.getElementById("chatArea").style.display="block";
-    listenChat();
-  }
-
-  const box = document.getElementById("chatBox");
-
-  box.addEventListener("scroll", async () => {
-
-    if(box.scrollTop <= 10 && !loadingMore && lastDoc){
-
-      loadingMore = true;
-
-      const oldHeight = box.scrollHeight;
-      if (!lastDoc) return;
-      loadingMore = true;
-    
-
-      const snapshot = await db.collection("chat")
-        .orderBy("time", "desc")
-        .startAfter(lastDoc)
-        .limit(LIMIT)
-        .get();
-
-      if(!snapshot.empty){
-
-        lastDoc = snapshot.docs[snapshot.docs.length - 1];
-        if(snapshot.docs.length < LIMIT){
-  lastDoc = null; // 👈 não tem mais mensagens
-}
-
-        snapshot.docs.reverse().forEach(doc => {
-
-  if(loadedMessages.has(doc.id)) return; // 👈 evita repetir
-  loadedMessages.add(doc.id);
-
-  const m = doc.data();
-
-          
-          const div = document.createElement("div");
-          div.className = "msg";
-          div.innerHTML = `
-<strong>${m.nick}:</strong> ${m.text}
-<br><small>${formatarDataMensagem(m.time)}</small>
-`;
-
-          box.prepend(div);
-        });
-
-        box.scrollTop = box.scrollHeight - oldHeight;
-      }
-
-      loadingMore = false;
-    }
-  });
-};
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('./service-worker.js').then(reg => {
-
-    console.log("Service Worker registrado");
-
-    // força verificar atualização
-    reg.update();
-
-    reg.onupdatefound = () => {
-      newWorker = reg.installing;
-
-      newWorker.onstatechange = () => {
-        if (newWorker.state === 'installed') {
-
-          if (navigator.serviceWorker.controller) {
-            console.log("Nova versão disponível!");
-
-            // opcional: mostrar botão na tela
-            alert("Nova versão disponível! Clique em ATUALIZAR APP.");
-          }
-        }
-      };
+  <!-- EMERGÊNCIA -->
+  <div id="emergenciaPage" class="page">
+    <h2>🚨 Telefones de Emergência</h2>
+    <p>
+      Polícia Militar: 190<br>
+      SAMU (Ambulância): 192<br>
+      Bombeiros: 193<br><br>
+      Hospital Municipal: (45) 2105-4100<br>
+      Guarda Municipal: (45) 2105-5100<br>
+      Delegacia da Mulher: (45) 3521-9200<br>
+      Defesa Civil: 199<br><br>
+      Polícia Federal: (45) 3522-1174<br>
+      Polícia Rodoviária Federal: (45) 3576-1400<br><br>
+      Prae-Unila: +55 45 3522-9983<br>
+      Prograd-Unila: +55 (45) 3522-9766<br><br>
+      Disque Denúncia: 181<br>
+      Conselho Tutelar: (45) 3521-1112<br>
+      Centro de Intoxicações: 0800 722 6001<br><br>
+      ⚠ Em situações graves, ligue imediatamente.
+    </p>
+  </div>
+
+  <!-- ENDEREÇOS -->
+  <div id="enderecosPage" class="page">
+    <h2>🏫 Campus UNILA</h2>
+    <p>
+      📍 UNILA Jardim Universitário (JU)<br>
+      Av. Tarquínio Joslin dos Santos, 1000 – Polo Universitário<br><br>
+      📍 UNILA Parque Tecnológico Itaipu (Parque Tec)<br>
+      Av. Tancredo Neves, 6731 – Jardim Itaipu<br>
+      CEP: 85867-970<br><br>
+      📍 Edifício Rio Almada<br>
+      Av. Tancredo Neves, 3838 – Porto Belo<br>
+      CEP: 85867-633<br><br>
+      📍 Campus Integração<br>
+      Av. Tancredo Neves, 3147 – Porto Belo<br><br>
+      📍 Almoxarifado / Patrimônio<br>
+      Rua Macucos, 131 – Portal da Foz<br><br>
+      📍 Campus Arandu<br>
+      Projeto em construção na Itaipu Binacional
+    </p>
+  </div>
+
+  <!-- RU -->
+  <div id="ruPage" class="page">
+    <h2>🍽️ Restaurante Universitário (RU)</h2>
+    <p>O Restaurante Universitário (RU) da UNILA oferece alimentação acessível para estudantes e servidores.</p>
+    <p>
+      📍 Unidade Jardim Universitário (JU)<br>
+      Av. Tarquínio Joslin dos Santos, 1000<br><br>
+      🕒 Horários:<br>
+      Café: 06h45 – 08h00<br>
+      Almoço: 11h00 – 14h00<br>
+      Jantar: 17h30 – 19h30<br>
+    </p>
+    <p>
+      📍 Unidade Itaipu Parquetec (PTI)<br>
+      Bloco 3<br><br>
+      🕒 Horários:<br>
+      Almoço: 11h30 – 14h30<br>
+      Jantar: 17h30 – 19h15<br>
+    </p>
+    <p>
+      💰 Valor médio: R$ 4,00<br>
+      Pode ser gratuito para bolsistas.
+    </p>
+    <p>⚠ Horários e valores podem sofrer alterações.</p>
+  </div>
+
+  <!-- INTERNET -->
+  <div id="internetPage" class="page">
+    <h2>🌐 Internet UNILA</h2>
+    <p>Para configurar a internet da UNILA (redes <b>UNILA</b> ou <b>eduroam</b>), conecte-se à rede e utilize as configurações abaixo:</p>
+    <p>
+      📶 Configuração geral:<br>
+      • Método EAP: PEAP<br>
+      • Autenticação Fase 2: MSCHAPV2<br>
+      • Certificado CA: Não validar ou não especificado<br>
+      • Identidade/Usuário: seu e-mail institucional (sem @unila.edu.br)<br>
+      • Senha: senha do e-mail institucional
+    </p>
+    <p>
+      📱 Android:<br>
+      • Conecte na rede UNILA ou eduroam<br>
+      • Use as configurações acima
+    </p>
+    <p>
+      🍎 iPhone:<br>
+      • Conecte na rede<br>
+      • Insira login e aceite certificado
+    </p>
+    <p>⚠ Dispositivos Motorola precisa outras configurações. Problemas: procure suporte da UNILA</p>
+  </div>
+
+  <!-- ESTUDE -->
+  <div id="estudPage" class="page">
+    <h2>🎓 Estude na UNILA</h2>
+    <p>A Universidade Federal da Integração Latino-Americana (UNILA), localizada em Foz do Iguaçu-PR, é uma instituição pública, gratuita e voltada à integração entre os países da América Latina.</p>
+    <p>A universidade oferece cerca de 29 cursos de graduação presenciais em diversas áreas do conhecimento, com foco acadêmico e social voltado à realidade latino-americana.</p>
+    <p>
+      🏛 Estrutura acadêmica:<br>
+      A UNILA é organizada em quatro institutos:<br>
+      • ILAACH – Artes, Cultura e História<br>
+      • ILACVN – Ciências da Vida e da Natureza<br>
+      • ILAESP – Economia, Sociedade e Política<br>
+      • ILATIT – Tecnologia, Infraestrutura e Território
+    </p>
+    <p>
+      📚 Cursos de graduação por instituto:<br><br>
+      <b>ILAACH:</b> Antropologia, Cinema e Audiovisual, História, Letras (Artes e Mediação Cultural), Música<br><br>
+      <b>ILACVN:</b> Biotecnologia, Ciências Biológicas, Ciências da Natureza, Engenharia Física, Medicina, Química, Saúde Coletiva<br><br>
+      <b>ILAESP:</b> Administração Pública, Ciência Política e Sociologia, Ciências Econômicas, Desenvolvimento Rural, Filosofia, Relações Internacionais, Serviço Social<br><br>
+      <b>ILATIT:</b> Arquitetura e Urbanismo, Engenharia Civil de Infraestrutura, Engenharia de Energia, Engenharia de Materiais, Engenharia Química, Geografia
+    </p>
+    <p>
+      📌 Formas de ingresso:<br>
+      • SiSU (nota do ENEM)<br>
+      • Processo Seletivo Internacional (PSI)<br>
+      • Processo Seletivo para Indígenas (PSIN)<br>
+      • Curso de Música com seleção própria<br>
+      • Vagas remanescentes
+    </p>
+    <p>
+      🔄 Outras formas de entrada:<br>
+      • Transferência externa<br>
+      • Reingresso<br>
+      • Portador de diploma
+    </p>
+    <p>
+      ⚠ Informações importantes:<br>
+      • Não possui vestibular próprio<br>
+      • Ingresso geralmente anual<br>
+      • Ensino totalmente gratuito<br>
+      • Cursos presenciais
+    </p>
+    <p>
+      🌎 Diferenciais da UNILA:<br>
+      • Ambiente internacional com estudantes de vários países<br>
+      • Integração cultural latino-americana<br>
+      • Ensino público de qualidade
+    </p>
+    <p>📊 Qualidade acadêmica: A UNILA possui nota 4 (de 5) no Índice Geral de Cursos (IGC) do MEC.</p>
+    <p>
+      🏛 Benefícios oferecidos:<br>
+      • Restaurante Universitário (baixo custo)<br>
+      • Bolsas de auxílio estudantil<br>
+      • Biblioteca completa<br>
+      • Laboratórios modernos<br>
+      • Projetos de pesquisa e extensão
+    </p>
+    <p>
+      💡 Dicas para novos estudantes:<br>
+      • Utilize o SIGAA para sua vida acadêmica<br>
+      • Acompanhe os editais regularmente<br>
+      • Participe de projetos e atividades da universidade
+    </p>
+  </div>
+
+  <!-- NOTÍCIAS -->
+  <div id="noticiasPage" class="page">
+    <h2>📰 Notícias</h2>
+    <p>Comerciantes locais, Bares, Pessoal da Feirinha da Unila, etc, se tiver interesse em divulgar seu negócio aqui entre em contato com o Desenvolvedor do App<br><br>
+    Por motivo que grupo o oficial da UNILA no Facebook com aproximadamente 20 mil Membros está desativado por motivo desconhecido, criamos outro que será livre para postar. Clique no botão "GRUPO NO FACEBOOK" e participe!<br><br>
+    Para salvar o Email institucional neste App faça login no navegador do Google e salve a senha memorizada.<br><br>
+    Após dois dias de paralisação que afetaram a rotina de milhares de passageiros, o transporte coletivo de Foz do Iguaçu voltou a operar integralmente na tarde desta terça-feira, 28, depois de um acordo mediado pelo Ministério Público do Trabalho.<br><br>
+    Estudantes não pagam transporte público em Foz.<br><br>
+    Obras do Campus Arandú estão em fase final e será entregue em 2028.<br><br>
+    O investimento total para a construção do Campus Arandu da UNILA, em Foz do Iguaçu, está orçado em R$ 752 milhões. A obra, projetada por Oscar Niemeyer, teve a ordem de serviço assinada em junho de 2025, com financiamento garantido pela Itaipu Binacional e gestão do UNOPS (órgão da ONU). Detalhes do Projeto:<br>
+    Valor Principal: R$ 752 milhões destinados à retomada e conclusão das obras.<br>
+    Parcerias: Acordo entre a UNILA, Itaipu Binacional e Ministério da Educação (MEC).<br>
+    Cronograma: A primeira etapa, incluindo restaurante e biblioteca, tem previsão de entrega para março de 2026, com conclusão total do complexo planejada para 2027. O Campus Arandu será a sede definitiva da Universidade Federal da Integração Latino-Americana (UNILA) em Foz do Iguaçu. Mais do que apenas um prédio universitário, ele é considerado o último grande projeto assinado por Oscar Niemeyer antes de sua morte.<br>
+    O complexo foi desenhado para ser um marco arquitetônico e um centro de integração regional. O que ele incluirá:<br>
+    Estrutura Acadêmica: Salas de aula, laboratórios de ponta e centros de pesquisa voltados para o desenvolvimento da América Latina.<br>
+    Biblioteca Central: Projetada para ser uma das maiores da região, servindo como polo de conhecimento.<br>
+    Restaurante Universitário: Parte da primeira etapa de entrega, para atender a comunidade acadêmica.<br>
+    Espaços Culturais: Auditórios e áreas de convivência que seguem as curvas e o concreto armado característicos de Niemeyer.<br>
+    Polo de Inovação: Pela proximidade com a Itaipu e o Parque Tecnológico (Parque Tec), funcionará como um hub estratégico para ciência e tecnologia.<br><br>
+    O significado do nome: "Arandu", em guarani, significa sabedoria ou ouvir o tempo. O nome reflete a missão da universidade de valorizar os saberes ancestrais e promover o diálogo entre as diferentes culturas do continente.<br><br>
+    Servidores das Universidades Federais em greve por tempo indeterminado, afetando bibliotecas, T.I. e outros setores, no entanto as aulas seguem normalmente.🌼🌼🌼</p>
+  </div>
+
+  <!-- CHAT -->
+  <div id="chatPage" class="page">
+    <h2>💬 Chat UNILA</h2>
+    <div id="nickArea">
+      <input id="nickInput" placeholder="Digite seu nick..." style="padding:10px; border-radius:10px; border:none; margin-bottom:10px; width:80%;" />
+      <button onclick="saveNick()">Entrar</button>
+    </div>
+    <div id="chatArea" style="display:none;">
+      <div id="chatBox"></div>
+      <div id="inputArea">
+        <input id="chatInput" placeholder="Digite sua mensagem..." />
+        <button id="sendBtn" onclick="sendMessage()">➤</button>
+      </div>
+      <button id="changeNickBtn" onclick="changeNick()" style="display:none; margin-top:10px;">🔄 Mudar Nick</button>
+    </div>
+  </div>
+
+  <!-- DEV -->
+  <div id="devPage" class="page">
+    <h2>👨‍💻 Desenvolvedor</h2>
+    <p>Para trabalhos e parcerias entre em contato:</p>
+    <p>Fernando - Serviço Social<br>Contato: +55 45 99949-9759</p>
+  </div>
+
+  <!-- UPA -->
+  <div id="upaPage" class="page">
+    <h2>🏥 Hospitais de Emergência 24h (UPA)</h2>
+    <p>
+      📍 UPA João Samek<br>
+      Av. Gramado, 450 – Jardim Lancaster<br>
+      📞 (45) 2105-8000<br><br>
+      📍 UPA Morumbi<br>
+      Av. Mário Filho, s/n – Morumbi<br>
+      📞 (45) 2105-8200<br><br>
+      📍 Hospital Municipal Padre Germano Lauck<br>
+      Rua Adoniran Barbosa, 370 – Parque Presidente<br>
+      📞 (45) 2105-4100<br><br>
+      📍 UPA 24h Porto Meira<br>
+      Rua Airton Moreira, s/n – Porto Meira<br>
+      📞 (45) 2105-8300<br><br>
+      ⚠ Atendimento 24 horas para urgência e emergência.<br><br>
+      Para outros tratamentos fora do contexto de urgência e emergência siga para a UBS mais próxima. UPAs só atendem urgência e emergência. UBS não são 24h e atendem geralmente até as 18:30, não funcionando aos sábados e feriados.
+    </p>
+  </div>
+
+  <!-- NOTES -->
+  <div id="notesPage" class="page">
+    <h2>📝 Anotações</h2>
+    <textarea id="note" placeholder="Escreva sua anotação aqui..."></textarea>
+    <button onclick="saveNote()">Salvar</button>
+    <div id="list" style="margin-top:20px;"></div>
+  </div>
+
+  <!-- RADIO PLAYER -->
+  <div id="radioPlayer" style="display:none; margin-bottom:80px; padding:20px;">
+    <iframe 
+      id="ytRadio"
+      width="100%" 
+      height="200"
+      src="https://www.youtube.com/embed/videoseries?list=PLyTsVCtgNA7Uzq69sB_NhyJJEpNr1ePPM&enablejsapi=1"
+      frameborder="0"
+      allow="autoplay"
+      allowfullscreen>
+    </iframe>
+  </div>
+
+  <div id="dateBar"></div>
+
+  <script>
+    // Configuração Firebase
+    const firebaseConfig = {
+      apiKey: "AIzaSyDCm8jh-gz3T8OkOH2J6ls66t5QizcKwu8",
+      authDomain: "app-unila.firebaseapp.com",
+      projectId: "app-unila",
+      storageBucket: "app-unila.firebasestorage.app",
+      messagingSenderId: "574505875323",
+      appId: "1:574505875323:web:fb885f0a2ae32b272fafde",
+      measurementId: "G-FJT3X93608"
     };
 
-  }).catch(err => console.log("Erro SW:", err));
-  if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.addEventListener("controllerchange", () => {
-    window.location.reload();
-  });
-  }
-}
-let nick = localStorage.getItem("chat_nick") || "";
-const LIMIT = 10;
-let lastDoc = null;
-let loadingMore = false;
-let loadedMessages = new Set();
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+    const ADMIN_NICK = "Fernando";
+    db.enablePersistence().catch((err) => console.log("Erro offline:", err));
 
-async function saveNick(){
-  const input = document.getElementById("nickInput").value.trim();
+    let nick = localStorage.getItem("chat_nick") || "";
+    const LIMIT = 10;
+    let lastDoc = null;
+    let loadingMore = false;
+    let loadedMessages = new Set();
 
-  if(!input) return;
+    function openLink(u){ window.open(u, "_blank"); }
 
-  const nickRef = db.collection("users").doc(input);
-  const doc = await nickRef.get();
-
-  // 🚫 Nick já existe
-  if(doc.exists){
-
-  const data = doc.data();
-  const agora = Date.now();
-
-  // 👇 SE FOR VOCÊ (ADMIN), pode usar mesmo ocupado
-  if(input === ADMIN_NICK){
-    console.log("Admin entrou com nick protegido");
-  } 
-  else {
-    // se ficou mais de 30 segundos sem atividade
-    if(agora - data.lastActive > 30000){
-
-      // libera o nick
-      await nickRef.delete();
-
-    } else {
-      alert("❌ Este nick já está em uso, escolha outro!");
-      return;
+    function openPage(id){
+      document.getElementById("home").style.display="none";
+      document.querySelectorAll(".page").forEach(p=>p.style.display="none");
+      document.getElementById(id).style.display="block";
+      if(id === 'notesPage') loadNotes();
     }
-  }
-}
 
-  // ✅ Salva no banco
-  await nickRef.set({
-  createdAt: Date.now(),
-  lastActive: Date.now()
-});
+    function goHome(){
+      document.getElementById("home").style.display="grid";
+      document.querySelectorAll(".page").forEach(p=>p.style.display="none");
+      document.getElementById("radioPlayer").style.display="none";
+    }
 
-  // ✅ salva local
-  nick = input;
-  localStorage.setItem("chat_nick", nick);
+    function shareApp(){
+      const texto = "📲 Baixe o App da UNILA:";
+      const url = "https://drive.google.com/file/d/1XgYsFJlnd8VuQGAyYopxNI2Huuknsugo/view?usp=drivesdk";
+      const mensagem = encodeURIComponent(texto + " " + url);
+      window.open("https://api.whatsapp.com/send?text=" + mensagem, "_system");
+    }
 
-  // ✅ entra no chat
-  document.getElementById("nickArea").style.display="none";
-  document.getElementById("chatArea").style.display="block";
+    // Anotações
+    function loadNotes(){
+      let list = document.getElementById("list");
+      list.innerHTML = "";
+      let notes = JSON.parse(localStorage.getItem("notes") || "[]");
+      notes.forEach((n, i) => {
+        let div = document.createElement("div");
+        div.className = "note-item";
+        div.innerHTML = `<span>${n}</span> <button class="delete-btn" onclick="deleteNote(${i})">🗑</button>`;
+        list.appendChild(div);
+      });
+    }
 
-  listenChat();
-  // 👇 mostrar botão só para admin
-if(nick === "Fernando"){
-  document.getElementById("changeNickBtn").style.display = "block";
-}
-}
-function changeNick(){
+    function saveNote(){
+      let t = document.getElementById("note").value;
+      if(!t) return;
+      let notes = JSON.parse(localStorage.getItem("notes") || "[]");
+      notes.push(t);
+      localStorage.setItem("notes", JSON.stringify(notes));
+      document.getElementById("note").value = "";
+      loadNotes();
+    }
 
-  // remove seu nick do banco (libera para outro usuário)
-  if(nick){
-    db.collection("users").doc(nick).delete();
-  }
+    function deleteNote(i){
+      let notes = JSON.parse(localStorage.getItem("notes") || "[]");
+      notes.splice(i, 1);
+      localStorage.setItem("notes", JSON.stringify(notes));
+      loadNotes();
+    }
 
-  // limpa o nick salvo
-  localStorage.removeItem("chat_nick");
-  nick = "";
-
-  // volta para tela de login
-  document.getElementById("chatArea").style.display = "none";
-  document.getElementById("nickArea").style.display = "block";
-
-  // limpa o campo
-  document.getElementById("nickInput").value = "";
-}
-function sendMessage(){
-  const input = document.getElementById("chatInput");
-  if(!input.value) return;
-
-  db.collection("chat").add({
-    nick: nick,
-    text: input.value,
-    time: Date.now()
-  });
-
-  input.value="";
-}
-
-function listenChat(){
-
-  db.collection("chat")
-  .orderBy("time", "desc")
-  .limit(LIMIT)
-  .onSnapshot(snapshot => {
-
-    const box = document.getElementById("chatBox");
-    box.innerHTML = "";
-    loadedMessages.clear();
-
-    const docs = snapshot.docs;
-
-    if(docs.length > 0){
-  lastDoc = docs[docs.length - 1]; // 👈 mantém assim (correto aqui)
-}
-
-    docs.reverse().forEach(doc => {
-
-      if(loadedMessages.has(doc.id)) return;
-      loadedMessages.add(doc.id);
-
-      const m = doc.data();
-
-      let btn = "";
-
-      if(m.nick === nick || nick === ADMIN_NICK){
-        btn = `<button onclick="deleteMsg('${doc.id}', '${m.nick}')">🗑</button>`;
+    // Data Bar
+    function atualizarDataBar(){
+      const el = document.getElementById("dateBar");
+      function formatarData(){
+        const d = new Date();
+        const dias = ["Dom","Seg","Ter","Qua","Qui","Sex","Sáb"];
+        const meses = ["Jan","Fev","Mar","Abr","Mai","Jun","Jul","Ago","Set","Out","Nov","Dez"];
+        return `${dias[d.getDay()]}, ${d.getDate()} ${meses[d.getMonth()]} ${d.getFullYear()}`;
       }
+      if(el) el.textContent = formatarData();
+    }
+    setInterval(atualizarDataBar, 60000);
 
-      const div = document.createElement("div");
-      div.className = "msg";
-      div.innerHTML = `
-        <strong>${m.nick}:</strong> ${m.text}
-        <br><small>${formatarDataMensagem(m.time)}</small>
-        ${btn}
-      `;
+    function formatarDataMensagem(timestamp){
+      const data = new Date(timestamp);
+      const agora = new Date();
+      const ontem = new Date();
+      ontem.setDate(agora.getDate() - 1);
+      const mesmoDia = data.toDateString() === agora.toDateString();
+      const ehOntem = data.toDateString() === ontem.toDateString();
+      const hora = data.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+      if(mesmoDia) return `Hoje às ${hora}`;
+      if(ehOntem) return `Ontem às ${hora}`;
+      return data.toLocaleDateString('pt-BR') + ` às ${hora}`;
+    }
 
-      box.appendChild(div);
-    });
+    // Chat logic
+    async function saveNick(){
+      const input = document.getElementById("nickInput").value.trim();
+      if(!input) return;
+      const nickRef = db.collection("users").doc(input);
+      const doc = await nickRef.get();
+      if(doc.exists && input !== ADMIN_NICK){
+        const data = doc.data();
+        if(Date.now() - data.lastActive < 30000){
+          alert("❌ Este nick já está em uso!");
+          return;
+        }
+      }
+      await nickRef.set({ createdAt: Date.now(), lastActive: Date.now() });
+      nick = input;
+      localStorage.setItem("chat_nick", nick);
+      document.getElementById("nickArea").style.display="none";
+      document.getElementById("chatArea").style.display="block";
+      if(nick === ADMIN_NICK) document.getElementById("changeNickBtn").style.display = "block";
+      listenChat();
+    }
 
-    box.scrollTop = box.scrollHeight;
-  });
-}
-function deleteMsg(id, msgNick){
+    function changeNick(){
+      if(nick) db.collection("users").doc(nick).delete();
+      localStorage.removeItem("chat_nick");
+      nick = "";
+      document.getElementById("chatArea").style.display = "none";
+      document.getElementById("nickArea").style.display = "block";
+    }
 
-  // 👇 bloqueio de segurança
-  if(msgNick !== nick && nick !== ADMIN_NICK){
-    alert("Você não pode apagar esta mensagem!");
-    return;
-  }
+    function sendMessage(){
+      const input = document.getElementById("chatInput");
+      if(!input.value) return;
+      db.collection("chat").add({ nick: nick, text: input.value, time: Date.now() });
+      input.value = "";
+    }
 
-  db.collection("chat").doc(id).delete();
-}
-function atualizarAtividade(){
-  if(nick){
-    db.collection("users").doc(nick).update({
-      lastActive: Date.now()
-    });
-  }
-}
-setInterval(atualizarAtividade, 60000);
-// a cada 60 segundos
-let player;
-let tocando = false;
+    function listenChat(){
+      db.collection("chat").orderBy("time", "desc").limit(LIMIT).onSnapshot(snapshot => {
+        const box = document.getElementById("chatBox");
+        box.innerHTML = "";
+        snapshot.docs.reverse().forEach(doc => {
+          const m = doc.data();
+          let btn = (m.nick === nick || nick === ADMIN_NICK) ? `<button onclick="deleteMsg('${doc.id}', '${m.nick}')" style="background:none; border:none; color:#94a3b8; cursor:pointer;">🗑</button>` : "";
+          const div = document.createElement("div");
+          div.className = "msg";
+          div.innerHTML = `<strong>${m.nick}:</strong> ${m.text}<br><small>${formatarDataMensagem(m.time)} ${btn}</small>`;
+          box.appendChild(div);
+        });
+        box.scrollTop = box.scrollHeight;
+      });
+    }
 
+    function deleteMsg(id, msgNick){
+      if(msgNick === nick || nick === ADMIN_NICK) db.collection("chat").doc(id).delete();
+    }
 
+    function atualizarAtividade(){
+      if(nick) db.collection("users").doc(nick).update({ lastActive: Date.now() });
+    }
+    setInterval(atualizarAtividade, 60000);
 
-function toggleRadioSimples() {
-  const player = document.getElementById("radioPlayer");
-  const iframe = document.getElementById("ytRadio");
+    // Radio logic
+    function toggleRadioSimples() {
+      const player = document.getElementById("radioPlayer");
+      const iframe = document.getElementById("ytRadio");
+      if (player.style.display === "none") {
+        player.style.display = "block";
+        iframe.contentWindow.postMessage(JSON.stringify({event: "command", func: "playVideo", args: []}), "*");
+        setTimeout(() => player.scrollIntoView({ behavior: "smooth" }), 300);
+      } else {
+        player.style.display = "none";
+        iframe.contentWindow.postMessage(JSON.stringify({event: "command", func: "pauseVideo", args: []}), "*");
+      }
+    }
 
-  if (player.style.display === "none" || player.style.display === "") {
-    player.style.display = "block";
+    // Theme colors
+    const colors = ["#1a0033", "#2b0a4a", "#3b0f66", "#120022"];
+    let colorIdx = 0;
+    setInterval(() => {
+      colorIdx = (colorIdx + 1) % colors.length;
+      document.querySelector("meta[name=theme-color]").setAttribute("content", colors[colorIdx]);
+    }, 3000);
 
-    // 🔊 tocar automaticamente
-    iframe.contentWindow.postMessage(
-      JSON.stringify({
-        event: "command",
-        func: "playVideo",
-        args: []
-      }),
-      "*"
-    );
+    window.onload = () => {
+      atualizarDataBar();
+      if(nick){
+        document.getElementById("nickArea").style.display="none";
+        document.getElementById("chatArea").style.display="block";
+        listenChat();
+      }
+    };
 
-  } else {
-    player.style.display = "none";
-
-    // ⏸ pausar
-    iframe.contentWindow.postMessage(
-      JSON.stringify({
-        event: "command",
-        func: "pauseVideo",
-        args: []
-      }),
-      "*"
-    );
-  }
-
-  setTimeout(() => {
-    player.scrollIntoView({ behavior: "smooth" });
-  }, 300);
-}
-const colors = ["#1a0033", "#2b0a4a", "#3b0f66", "#120022"];
-let i = 0;
-
-setInterval(() => {
-  i = (i + 1) % colors.length;
-  document.querySelector("meta[name=theme-color]")
-    .setAttribute("content", colors[i]);
-}, 3000);
-</script>
-<div id="radioPlayer" style="display:none; margin-bottom:80px;">
-  <iframe 
-  id="ytRadio"
-  width="100%" 
-  height="200"
-  src="https://www.youtube.com/embed/videoseries?list=PLyTsVCtgNA7Uzq69sB_NhyJJEpNr1ePPM&enablejsapi=1"
-  frameborder="0"
-  allow="autoplay"
-  allowfullscreen>
-</iframe>
-</div>
-<div id="dateBar"></div>
-
-<script>
-<script>
-function mostrarRadio() {
-  const radio = document.getElementById("radioPlayer");
-
-  // mostrar o player
-  radio.style.display = "block";
-
-  // rolar até o player suavemente
-  setTimeout(() => {
-    radio.scrollIntoView({ behavior: "smooth" });
-  }, 200);
-}
-<script>
-function scrollToRadio() {
-  const radio = document.getElementById("radioPlayer");
-
-  setTimeout(() => {
-    radio.scrollIntoView({ behavior: "smooth" });
-  }, 300);
-}
-</script>
-
+    // Service Worker registration
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('./service-worker.js').then(reg => {
+        console.log("SW registrado");
+      }).catch(err => console.log("Erro SW:", err));
+    }
+  </script>
 </body>
 </html>
