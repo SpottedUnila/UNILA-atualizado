@@ -92,73 +92,71 @@ body::before{
 
   background:linear-gradient(
     to bottom,
-    rgba(5,0,15,0.08),
-    rgba(10,0,20,0.28),
-    rgba(10,0,20,0.52)
+    rgba(0,0,0,0.05),
+    rgba(0,0,0,0.18),
+    rgba(0,0,0,0.45)
   );
 
   z-index:-1;
 }
 
 body{
+  
   font-family:Arial;
   margin:0;
   color:white;
-  padding-bottom:50px;
-  background-image:url("spotted-bg.png");
-  background-size:cover;
+  min-height:100vh;
+  overflow-x:hidden;
+  
+  .bg-fixa{
+  position:fixed;
+  top:0;
+  left:0;
+
+  width:110%;
+  height:100vh;
+
+  overflow:hidden;
+
+  background-image:url("https://raw.githubusercontent.com/fernando2018a1986-afk/UNILA-atualizado/5f7ab3465423cf5e14924085f487f50f95a286bb/spotted-bg.jpg");
+  background-size:cover ;
   background-position:top center;
   background-repeat:no-repeat;
-  background-attachment:scroll;
-  min-height:100vh;
+
+  z-index:-2;
+
 }
-
-.menu{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
-  gap:12px;
-
-  padding:20px;
-  margin-top:58vh;
-}
-
 button{
   padding:16px;
+
   border:none;
-  border-radius:14px;
-  font-weight:700;
+  border-radius:18px;
+
+  font-weight:800;
   font-size:16px;
-  letter-spacing:0.3px;
-  color:#f5f3ff; /* mais legível */
+
+  color:#ffffff;
+
   text-shadow:
-    0 3px 10px rgba(0,0,0,1),
-    0 2px 4px rgba(0,0,0,1);
-  cursor:pointer;
-  opacity:0.45;
-  /* 3D real */
-  box-shadow:
-    0 6px 0 rgba(0,0,0,0.35),   /* sombra base (profundidade) */
-    0 10px 18px rgba(0,0,0,0.25);
-  background: rgba(25,25,45,0.45);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border:1px solid rgba(255,255,255,0.20);
-  transition: all 0.12s ease;
-  transform: translateY(0);
-}
+    0 2px 8px rgba(0,0,0,1);
 
-/* hover leve (sensação premium) */
+  background:rgba(255,255,255,0.20) !important;
+
+
+  border:1px solid rgba(255,255,255,0.14);
+
+  box-shadow:
+    0 4px 14px rgba(0,0,0,0.28);
+}
+  
 button:hover{
-  filter: brightness(1.08);
-  transform: translateY(-1px);
-}
+  transform:translateY(-2px) scale(1.01);
 
-/* clique real (efeito pressionado) */
-button:active{
-  transform: translateY(4px);
+  background:rgba(40,40,70,0.42);
+
   box-shadow:
-    0 2px 0 rgba(0,0,0,0.35),
-    0 5px 10px rgba(0,0,0,0.25);
+    0 8px 24px rgba(0,0,0,0.45),
+    inset 0 1px 0 rgba(255,255,255,0.15);
 }
 
 .page{
@@ -256,13 +254,17 @@ button:active{
   bottom:0;
   left:50%;
   transform:translateX(-50%);
-  background:rgba(0,0,0,0.6);
+  background:rgba(255,255,255,0.20) !important;
+  background-color: rgba(0, 0, 0, 0.2);
+  opacity: 0.8;
   backdrop-filter:blur(6px);
   padding:6px 14px;
   border-radius:12px 12px 0 0;
   font-size:13px;
   color:#e5e7eb;
   z-index:1000;
+  color: black;
+  font-weight: 500;
 }
 
 .msg strong{
@@ -284,7 +286,7 @@ button:active{
   display:flex;
   flex-direction:column;
   height:100vh;
-  overflow:hidden;
+
 }
 
 #chatBox{
@@ -323,6 +325,22 @@ button:active{
   justify-content:center;
   box-shadow:0 4px 10px rgba(0,0,0,0.4);
 }
+.menu{
+  display:grid;
+
+  grid-template-columns:
+    repeat(auto-fit,minmax(160px,1fr));
+
+  gap:14px;
+
+  padding:20px;
+
+  margin-top:82vh;
+
+  padding-bottom:120px;
+
+  align-items:start;
+}
 </style>
 
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
@@ -346,6 +364,7 @@ function onYouTubeIframeAPIReady() {
 </head>
 
 <body>
+  <div class="bg-fixa"></div>
   <div id="aranduTag" style="position:fixed; top:10px; left:10px; font-size:24px; z-index:1000;">💜</div>
 
   <button class="home-btn" onclick="goHome()">🏠</button>
@@ -353,7 +372,7 @@ function onYouTubeIframeAPIReady() {
   <button id="installBtn" class="install-btn">📲 Instalar App</button>
 
   <div id="home" class="menu">
-    <button class="dev" onclick="openPage('chatPage')">Bate-papo 💬</button>
+    <button class="dev" onclick="openPage('chatPage')"> Spotted💜</button>
     <button class="unila" onclick="openLink('https://portal.unila.edu.br/')">🌐 Portal Oficial da UNILA</button>
     <button class="sigaa" onclick="openLink('https://sig.unila.edu.br/sigaa/verTelaLogin.do')">📚 Sistema Acadêmico SIGAA</button>
     <button class="gmail" onclick="openLink('https://mail.google.com/')">📧 E-mail Institucional</button>
@@ -361,7 +380,7 @@ function onYouTubeIframeAPIReady() {
     <button class="instagram" onclick="openLink('https://www.instagram.com/instaunila/')">📸 Instagram UNILA</button>
     <button class="facebook" onclick="openLink('https://www.facebook.com/unila.oficial')">📘 Facebook UNILA</button>
     <button class="biblioteca" onclick="openLink('https://portal.unila.edu.br/biblioteca')">📖 Biblioteca UNILA</button>
-    <button class="intercampi" onclick="openLink('https://portal.unila.edu.br/proagi/delog/arquivos/horario-intercampi/quadro-de-horario-intercampi.pdf')">🚌 Transporte Intercampi</button>
+    <button class="intercampi" onclick="openLink('https://portal.unila.edu.br/proagi/delog/arquivos/horario-intercampi/quadro-de-horario-intercampi.pdf')">🚌 deTransporte Intercampi</button>
     <button class="smartec" onclick="openLink('https://www.facebook.com/profile.php?id=61562436416014')">💻 Smart Tech</button>
     <button class="editais" onclick="openLink('https://documentos.unila.edu.br/')">📄 Editais Oficiais</button>
     <button class="emergencia" onclick="openPage('emergenciaPage')">🚨 Telefones de Emergência</button>
@@ -606,7 +625,7 @@ function onYouTubeIframeAPIReady() {
 
   <!-- NOTES -->
   <div id="notesPage" class="page">
-    <h2>📝 Anotações</h2>
+    <h2>📝 Anotaçõesh2>
     <textarea id="note" placeholder="Escreva sua anotação aqui..."></textarea>
     <button onclick="saveNote()">Salvar</button>
     <div id="list" style="margin-top:20px;"></div>
@@ -828,5 +847,12 @@ function onYouTubeIframeAPIReady() {
       }).catch(err => console.log("Erro SW:", err));
     }
   </script>
+  <script>
+
+window.addEventListener("scroll", function(){
+
+  const bg =
+
+</script>
 </body>
 </html>
