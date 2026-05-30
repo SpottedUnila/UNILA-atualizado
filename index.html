@@ -342,22 +342,70 @@ button:hover{
   z-index:999;
 }
 
-#radioBtn{
+.radio-container{
   position:fixed;
-  bottom:5px;
+  top:15px;
   right:15px;
-  width:55px;
-  height:55px;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  z-index:1001;
+  background:rgba(255,255,255,0.05);
+  backdrop-filter:blur(15px);
+  padding:5px 5px 5px 15px;
+  border-radius:30px;
+  border:1px solid rgba(255,255,255,0.1);
+  box-shadow:0 8px 32px rgba(0,0,0,0.3);
+}
+
+#radioBtn{
+  width:40px;
+  height:40px;
   border-radius:50%;
-  background:#9333ea;
+  background:linear-gradient(135deg, #9333ea, #5b21b6);
   color:white;
-  font-size:22px;
+  font-size:18px;
   border:none;
-  z-index:999;
   display:flex;
   align-items:center;
   justify-content:center;
-  box-shadow:0 4px 10px rgba(0,0,0,0.4);
+  cursor:pointer;
+  transition:all 0.3s ease;
+}
+
+#radioBtn:active{
+  transform:scale(0.9);
+}
+
+.radio-badge{
+  font-size:11px;
+  font-weight:700;
+  color:white;
+  text-transform:uppercase;
+  letter-spacing:1px;
+  display:flex;
+  align-items:center;
+  gap:6px;
+  white-space:nowrap;
+}
+
+.radio-dot{
+  width:6px;
+  height:6px;
+  background:#22c55e;
+  border-radius:50%;
+  box-shadow:0 0 8px #22c55e;
+  animation:blink 1.5s infinite;
+}
+
+@keyframes blink{
+  0%,100%{opacity:1;}
+  50%{opacity:0.3;}
+}
+
+@keyframes pulse-glow{
+  0%,100%{ box-shadow:0 0 5px rgba(147,51,234,0.2); transform:scale(1); }
+  50%{ box-shadow:0 0 15px rgba(147,51,234,0.5); transform:scale(1.02); }
 }
 .menu{
   display:grid;
@@ -403,7 +451,13 @@ function onYouTubeIframeAPIReady() {
   <div id="aranduTag" style="position:fixed; top:10px; left:10px; font-size:24px; z-index:1000;">💜</div>
 
   <button class="home-btn" onclick="goHome()">🏠</button>
-  <button id="radioBtn" onclick="toggleRadioSimples();">🎧</button>
+  <div class="radio-container">
+    <div class="radio-badge">
+      <div class="radio-dot"></div>
+      Music
+    </div>
+    <button id="radioBtn" onclick="toggleRadioSimples();">🎧</button>
+  </div>
   <button id="installBtn" class="install-btn">📲 Instalar App</button>
 
   <div id="home" class="menu">
@@ -1156,6 +1210,10 @@ function onYouTubeIframeAPIReady() {
       const iframe = document.getElementById("ytRadio");
       if (player.style.display === "none") {
         player.style.display = "block";
+        iframe.contentWindow.postMessage(JSON.stringify({event: "command", func: "playVideo", args: []}), "*");
+        setTimeout(() => player.scrollIntoView({ behavior: "smooth" }), 300);
+      } else {
+        player.style.display = "none";
         iframe.contentWindow.postMessage(JSON.stringify({event: "command", func: "playVideo", args: []}), "*");
         setTimeout(() => player.scrollIntoView({ behavior: "smooth" }), 300);
       } else {
