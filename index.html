@@ -864,7 +864,9 @@ function onYouTubeIframeAPIReady() {
       });
     }
 
+
     function saveNote(){
+      
       let t = document.getElementById("note").value;
       if(!t) return;
       let notes = JSON.parse(localStorage.getItem("notes") || "[]");
@@ -1214,10 +1216,6 @@ function onYouTubeIframeAPIReady() {
         setTimeout(() => player.scrollIntoView({ behavior: "smooth" }), 300);
       } else {
         player.style.display = "none";
-        iframe.contentWindow.postMessage(JSON.stringify({event: "command", func: "playVideo", args: []}), "*");
-        setTimeout(() => player.scrollIntoView({ behavior: "smooth" }), 300);
-      } else {
-        player.style.display = "none";
         iframe.contentWindow.postMessage(JSON.stringify({event: "command", func: "pauseVideo", args: []}), "*");
       }
     }
@@ -1257,3 +1255,5 @@ window.addEventListener("scroll", function(){
   </script>
 </body>
 </html>
+  
+      
