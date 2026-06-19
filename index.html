@@ -22,14 +22,12 @@
   letter-spacing:5px;
   color:#5b21b6;
   text-transform: uppercase;
-  /* 🎯 efeito 3D (camadas de profundidade) */
   text-shadow:
     0 1px 0 #2e1065,
     0 2px 0 #2e1065,
     0 3px 0 #2e1065,
     0 4px 0 #1e093f,
     0 5px 0 #1e093f,
-    /* sombra mais distante */
     0 8px 10px rgba(0,0,0,0.35);
 }
 .subtitulo-unila{
@@ -40,7 +38,6 @@
   opacity:0.85;
 }
 
-/* ✨ animação suave de brilho */
 @keyframes glow{
   0%,100%{
     filter: drop-shadow(0 0 6px rgba(34,197,94,0.3));
@@ -66,7 +63,7 @@
 
 #chatInput{
   flex:1;
-  height:45px; /* 👈 altura padrão WhatsApp */
+  height:45px;
   padding:0 15px;
   border-radius:25px;
   border:none;
@@ -262,7 +259,7 @@ button:hover{
   z-index:1001;
   color: white;
   font-weight: 500;
-  pointer-events: none; /* Para não atrapalhar cliques atrás dela */
+  pointer-events: none;
 }
 
 .msg strong{
@@ -327,7 +324,7 @@ button:hover{
   flex:1;
   overflow-y:scroll;
   padding:10px;
-  padding-bottom:180px; /* Aumentado para não cobrir mensagens com a barra e previews */
+  padding-bottom:180px;
   height: calc(100vh - 100px);
 }
 
@@ -462,208 +459,34 @@ function onYouTubeIframeAPIReady() {
 
   <div id="home" class="menu">
     <button class="dev" onclick="openPage('chatPage')"> Spotted💜 Chat💬</button>
-    <button class="unila" onclick="openLink('https://portal.unila.edu.br/')">🌐 Portal Oficial da UNILA</button>
-    <button class="sigaa" onclick="openLink('https://sig.unila.edu.br/sigaa/verTelaLogin.do')">📚 Sistema Acadêmico SIGAA</button>
-    <button class="gmail" onclick="openLink('https://mail.google.com/')">📧 E-mail Institucional</button>
-    <button class="google" onclick="openLink('https://www.google.com/')">🔎 Pesquisa Google</button>
-    <button class="instagram" onclick="openLink('https://www.instagram.com/instaunila/')">📸 Instagram UNILA</button>
-    <button class="facebook" onclick="openLink('https://www.facebook.com/unila.oficial')">📘 Facebook UNILA</button>
-    <button class="biblioteca" onclick="openLink('https://portal.unila.edu.br/biblioteca')">📖 Biblioteca UNILA</button>
-    <button class="intercampi" onclick="openLink('https://portal.unila.edu.br/proagi/delog/arquivos/horario-intercampi/quadro-de-horario-intercampi.pdf')">🚌 deTransporte Intercampi</button>
-    <button class="smartec" onclick="openLink('https://www.facebook.com/profile.php?id=61562436416014')">💻 Smart Tech</button>
-    <button class="editais" onclick="openLink('https://documentos.unila.edu.br/')">📄 Editais Oficiais</button>
-    <button class="emergencia" onclick="openPage('emergenciaPage')">🚨 Telefones de Emergência</button>
-    <button class="enderecos" onclick="openPage('enderecosPage')">🏫 Endereços dos Campus</button>
-    <button class="ru" onclick="openPage('ruPage')">🍽️ Restaurantes Universitários</button>
-    <button class="facebook" onclick="openLink('https://facebook.com/groups/1469303078173697/')">👥 Grupo no Facebook</button>
-    <button class="dev" onclick="openPage('devPage')">👨‍💻 Desenvolvedor</button>
+    <button class="unila" onclick="openDynamic('portal_unila','link')">🌐 Portal Oficial da UNILA</button>
+    <button class="sigaa" onclick="openDynamic('sigaa','link')">📚 Sistema Acadêmico SIGAA</button>
+    <button class="gmail" onclick="openDynamic('email','link')">📧 E-mail Institucional</button>
+    <button class="google" onclick="openDynamic('google','link')">🔎 Pesquisa Google</button>
+    <button class="instagram" onclick="openDynamic('instagram','link')">📸 Instagram UNILA</button>
+    <button class="facebook" onclick="openDynamic('facebook','link')">📘 Facebook UNILA</button>
+    <button class="biblioteca" onclick="openDynamic('biblioteca','link')">📖 Biblioteca UNILA</button>
+    <button class="intercampi" onclick="openDynamic('intercampi','link')">🚌 Transporte Intercampi</button>
+    <button class="smartec" onclick="openDynamic('smartec','link')">💻 Smart Tech</button>
+    <button class="editais" onclick="openDynamic('editais','link')">📄 Editais Oficiais</button>
+    <button class="emergencia" onclick="openDynamic('emergencia','page')">🚨 Telefones de Emergência</button>
+    <button class="enderecos" onclick="openDynamic('enderecos','page')">🏫 Endereços dos Campus</button>
+    <button class="ru" onclick="openDynamic('ru','page')">🍽️ Restaurantes Universitários</button>
+    <button class="facebook" onclick="openDynamic('grupo_facebook','link')">👥 Grupo no Facebook</button>
+    <button class="dev" onclick="openDynamic('dev','page')">👨‍💻 Desenvolvedor</button>
     <button class="notes" onclick="openPage('notesPage')">📝 Anotações</button>
     <button class="share" onclick="shareApp()">📤 Compartilhar App</button>
-    <button class="internet" onclick="openPage('internetPage')">🌐 Internet UNILA</button>
-    <button class="estude" onclick="openPage('estudPage')">🎓 Estude na UNILA</button>
-    <button class="google" onclick="openLink('https://enem.inep.gov.br/participante/#!/")">📝 ENEM – Página do Participante</button>
-    <button class="noticias" onclick="openPage('noticiasPage')">📰 Notícias</button>
-    <button class="emergencia" onclick="openPage('upaPage')">🏥 Hospitais de Emergência 24h (UPA)</button>
+    <button class="internet" onclick="openDynamic('internet','page')">🌐 Internet UNILA</button>
+    <button class="estude" onclick="openDynamic('estude','page')">🎓 Estude na UNILA</button>
+    <button class="google" onclick="openDynamic('enem','link')">📝 ENEM – Página do Participante</button>
+    <button class="noticias" onclick="openDynamic('noticias','page')">📰 Notícias</button>
+    <button class="emergencia" onclick="openDynamic('upa','page')">🏥 Hospitais de Emergência 24h (UPA)</button>
   </div>
 
-  <!-- EMERGÊNCIA -->
-  <div id="emergenciaPage" class="page">
-    <h2>🚨 Telefones de Emergência</h2>
-    <p>
-      Polícia Militar: 190<br>
-      SAMU (Ambulância): 192<br>
-      Bombeiros: 193<br><br>
-      Hospital Municipal: (45) 2105-4100<br>
-      Guarda Municipal: (45) 2105-5100<br>
-      Delegacia da Mulher: (45) 3521-9200<br>
-      Defesa Civil: 199<br><br>
-      Polícia Federal: (45) 3522-1174<br>
-      Polícia Rodoviária Federal: (45) 3576-1400<br><br>
-      Prae-Unila: +55 45 3522-9983<br>
-      Prograd-Unila: +55 (45) 3522-9766<br><br>
-      Disque Denúncia: 181<br>
-      Conselho Tutelar: (45) 3521-1112<br>
-      Centro de Intoxicações: 0800 722 6001<br><br>
-      ⚠ Em situações graves, ligue imediatamente.
-    </p>
-  </div>
-
-  <!-- ENDEREÇOS -->
-  <div id="enderecosPage" class="page">
-    <h2>🏫 Campus UNILA</h2>
-    <p>
-      📍 UNILA Jardim Universitário (JU)<br>
-      Av. Tarquínio Joslin dos Santos, 1000 – Polo Universitário<br><br>
-      📍 UNILA Parque Tecnológico Itaipu (Parque Tec)<br>
-      Av. Tancredo Neves, 6731 – Jardim Itaipu<br>
-      CEP: 85867-970<br><br>
-      📍 Edifício Rio Almada<br>
-      Av. Tancredo Neves, 3838 – Porto Belo<br>
-      CEP: 85867-633<br><br>
-      📍 Campus Integração<br>
-      Av. Tancredo Neves, 3147 – Porto Belo<br><br>
-      📍 Almoxarifado / Patrimônio<br>
-      Rua Macucos, 131 – Portal da Foz<br><br>
-      📍 Campus Arandu<br>
-      Projeto em construção na Itaipu Binacional
-    </p>
-  </div>
-
-  <!-- RU -->
-  <div id="ruPage" class="page">
-    <h2>🍽️ Restaurante Universitário (RU)</h2>
-    <p>O Restaurante Universitário (RU) da UNILA oferece alimentação acessível para estudantes e servidores.</p>
-    <p>
-      📍 Unidade Jardim Universitário (JU)<br>
-      Av. Tarquínio Joslin dos Santos, 1000<br><br>
-      🕒 Horários:<br>
-      Café: 06h45 – 08h00<br>
-      Almoço: 11h00 – 14h00<br>
-      Jantar: 17h30 – 19h30<br>
-    </p>
-    <p>
-      📍 Unidade Itaipu Parquetec (PTI)<br>
-      Bloco 3<br><br>
-      🕒 Horários:<br>
-      Almoço: 11h30 – 14h30<br>
-      Jantar: 17h30 – 19h15<br>
-    </p>
-    <p>
-      💰 Valor médio: R$ 4,00<br>
-      Pode ser gratuito para bolsistas.
-    </p>
-    <p>⚠ Horários e valores podem sofrer alterações.</p>
-  </div>
-
-  <!-- INTERNET -->
-  <div id="internetPage" class="page">
-    <h2>🌐 Internet UNILA</h2>
-    <p>Para configurar a internet da UNILA (redes <b>UNILA</b> ou <b>eduroam</b>), conecte-se à rede e utilize as configurações abaixo:</p>
-    <p>
-      📶 Configuração geral:<br>
-      • Método EAP: PEAP<br>
-      • Autenticação Fase 2: MSCHAPV2<br>
-      • Certificado CA: Não validar ou não especificado<br>
-      • Identidade/Usuário: seu e-mail institucional (sem @unila.edu.br)<br>
-      • Senha: senha do e-mail institucional
-    </p>
-    <p>
-      📱 Android:<br>
-      • Conecte na rede UNILA ou eduroam<br>
-      • Use as configurações acima
-    </p>
-    <p>
-      🍎 iPhone:<br>
-      • Conecte na rede<br>
-      • Insira login e aceite certificado
-    </p>
-    <p>⚠ Dispositivos Motorola precisa outras configurações. Problemas: procure suporte da UNILA</p>
-  </div>
-
-  <!-- ESTUDE -->
-  <div id="estudPage" class="page">
-    <h2>🎓 Estude na UNILA</h2>
-    <p>A Universidade Federal da Integração Latino-Americana (UNILA), localizada em Foz do Iguaçu-PR, é uma instituição pública, gratuita e voltada à integração entre os países da América Latina.</p>
-    <p>A universidade oferece cerca de 29 cursos de graduação presenciais em diversas áreas do conhecimento, com foco acadêmico e social voltado à realidade latino-americana.</p>
-    <p>
-      🏛 Estrutura acadêmica:<br>
-      • ILAACH – Artes, Cultura e História<br>
-      • ILACVN – Ciências da Vida e da Natureza<br>
-      • ILAESP – Economia, Sociedade e Política<br>
-      • ILATIT – Tecnologia, Infraestrutura e Território
-    </p>
-    <p>
-      📚 Cursos de graduação por instituto:<br><br>
-      <b>ILAACH:</b> Antropologia, Cinema e Audiovisual, História, Letras (Artes e Mediação Cultural), Música<br><br>
-      <b>ILACVN:</b> Biotecnologia, Ciências Biológicas, Ciências da Natureza, Engenharia Física, Medicina, Química, Saúde Coletiva<br><br>
-      <b>ILAESP:</b> Administração Pública, Ciência Política e Sociologia, Ciências Econômicas, Desenvolvimento Rural, Filosofia, Relações Internacionais, Serviço Social<br><br>
-      <b>ILATIT:</b> Arquitetura e Urbanismo, Engenharia Civil de Infraestrutura, Engenharia de Energia, Engenharia de Materiais, Engenharia Química, Geografia
-    </p>
-    <p>
-      📌 Formas de ingresso:<br>
-      • SiSU (nota do ENEM)<br>
-      • Processo Seletivo Internacional (PSI)<br>
-      • Processo Seletivo para Indígenas (PSIN)<br>
-      • Curso de Música com seleção própria<br>
-      • Vagas remanescentes
-    </p>
-    <p>
-      🔄 Outras formas de entrada:<br>
-      • Transferência externa<br>
-      • Reingresso<br>
-      • Portador de diploma
-    </p>
-    <p>
-      ⚠ Informações importantes:<br>
-      • Não possui vestibular próprio<br>
-      • Ingresso geralmente anual<br>
-      • Ensino totalmente gratuito<br>
-      • Cursos presenciais
-    </p>
-    <p>
-      🌎 Diferenciais da UNILA:<br>
-      • Ambiente internacional com estudantes de vários países<br>
-      • Integração cultural latino-americana<br>
-      • Ensino público de qualidade
-    </p>
-    <p>📊 Qualidade acadêmica: A UNILA possui nota 4 (de 5) no Índice Geral de Cursos (IGC) do MEC.</p>
-    <p>
-      🏛 Benefícios oferecidos:<br>
-      • Restaurante Universitário (baixo custo)<br>
-      • Bolsas de auxílio estudantil<br>
-      • Biblioteca completa<br>
-      • Laboratórios modernos<br>
-      • Projetos de pesquisa e extensão
-    </p>
-    <p>
-      💡 Dicas para novos estudantes:<br>
-      • Utilize o SIGAA para sua vida acadêmica<br>
-      • Acompanhe os editais regularmente<br>
-      • Participe de projetos e atividades da universidade
-    </p>
-  </div>
-
-  <!-- NOTÍCIAS -->
-  <div id="noticiasPage" class="page">
-    <h2>📰 Notícias</h2>
-    <p>Comerciantes locais, Bares, Pessoal da Feirinha da Unila, etc, se tiver interesse em divulgar seu negócio aqui entre em contato com o Desenvolvedor do App<br><br>
-    Por motivo que grupo o oficial da UNILA no Facebook com aproximadamente 20 mil Membros está desativado por motivo desconhecido, criamos outro que será livre para postar. Clique no botão "GRUPO NO FACEBOOK" e participe!<br><br>
-    Para salvar o Email institucional neste App faça login no navegador do Google e salve a senha memorizada.<br><br>
-    Após dois dias de paralisação que afetaram a rotina de milhares de passageiros, o transporte coletivo de Foz do Iguaçu voltou a operar integralmente na tarde desta terça-feira, 28, depois de um acordo mediado pelo Ministério Público do Trabalho.<br><br>
-    Estudantes não pagam transporte público em Foz.<br><br>
-    Obras do Campus Arandú estão em fase final e será entregue em 2028.<br><br>
-    O investimento total para a construção do Campus Arandu da UNILA, em Foz do Iguaçu, está orçado em R$ 752 milhões. A obra, projetada por Oscar Niemeyer, teve a ordem de serviço assinada em junho de 2025, com financiamento garantido pela Itaipu Binacional e gestão do UNOPS (órgão da ONU). Detalhes do Projeto:<br>
-    Valor Principal: R$ 752 milhões destinados à retomada e conclusão das obras.<br>
-    Parcerias: Acordo entre a UNILA, Itaipu Binacional e Ministério da Educação (MEC).<br>
-    Cronograma: A primeira etapa, incluindo restaurante e biblioteca, tem previsão de entrega para março de 2026, com conclusão total do complexo planejada para 2027. O Campus Arandu será a sede definitiva da Universidade Federal da Integração Latino-Americana (UNILA) em Foz do Iguaçu. Mais do que apenas um prédio universitário, ele é considerado o último grande projeto assinado por Oscar Niemeyer antes de sua morte.<br>
-    O complexo foi desenhado para ser um marco arquitetônico e um centro de integração regional. O que ele incluirá:<br>
-    Estrutura Acadêmica: Salas de aula, laboratórios de ponta e centros de pesquisa voltados para o desenvolvimento da América Latina.<br>
-    Biblioteca Central: Projetada para ser uma das maiores da região, servindo como polo de conhecimento.<br>
-    Restaurante Universitário: Parte da primeira etapa de entrega, para atender a comunidade acadêmica.<br>
-    Espaços Culturais: Auditórios e áreas de convivência que seguem as curvas e o concreto armado característicos de Niemeyer.<br>
-    Polo de Inovação: Pela proximidade com a Itaipu e o Parque Tecnológico (Parque Tec), funcionará como um hub estratégico para ciência e tecnologia.<br><br>
-    O significado do nome: "Arandu", em guarani, significa sabedoria ou ouvir o tempo. O nome reflete a missão da universidade de valorizar os saberes ancestrais e promover o diálogo entre as diferentes culturas do continente.<br><br>
-    Servidores das Universidades Federais em greve por tempo indeterminado, afetando bibliotecas, T.I. e outros setores, no entanto as aulas seguem normalmente.🌼🌼🌼</p>
+  <!-- PÁGINA DINÂMICA (conteúdo carregado do Firebase) -->
+  <div id="dynamicPage" class="page">
+    <h2 id="dynamicTitle"></h2>
+    <p id="dynamicContent" style="white-space: pre-line;"></p>
   </div>
 
   <!-- CHAT -->
@@ -705,32 +528,11 @@ function onYouTubeIframeAPIReady() {
     </div>
   </div>
 
-  <!-- DEV -->
+  <!-- DEV (fallback) -->
   <div id="devPage" class="page">
     <h2>👨‍💻 Desenvolvedor</h2>
     <p>Para trabalhos e parcerias entre em contato:</p>
     <p>Fernando - Serviço Social<br>Contato: +55 45 99949-9759</p>
-  </div>
-
-  <!-- UPA -->
-  <div id="upaPage" class="page">
-    <h2>🏥 Hospitais de Emergência 24h (UPA)</h2>
-    <p>
-      📍 UPA João Samek<br>
-      Av. Gramado, 450 – Jardim Lancaster<br>
-      📞 (45) 2105-8000<br><br>
-      📍 UPA Morumbi<br>
-      Av. Mário Filho, s/n – Morumbi<br>
-      📞 (45) 2105-8200<br><br>
-      📍 Hospital Municipal Padre Germano Lauck<br>
-      Rua Adoniran Barbosa, 370 – Parque Presidente<br>
-      📞 (45) 2105-4100<br><br>
-      📍 UPA 24h Porto Meira<br>
-      Rua Airton Moreira, s/n – Porto Meira<br>
-      📞 (45) 2105-8300<br><br>
-      ⚠ Atendimento 24 horas para urgência e emergência.<br><br>
-      Para outros tratamentos fora do contexto de urgência e emergência siga para a UBS mais próxima. UPAs só atendem urgência e emergência. UBS não são 24h e atendem geralmente até as 18:30, não funcionando aos sábados e feriados.
-    </p>
   </div>
 
   <!-- NOTES -->
@@ -786,12 +588,126 @@ function onYouTubeIframeAPIReady() {
     const CLOUDINARY_API_KEY = '444299785184934';
     const CLOUDINARY_API_SECRET = '3dNWqkn-MH4p3wF75K_vgb1opVs';
 
-    // Função para gerar assinatura SHA-1 (Necessária para upload seguro)
+    // ============================================
+    // SISTEMA DE CONTEÚDO DINÂMICO (Firebase)
+    // ============================================
+
+    // Valores padrão (fallback caso não tenha no Firebase)
+    const defaultContent = {
+      portal_unila: "https://portal.unila.edu.br/",
+      sigaa: "https://sig.unila.edu.br/sigaa/verTelaLogin.do",
+      email: "https://mail.google.com/",
+      google: "https://www.google.com/",
+      instagram: "https://www.instagram.com/instaunila/",
+      facebook: "https://www.facebook.com/unila.oficial",
+      biblioteca: "https://portal.unila.edu.br/biblioteca",
+      intercampi: "https://portal.unila.edu.br/proagi/delog/arquivos/horario-intercampi/quadro-de-horario-intercampi.pdf",
+      smartec: "https://www.facebook.com/profile.php?id=61562436416014",
+      editais: "https://documentos.unila.edu.br/",
+      emergencia: "Polícia Militar: 190\nSAMU (Ambulância): 192\nBombeiros: 193\n\nHospital Municipal: (45) 2105-4100\nGuarda Municipal: (45) 2105-5100\nDelegacia da Mulher: (45) 3521-9200\nDefesa Civil: 199\n\nPolícia Federal: (45) 3522-1174\nPolícia Rodoviária Federal: (45) 3576-1400\n\nPrae-Unila: +55 45 3522-9983\nPrograd-Unila: +55 (45) 3522-9766\n\nDisque Denúncia: 181\nConselho Tutelar: (45) 3521-1112\nCentro de Intoxicações: 0800 722 6001\n\n⚠ Em situações graves, ligue imediatamente.",
+      enderecos: "📍 UNILA Jardim Universitário (JU)\nAv. Tarquínio Joslin dos Santos, 1000 – Polo Universitário\n\n📍 UNILA Parque Tecnológico Itaipu (Parque Tec)\nAv. Tancredo Neves, 6731 – Jardim Itaipu\nCEP: 85867-970\n\n📍 Edifício Rio Almada\nAv. Tancredo Neves, 3838 – Porto Belo\nCEP: 85867-633\n\n📍 Campus Integração\nAv. Tancredo Neves, 3147 – Porto Belo\n\n📍 Almoxarifado / Patrimônio\nRua Macucos, 131 – Portal da Foz\n\n📍 Campus Arandu\nProjeto em construção na Itaipu Binacional",
+      ru: "O Restaurante Universitário (RU) da UNILA oferece alimentação acessível para estudantes e servidores.\n\n📍 Unidade Jardim Universitário (JU)\nAv. Tarquínio Joslin dos Santos, 1000\n\n🕒 Horários:\nCafé: 06h45 – 08h00\nAlmoço: 11h00 – 14h00\nJantar: 17h30 – 19h30\n\n📍 Unidade Itaipu Parquetec (PTI)\nBloco 3\n\n🕒 Horários:\nAlmoço: 11h30 – 14h30\nJantar: 17h30 – 19h15\n\n💰 Valor médio: R$ 4,00\nPode ser gratuito para bolsistas.\n\n⚠ Horários e valores podem sofrer alterações.",
+      grupo_facebook: "https://facebook.com/groups/1469303078173697/",
+      dev: "Para trabalhos e parcerias entre em contato:\n\nFernando - Serviço Social\nContato: +55 45 99949-9759",
+      internet: "Para configurar a internet da UNILA (redes UNILA ou eduroam), conecte-se à rede e utilize as configurações abaixo:\n\n📶 Configuração geral:\n• Método EAP: PEAP\n• Autenticação Fase 2: MSCHAPV2\n• Certificado CA: Não validar ou não especificado\n• Identidade/Usuário: seu e-mail institucional (sem @unila.edu.br)\n• Senha: senha do e-mail institucional\n\n📱 Android:\n• Conecte na rede UNILA ou eduroam\n• Use as configurações acima\n\n🍎 iPhone:\n• Conecte na rede\n• Insira login e aceite certificado\n\n⚠ Dispositivos Motorola precisa outras configurações. Problemas: procure suporte da UNILA",
+      estude: "A Universidade Federal da Integração Latino-Americana (UNILA), localizada em Foz do Iguaçu-PR, é uma instituição pública, gratuita e voltada à integração entre os países da América Latina.\n\nA universidade oferece cerca de 29 cursos de graduação presenciais em diversas áreas do conhecimento.\n\n🏛 Estrutura acadêmica:\n• ILAACH – Artes, Cultura e História\n• ILACVN – Ciências da Vida e da Natureza\n• ILAESP – Economia, Sociedade e Política\n• ILATIT – Tecnologia, Infraestrutura e Território\n\n📌 Formas de ingresso:\n• SiSU (nota do ENEM)\n• Processo Seletivo Internacional (PSI)\n• Processo Seletivo para Indígenas (PSIN)\n• Curso de Música com seleção própria\n• Vagas remanescentes\n\n📊 Qualidade acadêmica: Nota 4 (de 5) no IGC do MEC.",
+      enem: "https://enem.inep.gov.br/participante/#!/",
+      noticias: "Comerciantes locais, Bares, Pessoal da Feirinha da Unila, etc, se tiver interesse em divulgar seu negócio aqui entre em contato com o Desenvolvedor do App\n\nPor motivo que grupo o oficial da UNILA no Facebook com aproximadamente 20 mil Membros está desativado por motivo desconhecido, criamos outro que será livre para postar. Clique no botão \"GRUPO NO FACEBOOK\" e participe!\n\nPara salvar o Email institucional neste App faça login no navegador do Google e salve a senha memorizada.\n\nEstudantes não pagam transporte público em Foz.\n\nObras do Campus Arandú estão em fase final e será entregue em 2028.",
+      upa: "📍 UPA João Samek\nAv. Gramado, 450 – Jardim Lancaster\n📞 (45) 2105-8000\n\n📍 UPA Morumbi\nAv. Mário Filho, s/n – Morumbi\n📞 (45) 2105-8200\n\n📍 Hospital Municipal Padre Germano Lauck\nRua Adoniran Barbosa, 370 – Parque Presidente\n📞 (45) 2105-4100\n\n📍 UPA 24h Porto Meira\nRua Airton Moreira, s/n – Porto Meira\n📞 (45) 2105-8300\n\n⚠ Atendimento 24 horas para urgência e emergência.\n\nPara outros tratamentos fora do contexto de urgência e emergência siga para a UBS mais próxima."
+    };
+
+    // Títulos dos botões para exibir nas páginas
+    const buttonTitles = {
+      portal_unila: "🌐 Portal Oficial da UNILA",
+      sigaa: "📚 Sistema Acadêmico SIGAA",
+      email: "📧 E-mail Institucional",
+      google: "🔎 Pesquisa Google",
+      instagram: "📸 Instagram UNILA",
+      facebook: "📘 Facebook UNILA",
+      biblioteca: "📖 Biblioteca UNILA",
+      intercampi: "🚌 Transporte Intercampi",
+      smartec: "💻 Smart Tech",
+      editais: "📄 Editais Oficiais",
+      emergencia: "🚨 Telefones de Emergência",
+      enderecos: "🏫 Endereços dos Campus",
+      ru: "🍽️ Restaurantes Universitários",
+      grupo_facebook: "👥 Grupo no Facebook",
+      dev: "👨‍💻 Desenvolvedor",
+      internet: "🌐 Internet UNILA",
+      estude: "🎓 Estude na UNILA",
+      enem: "📝 ENEM – Página do Participante",
+      noticias: "📰 Notícias",
+      upa: "🏥 Hospitais de Emergência 24h (UPA)"
+    };
+
+    // Cache local dos conteúdos
+    let contentCache = {};
+
+    // Carregar todos os conteúdos do Firebase ao iniciar
+    async function loadAllContent() {
+      try {
+        const snapshot = await db.collection('admin_content').get();
+        snapshot.forEach(doc => {
+          contentCache[doc.id] = doc.data().value;
+        });
+        console.log("Conteúdos carregados do Firebase:", Object.keys(contentCache).length);
+      } catch(e) {
+        console.log("Usando conteúdos padrão (offline ou erro):", e);
+      }
+    }
+
+    // Escutar mudanças em tempo real
+    function listenContentChanges() {
+      db.collection('admin_content').onSnapshot(snapshot => {
+        snapshot.docChanges().forEach(change => {
+          if (change.type === 'added' || change.type === 'modified') {
+            contentCache[change.doc.id] = change.doc.data().value;
+          }
+        });
+      });
+    }
+
+    // Obter conteúdo (Firebase > Cache > Padrão)
+    function getContent(id) {
+      return contentCache[id] || defaultContent[id] || '';
+    }
+
+    // Função principal: abrir conteúdo dinâmico
+    async function openDynamic(id, type) {
+      // Tentar buscar do Firebase primeiro (caso tenha atualização recente)
+      let value = getContent(id);
+
+      // Tentar atualizar do Firebase em tempo real
+      try {
+        const doc = await db.collection('admin_content').doc(id).get();
+        if (doc.exists) {
+          value = doc.data().value;
+          contentCache[id] = value;
+        }
+      } catch(e) {
+        // Usa cache/padrão se offline
+      }
+
+      if (type === 'link') {
+        window.open(value, "_blank");
+      } else {
+        // Mostrar página dinâmica
+        document.getElementById("home").style.display = "none";
+        document.querySelectorAll(".page").forEach(p => p.style.display = "none");
+        
+        document.getElementById("dynamicTitle").textContent = buttonTitles[id] || id;
+        document.getElementById("dynamicContent").textContent = value;
+        document.getElementById("dynamicPage").style.display = "block";
+      }
+    }
+
+    // ============================================
+    // FUNÇÕES ORIGINAIS DO APP
+    // ============================================
+
     async function generateSignature(params, secret) {
       const sortedParams = Object.keys(params).sort().map(key => `${key}=${params[key]}`).join('&');
       const stringToSign = sortedParams + secret;
-      
-      // Usando a API de criptografia do navegador
       const encoder = new TextEncoder();
       const data = encoder.encode(stringToSign);
       const hashBuffer = await crypto.subtle.digest('SHA-1', data);
@@ -799,7 +715,6 @@ function onYouTubeIframeAPIReady() {
       return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
     }
 
-    // Função para fazer upload da imagem para o Cloudinary (Versão Assinada - Mais garantida!)
     async function uploadImageToCloudinary(file) {
       const timestamp = Math.round(new Date().getTime() / 1000);
       const signature = await generateSignature({ timestamp: timestamp }, CLOUDINARY_API_SECRET);
@@ -864,9 +779,7 @@ function onYouTubeIframeAPIReady() {
       });
     }
 
-
     function saveNote(){
-      
       let t = document.getElementById("note").value;
       if(!t) return;
       let notes = JSON.parse(localStorage.getItem("notes") || "[]");
@@ -929,116 +842,6 @@ function onYouTubeIframeAPIReady() {
       document.getElementById("replyPreview").style.display = "none";
     }
 
-    async function sendMessage(){
-      const input = document.getElementById("chatInput");
-      const text = input.value.trim();
-      
-      if (!text && !selectedImage) return;
-
-      const messageData = {
-        nick: nick,
-        time: Date.now()
-      };
-
-      if (replyTo) {
-        messageData.reply = replyTo;
-        cancelReply();
-      }
-
-      if (selectedImage) {
-        const originalPlaceholder = input.placeholder;
-        input.placeholder = "Enviando...";
-        input.disabled = true;
-        
-        const imageUrl = await uploadImageToCloudinary(selectedImage);
-        
-        input.disabled = false;
-        input.placeholder = originalPlaceholder;
-
-        if (imageUrl) {
-          messageData.imageUrl = imageUrl;
-          messageData.text = text; // O texto vira o comentário da foto
-          cancelImage();
-        } else {
-          return; // Erro já tratado no uploadImageToCloudinary
-        }
-      } else {
-        messageData.text = text;
-      }
-
-      db.collection("chat").add(messageData);
-      input.value = "";
-    }
-
-    function formatarDataMensagem(timestamp){
-      const data = new Date(timestamp);
-      const agora = new Date();
-      const ontem = new Date();
-      ontem.setDate(agora.getDate() - 1);
-      const mesmoDia = data.toDateString() === agora.toDateString();
-      const ehOntem = data.toDateString() === ontem.toDateString();
-      const hora = data.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
-      if(mesmoDia) return `Hoje às ${hora}`;
-      if(ehOntem) return `Ontem às ${hora}`;
-      return data.toLocaleDateString('pt-BR') + ` às ${hora}`;
-    }
-
-    // Chat logic
-    async function uploadImageAndSendMessage(file) {
-      // Feedback visual simples
-      const input = document.getElementById("chatInput");
-      const originalPlaceholder = input.placeholder;
-      input.placeholder = "Enviando imagem...";
-      input.disabled = true;
-
-      const imageUrl = await uploadImageToCloudinary(file);
-      
-      input.placeholder = originalPlaceholder;
-      input.disabled = false;
-
-      if (imageUrl) {
-        db.collection("chat").add({ 
-          nick: nick, 
-          imageUrl: imageUrl, 
-          time: Date.now(),
-          text: "" // Adicionando campo texto vazio para garantir compatibilidade
-        });
-      } else {
-        alert("❌ Erro ao enviar imagem. Verifique se o 'Upload Preset' no Cloudinary está como 'Unsigned'.");
-      }
-    }
-
-    async function saveNick(){
-      const input = document.getElementById("nickInput").value.trim();
-      if(!input) return;
-      const nickRef = db.collection("users").doc(input);
-      const doc = await nickRef.get();
-      if(doc.exists && input !== ADMIN_NICK){
-        const data = doc.data();
-        if(Date.now() - data.lastActive < 30000){
-          alert("❌ Este nick já está em uso!");
-          return;
-        }
-      }
-      await nickRef.set({ createdAt: Date.now(), lastActive: Date.now() });
-      nick = input;
-      localStorage.setItem("chat_nick", nick);
-      document.getElementById("nickArea").style.display="none";
-      document.getElementById("chatArea").style.display="block";
-      if(nick === ADMIN_NICK) document.getElementById("changeNickBtn").style.display = "block";
-      listenChat();
-    }
-
-    function changeNick(){
-      if(nick) db.collection("users").doc(nick).delete();
-      localStorage.removeItem("chat_nick");
-      nick = "";
-      document.getElementById("chatArea").style.display = "none";
-      document.getElementById("nickArea").style.display = "block";
-    }
-
-
-
     function sendMessage(){
       const input = document.getElementById("chatInput");
       const text = input.value.trim();
@@ -1081,6 +884,19 @@ function onYouTubeIframeAPIReady() {
 
     let chatMessages = [];
     let unsubscribeChat = null;
+
+    function formatarDataMensagem(timestamp){
+      const data = new Date(timestamp);
+      const agora = new Date();
+      const ontem = new Date();
+      ontem.setDate(agora.getDate() - 1);
+      const mesmoDia = data.toDateString() === agora.toDateString();
+      const ehOntem = data.toDateString() === ontem.toDateString();
+      const hora = data.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+      if(mesmoDia) return `Hoje às ${hora}`;
+      if(ehOntem) return `Ontem às ${hora}`;
+      return data.toLocaleDateString('pt-BR') + ` às ${hora}`;
+    }
 
     function renderMessages(append = false) {
       const box = document.getElementById("chatBox");
@@ -1139,7 +955,6 @@ function onYouTubeIframeAPIReady() {
             newMessages.push({ id: doc.id, ...doc.data() });
           });
           
-          // Atualiza as mensagens mantendo as antigas carregadas
           const loadedIds = new Set(chatMessages.map(m => m.id));
           const updates = newMessages.filter(m => !loadedIds.has(m.id));
           
@@ -1153,7 +968,6 @@ function onYouTubeIframeAPIReady() {
           }
         });
 
-      // Evento de Scroll para carregar mais
       const box = document.getElementById("chatBox");
       box.onscroll = () => {
         if (box.scrollTop === 0 && !loadingMore && lastDoc) {
@@ -1195,10 +1009,38 @@ function onYouTubeIframeAPIReady() {
     function deleteMsg(id, msgNick){
       if(msgNick === nick || nick === ADMIN_NICK) {
         db.collection("chat").doc(id).delete();
-        // Remove da lista local também para atualizar a tela instantaneamente
         chatMessages = chatMessages.filter(m => m.id !== id);
         renderMessages();
       }
+    }
+
+    async function saveNick(){
+      const input = document.getElementById("nickInput").value.trim();
+      if(!input) return;
+      const nickRef = db.collection("users").doc(input);
+      const doc = await nickRef.get();
+      if(doc.exists && input !== ADMIN_NICK){
+        const data = doc.data();
+        if(Date.now() - data.lastActive < 30000){
+          alert("❌ Este nick já está em uso!");
+          return;
+        }
+      }
+      await nickRef.set({ createdAt: Date.now(), lastActive: Date.now() });
+      nick = input;
+      localStorage.setItem("chat_nick", nick);
+      document.getElementById("nickArea").style.display="none";
+      document.getElementById("chatArea").style.display="block";
+      if(nick === ADMIN_NICK) document.getElementById("changeNickBtn").style.display = "block";
+      listenChat();
+    }
+
+    function changeNick(){
+      if(nick) db.collection("users").doc(nick).delete();
+      localStorage.removeItem("chat_nick");
+      nick = "";
+      document.getElementById("chatArea").style.display = "none";
+      document.getElementById("nickArea").style.display = "block";
     }
 
     function atualizarAtividade(){
@@ -1230,6 +1072,8 @@ function onYouTubeIframeAPIReady() {
 
     window.onload = () => {
       atualizarDataBar();
+      loadAllContent();
+      listenContentChanges();
       if(nick){
         document.getElementById("nickArea").style.display="none";
         document.getElementById("chatArea").style.display="block";
@@ -1244,16 +1088,5 @@ function onYouTubeIframeAPIReady() {
       }).catch(err => console.log("Erro SW:", err));
     }
   </script>
-  <script>
-
-window.addEventListener("scroll", function(){
-
-  const bg =
-
-});
-
-  </script>
 </body>
 </html>
-  
-      
