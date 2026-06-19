@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin - UNILA App</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background: #1a1a2e;
+  color: #e0e0e0;
+  min-height: 100vh;
+  padding: 15px;
+}
+
+.header {
+  text-align: center;
+  padding: 25px;
+  background: linear-gradient(135deg, #5b21b6, #2563eb);
+  border-radius: 12px;
+  margin-bottom: 20px;
+  box-shadow: 0 8px 30px rgba(91, 33, 182, 0.3);
+}
+
+.header h1 { font-size: 24px; margin-bottom: 5px; }
+.header p { opacity: 0.8; font-size: 13px; }
+
+.status-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: center;
+  margin-top: 10px;
+  font-size: 12px;
+}
+
+.status-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: #22c55e;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%,100% { opacity:1; }
+  50% { opacity:0.4; }
+}
+
+.section {
+  background: #16213e;
+  border-radius: 12px;
+  margin-bottom: 15px;
+  overflow: hidden;
+  border: 1px solid #1f3460;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  background: #1f3460;
+  cursor: pointer;
+  user-select: none;
+}
+
+.section-header h3 { font-size: 15px; }
+.section-header .arrow { transition: transform 0.3s; }
+.section-header.open .arrow { transform: rotate(180deg); }
+
+.section-body {
+  padding: 20px;
+  display: none;
+}
+
+.section-body.open { display: block; }
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: #94a3b8;
+  margin-bottom: 6px;
+}
+
+.form-group input,
+.form-group textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #334155;
+  border-radius: 8px;
+  background: #0f172a;
+  color: #e0e0e0;
+  font-size: 14px;
+  font-family: inherit;
+  transition: border-color 0.3s;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: #5b21b6;
+  box-shadow: 0 0 0 3px rgba(91, 33, 182, 0.2);
+}
+
+.form-group textarea {
+  min-height: 120px;
+  resize: vertical;
+  line-height: 1.6;
+}
+
+.btn-save {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  color: white;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.btn-save:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(34, 197, 94, 0.3);
+}
+
+.btn-save:active { transform: scale(0.98); }
+
+.btn-save.saving {
+  background: #6b7280;
+  pointer-events: none;
+}
+
+.toast {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%) translateY(100px);
+  background: #22c55e;
+  color: white;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 14px;
+  z-index: 9999;
+  transition: transform 0.3s ease;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+}
+
+.toast.show { transform: translateX(-50%) translateY(0); }
+.toast.error { background: #ef4444; }
+
+.badge {
+  display: inline-block;
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.badge-link { background: #2563eb; }
+.badge-page { background: #9333ea; }
+
+.info-box {
+  background: #0f172a;
+  border-left: 3px solid #5b21b6;
+  padding: 12px;
+  border-radius: 0 8px 8px 0;
+  margin-bottom: 15px;
+  font-size: 12px;
+  color: #94a3b8;
+}
+
+.loading {
+  text-align: center;
+  padding: 40px;
+  color: #94a3b8;
+}
+
+.loading-spinner {
+  width: 30px; height: 30px;
+  border: 3px solid #334155;
+  border-top-color: #5b21b6;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin: 0 auto 10px;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+</style>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+</head>
+<body>
+
+<div class="header">
+  <h1>🎛️ Admin Panel</h1>
+  <p>Edite os conteúdos dos botões do UNILA App</p>
+  <div class="status-bar">
+    <div class="status-dot"></div>
+    <span>Conectado ao Firebase</span>
+  </div>
+</div>
+
+<div id="loadingArea" class="loading">
+  <div class="loading-spinner"></div>
+  <p>Carregando conteúdos...</p>
+</div>
+
+<div id="sectionsArea" style="display:none;"></div>
+
+<div id="toast" class="toast"></div>
+
+<script>
+// Firebase Config (mesmo do app principal)
+const firebaseConfig = {
+  apiKey: "AIzaSyDCm8jh-gz3T8OkOH2J6ls66t5QizcKwu8",
+  authDomain: "app-unila.firebaseapp.com",
+  projectId: "app-unila",
+  storageBucket: "app-unila.firebasestorage.app",
+  messagingSenderId: "574505875323",
+  appId: "1:574505875323:web:fb885f0a2ae32b272fafde",
+  measurementId: "G-FJT3X93608"
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+
+// Definição dos botões editáveis (exceto Chat e Rádio)
+const editableButtons = [
+  {
+    id: "portal_unila",
+    name: "🌐 Portal Oficial da UNILA",
+    type: "link",
+    description: "Link do portal oficial da UNILA",
+    defaultValue: "https://portal.unila.edu.br/"
+  },
+  {
+    id: "sigaa",
+    name: "📚 Sistema Acadêmico SIGAA",
+    type: "link",
+    description: "Link do sistema SIGAA",
+    defaultValue: "https://sig.unila.edu.br/sigaa/verTelaLogin.do"
+  },
+  {
+    id: "email",
+    name: "📧 E-mail Institucional",
+    type: "link",
+    description: "Link do e-mail institucional",
+    defaultValue: "https://mail.google.com/"
+  },
+  {
+    id: "google",
+    name: "🔎 Pesquisa Google",
+    type: "link",
+    description: "Link do Google",
+    defaultValue: "https://www.google.com/"
+  },
+  {
+    id: "instagram",
+    name: "📸 Instagram UNILA",
+    type: "link",
+    description: "Link do Instagram da UNILA",
+    defaultValue: "https://www.instagram.com/instaunila/"
+  },
+  {
+    id: "facebook",
+    name: "📘 Facebook UNILA",
+    type: "link",
+    description: "Link do Facebook da UNILA",
+    defaultValue: "https://www.facebook.com/unila.oficial"
+  },
+  {
+    id: "biblioteca",
+    name: "📖 Biblioteca UNILA",
+    type: "link",
+    description: "Link da biblioteca",
+    defaultValue: "https://portal.unila.edu.br/biblioteca"
+  },
+  {
+    id: "intercampi",
+    name: "🚌 Transporte Intercampi",
+    type: "link",
+    description: "Link do PDF de horários do intercampi",
+    defaultValue: "https://portal.unila.edu.br/proagi/delog/arquivos/horario-intercampi/quadro-de-horario-intercampi.pdf"
+  },
+  {
+    id: "smartec",
+    name: "💻 Smart Tech",
+    type: "link",
+    description: "Link da página Smart Tech",
+    defaultValue: "https://www.facebook.com/profile.php?id=61562436416014"
+  },
+  {
+    id: "editais",
+    name: "📄 Editais Oficiais",
+    type: "link",
+    description: "Link dos editais",
+    defaultValue: "https://documentos.unila.edu.br/"
+  },
+  {
+    id: "emergencia",
+    name: "🚨 Telefones de Emergência",
+    type: "page",
+    description: "Texto com telefones de emergência",
+    defaultValue: "Polícia Militar: 190\nSAMU (Ambulância): 192\nBombeiros: 193\n\nHospital Municipal: (45) 2105-4100\nGuarda Municipal: (45) 2105-5100\nDelegacia da Mulher: (45) 3521-9200\nDefesa Civil: 199\n\nPolícia Federal: (45) 3522-1174\nPolícia Rodoviária Federal: (45) 3576-1400\n\nPrae-Unila: +55 45 3522-9983\nPrograd-Unila: +55 (45) 3522-9766\n\nDisque Denúncia: 181\nConselho Tutelar: (45) 3521-1112\nCentro de Intoxicações: 0800 722 6001\n\n⚠ Em situações graves, ligue imediatamente."
+  },
+  {
+    id: "enderecos",
+    name: "🏫 Endereços dos Campus",
+    type: "page",
+    description: "Texto com endereços dos campus",
+    defaultValue: "📍 UNILA Jardim Universitário (JU)\nAv. Tarquínio Joslin dos Santos, 1000 – Polo Universitário\n\n📍 UNILA Parque Tecnológico Itaipu (Parque Tec)\nAv. Tancredo Neves, 6731 – Jardim Itaipu\nCEP: 85867-970\n\n📍 Edifício Rio Almada\nAv. Tancredo Neves, 3838 – Porto Belo\nCEP: 85867-633\n\n📍 Campus Integração\nAv. Tancredo Neves, 3147 – Porto Belo\n\n📍 Almoxarifado / Patrimônio\nRua Macucos, 131 – Portal da Foz\n\n📍 Campus Arandu\nProjeto em construção na Itaipu Binacional"
+  },
+  {
+    id: "ru",
+    name: "🍽️ Restaurantes Universitários",
+    type: "page",
+    description: "Informações sobre o RU",
+    defaultValue: "O Restaurante Universitário (RU) da UNILA oferece alimentação acessível para estudantes e servidores.\n\n📍 Unidade Jardim Universitário (JU)\nAv. Tarquínio Joslin dos Santos, 1000\n\n🕒 Horários:\nCafé: 06h45 – 08h00\nAlmoço: 11h00 – 14h00\nJantar: 17h30 – 19h30\n\n📍 Unidade Itaipu Parquetec (PTI)\nBloco 3\n\n🕒 Horários:\nAlmoço: 11h30 – 14h30\nJantar: 17h30 – 19h15\n\n💰 Valor médio: R$ 4,00\nPode ser gratuito para bolsistas.\n\n⚠ Horários e valores podem sofrer alterações."
+  },
+  {
+    id: "grupo_facebook",
+    name: "👥 Grupo no Facebook",
+    type: "link",
+    description: "Link do grupo no Facebook",
+    defaultValue: "https://facebook.com/groups/1469303078173697/"
+  },
+  {
+    id: "dev",
+    name: "👨‍💻 Desenvolvedor",
+    type: "page",
+    description: "Informações do desenvolvedor",
+    defaultValue: "Para trabalhos e parcerias entre em contato:\n\nFernando - Serviço Social\nContato: +55 45 99949-9759"
+  },
+  {
+    id: "internet",
+    name: "🌐 Internet UNILA",
+    type: "page",
+    description: "Instruções de configuração da internet",
+    defaultValue: "Para configurar a internet da UNILA (redes UNILA ou eduroam), conecte-se à rede e utilize as configurações abaixo:\n\n📶 Configuração geral:\n• Método EAP: PEAP\n• Autenticação Fase 2: MSCHAPV2\n• Certificado CA: Não validar ou não especificado\n• Identidade/Usuário: seu e-mail institucional (sem @unila.edu.br)\n• Senha: senha do e-mail institucional\n\n📱 Android:\n• Conecte na rede UNILA ou eduroam\n• Use as configurações acima\n\n🍎 iPhone:\n• Conecte na rede\n• Insira login e aceite certificado\n\n⚠ Dispositivos Motorola precisa outras configurações. Problemas: procure suporte da UNILA"
+  },
+  {
+    id: "estude",
+    name: "🎓 Estude na UNILA",
+    type: "page",
+    description: "Informações sobre estudar na UNILA",
+    defaultValue: "A Universidade Federal da Integração Latino-Americana (UNILA), localizada em Foz do Iguaçu-PR, é uma instituição pública, gratuita e voltada à integração entre os países da América Latina.\n\nA universidade oferece cerca de 29 cursos de graduação presenciais em diversas áreas do conhecimento.\n\n🏛 Estrutura acadêmica:\n• ILAACH – Artes, Cultura e História\n• ILACVN – Ciências da Vida e da Natureza\n• ILAESP – Economia, Sociedade e Política\n• ILATIT – Tecnologia, Infraestrutura e Território\n\n📌 Formas de ingresso:\n• SiSU (nota do ENEM)\n• Processo Seletivo Internacional (PSI)\n• Processo Seletivo para Indígenas (PSIN)\n• Curso de Música com seleção própria\n• Vagas remanescentes\n\n📊 Qualidade acadêmica: Nota 4 (de 5) no IGC do MEC."
+  },
+  {
+    id: "enem",
+    name: "📝 ENEM – Página do Participante",
+    type: "link",
+    description: "Link do ENEM",
+    defaultValue: "https://enem.inep.gov.br/participante/#!/"
+  },
+  {
+    id: "noticias",
+    name: "📰 Notícias",
+    type: "page",
+    description: "Texto de notícias do app",
+    defaultValue: "Comerciantes locais, Bares, Pessoal da Feirinha da Unila, etc, se tiver interesse em divulgar seu negócio aqui entre em contato com o Desenvolvedor do App\n\nPor motivo que grupo o oficial da UNILA no Facebook com aproximadamente 20 mil Membros está desativado por motivo desconhecido, criamos outro que será livre para postar. Clique no botão \"GRUPO NO FACEBOOK\" e participe!\n\nPara salvar o Email institucional neste App faça login no navegador do Google e salve a senha memorizada.\n\nApós dois dias de paralisação que afetaram a rotina de milhares de passageiros, o transporte coletivo de Foz do Iguaçu voltou a operar integralmente.\n\nEstudantes não pagam transporte público em Foz.\n\nObras do Campus Arandú estão em fase final e será entregue em 2028."
+  },
+  {
+    id: "upa",
+    name: "🏥 Hospitais de Emergência 24h (UPA)",
+    type: "page",
+    description: "Informações sobre UPAs",
+    defaultValue: "📍 UPA João Samek\nAv. Gramado, 450 – Jardim Lancaster\n📞 (45) 2105-8000\n\n📍 UPA Morumbi\nAv. Mário Filho, s/n – Morumbi\n📞 (45) 2105-8200\n\n📍 Hospital Municipal Padre Germano Lauck\nRua Adoniran Barbosa, 370 – Parque Presidente\n📞 (45) 2105-4100\n\n📍 UPA 24h Porto Meira\nRua Airton Moreira, s/n – Porto Meira\n📞 (45) 2105-8300\n\n⚠ Atendimento 24 horas para urgência e emergência.\n\nPara outros tratamentos fora do contexto de urgência e emergência siga para a UBS mais próxima."
+  }
+];
+
+// Carregar dados do Firebase
+async function loadData() {
+  const sectionsArea = document.getElementById('sectionsArea');
+  sectionsArea.innerHTML = '';
+
+  for (const btn of editableButtons) {
+    // Tentar carregar do Firebase
+    let currentValue = btn.defaultValue;
+    try {
+      const doc = await db.collection('admin_content').doc(btn.id).get();
+      if (doc.exists) {
+        currentValue = doc.data().value;
+      }
+    } catch(e) {
+      console.log('Usando valor padrão para:', btn.id);
+    }
+
+    const section = document.createElement('div');
+    section.className = 'section';
+
+    const badgeClass = btn.type === 'link' ? 'badge-link' : 'badge-page';
+    const badgeText = btn.type === 'link' ? 'LINK' : 'PÁGINA';
+    const inputType = btn.type === 'link' ? 'input' : 'textarea';
+
+    section.innerHTML = `
+      <div class="section-header" onclick="toggleSection(this)">
+        <h3>${btn.name} <span class="badge ${badgeClass}">${badgeText}</span></h3>
+        <span class="arrow">▼</span>
+      </div>
+      <div class="section-body">
+        <div class="info-box">${btn.description}</div>
+        <div class="form-group">
+          <label>${btn.type === 'link' ? 'URL / Link de destino' : 'Conteúdo da página (texto)'}</label>
+          ${btn.type === 'link' 
+            ? `<input type="url" id="field_${btn.id}" value="${escapeHtml(currentValue)}" placeholder="https://...">`
+            : `<textarea id="field_${btn.id}" placeholder="Digite o conteúdo...">${escapeHtml(currentValue)}</textarea>`
+          }
+        </div>
+        <button class="btn-save" id="btn_${btn.id}" onclick="saveField('${btn.id}')">💾 Salvar</button>
+      </div>
+    `;
+
+    sectionsArea.appendChild(section);
+  }
+
+  document.getElementById('loadingArea').style.display = 'none';
+  sectionsArea.style.display = 'block';
+}
+
+function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
+function toggleSection(header) {
+  header.classList.toggle('open');
+  const body = header.nextElementSibling;
+  body.classList.toggle('open');
+}
+
+async function saveField(id) {
+  const field = document.getElementById(`field_${id}`);
+  const btn = document.getElementById(`btn_${id}`);
+  const value = field.value.trim();
+
+  if (!value) {
+    showToast('❌ O campo não pode estar vazio!', 'error');
+    return;
+  }
+
+  btn.textContent = '⏳ Salvando...';
+  btn.classList.add('saving');
+
+  try {
+    await db.collection('admin_content').doc(id).set({
+      value: value,
+      updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+
+    btn.textContent = '✅ Salvo!';
+    showToast('✅ Conteúdo salvo com sucesso!');
+
+    setTimeout(() => {
+      btn.textContent = '💾 Salvar';
+      btn.classList.remove('saving');
+    }, 2000);
+
+  } catch(e) {
+    btn.textContent = '❌ Erro!';
+    showToast('❌ Erro ao salvar: ' + e.message, 'error');
+
+    setTimeout(() => {
+      btn.textContent = '💾 Salvar';
+      btn.classList.remove('saving');
+    }, 2000);
+  }
+}
+
+function showToast(msg, type = 'success') {
+  const toast = document.getElementById('toast');
+  toast.textContent = msg;
+  toast.className = `toast show ${type === 'error' ? 'error' : ''}`;
+  setTimeout(() => { toast.className = 'toast'; }, 3000);
+}
+
+// Inicializar
+loadData();
+</script>
+</body>
+</html>
