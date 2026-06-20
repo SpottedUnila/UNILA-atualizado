@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Unila App</title>
+<title>Unila App v32</title>
 
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#2b0a4a">
@@ -48,27 +48,32 @@
 }
 
 #sendBtn{
-  width:45px;
-  height:45px;
+  width:55px;
+  height:55px;
   border-radius:50%;
   border:none;
-  background:#25D366;
+  background: linear-gradient(135deg, #25D366, #128C7E);
   color:white;
-  font-size:18px;
+  font-size:22px;
   display:flex;
   align-items:center;
   justify-content:center;
-  box-shadow:0 4px 10px rgba(0,0,0,0.3);
+  box-shadow:0 6px 15px rgba(0,0,0,0.4);
+  transition: transform 0.2s;
+  cursor: pointer;
 }
+#sendBtn:active { transform: scale(0.9); }
 
 #chatInput{
   flex:1;
-  height:45px;
-  padding:0 15px;
-  border-radius:25px;
-  border:none;
-  font-size:15px;
-  background:#e5e7eb;
+  height:55px;
+  padding:0 20px;
+  border-radius:30px;
+  border:1px solid rgba(255,255,255,0.1);
+  font-size:16px;
+  background:rgba(255,255,255,0.95);
+  color: #1f2937;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
 }
 
 .msg{
@@ -156,21 +161,44 @@ button:hover{
     inset 0 1px 0 rgba(255,255,255,0.15);
 }
 
+/* Efeito apenas no texto ao clicar: fundo escuro 50% translúcido para destacar as letras brancas */
+.menu button:active {
+  background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)) !important;
+  background-blend-mode: overlay;
+  text-shadow: 0 0 10px rgba(0,0,0,1);
+}
+
 .page{
   display:none;
   padding:20px;
   line-height:1.7;
+  background: rgba(0, 0, 0, 0.5); /* Fundo escuro 50% translúcido para facilitar leitura */
+  border-radius: 15px;
+  margin: 15px;
+  backdrop-filter: blur(5px); /* Leve desfoque para destacar ainda mais o texto */
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .home-btn{
   position:fixed;
-  bottom:140px;
+  bottom:63px;
   right:15px;
-  background:#22c55e;
-  padding:14px;
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  padding:12px;
   border-radius:50%;
-  z-index:999;
+  z-index:1000;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.5);
+  width: 55px;
+  height: 55px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  border: 2px solid rgba(255,255,255,0.2);
+  transition: transform 0.2s;
+  cursor: pointer;
 }
+.home-btn:active { transform: scale(0.9); }
 
 .install-btn{
   position:fixed;
@@ -213,8 +241,70 @@ button:hover{
 .internet{background:#3b82f6;}
 .estude{background:#22c55e;}
 .noticias {
-  background: #000;
-  color: white;
+	  background: #000;
+	  color: white;
+	}
+	.desapega {
+	  background: #f59e0b; /* Laranja âmbar */
+	  color: white;
+	}
+	
+	/* Estilos para os Cards do Desapega */
+	.desapega-card {
+	  background: rgba(30, 41, 59, 0.9);
+	  border-radius: 12px;
+	  padding: 15px;
+	  margin-bottom: 15px;
+	  border: 1px solid rgba(255, 255, 255, 0.1);
+	  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+	}
+	.desapega-img {
+	  width: 100%;
+	  max-height: 250px;
+	  object-fit: cover;
+	  border-radius: 8px;
+	  margin-bottom: 10px;
+	}
+	.desapega-price {
+	  font-size: 20px;
+	  font-weight: bold;
+	  color: #22c55e;
+	  margin: 5px 0;
+	}
+	.desapega-contact {
+	  display: inline-block;
+	  background: #25D366;
+	  color: white;
+	  padding: 8px 15px;
+	  border-radius: 20px;
+	  text-decoration: none;
+	  font-size: 14px;
+	  margin-top: 10px;
+	  font-weight: bold;
+	}
+.btn-postar {
+  background: #f59e0b;
+  width: 100%;
+  margin-bottom: 25px;
+  padding: 18px;
+  font-size: 20px;
+}
+	.desapega-form {
+	  background: rgba(15, 23, 42, 0.8);
+	  padding: 20px;
+	  border-radius: 15px;
+	  margin-bottom: 20px;
+	  display: none;
+	}
+.desapega-form input, .desapega-form textarea {
+  width: 100%;
+  padding: 15px;
+  margin-bottom: 15px;
+  border-radius: 12px;
+  border: none;
+  background: #e5e7eb;
+  color: #1f2937;
+  font-size: 18px;
 }
 
 /* NOTES */
@@ -332,7 +422,7 @@ button:hover{
   position:fixed;
   bottom:63px;
   left:5px;
-  right:5px;
+  right:85px; /* Movido um pouco mais para a esquerda */
   display:flex;
   align-items:center;
   gap:8px;
@@ -480,6 +570,7 @@ function onYouTubeIframeAPIReady() {
     <button class="estude" onclick="openDynamic('estude','page')">🎓 Estude na UNILA</button>
     <button class="google" onclick="openDynamic('enem','link')">📝 ENEM – Página do Participante</button>
     <button class="noticias" onclick="openDynamic('noticias','page')">📰 Notícias</button>
+	    <button class="desapega" onclick="openPage('desapegaPage')">🛒 Anúncios Unileiro</button>
     <button class="emergencia" onclick="openDynamic('upa','page')">🏥 Hospitais de Emergência 24h (UPA)</button>
   </div>
 
@@ -517,8 +608,12 @@ function onYouTubeIframeAPIReady() {
       </div>
 
       <div id="inputArea">
+        <div style="position:absolute; top:-35px; left:10px; display:flex; align-items:center; gap:6px; background:rgba(0,0,0,0.5); padding:4px 12px; border-radius:15px; border:1px solid rgba(255,255,255,0.1); backdrop-filter:blur(8px);">
+          <input type="checkbox" id="chatAnonymous" style="width:15px; height:15px; cursor:pointer;" />
+          <label for="chatAnonymous" style="font-size:11px; color:#ffffff; cursor:pointer; font-weight:bold;">👤 Anônimo</label>
+        </div>
         <input id="chatInput" placeholder="Digite sua mensagem..." />
-        <label for="imageUpload" style="cursor:pointer; background:#3b82f6; width:45px; height:45px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:20px; box-shadow:0 4px 10px rgba(0,0,0,0.3);">
+        <label for="imageUpload" style="cursor:pointer; background: linear-gradient(135deg, #3b82f6, #2563eb); width:55px; height:55px; min-width:55px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:24px; box-shadow:0 6px 15px rgba(0,0,0,0.4); transition: transform 0.2s;">
           📷
           <input type="file" id="imageUpload" accept="image/*" style="display:none;" onchange="handleImageSelect(event)" />
         </label>
@@ -541,6 +636,50 @@ function onYouTubeIframeAPIReady() {
     <textarea id="note" placeholder="Escreva sua anotação aqui..."></textarea>
     <button onclick="saveNote()">Salvar</button>
     <div id="list" style="margin-top:20px;"></div>
+  </div>
+
+  <!-- DESAPEGA UNILEIRO -->
+  <div id="desapegaPage" class="page">
+    <h2>🛒 Anúncios Unileiro</h2>
+    <button class="btn-postar" onclick="toggleDesapegaForm()">➕ Postar Anúncio</button>
+    
+    <div id="desapegaForm" class="desapega-form">
+      <h3 id="adFormTitle">Novo Anúncio</h3>
+      <input type="hidden" id="adId" />
+      <input type="text" id="adTitle" placeholder="O que você está vendendo?" />
+      <input type="text" id="adPrice" placeholder="Preço (Ex: R$ 50,00 ou Grátis)" />
+      <textarea id="adDesc" placeholder="Descrição do item..."></textarea>
+      <input type="text" id="adWhatsapp" placeholder="Seu WhatsApp (Ex: 45999999999)" />
+      
+      <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom:10px;">
+        <label style="background:#3b82f6; color:white; padding:10px; border-radius:8px; text-align:center; cursor:pointer; font-size:12px;">
+          📷 Foto 1
+          <input type="file" id="adImage1" accept="image/*" style="display:none;" onchange="handleAdImageSelect(event, 1)" />
+        </label>
+        <label style="background:#3b82f6; color:white; padding:10px; border-radius:8px; text-align:center; cursor:pointer; font-size:12px;">
+          📷 Foto 2
+          <input type="file" id="adImage2" accept="image/*" style="display:none;" onchange="handleAdImageSelect(event, 2)" />
+        </label>
+      </div>
+      
+      <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom:10px;">
+        <img id="adPreview1" src="" style="display:none; width:100%; border-radius:8px; height:80px; object-fit:cover;" />
+        <img id="adPreview2" src="" style="display:none; width:100%; border-radius:8px; height:80px; object-fit:cover;" />
+      </div>
+      
+      <div style="margin-bottom:10px; display:flex; align-items:center; gap:8px;">
+        <input type="checkbox" id="adAnonymous" style="width:20px; height:20px; cursor:pointer;" />
+        <label for="adAnonymous" style="font-size:14px; color:white; cursor:pointer;">Postar anonimamente (Ocultar meu Nick)</label>
+      </div>
+      <div style="display:flex; gap:10px;">
+        <button onclick="saveAd()" id="btnSaveAd" style="flex:1; background:#22c55e;">Salvar</button>
+        <button onclick="cancelAdEdit()" style="flex:1; background:#dc2626;">Cancelar</button>
+      </div>
+    </div>
+
+    <div id="adList">
+      <p style="text-align:center;">Carregando anúncios...</p>
+    </div>
   </div>
 
   <!-- RADIO PLAYER -->
@@ -751,6 +890,7 @@ function onYouTubeIframeAPIReady() {
       document.querySelectorAll(".page").forEach(p=>p.style.display="none");
       document.getElementById(id).style.display="block";
       if(id === 'notesPage') loadNotes();
+      if(id === 'desapegaPage') listenAds();
     }
 
     function goHome(){
@@ -848,9 +988,12 @@ function onYouTubeIframeAPIReady() {
       
       if (!text && !selectedImage) return;
 
+      const isAnonymous = document.getElementById("chatAnonymous").checked;
       const messageData = {
-        nick: nick,
-        time: Date.now()
+        nick: isAnonymous ? "Anônimo 👤" : nick,
+        realNick: nick, // Mantemos o realNick para controle do autor e ADM
+        time: Date.now(),
+        anonymous: isAnonymous
       };
 
       if (replyTo) {
@@ -879,6 +1022,7 @@ function onYouTubeIframeAPIReady() {
         messageData.text = text;
         db.collection("chat").add(messageData);
         input.value = "";
+        document.getElementById("chatAnonymous").checked = false;
       }
     }
 
@@ -910,7 +1054,8 @@ function onYouTubeIframeAPIReady() {
       chatMessages.forEach(m => {
         if (document.getElementById(m.id)) return;
 
-        let deleteBtn = (m.nick === nick || nick === ADMIN_NICK) ? `<button onclick="deleteMsg('${m.id}', '${m.nick}')" style="background:none; border:none; color:#94a3b8; cursor:pointer; margin-left:10px;">🗑</button>` : "";
+        // Permite excluir se for o autor real ou o administrador
+        let deleteBtn = (m.realNick === nick || nick === ADMIN_NICK) ? `<button onclick="deleteMsg('${m.id}', '${m.realNick || m.nick}')" style="background:none; border:none; color:#94a3b8; cursor:pointer; margin-left:10px;">🗑</button>` : "";
         let replyBtn = `<button onclick="setReply('${m.id}', '${m.nick}', '${(m.text || "Imagem").replace(/'/g, "\\\'")}')" style="background:none; border:none; color:#3b82f6; cursor:pointer;">↩ Responder</button>`;
         
         const div = document.createElement("div");
@@ -1069,6 +1214,303 @@ function onYouTubeIframeAPIReady() {
       colorIdx = (colorIdx + 1) % colors.length;
       document.querySelector("meta[name=theme-color]").setAttribute("content", colors[colorIdx]);
     }, 3000);
+
+    // ============================================
+    // LÓGICA DESAPEGA UNILEIRO
+    // ============================================
+    let adPhotos = [null, null];
+    let existingPhotos = [null, null];
+    let unsubscribeAds = null;
+
+    function toggleDesapegaForm() {
+      const form = document.getElementById("desapegaForm");
+      form.style.display = form.style.display === "block" ? "none" : "block";
+      if(form.style.display === "none") resetAdForm();
+    }
+
+    function resetAdForm() {
+      document.getElementById("adId").value = "";
+      document.getElementById("adTitle").value = "";
+      document.getElementById("adPrice").value = "";
+      document.getElementById("adDesc").value = "";
+      document.getElementById("adWhatsapp").value = "";
+      document.getElementById("adPreview1").style.display = "none";
+      document.getElementById("adPreview2").style.display = "none";
+      document.getElementById("adFormTitle").textContent = "Novo Anúncio";
+      adPhotos = [null, null];
+      existingPhotos = [null, null];
+    }
+
+    function cancelAdEdit() {
+      resetAdForm();
+      toggleDesapegaForm();
+    }
+
+    function handleAdImageSelect(event, index) {
+      const file = event.target.files[0];
+      if (file) {
+        adPhotos[index-1] = file;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const preview = document.getElementById("adPreview" + index);
+          preview.src = e.target.result;
+          preview.style.display = "block";
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    async function saveAd() {
+      const adId = document.getElementById("adId").value;
+      const title = document.getElementById("adTitle").value.trim();
+      const price = document.getElementById("adPrice").value.trim();
+      const desc = document.getElementById("adDesc").value.trim();
+      const whatsapp = document.getElementById("adWhatsapp").value.trim();
+      const btn = document.getElementById("btnSaveAd");
+
+      if (!title || !price || !whatsapp) {
+        alert("Preencha os campos obrigatórios!");
+        return;
+      }
+
+      // No modo de edição, permitimos salvar se já existirem fotos. No modo novo, precisa de pelo menos uma nova.
+      if (!adId && !adPhotos[0] && !adPhotos[1]) {
+        alert("Selecione pelo menos uma foto!");
+        return;
+      }
+
+      btn.disabled = true;
+      btn.textContent = "Processando...";
+
+      try {
+        // Garantir que temos um nick
+        if (!nick) {
+          alert("Você precisa estar logado (definir um nick) para postar!");
+          btn.disabled = false;
+          btn.textContent = "Salvar";
+          return;
+        }
+
+        let finalUrls = [existingPhotos[0] || null, existingPhotos[1] || null];
+
+        // Upload de novas fotos (se houver)
+        for (let i = 0; i < 2; i++) {
+          if (adPhotos[i]) {
+            btn.textContent = `Enviando foto ${i+1}...`;
+            const url = await uploadImageToCloudinary(adPhotos[i]);
+            if (url) {
+              finalUrls[i] = url;
+            } else {
+              throw new Error(`Falha no upload da imagem ${i+1}`);
+            }
+          }
+        }
+
+        // Filtrar URLs nulas (caso o usuário tenha removido ou não enviado a segunda foto)
+        const validPhotos = finalUrls.filter(u => u !== null);
+        if (validPhotos.length === 0) {
+          alert("O anúncio precisa de pelo menos uma foto!");
+          btn.disabled = false;
+          btn.textContent = "Salvar";
+          return;
+        }
+
+        const isAnonymous = document.getElementById("adAnonymous").checked;
+        const adData = {
+          title,
+          price,
+          desc,
+          whatsapp,
+          photos: validPhotos,
+          nick: isAnonymous ? "Anônimo 👤" : nick,
+          realNick: nick, // Para controle do autor e ADM
+          time: Date.now(),
+          anonymous: isAnonymous
+        };
+
+        btn.textContent = "Salvando dados...";
+        if (adId) {
+          await db.collection("desapega").doc(adId).update(adData);
+          alert("✅ Anúncio atualizado com sucesso!");
+        } else {
+          await db.collection("desapega").add(adData);
+          alert("✅ Anúncio publicado com sucesso!");
+        }
+
+        resetAdForm();
+        document.getElementById("adAnonymous").checked = false;
+        toggleDesapegaForm();
+      } catch (e) {
+        console.error("Erro detalhado:", e);
+        alert("❌ Erro ao salvar: " + e.message);
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "Salvar";
+      }
+    }
+
+    function editAd(id, data) {
+      resetAdForm();
+      document.getElementById("adId").value = id;
+      document.getElementById("adTitle").value = data.title;
+      document.getElementById("adPrice").value = data.price;
+      document.getElementById("adDesc").value = data.desc;
+      document.getElementById("adWhatsapp").value = data.whatsapp;
+      document.getElementById("adFormTitle").textContent = "Editar Anúncio";
+      
+      if (data.photos && data.photos.length > 0) {
+        data.photos.forEach((url, i) => {
+          if (i < 2) {
+            existingPhotos[i] = url;
+            const preview = document.getElementById("adPreview" + (i + 1));
+            preview.src = url;
+            preview.style.display = "block";
+          }
+        });
+      }
+      
+      document.getElementById("desapegaForm").style.display = "block";
+      document.getElementById("desapegaPage").scrollTop = 0;
+    }
+
+    function listenAds() {
+      if (unsubscribeAds) unsubscribeAds();
+      
+      unsubscribeAds = db.collection("desapega")
+        .orderBy("time", "desc")
+        .onSnapshot(snapshot => {
+          const adList = document.getElementById("adList");
+          adList.innerHTML = "";
+          
+          if (snapshot.empty) {
+            adList.innerHTML = "<p style='text-align:center;'>Nenhum anúncio encontrado.</p>";
+            return;
+          }
+
+          snapshot.forEach(doc => {
+            const ad = doc.data();
+            const id = doc.id;
+            const card = document.createElement("div");
+            card.className = "desapega-card";
+            
+            let photosHtml = "";
+            if (ad.photos && ad.photos.length > 0) {
+              photosHtml = `<div style="display:grid; grid-template-columns: ${ad.photos.length > 1 ? '1fr 1fr' : '1fr'}; gap:5px;">
+                ${ad.photos.map(p => `<img src="${p}" class="desapega-img" style="height:150px;" onclick="window.open('${p}', '_blank')" />`).join('')}
+              </div>`;
+            }
+
+            // Permite ações se for o autor real ou o administrador
+            let actionsBtn = (ad.realNick === nick || nick === ADMIN_NICK) ? `
+              <div style="display:flex; gap:5px; margin-top:10px;">
+                <button onclick='editAd("${id}", ${JSON.stringify(ad).replace(/'/g, "&apos;")})' style="background:#3b82f6; border:none; color:white; padding:8px; border-radius:5px; font-size:12px; flex:1;">✏️ Editar</button>
+                <button onclick="deleteAd('${id}')" style="background:#dc2626; border:none; color:white; padding:8px; border-radius:5px; font-size:12px; flex:1;">🗑 Excluir</button>
+              </div>
+            ` : "";
+
+            let repliesHtml = "";
+            if (ad.replies && ad.replies.length > 0) {
+              repliesHtml = `<div style="margin-top:10px; padding-left:10px; border-left:2px solid #f59e0b;">
+                ${ad.replies.map((r, index) => `
+                  <div style="font-size:13px; background:rgba(255,255,255,0.05); padding:5px; border-radius:5px; margin-bottom:5px;">
+                    <div style="display:flex; justify-content:space-between;">
+                      <strong>${r.nick}:</strong>
+                      ${(r.realNick === nick || nick === ADMIN_NICK) ? `<span onclick="deleteAdReply('${id}', ${index})" style="cursor:pointer; color:#dc2626; font-size:10px;">🗑</span>` : ""}
+                    </div>
+                    ${r.text}
+                  </div>
+                `).join('')}
+              </div>`;
+            }
+
+            card.innerHTML = `
+              ${photosHtml}
+              <h3 style="margin:10px 0 5px 0;">${ad.title}</h3>
+              <p class="desapega-price">${ad.price}</p>
+              <p style="font-size:14px; color:#cbd5e1; white-space:pre-line; margin-bottom:10px;">${ad.desc}</p>
+              <p style="font-size:11px; color:#94a3b8;">Postado por: ${ad.nick}</p>
+              
+              <div style="display:flex; gap:10px; margin-top:10px; align-items:center;">
+                <a href="https://api.whatsapp.com/send?phone=55${ad.whatsapp.replace(/\D/g, '')}" class="desapega-contact" target="_blank" style="margin-top:0; flex:1; text-align:center;">📱 WhatsApp</a>
+                <button onclick="showReplyInput('${id}')" style="background:#3b82f6; padding:8px 15px; border-radius:20px; font-size:14px; font-weight:bold; border:none; color:white; cursor:pointer;">💬 Responder</button>
+              </div>
+
+              <div id="replyInputArea_${id}" style="display:none; margin-top:10px;">
+                <div style="display:flex; gap:5px;">
+                  <input type="text" id="replyInput_${id}" placeholder="Escreva sua resposta..." style="flex:1; padding:15px; border-radius:10px; border:none; background:#e5e7eb; color:#1f2937; font-size:18px;" />
+                  <button onclick="sendAdReply('${id}')" style="background:#22c55e; border:none; color:white; padding:15px; border-radius:10px; font-size:18px;">➤</button>
+                </div>
+              </div>
+
+              ${repliesHtml}
+              ${actionsBtn}
+            `;
+            adList.appendChild(card);
+          });
+        });
+    }
+
+    function showReplyInput(id) {
+      const area = document.getElementById(`replyInputArea_${id}`);
+      area.style.display = area.style.display === "none" ? "block" : "none";
+      if (area.style.display === "block") {
+        document.getElementById(`replyInput_${id}`).focus();
+      }
+    }
+
+    async function sendAdReply(adId) {
+      const input = document.getElementById(`replyInput_${adId}`);
+      const text = input.value.trim();
+      if (!text) return;
+      if (!nick) {
+        alert("Você precisa definir um Nick para responder!");
+        return;
+      }
+
+      try {
+        const adRef = db.collection("desapega").doc(adId);
+        const doc = await adRef.get();
+        if (doc.exists) {
+          const replies = doc.data().replies || [];
+          // No Desapega, respostas sempre mostram o nick para segurança da negociação, 
+          // mas se você quiser anonimato aqui também, podemos ajustar. 
+          // Por enquanto, manterei o nick nas respostas para evitar golpes.
+          replies.push({
+            nick: nick,
+            realNick: nick,
+            text: text,
+            time: Date.now()
+          });
+          await adRef.update({ replies: replies });
+          input.value = "";
+          document.getElementById(`replyInputArea_${adId}`).style.display = "none";
+        }
+      } catch (e) {
+        console.error("Erro ao responder:", e);
+        alert("Erro ao enviar resposta: " + e.message);
+      }
+    }
+
+    async function deleteAdReply(adId, index) {
+      if (!confirm("Remover esta resposta?")) return;
+      try {
+        const adRef = db.collection("desapega").doc(adId);
+        const doc = await adRef.get();
+        if (doc.exists) {
+          const replies = doc.data().replies || [];
+          replies.splice(index, 1);
+          await adRef.update({ replies: replies });
+        }
+      } catch (e) {
+        alert("Erro ao remover resposta: " + e.message);
+      }
+    }
+
+    function deleteAd(id) {
+      if (confirm("Tem certeza que deseja remover este anúncio?")) {
+        db.collection("desapega").doc(id).delete();
+      }
+    }
 
     window.onload = () => {
       atualizarDataBar();
