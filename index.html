@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Unila App v34</title>
+<title>Unila App v35 - Corrigido</title>
 
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#2b0a4a">
@@ -161,7 +161,6 @@ button:hover{
     inset 0 1px 0 rgba(255,255,255,0.15);
 }
 
-/* Efeito apenas no texto ao clicar: fundo escuro 50% translúcido para destacar as letras brancas */
 .menu button:active {
   background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)) !important;
   background-blend-mode: overlay;
@@ -172,10 +171,10 @@ button:hover{
   display:none;
   padding:20px;
   line-height:1.7;
-  background: rgba(0, 0, 0, 0.5); /* Fundo escuro 50% translúcido para facilitar leitura */
+  background: rgba(0, 0, 0, 0.5);
   border-radius: 15px;
   margin: 15px;
-  backdrop-filter: blur(5px); /* Leve desfoque para destacar ainda mais o texto */
+  backdrop-filter: blur(5px);
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
@@ -221,7 +220,6 @@ button:hover{
   font-size:12px;
 }
 
-/* CORES */
 .unila{background:#2563eb;}
 .sigaa{background:#9333ea;}
 .gmail{background:#ea4335;}
@@ -241,47 +239,46 @@ button:hover{
 .internet{background:#3b82f6;}
 .estude{background:#22c55e;}
 .noticias {
-	  background: #000;
-	  color: white;
-	}
-	.desapega {
-	  background: #f59e0b; /* Laranja âmbar */
-	  color: white;
-	}
-	
-	/* Estilos para os Cards do Desapega */
-	.desapega-card {
-	  background: rgba(30, 41, 59, 0.9);
-	  border-radius: 12px;
-	  padding: 15px;
-	  margin-bottom: 15px;
-	  border: 1px solid rgba(255, 255, 255, 0.1);
-	  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-	}
-	.desapega-img {
-	  width: 100%;
-	  max-height: 250px;
-	  object-fit: cover;
-	  border-radius: 8px;
-	  margin-bottom: 10px;
-	}
-	.desapega-price {
-	  font-size: 20px;
-	  font-weight: bold;
-	  color: #22c55e;
-	  margin: 5px 0;
-	}
-	.desapega-contact {
-	  display: inline-block;
-	  background: #25D366;
-	  color: white;
-	  padding: 8px 15px;
-	  border-radius: 20px;
-	  text-decoration: none;
-	  font-size: 14px;
-	  margin-top: 10px;
-	  font-weight: bold;
-	}
+  background: #000;
+  color: white;
+}
+.desapega {
+  background: #f59e0b;
+  color: white;
+}
+
+.desapega-card {
+  background: rgba(30, 41, 59, 0.9);
+  border-radius: 12px;
+  padding: 15px;
+  margin-bottom: 15px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+.desapega-img {
+  width: 100%;
+  max-height: 250px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 10px;
+}
+.desapega-price {
+  font-size: 20px;
+  font-weight: bold;
+  color: #22c55e;
+  margin: 5px 0;
+}
+.desapega-contact {
+  display: inline-block;
+  background: #25D366;
+  color: white;
+  padding: 8px 15px;
+  border-radius: 20px;
+  text-decoration: none;
+  font-size: 14px;
+  margin-top: 10px;
+  font-weight: bold;
+}
 .btn-postar {
   background: #f59e0b;
   width: 100%;
@@ -289,13 +286,13 @@ button:hover{
   padding: 18px;
   font-size: 20px;
 }
-	.desapega-form {
-	  background: rgba(15, 23, 42, 0.8);
-	  padding: 20px;
-	  border-radius: 15px;
-	  margin-bottom: 20px;
-	  display: none;
-	}
+.desapega-form {
+  background: rgba(15, 23, 42, 0.8);
+  padding: 20px;
+  border-radius: 15px;
+  margin-bottom: 20px;
+  display: none;
+}
 .desapega-form input, .desapega-form textarea {
   width: 100%;
   padding: 15px;
@@ -307,7 +304,6 @@ button:hover{
   font-size: 18px;
 }
 
-/* NOTES */
 #notesPage textarea{
   width:100%;
   height:100px;
@@ -402,12 +398,10 @@ button:hover{
   z-index:998;
 }
 
-/* BARRA DO CHAT - ESTILO WHATSAPP */
 #chatArea{
   display:flex;
   flex-direction:column;
   height:100vh;
-
 }
 
 #chatBox{
@@ -422,7 +416,7 @@ button:hover{
   position:fixed;
   bottom:63px;
   left:5px;
-  right:85px; /* Movido um pouco mais para a esquerda */
+  right:85px;
   display:flex;
   align-items:center;
   gap:8px;
@@ -496,18 +490,11 @@ button:hover{
 }
 .menu{
   display:grid;
-
-  grid-template-columns:
-    repeat(auto-fit,minmax(160px,1fr));
-
+  grid-template-columns: repeat(2, 1fr);
   gap:14px;
-
   padding:20px;
-
   margin-top:82vh;
-
   padding-bottom:150px;
-
   align-items:start;
 }
 </style>
@@ -570,17 +557,15 @@ function onYouTubeIframeAPIReady() {
     <button class="estude" onclick="openDynamic('estude','page')">🎓 Estude na UNILA</button>
     <button class="google" onclick="openDynamic('enem','link')">📝 ENEM – Página do Participante</button>
     <button class="noticias" onclick="openDynamic('noticias','page')">📰 Notícias</button>
-	    <button class="desapega" onclick="openPage('desapegaPage')">🛒 Anúncios Unileiro</button>
+    <button class="desapega" onclick="openPage('desapegaPage')">🛒 Anúncios Unileiro</button>
     <button class="emergencia" onclick="openDynamic('upa','page')">🏥 Hospitais de Emergência 24h (UPA)</button>
   </div>
 
-  <!-- PÁGINA DINÂMICA (conteúdo carregado do Firebase) -->
   <div id="dynamicPage" class="page">
     <h2 id="dynamicTitle"></h2>
     <p id="dynamicContent" style="white-space: pre-line;"></p>
   </div>
 
-  <!-- CHAT -->
   <div id="chatPage" class="page">
     <h2>💬 Chat UNILA</h2>
     <div id="nickArea">
@@ -590,7 +575,6 @@ function onYouTubeIframeAPIReady() {
     <div id="chatArea" style="display:none;">
       <div id="chatBox"></div>
       
-      <!-- Pré-visualização de Resposta -->
       <div id="replyPreview">
         <div style="display:flex; justify-content:space-between; align-items:center;">
           <div id="replyContent" style="font-size:12px; color:#22c55e; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; flex:1;"></div>
@@ -598,7 +582,6 @@ function onYouTubeIframeAPIReady() {
         </div>
       </div>
 
-      <!-- Pré-visualização de Imagem antes de enviar -->
       <div id="imagePreview" class="image-preview-container">
         <div style="display:flex; align-items:center; gap:10px;">
           <img id="previewImg" src="" style="height:50px; border-radius:5px;" />
@@ -623,14 +606,12 @@ function onYouTubeIframeAPIReady() {
     </div>
   </div>
 
-  <!-- DEV (fallback) -->
   <div id="devPage" class="page">
     <h2>👨‍💻 Desenvolvedor</h2>
     <p>Para trabalhos e parcerias entre em contato:</p>
     <p>Fernando - Serviço Social<br>Contato: +55 45 99949-9759</p>
   </div>
 
-  <!-- NOTES -->
   <div id="notesPage" class="page">
     <h2>📝 Anotações</h2>
     <textarea id="note" placeholder="Escreva sua anotação aqui..."></textarea>
@@ -638,7 +619,6 @@ function onYouTubeIframeAPIReady() {
     <div id="list" style="margin-top:20px;"></div>
   </div>
 
-  <!-- DESAPEGA UNILEIRO -->
   <div id="desapegaPage" class="page">
     <h2>🛒 Anúncios Unileiro</h2>
     <button class="btn-postar" onclick="toggleDesapegaForm()">➕ Postar Anúncio</button>
@@ -682,7 +662,6 @@ function onYouTubeIframeAPIReady() {
     </div>
   </div>
 
-  <!-- RADIO PLAYER -->
   <div id="radioPlayer" style="display:none; margin-bottom:80px; padding:20px;">
     <iframe 
       id="ytRadio"
@@ -731,7 +710,6 @@ function onYouTubeIframeAPIReady() {
     // SISTEMA DE CONTEÚDO DINÂMICO (Firebase)
     // ============================================
 
-    // Valores padrão (fallback caso não tenha no Firebase)
     const defaultContent = {
       portal_unila: "https://portal.unila.edu.br/",
       sigaa: "https://sig.unila.edu.br/sigaa/verTelaLogin.do",
@@ -740,7 +718,7 @@ function onYouTubeIframeAPIReady() {
       instagram: "https://www.instagram.com/instaunila/",
       facebook: "https://www.facebook.com/unila.oficial",
       biblioteca: "https://portal.unila.edu.br/biblioteca",
-      intercampi: "https://portal.unila.edu.br/proagi/delog/arquivos/horario-intercampi/quadro-de-horario-intercampi.pdf",
+      intercampi: "https://portal.unila.edu.br/proagi/delog/arquivos/horario-intercampi: "https://portal.unila.edu.br/proagi/delog/arquivos/horario-intercampi/quadro-de-horario-intercampi.pdf",
       smartec: "https://www.facebook.com/profile.php?id=61562436416014",
       editais: "https://documentos.unila.edu.br/",
       emergencia: "Polícia Militar: 190\nSAMU (Ambulância): 192\nBombeiros: 193\n\nHospital Municipal: (45) 2105-4100\nGuarda Municipal: (45) 2105-5100\nDelegacia da Mulher: (45) 3521-9200\nDefesa Civil: 199\n\nPolícia Federal: (45) 3522-1174\nPolícia Rodoviária Federal: (45) 3576-1400\n\nPrae-Unila: +55 45 3522-9983\nPrograd-Unila: +55 (45) 3522-9766\n\nDisque Denúncia: 181\nConselho Tutelar: (45) 3521-1112\nCentro de Intoxicações: 0800 722 6001\n\n⚠ Em situações graves, ligue imediatamente.",
@@ -751,11 +729,10 @@ function onYouTubeIframeAPIReady() {
       internet: "Para configurar a internet da UNILA (redes UNILA ou eduroam), conecte-se à rede e utilize as configurações abaixo:\n\n📶 Configuração geral:\n• Método EAP: PEAP\n• Autenticação Fase 2: MSCHAPV2\n• Certificado CA: Não validar ou não especificado\n• Identidade/Usuário: seu e-mail institucional (sem @unila.edu.br)\n• Senha: senha do e-mail institucional\n\n📱 Android:\n• Conecte na rede UNILA ou eduroam\n• Use as configurações acima\n\n🍎 iPhone:\n• Conecte na rede\n• Insira login e aceite certificado\n\n⚠ Dispositivos Motorola precisa outras configurações. Problemas: procure suporte da UNILA",
       estude: "A Universidade Federal da Integração Latino-Americana (UNILA), localizada em Foz do Iguaçu-PR, é uma instituição pública, gratuita e voltada à integração entre os países da América Latina.\n\nA universidade oferece cerca de 29 cursos de graduação presenciais em diversas áreas do conhecimento.\n\n🏛 Estrutura acadêmica:\n• ILAACH – Artes, Cultura e História\n• ILACVN – Ciências da Vida e da Natureza\n• ILAESP – Economia, Sociedade e Política\n• ILATIT – Tecnologia, Infraestrutura e Território\n\n📌 Formas de ingresso:\n• SiSU (nota do ENEM)\n• Processo Seletivo Internacional (PSI)\n• Processo Seletivo para Indígenas (PSIN)\n• Curso de Música com seleção própria\n• Vagas remanescentes\n\n📊 Qualidade acadêmica: Nota 4 (de 5) no IGC do MEC.",
       enem: "https://enem.inep.gov.br/participante/#!/",
-      noticias: "Comerciantes locais, Bares, Pessoal da Feirinha da Unila, etc, se tiver interesse em divulgar seu negócio aqui entre em contato com o Desenvolvedor do App\n\nPor motivo que grupo o oficial da UNILA no Facebook com aproximadamente 20 mil Membros está desativado por motivo desconhecido, criamos outro que será livre para postar. Clique no botão \"GRUPO NO FACEBOOK\" e participe!\n\nPara salvar o Email institucional neste App faça login no navegador do Google e salve a senha memorizada.\n\nEstudantes não pagam transporte público em Foz.\n\nObras do Campus Arandú estão em fase final e será entregue em 2028.",
+      noticias: "Comerciantes locais, Bares, Pessoal da Feirinha da Unila, etc, se tiver interesse em divulgar seu negócio aqui entre em contato com o Desenvolvedor do App\n\nPor motivo que grupo o oficial da UNILA no Facebook com aproximadamente 20 mil Membros está desativado por motivo desconhecido, criamos outro que será livre para postar. Clique no botão \"GRUPO NO FACEBOOK\" e participe!\n\nPara salvar o Email institucional neste App faça login no navegador do Google e salve a senha memorizada.\n\nApós dois dias de paralisação que afetaram a rotina de milhares de passageiros, o transporte coletivo de Foz do Iguaçu voltou a operar integralmente.\n\nEstudantes não pagam transporte público em Foz.\n\nObras do Campus Arandú estão em fase final e será entregue em 2028.",
       upa: "📍 UPA João Samek\nAv. Gramado, 450 – Jardim Lancaster\n📞 (45) 2105-8000\n\n📍 UPA Morumbi\nAv. Mário Filho, s/n – Morumbi\n📞 (45) 2105-8200\n\n📍 Hospital Municipal Padre Germano Lauck\nRua Adoniran Barbosa, 370 – Parque Presidente\n📞 (45) 2105-4100\n\n📍 UPA 24h Porto Meira\nRua Airton Moreira, s/n – Porto Meira\n📞 (45) 2105-8300\n\n⚠ Atendimento 24 horas para urgência e emergência.\n\nPara outros tratamentos fora do contexto de urgência e emergência siga para a UBS mais próxima."
     };
 
-    // Títulos dos botões para exibir nas páginas
     const buttonTitles = {
       portal_unila: "🌐 Portal Oficial da UNILA",
       sigaa: "📚 Sistema Acadêmico SIGAA",
@@ -779,10 +756,8 @@ function onYouTubeIframeAPIReady() {
       upa: "🏥 Hospitais de Emergência 24h (UPA)"
     };
 
-    // Cache local dos conteúdos
     let contentCache = {};
 
-    // Carregar todos os conteúdos do Firebase ao iniciar
     async function loadAllContent() {
       try {
         const snapshot = await db.collection('admin_content').get();
@@ -795,7 +770,6 @@ function onYouTubeIframeAPIReady() {
       }
     }
 
-    // Escutar mudanças em tempo real
     function listenContentChanges() {
       db.collection('admin_content').onSnapshot(snapshot => {
         snapshot.docChanges().forEach(change => {
@@ -806,17 +780,13 @@ function onYouTubeIframeAPIReady() {
       });
     }
 
-    // Obter conteúdo (Firebase > Cache > Padrão)
     function getContent(id) {
       return contentCache[id] || defaultContent[id] || '';
     }
 
-    // Função principal: abrir conteúdo dinâmico
     async function openDynamic(id, type) {
-      // Tentar buscar do Firebase primeiro (caso tenha atualização recente)
       let value = getContent(id);
 
-      // Tentar atualizar do Firebase em tempo real
       try {
         const doc = await db.collection('admin_content').doc(id).get();
         if (doc.exists) {
@@ -830,7 +800,6 @@ function onYouTubeIframeAPIReady() {
       if (type === 'link') {
         window.open(value, "_blank");
       } else {
-        // Mostrar página dinâmica
         document.getElementById("home").style.display = "none";
         document.querySelectorAll(".page").forEach(p => p.style.display = "none");
         
@@ -991,7 +960,7 @@ function onYouTubeIframeAPIReady() {
       const isAnonymous = document.getElementById("chatAnonymous").checked;
       const messageData = {
         nick: isAnonymous ? "Anônimo 👤" : nick,
-        realNick: nick, // Mantemos o realNick para controle do autor e ADM
+        realNick: nick,
         time: Date.now(),
         anonymous: isAnonymous
       };
@@ -1054,7 +1023,6 @@ function onYouTubeIframeAPIReady() {
       chatMessages.forEach(m => {
         if (document.getElementById(m.id)) return;
 
-        // Permite excluir se for o autor real ou o administrador
         let deleteBtn = (m.realNick === nick || nick === ADMIN_NICK) ? `<button onclick="deleteMsg('${m.id}', '${m.realNick || m.nick}')" style="background:none; border:none; color:#94a3b8; cursor:pointer; margin-left:10px;">🗑</button>` : "";
         let replyBtn = `<button onclick="setReply('${m.id}', '${m.nick}', '${(m.text || "Imagem").replace(/'/g, "\\\'")}')" style="background:none; border:none; color:#3b82f6; cursor:pointer;">↩ Responder</button>`;
         
@@ -1151,6 +1119,33 @@ function onYouTubeIframeAPIReady() {
       loadingMore = false;
     }
 
+    // ✅ CORREÇÃO 1: Função saveNick() - Simplificada
+    async function saveNick(){
+      const input = document.getElementById("nickInput").value.trim();
+      if(!input) {
+        alert("❌ Digite um nick!");
+        return;
+      }
+      
+      if(input.length < 2) {
+        alert("❌ O nick deve ter pelo menos 2 caracteres!");
+        return;
+      }
+      
+      nick = input;
+      localStorage.setItem("chat_nick", nick);
+      document.getElementById("nickInput").value = "";
+      document.getElementById("nickArea").style.display = "none";
+      document.getElementById("chatArea").style.display = "block";
+      
+      if(nick === ADMIN_NICK) {
+        document.getElementById("changeNickBtn").style.display = "block";
+      }
+      
+      listenChat();
+    }
+
+    // ✅ CORREÇÃO 2: Função deleteMsg() - Sem notificação
     function deleteMsg(id, msgNick){
       if(msgNick === nick || nick === ADMIN_NICK) {
         db.collection("chat").doc(id).delete();
@@ -1159,37 +1154,18 @@ function onYouTubeIframeAPIReady() {
       }
     }
 
-    async function saveNick(){
-      const input = document.getElementById("nickInput").value.trim();
-      if(!input) return;
-      const nickRef = db.collection("users").doc(input);
-      const doc = await nickRef.get();
-      if(doc.exists && input !== ADMIN_NICK){
-        const data = doc.data();
-        if(Date.now() - data.lastActive < 30000){
-          alert("❌ Este nick já está em uso!");
-          return;
-        }
-      }
-      await nickRef.set({ createdAt: Date.now(), lastActive: Date.now() });
-      nick = input;
-      localStorage.setItem("chat_nick", nick);
-      document.getElementById("nickArea").style.display="none";
-      document.getElementById("chatArea").style.display="block";
-      if(nick === ADMIN_NICK) document.getElementById("changeNickBtn").style.display = "block";
-      listenChat();
-    }
-
+    // ✅ CORREÇÃO 3: Função changeNick() - Simplificada
     function changeNick(){
-      if(nick) db.collection("users").doc(nick).delete();
       localStorage.removeItem("chat_nick");
       nick = "";
       document.getElementById("chatArea").style.display = "none";
       document.getElementById("nickArea").style.display = "block";
+      document.getElementById("nickInput").value = "";
+      document.getElementById("changeNickBtn").style.display = "none";
     }
 
     function atualizarAtividade(){
-      if(nick) db.collection("users").doc(nick).update({ lastActive: Date.now() });
+      if(nick) console.log("Atividade atualizada");
     }
     setInterval(atualizarAtividade, 60000);
 
@@ -1273,7 +1249,6 @@ function onYouTubeIframeAPIReady() {
         return;
       }
 
-      // No modo de edição, permitimos salvar se já existirem fotos. No modo novo, precisa de pelo menos uma nova.
       if (!adId && !adPhotos[0] && !adPhotos[1]) {
         alert("Selecione pelo menos uma foto!");
         return;
@@ -1285,7 +1260,6 @@ function onYouTubeIframeAPIReady() {
       try {
         const isAnonymous = document.getElementById("adAnonymous").checked;
 
-        // Se não for anônimo e não tiver nick, avisa para criar no chat
         if (!isAnonymous && !nick) {
           alert("Para postar com seu nome, você precisa primeiro criar um Nick no botão 'Spotted💜 Chat💬'!");
           btn.disabled = false;
@@ -1295,7 +1269,6 @@ function onYouTubeIframeAPIReady() {
 
         let finalUrls = [existingPhotos[0] || null, existingPhotos[1] || null];
 
-        // Upload de novas fotos (se houver)
         for (let i = 0; i < 2; i++) {
           if (adPhotos[i]) {
             btn.textContent = `Enviando foto ${i+1}...`;
@@ -1308,7 +1281,6 @@ function onYouTubeIframeAPIReady() {
           }
         }
 
-        // Filtrar URLs nulas (caso o usuário tenha removido ou não enviado a segunda foto)
         const validPhotos = finalUrls.filter(u => u !== null);
         if (validPhotos.length === 0) {
           alert("O anúncio precisa de pelo menos uma foto!");
@@ -1324,7 +1296,7 @@ function onYouTubeIframeAPIReady() {
           whatsapp,
           photos: validPhotos,
           nick: isAnonymous ? "Anônimo 👤" : nick,
-          realNick: nick || "Anônimo", // Para controle do autor e ADM
+          realNick: nick || "Anônimo",
           time: Date.now(),
           anonymous: isAnonymous
         };
@@ -1401,7 +1373,6 @@ function onYouTubeIframeAPIReady() {
               </div>`;
             }
 
-            // Permite ações se for o autor real ou o administrador
             let actionsBtn = (ad.realNick === nick || nick === ADMIN_NICK) ? `
               <div style="display:flex; gap:5px; margin-top:10px;">
                 <button onclick='editAd("${id}", ${JSON.stringify(ad).replace(/'/g, "&apos;")})' style="background:#3b82f6; border:none; color:white; padding:8px; border-radius:5px; font-size:12px; flex:1;">✏️ Editar</button>
@@ -1473,9 +1444,6 @@ function onYouTubeIframeAPIReady() {
         const doc = await adRef.get();
         if (doc.exists) {
           const replies = doc.data().replies || [];
-          // No Desapega, respostas sempre mostram o nick para segurança da negociação, 
-          // mas se você quiser anonimato aqui também, podemos ajustar. 
-          // Por enquanto, manterei o nick nas respostas para evitar golpes.
           replies.push({
             nick: nick,
             realNick: nick,
@@ -1492,8 +1460,8 @@ function onYouTubeIframeAPIReady() {
       }
     }
 
+    // ✅ CORREÇÃO 4: Função deleteAdReply() - Sem notificação
     async function deleteAdReply(adId, index) {
-      if (!confirm("Remover esta resposta?")) return;
       try {
         const adRef = db.collection("desapega").doc(adId);
         const doc = await adRef.get();
@@ -1503,14 +1471,13 @@ function onYouTubeIframeAPIReady() {
           await adRef.update({ replies: replies });
         }
       } catch (e) {
-        alert("Erro ao remover resposta: " + e.message);
+        console.error("Erro ao remover resposta:", e);
       }
     }
 
+    // ✅ CORREÇÃO 5: Função deleteAd() - Sem notificação
     function deleteAd(id) {
-      if (confirm("Tem certeza que deseja remover este anúncio?")) {
-        db.collection("desapega").doc(id).delete();
-      }
+      db.collection("desapega").doc(id).delete();
     }
 
     window.onload = () => {
@@ -1524,7 +1491,6 @@ function onYouTubeIframeAPIReady() {
       }
     };
 
-    // Service Worker registration
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('./service-worker.js').then(reg => {
         console.log("SW registrado");
@@ -1533,3 +1499,4 @@ function onYouTubeIframeAPIReady() {
   </script>
 </body>
 </html>
+	
