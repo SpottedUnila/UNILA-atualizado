@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Unila App v35 - Corrigido</title>
+<title>Unila App v35 - Oficial</title>
 
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#2b0a4a">
@@ -91,74 +91,54 @@ body::before{
   content:"";
   position:fixed;
   inset:0;
-
   background:linear-gradient(
     to bottom,
     rgba(0,0,0,0.05),
     rgba(0,0,0,0.18),
     rgba(0,0,0,0.45)
   );
-
   z-index:-1;
 }
 
 body{
-  
   font-family:Arial;
   margin:0;
   color:white;
   min-height:100vh;
   overflow-x:hidden;
-  
-  .bg-fixa{
+}
+
+.bg-fixa{
   position:fixed;
   top:0;
   left:0;
-
   width:110%;
   height:100vh;
-
   overflow:hidden;
-
   background-image:url("https://raw.githubusercontent.com/fernando2018a1986-afk/UNILA-atualizado/5f7ab3465423cf5e14924085f487f50f95a286bb/spotted-bg.jpg");
   background-size:cover ;
   background-position:top center;
   background-repeat:no-repeat;
-
   z-index:-2;
-
 }
+
 button{
   padding:16px;
-
   border:none;
   border-radius:18px;
-
   font-weight:800;
   font-size:16px;
-
   color:#ffffff;
-
-  text-shadow:
-    0 2px 8px rgba(0,0,0,1);
-
+  text-shadow: 0 2px 8px rgba(0,0,0,1);
   background:rgba(255,255,255,0.20) !important;
-
-
   border:1px solid rgba(255,255,255,0.14);
-
-  box-shadow:
-    0 4px 14px rgba(0,0,0,0.28);
+  box-shadow: 0 4px 14px rgba(0,0,0,0.28);
 }
   
 button:hover{
   transform:translateY(-2px) scale(1.01);
-
   background:rgba(40,40,70,0.42);
-
-  box-shadow:
-    0 8px 24px rgba(0,0,0,0.45),
-    inset 0 1px 0 rgba(255,255,255,0.15);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.15);
 }
 
 .menu button:active {
@@ -210,16 +190,6 @@ button:hover{
   display:none;
 }
 
-.update-btn{
-  position:fixed;
-  bottom:80px;
-  right:15px;
-  background:#3b82f6;
-  padding:8px 12px;
-  border-radius:8px;
-  font-size:12px;
-}
-
 .unila{background:#2563eb;}
 .sigaa{background:#9333ea;}
 .gmail{background:#ea4335;}
@@ -238,14 +208,8 @@ button:hover{
 .share{background:#10b981;}
 .internet{background:#3b82f6;}
 .estude{background:#22c55e;}
-.noticias {
-  background: #000;
-  color: white;
-}
-.desapega {
-  background: #f59e0b;
-  color: white;
-}
+.noticias { background: #000; color: white; }
+.desapega { background: #f59e0b; color: white; }
 
 .desapega-card {
   background: rgba(30, 41, 59, 0.9);
@@ -269,15 +233,17 @@ button:hover{
   margin: 5px 0;
 }
 .desapega-contact {
-  display: inline-block;
-  background: #25D366;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #22c55e;
   color: white;
-  padding: 8px 15px;
-  border-radius: 20px;
+  padding: 12px;
+  border-radius: 15px;
   text-decoration: none;
-  font-size: 14px;
-  margin-top: 10px;
+  font-size: 16px;
   font-weight: bold;
+  gap: 8px;
 }
 .btn-postar {
   background: #f59e0b;
@@ -362,16 +328,6 @@ button:hover{
   margin-top:4px;
 }
 
-.reply-box{
-  background:rgba(255,255,255,0.1);
-  border-left:4px solid #22c55e;
-  padding:5px 10px;
-  margin-bottom:5px;
-  border-radius:4px;
-  font-size:13px;
-  cursor:pointer;
-}
-
 #replyPreview{
   display:none;
   background:#1e293b;
@@ -454,9 +410,7 @@ button:hover{
   transition:all 0.3s ease;
 }
 
-#radioBtn:active{
-  transform:scale(0.9);
-}
+#radioBtn:active{ transform:scale(0.9); }
 
 .radio-badge{
   font-size:11px;
@@ -479,15 +433,8 @@ button:hover{
   animation:blink 1.5s infinite;
 }
 
-@keyframes blink{
-  0%,100%{opacity:1;}
-  50%{opacity:0.3;}
-}
+@keyframes blink{ 0%,100%{opacity:1;} 50%{opacity:0.3;} }
 
-@keyframes pulse-glow{
-  0%,100%{ box-shadow:0 0 5px rgba(147,51,234,0.2); transform:scale(1); }
-  50%{ box-shadow:0 0 15px rgba(147,51,234,0.5); transform:scale(1.02); }
-}
 .menu{
   display:grid;
   grid-template-columns: repeat(2, 1fr);
@@ -497,11 +444,29 @@ button:hover{
   padding-bottom:150px;
   align-items:start;
 }
-</style>
 
-<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-<meta http-equiv="Pragma" content="no-cache">
-<meta http-equiv="Expires" content="0">
+.action-btns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 10px;
+}
+.btn-action {
+  padding: 10px;
+  border-radius: 10px;
+  border: none;
+  font-size: 14px;
+  font-weight: bold;
+  color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+}
+.btn-edit { background: #475569; }
+.btn-delete { background: #475569; }
+</style>
 
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
@@ -512,9 +477,7 @@ button:hover{
 let ytPlayer;
 function onYouTubeIframeAPIReady() {
   ytPlayer = new YT.Player("ytRadio", {
-    events: {
-      'onReady': () => {}
-    }
+    events: { 'onReady': () => {} }
   });
 }
 </script>
@@ -574,14 +537,12 @@ function onYouTubeIframeAPIReady() {
     </div>
     <div id="chatArea" style="display:none;">
       <div id="chatBox"></div>
-      
       <div id="replyPreview">
         <div style="display:flex; justify-content:space-between; align-items:center;">
           <div id="replyContent" style="font-size:12px; color:#22c55e; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; flex:1;"></div>
           <button onclick="cancelReply()" style="background:none; border:none; color:white; padding:5px;">✕</button>
         </div>
       </div>
-
       <div id="imagePreview" class="image-preview-container">
         <div style="display:flex; align-items:center; gap:10px;">
           <img id="previewImg" src="" style="height:50px; border-radius:5px;" />
@@ -589,7 +550,6 @@ function onYouTubeIframeAPIReady() {
           <button onclick="cancelImage()" style="background:none; border:none; color:white; padding:5px;">✕</button>
         </div>
       </div>
-
       <div id="inputArea">
         <div style="position:absolute; top:-35px; left:10px; display:flex; align-items:center; gap:6px; background:rgba(0,0,0,0.5); padding:4px 12px; border-radius:15px; border:1px solid rgba(255,255,255,0.1); backdrop-filter:blur(8px);">
           <input type="checkbox" id="chatAnonymous" style="width:15px; height:15px; cursor:pointer;" />
@@ -606,12 +566,6 @@ function onYouTubeIframeAPIReady() {
     </div>
   </div>
 
-  <div id="devPage" class="page">
-    <h2>👨‍💻 Desenvolvedor</h2>
-    <p>Para trabalhos e parcerias entre em contato:</p>
-    <p>Fernando - Serviço Social<br>Contato: +55 45 99949-9759</p>
-  </div>
-
   <div id="notesPage" class="page">
     <h2>📝 Anotações</h2>
     <textarea id="note" placeholder="Escreva sua anotação aqui..."></textarea>
@@ -622,7 +576,6 @@ function onYouTubeIframeAPIReady() {
   <div id="desapegaPage" class="page">
     <h2>🛒 Anúncios Unileiro</h2>
     <button class="btn-postar" onclick="toggleDesapegaForm()">➕ Postar Anúncio</button>
-    
     <div id="desapegaForm" class="desapega-form">
       <h3 id="adFormTitle">Novo Anúncio</h3>
       <input type="hidden" id="adId" />
@@ -630,7 +583,6 @@ function onYouTubeIframeAPIReady() {
       <input type="text" id="adPrice" placeholder="Preço (Ex: R$ 50,00 ou Grátis)" />
       <textarea id="adDesc" placeholder="Descrição do item..."></textarea>
       <input type="text" id="adWhatsapp" placeholder="Seu WhatsApp (Ex: 45999999999)" />
-      
       <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom:10px;">
         <label style="background:#3b82f6; color:white; padding:10px; border-radius:8px; text-align:center; cursor:pointer; font-size:12px;">
           📷 Foto 1
@@ -641,43 +593,29 @@ function onYouTubeIframeAPIReady() {
           <input type="file" id="adImage2" accept="image/*" style="display:none;" onchange="handleAdImageSelect(event, 2)" />
         </label>
       </div>
-      
       <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom:10px;">
         <img id="adPreview1" src="" style="display:none; width:100%; border-radius:8px; height:80px; object-fit:cover;" />
         <img id="adPreview2" src="" style="display:none; width:100%; border-radius:8px; height:80px; object-fit:cover;" />
       </div>
-      
       <div style="margin-bottom:10px; display:flex; align-items:center; gap:8px;">
         <input type="checkbox" id="adAnonymous" style="width:20px; height:20px; cursor:pointer;" />
-        <label for="adAnonymous" style="font-size:14px; color:white; cursor:pointer;">Postar anonimamente (Ocultar meu Nick)</label>
+        <label for="adAnonymous" style="font-size:14px; color:white; cursor:pointer;">Postar anonimamente</label>
       </div>
       <div style="display:flex; gap:10px;">
         <button onclick="saveAd()" id="btnSaveAd" style="flex:1; background:#22c55e;">Salvar</button>
         <button onclick="cancelAdEdit()" style="flex:1; background:#dc2626;">Cancelar</button>
       </div>
     </div>
-
-    <div id="adList">
-      <p style="text-align:center;">Carregando anúncios...</p>
-    </div>
+    <div id="adList"></div>
   </div>
 
   <div id="radioPlayer" style="display:none; margin-bottom:80px; padding:20px;">
-    <iframe 
-      id="ytRadio"
-      width="100%" 
-      height="200"
-      src="https://www.youtube.com/embed/videoseries?list=PLyTsVCtgNA7Uzq69sB_NhyJJEpNr1ePPM&enablejsapi=1"
-      frameborder="0"
-      allow="autoplay"
-      allowfullscreen>
-    </iframe>
+    <iframe id="ytRadio" width="100%" height="200" src="https://www.youtube.com/embed/videoseries?list=PLyTsVCtgNA7Uzq69sB_NhyJJEpNr1ePPM&enablejsapi=1" frameborder="0" allow="autoplay" allowfullscreen></iframe>
   </div>
 
   <div id="dateBar"></div>
 
   <script>
-    // Configuração Firebase
     const firebaseConfig = {
       apiKey: "AIzaSyDCm8jh-gz3T8OkOH2J6ls66t5QizcKwu8",
       authDomain: "app-unila.firebaseapp.com",
@@ -691,69 +629,48 @@ function onYouTubeIframeAPIReady() {
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
     const ADMIN_NICK = "Fernando";
-    db.enablePersistence().catch((err) => console.log("Erro offline:", err));
 
     let nick = localStorage.getItem("chat_nick") || "";
     const LIMIT = 10;
-    let lastDoc = null;
-    let loadingMore = false;
-    let loadedMessages = new Set();
-    let replyTo = null;
+    let chatMessages = [];
+    let unsubscribeChat = null;
+    let unsubscribeAds = null;
     let selectedImage = null;
+    let adPhotos = [null, null];
+    let existingPhotos = [null, null];
 
-    // Credenciais Cloudinary
     const CLOUDINARY_CLOUD_NAME = 'dthnn5flq';
     const CLOUDINARY_API_KEY = '444299785184934';
     const CLOUDINARY_API_SECRET = '3dNWqkn-MH4p3wF75K_vgb1opVs';
 
-    // ============================================
-    // SISTEMA DE CONTEÚDO DINÂMICO (Firebase)
-    // ============================================
-
+    // Conteúdo Dinâmico
     const defaultContent = {
-      portal_unila: "https://portal.unila.edu.br/",
-      sigaa: "https://sig.unila.edu.br/sigaa/verTelaLogin.do",
-      email: "https://mail.google.com/",
-      google: "https://www.google.com/",
-      instagram: "https://www.instagram.com/instaunila/",
-      facebook: "https://www.facebook.com/unila.oficial",
-      biblioteca: "https://portal.unila.edu.br/biblioteca",
-      intercampi: "https://portal.unila.edu.br/proagi/delog/arquivos/horario-intercampi/quadro-de-horario-intercampi.pdf",
-      smartec: "https://www.facebook.com/profile.php?id=61562436416014",
-      editais: "https://documentos.unila.edu.br/",
-      emergencia: "Polícia Militar: 190\nSAMU (Ambulância): 192\nBombeiros: 193\n\nHospital Municipal: (45) 2105-4100\nGuarda Municipal: (45) 2105-5100\nDelegacia da Mulher: (45) 3521-9200\nDefesa Civil: 199\n\nPolícia Federal: (45) 3522-1174\nPolícia Rodoviária Federal: (45) 3576-1400\n\nPrae-Unila: +55 45 3522-9983\nPrograd-Unila: +55 (45) 3522-9766\n\nDisque Denúncia: 181\nConselho Tutelar: (45) 3521-1112\nCentro de Intoxicações: 0800 722 6001\n\n⚠ Em situações graves, ligue imediatamente.",
-      enderecos: "📍 UNILA Jardim Universitário (JU)\nAv. Tarquínio Joslin dos Santos, 1000 – Polo Universitário\n\n📍 UNILA Parque Tecnológico Itaipu (Parque Tec)\nAv. Tancredo Neves, 6731 – Jardim Itaipu\nCEP: 85867-970\n\n📍 Edifício Rio Almada\nAv. Tancredo Neves, 3838 – Porto Belo\nCEP: 85867-633\n\n📍 Campus Integração\nAv. Tancredo Neves, 3147 – Porto Belo\n\n📍 Almoxarifado / Patrimônio\nRua Macucos, 131 – Portal da Foz\n\n📍 Campus Arandu\nProjeto em construção na Itaipu Binacional",
-      ru: "O Restaurante Universitário (RU) da UNILA oferece alimentação acessível para estudantes e servidores.\n\n📍 Unidade Jardim Universitário (JU)\nAv. Tarquínio Joslin dos Santos, 1000\n\n🕒 Horários:\nCafé: 06h45 – 08h00\nAlmoço: 11h00 – 14h00\nJantar: 17h30 – 19h30\n\n📍 Unidade Itaipu Parquetec (PTI)\nBloco 3\n\n🕒 Horários:\nAlmoço: 11h30 – 14h30\nJantar: 17h30 – 19h15\n\n💰 Valor médio: R$ 4,00\nPode ser gratuito para bolsistas.\n\n⚠ Horários e valores podem sofrer alterações.",
-      grupo_facebook: "https://facebook.com/groups/1469303078173697/",
-      dev: "Para trabalhos e parcerias entre em contato:\n\nFernando - Serviço Social\nContato: +55 45 99949-9759",
-      internet: "Para configurar a internet da UNILA (redes UNILA ou eduroam), conecte-se à rede e utilize as configurações abaixo:\n\n📶 Configuração geral:\n• Método EAP: PEAP\n• Autenticação Fase 2: MSCHAPV2\n• Certificado CA: Não validar ou não especificado\n• Identidade/Usuário: seu e-mail institucional (sem @unila.edu.br)\n• Senha: senha do e-mail institucional\n\n📱 Android:\n• Conecte na rede UNILA ou eduroam\n• Use as configurações acima\n\n🍎 iPhone:\n• Conecte na rede\n• Insira login e aceite certificado\n\n⚠ Dispositivos Motorola precisa outras configurações. Problemas: procure suporte da UNILA",
-      estude: "A Universidade Federal da Integração Latino-Americana (UNILA), localizada em Foz do Iguaçu-PR, é uma instituição pública, gratuita e voltada à integração entre os países da América Latina.\n\nA universidade oferece cerca de 29 cursos de graduação presenciais em diversas áreas do conhecimento.\n\n🏛 Estrutura acadêmica:\n• ILAACH – Artes, Cultura e História\n• ILACVN – Ciências da Vida e da Natureza\n• ILAESP – Economia, Sociedade e Política\n• ILATIT – Tecnologia, Infraestrutura e Território\n\n📌 Formas de ingresso:\n• SiSU (nota do ENEM)\n• Processo Seletivo Internacional (PSI)\n• Processo Seletivo para Indígenas (PSIN)\n• Curso de Música com seleção própria\n• Vagas remanescentes\n\n📊 Qualidade acadêmica: Nota 4 (de 5) no IGC do MEC.",
-      enem: "https://enem.inep.gov.br/participante/#!/",
-      noticias: "Comerciantes locais, Bares, Pessoal da Feirinha da Unila, etc, se tiver interesse em divulgar seu negócio aqui entre em contato com o Desenvolvedor do App\n\nPor motivo que grupo o oficial da UNILA no Facebook com aproximadamente 20 mil Membros está desativado por motivo desconhecido, criamos outro que será livre para postar. Clique no botão \"GRUPO NO FACEBOOK\" e participe!\n\nPara salvar o Email institucional neste App faça login no navegador do Google e salve a senha memorizada.\n\nApós dois dias de paralisação que afetaram a rotina de milhares de passageiros, o transporte coletivo de Foz do Iguaçu voltou a operar integralmente.\n\nEstudantes não pagam transporte público em Foz.\n\nObras do Campus Arandú estão em fase final e será entregue em 2028.",
-      upa: "📍 UPA João Samek\nAv. Gramado, 450 – Jardim Lancaster\n📞 (45) 2105-8000\n\n📍 UPA Morumbi\nAv. Mário Filho, s/n – Morumbi\n📞 (45) 2105-8200\n\n📍 Hospital Municipal Padre Germano Lauck\nRua Adoniran Barbosa, 370 – Parque Presidente\n📞 (45) 2105-4100\n\n📍 UPA 24h Porto Meira\nRua Airton Moreira, s/n – Porto Meira\n📞 (45) 2105-8300\n\n⚠ Atendimento 24 horas para urgência e emergência.\n\nPara outros tratamentos fora do contexto de urgência e emergência siga para a UBS mais próxima."
+      portal_unila: "https://portal.unila.edu.br/", sigaa: "https://sig.unila.edu.br/sigaa/verTelaLogin.do",
+      email: "https://mail.google.com/", google: "https://www.google.com/",
+      instagram: "https://www.instagram.com/instaunila/", facebook: "https://www.facebook.com/unila.oficial",
+      biblioteca: "https://portal.unila.edu.br/biblioteca", intercampi: "https://portal.unila.edu.br/proagi/delog/arquivos/horario-intercampi/quadro-de-horario-intercampi.pdf",
+      smartec: "https://www.facebook.com/profile.php?id=61562436416014", editais: "https://documentos.unila.edu.br/",
+      emergencia: "Polícia Militar: 190\nSAMU: 192\nBombeiros: 193",
+      enderecos: "📍 UNILA Jardim Universitário (JU)\nAv. Tarquínio Joslin dos Santos, 1000",
+      ru: "📍 Unidade Jardim Universitário (JU)\nCafé: 06h45 – 08h00\nAlmoço: 11h00 – 14h00\nJantar: 17h30 – 19h30",
+      grupo_facebook: "https://facebook.com/groups/1469303078173697/", dev: "Fernando - Contato: +55 45 99949-9759",
+      internet: "📶 Configuração geral:\n• Método EAP: PEAP\n• Autenticação Fase 2: MSCHAPV2",
+      estude: "UNILA - Instituição pública, gratuita e voltada à integração Latino-Americana.",
+      enem: "https://enem.inep.gov.br/participante/#!/", noticias: "Notícias da UNILA e região.",
+      upa: "📍 UPA João Samek\nAv. Gramado, 450\n📞 (45) 2105-8000"
     };
 
     const buttonTitles = {
-      portal_unila: "🌐 Portal Oficial da UNILA",
-      sigaa: "📚 Sistema Acadêmico SIGAA",
-      email: "📧 E-mail Institucional",
-      google: "🔎 Pesquisa Google",
-      instagram: "📸 Instagram UNILA",
-      facebook: "📘 Facebook UNILA",
-      biblioteca: "📖 Biblioteca UNILA",
-      intercampi: "🚌 Transporte Intercampi",
-      smartec: "💻 Smart Tech",
-      editais: "📄 Editais Oficiais",
-      emergencia: "🚨 Telefones de Emergência",
-      enderecos: "🏫 Endereços dos Campus",
-      ru: "🍽️ Restaurantes Universitários",
-      grupo_facebook: "👥 Grupo no Facebook",
-      dev: "👨‍💻 Desenvolvedor",
-      internet: "🌐 Internet UNILA",
-      estude: "🎓 Estude na UNILA",
-      enem: "📝 ENEM – Página do Participante",
-      noticias: "📰 Notícias",
-      upa: "🏥 Hospitais de Emergência 24h (UPA)"
+      portal_unila: "🌐 Portal Oficial da UNILA", sigaa: "📚 Sistema Acadêmico SIGAA",
+      email: "📧 E-mail Institucional", google: "🔎 Pesquisa Google",
+      instagram: "📸 Instagram UNILA", facebook: "📘 Facebook UNILA",
+      biblioteca: "📖 Biblioteca UNILA", intercampi: "🚌 Transporte Intercampi",
+      smartec: "💻 Smart Tech", editais: "📄 Editais Oficiais",
+      emergencia: "🚨 Telefones de Emergência", enderecos: "🏫 Endereços dos Campus",
+      ru: "🍽️ Restaurantes Universitários", grupo_facebook: "👥 Grupo no Facebook",
+      dev: "👨‍💻 Desenvolvedor", internet: "🌐 Internet UNILA",
+      estude: "🎓 Estude na UNILA", enem: "📝 ENEM – Página do Participante",
+      noticias: "📰 Notícias", upa: "🏥 Hospitais de Emergência 24h (UPA)"
     };
 
     let contentCache = {};
@@ -761,13 +678,8 @@ function onYouTubeIframeAPIReady() {
     async function loadAllContent() {
       try {
         const snapshot = await db.collection('admin_content').get();
-        snapshot.forEach(doc => {
-          contentCache[doc.id] = doc.data().value;
-        });
-        console.log("Conteúdos carregados do Firebase:", Object.keys(contentCache).length);
-      } catch(e) {
-        console.log("Usando conteúdos padrão (offline ou erro):", e);
-      }
+        snapshot.forEach(doc => { contentCache[doc.id] = doc.data().value; });
+      } catch(e) { console.log("Erro ao carregar conteúdos:", e); }
     }
 
     function listenContentChanges() {
@@ -780,428 +692,117 @@ function onYouTubeIframeAPIReady() {
       });
     }
 
-    function getContent(id) {
-      return contentCache[id] || defaultContent[id] || '';
-    }
-
     async function openDynamic(id, type) {
-      let value = getContent(id);
-
-      try {
-        const doc = await db.collection('admin_content').doc(id).get();
-        if (doc.exists) {
-          value = doc.data().value;
-          contentCache[id] = value;
-        }
-      } catch(e) {
-        // Usa cache/padrão se offline
-      }
-
-      if (type === 'link') {
-        window.open(value, "_blank");
-      } else {
+      let value = contentCache[id] || defaultContent[id] || '';
+      if (type === 'link') { window.open(value, "_blank"); }
+      else {
         document.getElementById("home").style.display = "none";
         document.querySelectorAll(".page").forEach(p => p.style.display = "none");
-        
         document.getElementById("dynamicTitle").textContent = buttonTitles[id] || id;
         document.getElementById("dynamicContent").textContent = value;
         document.getElementById("dynamicPage").style.display = "block";
       }
     }
 
-    // ============================================
-    // FUNÇÕES ORIGINAIS DO APP
-    // ============================================
-
-    async function generateSignature(params, secret) {
-      const sortedParams = Object.keys(params).sort().map(key => `${key}=${params[key]}`).join('&');
-      const stringToSign = sortedParams + secret;
-      const encoder = new TextEncoder();
-      const data = encoder.encode(stringToSign);
-      const hashBuffer = await crypto.subtle.digest('SHA-1', data);
-      const hashArray = Array.from(new Uint8Array(hashBuffer));
-      return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-    }
-
-    async function uploadImageToCloudinary(file) {
-      const timestamp = Math.round(new Date().getTime() / 1000);
-      const signature = await generateSignature({ timestamp: timestamp }, CLOUDINARY_API_SECRET);
-
-      const formData = new FormData();
-      formData.append('file', file);
-      formData.append('api_key', CLOUDINARY_API_KEY);
-      formData.append('timestamp', timestamp);
-      formData.append('signature', signature);
-
-      try {
-        const response = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`, {
-          method: 'POST',
-          body: formData,
-        });
-        const data = await response.json();
-        if (data.secure_url) {
-          return data.secure_url;
-        } else {
-          console.error('Erro no upload do Cloudinary:', data);
-          alert("Erro no Cloudinary: " + (data.error ? data.error.message : "Desconhecido"));
-          return null;
-        }
-      } catch (error) {
-        console.error('Erro ao conectar com o Cloudinary:', error);
-        return null;
-      }
-    }
-
-    function openLink(u){ window.open(u, "_blank"); }
-
-    function openPage(id){
-      document.getElementById("home").style.display="none";
-      document.querySelectorAll(".page").forEach(p=>p.style.display="none");
-      document.getElementById(id).style.display="block";
-      if(id === 'notesPage') loadNotes();
-      if(id === 'desapegaPage') listenAds();
-    }
-
-    function goHome(){
-      document.getElementById("home").style.display="grid";
-      document.querySelectorAll(".page").forEach(p=>p.style.display="none");
-      document.getElementById("radioPlayer").style.display="none";
-    }
-
-    function shareApp(){
-      const texto = "📲 Baixe o App da UNILA:";
-      const url = "https://drive.google.com/file/d/1XgYsFJlnd8VuQGAyYopxNI2Huuknsugo/view?usp=drivesdk";
-      const mensagem = encodeURIComponent(texto + " " + url);
-      window.open("https://api.whatsapp.com/send?text=" + mensagem, "_system");
-    }
-
-    // Anotações
-    function loadNotes(){
-      let list = document.getElementById("list");
-      list.innerHTML = "";
-      let notes = JSON.parse(localStorage.getItem("notes") || "[]");
-      notes.forEach((n, i) => {
-        let div = document.createElement("div");
-        div.className = "note-item";
-        div.innerHTML = `<span>${n}</span> <button class="delete-btn" onclick="deleteNote(${i})">🗑</button>`;
-        list.appendChild(div);
-      });
-    }
-
-    function saveNote(){
-      let t = document.getElementById("note").value;
-      if(!t) return;
-      let notes = JSON.parse(localStorage.getItem("notes") || "[]");
-      notes.push(t);
-      localStorage.setItem("notes", JSON.stringify(notes));
-      document.getElementById("note").value = "";
-      loadNotes();
-    }
-
-    function deleteNote(i){
-      let notes = JSON.parse(localStorage.getItem("notes") || "[]");
-      notes.splice(i, 1);
-      localStorage.setItem("notes", JSON.stringify(notes));
-      loadNotes();
-    }
-
-    // Data Bar
-    function atualizarDataBar(){
-      const el = document.getElementById("dateBar");
-      function formatarData(){
-        const d = new Date();
-        const dias = ["Dom","Seg","Ter","Qua","Qui","Sex","Sáb"];
-        const meses = ["Jan","Fev","Mar","Abr","Mai","Jun","Jul","Ago","Set","Out","Nov","Dez"];
-        return `${dias[d.getDay()]}, ${d.getDate()} ${meses[d.getMonth()]} ${d.getFullYear()}`;
-      }
-      if(el) el.textContent = formatarData();
-    }
-    setInterval(atualizarDataBar, 60000);
-
-    function handleImageSelect(event) {
-      const file = event.target.files[0];
-      if (file) {
-        selectedImage = file;
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          document.getElementById("previewImg").src = e.target.result;
-          document.getElementById("imagePreview").style.display = "block";
-          document.getElementById("chatInput").placeholder = "Adicione um comentário...";
-        };
-        reader.readAsDataURL(file);
-      }
-    }
-
-    function cancelImage() {
-      selectedImage = null;
-      document.getElementById("imagePreview").style.display = "none";
-      document.getElementById("imageUpload").value = "";
-      document.getElementById("chatInput").placeholder = "Digite sua mensagem...";
-    }
-
-    function setReply(id, user, text) {
-      replyTo = { id, user, text: text || "Imagem" };
-      document.getElementById("replyContent").textContent = `Respondendo a ${user}: ${replyTo.text}`;
-      document.getElementById("replyPreview").style.display = "block";
-      document.getElementById("chatInput").focus();
-    }
-
-    function cancelReply() {
-      replyTo = null;
-      document.getElementById("replyPreview").style.display = "none";
-    }
-
-    function sendMessage(){
-      const input = document.getElementById("chatInput");
-      const text = input.value.trim();
-      
-      if (!text && !selectedImage) return;
-
-      const isAnonymous = document.getElementById("chatAnonymous").checked;
-      const messageData = {
-        nick: isAnonymous ? "Anônimo 👤" : nick,
-        realNick: nick,
-        time: Date.now(),
-        anonymous: isAnonymous
-      };
-
-      if (replyTo) {
-        messageData.reply = replyTo;
-        cancelReply();
-      }
-
-      if (selectedImage) {
-        const originalPlaceholder = input.placeholder;
-        input.placeholder = "Enviando...";
-        input.disabled = true;
-        
-        uploadImageToCloudinary(selectedImage).then(imageUrl => {
-          input.disabled = false;
-          input.placeholder = originalPlaceholder;
-
-          if (imageUrl) {
-            messageData.imageUrl = imageUrl;
-            messageData.text = text;
-            db.collection("chat").add(messageData);
-            cancelImage();
-            input.value = "";
-          }
-        });
-      } else {
-        messageData.text = text;
-        db.collection("chat").add(messageData);
-        input.value = "";
-        document.getElementById("chatAnonymous").checked = false;
-      }
-    }
-
-    let chatMessages = [];
-    let unsubscribeChat = null;
-
-    function formatarDataMensagem(timestamp){
-      const data = new Date(timestamp);
-      const agora = new Date();
-      const ontem = new Date();
-      ontem.setDate(agora.getDate() - 1);
-      const mesmoDia = data.toDateString() === agora.toDateString();
-      const ehOntem = data.toDateString() === ontem.toDateString();
-      const hora = data.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
-      if(mesmoDia) return `Hoje às ${hora}`;
-      if(ehOntem) return `Ontem às ${hora}`;
-      return data.toLocaleDateString('pt-BR') + ` às ${hora}`;
-    }
-
-    function renderMessages(append = false) {
-      const box = document.getElementById("chatBox");
-      const oldScrollHeight = box.scrollHeight;
-      const oldScrollTop = box.scrollTop;
-
-      if (!append) box.innerHTML = "";
-      
-      const fragment = document.createDocumentFragment();
-      
-      chatMessages.forEach(m => {
-        if (document.getElementById(m.id)) return;
-
-        let deleteBtn = (m.realNick === nick || nick === ADMIN_NICK) ? `<button onclick="deleteMsg('${m.id}', '${m.realNick || m.nick}')" style="background:none; border:none; color:#94a3b8; cursor:pointer; margin-left:10px;">🗑</button>` : "";
-        let replyBtn = `<button onclick="setReply('${m.id}', '${m.nick}', '${(m.text || "Imagem").replace(/'/g, "\\\'")}')" style="background:none; border:none; color:#3b82f6; cursor:pointer;">↩ Responder</button>`;
-        
-        const div = document.createElement("div");
-        div.className = "msg";
-        div.id = m.id;
-        
-        let messageContent = "";
-        if (m.reply) {
-          messageContent += `<div class="reply-box" onclick="document.getElementById('${m.reply.id}').scrollIntoView({behavior:'smooth'})">
-            <strong>${m.reply.user}</strong>: ${m.reply.text}
-          </div>`;
-        }
-        if (m.imageUrl) {
-          messageContent += `<img src="${m.imageUrl}" style="max-width:100%; max-height:300px; border-radius:8px; margin-top:5px; display:block;" onclick="window.open('${m.imageUrl}', '_blank')" />`;
-        }
-        if (m.text) {
-          messageContent += `<div style="margin-top:5px;">${m.text}</div>`;
-        }
-
-        div.innerHTML = `<strong>${m.nick}:</strong> ${messageContent}<small>${formatarDataMensagem(m.time)} ${replyBtn} ${deleteBtn}</small>`;
-        fragment.appendChild(div);
-      });
-
-      if (append) {
-        box.prepend(fragment);
-        box.scrollTop = box.scrollHeight - oldScrollHeight + oldScrollTop;
-      } else {
-        box.appendChild(fragment);
-        box.scrollTop = box.scrollHeight;
-      }
-    }
-
-    function listenChat() {
-      if (unsubscribeChat) unsubscribeChat();
-      
-      unsubscribeChat = db.collection("chat")
-        .orderBy("time", "desc")
-        .limit(LIMIT)
-        .onSnapshot(snapshot => {
-          const newMessages = [];
-          snapshot.docs.forEach(doc => {
-            newMessages.push({ id: doc.id, ...doc.data() });
-          });
-          
-          const loadedIds = new Set(chatMessages.map(m => m.id));
-          const updates = newMessages.filter(m => !loadedIds.has(m.id));
-          
-          if (updates.length > 0) {
-            chatMessages = [...chatMessages, ...updates].sort((a, b) => a.time - b.time);
-            renderMessages();
-          }
-
-          if (snapshot.docs.length > 0) {
-            lastDoc = snapshot.docs[snapshot.docs.length - 1];
-          }
-        });
-
-      const box = document.getElementById("chatBox");
-      box.onscroll = () => {
-        if (box.scrollTop === 0 && !loadingMore && lastDoc) {
-          loadMoreMessages();
-        }
-      };
-    }
-
-    async function loadMoreMessages() {
-      loadingMore = true;
-      const loadingDiv = document.createElement("div");
-      loadingDiv.innerHTML = "Carregando mensagens antigas...";
-      loadingDiv.style.textAlign = "center";
-      loadingDiv.style.padding = "10px";
-      loadingDiv.style.fontSize = "12px";
-      document.getElementById("chatBox").prepend(loadingDiv);
-
-      const snapshot = await db.collection("chat")
-        .orderBy("time", "desc")
-        .startAfter(lastDoc)
-        .limit(LIMIT)
-        .get();
-
-      loadingDiv.remove();
-
-      if (snapshot.docs.length > 0) {
-        const olderMessages = [];
-        snapshot.docs.forEach(doc => {
-          olderMessages.push({ id: doc.id, ...doc.data() });
-        });
-        
-        chatMessages = [...olderMessages, ...chatMessages].sort((a, b) => a.time - b.time);
-        lastDoc = snapshot.docs[snapshot.docs.length - 1];
-        renderMessages(true);
-      }
-      loadingMore = false;
-    }
-
-    // ✅ CORREÇÃO 1: Função saveNick() - Simplificada
+    // Chat Logic
     async function saveNick(){
       const input = document.getElementById("nickInput").value.trim();
-      if(!input) {
-        alert("❌ Digite um nick!");
-        return;
-      }
-      
-      if(input.length < 2) {
-        alert("❌ O nick deve ter pelo menos 2 caracteres!");
-        return;
-      }
-      
+      if(!input || input.length < 2) { alert("❌ Nick inválido!"); return; }
       nick = input;
       localStorage.setItem("chat_nick", nick);
-      document.getElementById("nickInput").value = "";
       document.getElementById("nickArea").style.display = "none";
       document.getElementById("chatArea").style.display = "block";
-      
-      if(nick === ADMIN_NICK) {
-        document.getElementById("changeNickBtn").style.display = "block";
-      }
-      
+      if(nick === ADMIN_NICK) document.getElementById("changeNickBtn").style.display = "block";
       listenChat();
     }
 
-    // ✅ CORREÇÃO 2: Função deleteMsg() - Sem notificação
-    function deleteMsg(id, msgNick){
-      if(msgNick === nick || nick === ADMIN_NICK) {
-        db.collection("chat").doc(id).delete();
-        chatMessages = chatMessages.filter(m => m.id !== id);
-        renderMessages();
-      }
-    }
-
-    // ✅ CORREÇÃO 3: Função changeNick() - Simplificada
     function changeNick(){
       localStorage.removeItem("chat_nick");
       nick = "";
       document.getElementById("chatArea").style.display = "none";
       document.getElementById("nickArea").style.display = "block";
-      document.getElementById("nickInput").value = "";
       document.getElementById("changeNickBtn").style.display = "none";
     }
 
-    function atualizarAtividade(){
-      if(nick) console.log("Atividade atualizada");
-    }
-    setInterval(atualizarAtividade, 60000);
-
-    // Radio logic
-    function toggleRadioSimples() {
-      const player = document.getElementById("radioPlayer");
-      const iframe = document.getElementById("ytRadio");
-      if (player.style.display === "none") {
-        player.style.display = "block";
-        iframe.contentWindow.postMessage(JSON.stringify({event: "command", func: "playVideo", args: []}), "*");
-        setTimeout(() => player.scrollIntoView({ behavior: "smooth" }), 300);
-      } else {
-        player.style.display = "none";
-        iframe.contentWindow.postMessage(JSON.stringify({event: "command", func: "pauseVideo", args: []}), "*");
+    function deleteMsg(id, msgNick){
+      if(msgNick === nick || nick === ADMIN_NICK) {
+        db.collection("chat").doc(id).delete();
       }
     }
 
-    // Theme colors
-    const colors = ["#1a0033", "#2b0a4a", "#3b0f66", "#120022"];
-    let colorIdx = 0;
-    setInterval(() => {
-      colorIdx = (colorIdx + 1) % colors.length;
-      document.querySelector("meta[name=theme-color]").setAttribute("content", colors[colorIdx]);
-    }, 3000);
+    function sendMessage(){
+      const input = document.getElementById("chatInput");
+      const text = input.value.trim();
+      if (!text && !selectedImage) return;
+      const isAnonymous = document.getElementById("chatAnonymous").checked;
+      const data = {
+        nick: isAnonymous ? "Anônimo 👤" : nick,
+        realNick: nick,
+        time: Date.now(),
+        text: text
+      };
+      if (selectedImage) {
+        uploadImageToCloudinary(selectedImage).then(url => {
+          if (url) { data.imageUrl = url; db.collection("chat").add(data); }
+          cancelImage();
+        });
+      } else { db.collection("chat").add(data); }
+      input.value = "";
+    }
 
-    // ============================================
-    // LÓGICA DESAPEGA UNILEIRO
-    // ============================================
-    let adPhotos = [null, null];
-    let existingPhotos = [null, null];
-    let unsubscribeAds = null;
+    function renderMessages() {
+      const box = document.getElementById("chatBox");
+      box.innerHTML = "";
+      chatMessages.forEach(m => {
+        const div = document.createElement("div");
+        div.className = "msg";
+        let del = (m.realNick === nick || nick === ADMIN_NICK) ? `<span onclick="deleteMsg('${m.id}', '${m.realNick}')" style="cursor:pointer; color:red; margin-left:10px;">🗑</span>` : "";
+        div.innerHTML = `<strong>${m.nick}:</strong> ${m.text || ""} ${m.imageUrl ? `<img src="${m.imageUrl}" style="max-width:100%; border-radius:8px; display:block; margin-top:5px;">` : ""} ${del}`;
+        box.appendChild(div);
+      });
+      box.scrollTop = box.scrollHeight;
+    }
 
+    function listenChat() {
+      if (unsubscribeChat) unsubscribeChat();
+      unsubscribeChat = db.collection("chat").orderBy("time", "desc").limit(LIMIT).onSnapshot(snapshot => {
+        chatMessages = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })).reverse();
+        renderMessages();
+      });
+    }
+
+    // Desapega Logic
     function toggleDesapegaForm() {
-      const form = document.getElementById("desapegaForm");
-      form.style.display = form.style.display === "block" ? "none" : "block";
-      if(form.style.display === "none") resetAdForm();
+      const f = document.getElementById("desapegaForm");
+      f.style.display = f.style.display === "block" ? "none" : "block";
+    }
+
+    async function saveAd() {
+      const title = document.getElementById("adTitle").value.trim();
+      const price = document.getElementById("adPrice").value.trim();
+      const whatsapp = document.getElementById("adWhatsapp").value.trim();
+      if(!title || !price || !whatsapp) { alert("Preencha tudo!"); return; }
+      const isAnon = document.getElementById("adAnonymous").checked;
+      
+      let finalUrls = [null, null];
+      for (let i = 0; i < 2; i++) {
+        if (adPhotos[i]) {
+          const url = await uploadImageToCloudinary(adPhotos[i]);
+          if (url) finalUrls[i] = url;
+        }
+      }
+
+      const data = {
+        title, price, whatsapp, 
+        desc: document.getElementById("adDesc").value,
+        photos: finalUrls.filter(u => u !== null),
+        nick: isAnon ? "Anônimo 👤" : nick,
+        realNick: nick,
+        time: Date.now()
+      };
+      await db.collection("desapega").add(data);
+      resetAdForm();
+      toggleDesapegaForm();
     }
 
     function resetAdForm() {
@@ -1212,14 +813,63 @@ function onYouTubeIframeAPIReady() {
       document.getElementById("adWhatsapp").value = "";
       document.getElementById("adPreview1").style.display = "none";
       document.getElementById("adPreview2").style.display = "none";
-      document.getElementById("adFormTitle").textContent = "Novo Anúncio";
       adPhotos = [null, null];
-      existingPhotos = [null, null];
     }
 
-    function cancelAdEdit() {
-      resetAdForm();
-      toggleDesapegaForm();
+    function deleteAd(id) {
+      db.collection("desapega").doc(id).delete();
+    }
+
+    function listenAds() {
+      if (unsubscribeAds) unsubscribeAds();
+      unsubscribeAds = db.collection("desapega").orderBy("time", "desc").onSnapshot(snapshot => {
+        const list = document.getElementById("adList");
+        list.innerHTML = "";
+        snapshot.forEach(doc => {
+          const ad = doc.data();
+          const id = doc.id;
+          const card = document.createElement("div");
+          card.className = "desapega-card";
+          
+          let photosHtml = "";
+          if (ad.photos && ad.photos.length > 0) {
+            photosHtml = `<img src="${ad.photos[0]}" class="desapega-img" onclick="window.open('${ad.photos[0]}', '_blank')" />`;
+          }
+
+          let actionBtns = (ad.realNick === nick || nick === ADMIN_NICK) ? `
+            <div class="action-btns">
+              <button class="btn-action btn-edit" onclick='editAd("${id}", ${JSON.stringify(ad).replace(/'/g, "&apos;")})'>✏️ Editar</button>
+              <button class="btn-action btn-delete" onclick="deleteAd('${id}')">🗑️ Excluir</button>
+            </div>
+          ` : "";
+
+          card.innerHTML = `
+            ${photosHtml}
+            <h3 style="margin:10px 0 5px 0;">${ad.title}</h3>
+            <p class="desapega-price">${ad.price}</p>
+            <p style="font-size:14px; color:#cbd5e1; white-space:pre-line; margin-bottom:10px;">${ad.desc}</p>
+            <p style="font-size:11px; color:#94a3b8;">Postado por: ${ad.nick}</p>
+            
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:10px;">
+              <a href="https://api.whatsapp.com/send?phone=55${ad.whatsapp.replace(/\D/g, '')}" class="desapega-contact" target="_blank">📱 WhatsApp</a>
+              <button style="background:#475569; border:none; color:white; padding:12px; border-radius:15px; font-weight:bold; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:5px;">💬 Responder</button>
+            </div>
+            ${actionBtns}
+          `;
+          list.appendChild(card);
+        });
+      });
+    }
+
+    async function uploadImageToCloudinary(file) {
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('upload_preset', 'ml_default');
+      try {
+        const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`, { method: 'POST', body: formData });
+        const data = await res.json();
+        return data.secure_url;
+      } catch (e) { return null; }
     }
 
     function handleAdImageSelect(event, index) {
@@ -1236,266 +886,21 @@ function onYouTubeIframeAPIReady() {
       }
     }
 
-    async function saveAd() {
-      const adId = document.getElementById("adId").value;
-      const title = document.getElementById("adTitle").value.trim();
-      const price = document.getElementById("adPrice").value.trim();
-      const desc = document.getElementById("adDesc").value.trim();
-      const whatsapp = document.getElementById("adWhatsapp").value.trim();
-      const btn = document.getElementById("btnSaveAd");
-
-      if (!title || !price || !whatsapp) {
-        alert("Preencha os campos obrigatórios!");
-        return;
-      }
-
-      if (!adId && !adPhotos[0] && !adPhotos[1]) {
-        alert("Selecione pelo menos uma foto!");
-        return;
-      }
-
-      btn.disabled = true;
-      btn.textContent = "Processando...";
-
-      try {
-        const isAnonymous = document.getElementById("adAnonymous").checked;
-
-        if (!isAnonymous && !nick) {
-          alert("Para postar com seu nome, você precisa primeiro criar um Nick no botão 'Spotted💜 Chat💬'!");
-          btn.disabled = false;
-          btn.textContent = "Salvar";
-          return;
-        }
-
-        let finalUrls = [existingPhotos[0] || null, existingPhotos[1] || null];
-
-        for (let i = 0; i < 2; i++) {
-          if (adPhotos[i]) {
-            btn.textContent = `Enviando foto ${i+1}...`;
-            const url = await uploadImageToCloudinary(adPhotos[i]);
-            if (url) {
-              finalUrls[i] = url;
-            } else {
-              throw new Error(`Falha no upload da imagem ${i+1}`);
-            }
-          }
-        }
-
-        const validPhotos = finalUrls.filter(u => u !== null);
-        if (validPhotos.length === 0) {
-          alert("O anúncio precisa de pelo menos uma foto!");
-          btn.disabled = false;
-          btn.textContent = "Salvar";
-          return;
-        }
-
-        const adData = {
-          title,
-          price,
-          desc,
-          whatsapp,
-          photos: validPhotos,
-          nick: isAnonymous ? "Anônimo 👤" : nick,
-          realNick: nick || "Anônimo",
-          time: Date.now(),
-          anonymous: isAnonymous
-        };
-
-        btn.textContent = "Salvando dados...";
-        if (adId) {
-          await db.collection("desapega").doc(adId).update(adData);
-          alert("✅ Anúncio atualizado com sucesso!");
-        } else {
-          await db.collection("desapega").add(adData);
-          alert("✅ Anúncio publicado com sucesso!");
-        }
-
-        resetAdForm();
-        document.getElementById("adAnonymous").checked = false;
-        toggleDesapegaForm();
-      } catch (e) {
-        console.error("Erro detalhado:", e);
-        alert("❌ Erro ao salvar: " + e.message);
-      } finally {
-        btn.disabled = false;
-        btn.textContent = "Salvar";
-      }
+    function handleImageSelect(e) { selectedImage = e.target.files[0]; }
+    function cancelImage() { selectedImage = null; }
+    function goHome() {
+      document.getElementById("home").style.display = "grid";
+      document.querySelectorAll(".page").forEach(p => p.style.display = "none");
+    }
+    function openPage(id) {
+      document.getElementById("home").style.display = "none";
+      document.querySelectorAll(".page").forEach(p => p.style.display = "none");
+      document.getElementById(id).style.display = "block";
+      if(id === 'chatPage') listenChat();
+      if(id === 'desapegaPage') listenAds();
     }
 
-    function editAd(id, data) {
-      resetAdForm();
-      document.getElementById("adId").value = id;
-      document.getElementById("adTitle").value = data.title;
-      document.getElementById("adPrice").value = data.price;
-      document.getElementById("adDesc").value = data.desc;
-      document.getElementById("adWhatsapp").value = data.whatsapp;
-      document.getElementById("adFormTitle").textContent = "Editar Anúncio";
-      
-      if (data.photos && data.photos.length > 0) {
-        data.photos.forEach((url, i) => {
-          if (i < 2) {
-            existingPhotos[i] = url;
-            const preview = document.getElementById("adPreview" + (i + 1));
-            preview.src = url;
-            preview.style.display = "block";
-          }
-        });
-      }
-      
-      document.getElementById("desapegaForm").style.display = "block";
-      document.getElementById("desapegaPage").scrollTop = 0;
-    }
-
-    function listenAds() {
-      if (unsubscribeAds) unsubscribeAds();
-      
-      unsubscribeAds = db.collection("desapega")
-        .orderBy("time", "desc")
-        .onSnapshot(snapshot => {
-          const adList = document.getElementById("adList");
-          adList.innerHTML = "";
-          
-          if (snapshot.empty) {
-            adList.innerHTML = "<p style='text-align:center;'>Nenhum anúncio encontrado.</p>";
-            return;
-          }
-
-          snapshot.forEach(doc => {
-            const ad = doc.data();
-            const id = doc.id;
-            const card = document.createElement("div");
-            card.className = "desapega-card";
-            
-            let photosHtml = "";
-            if (ad.photos && ad.photos.length > 0) {
-              photosHtml = `<div style="display:grid; grid-template-columns: ${ad.photos.length > 1 ? '1fr 1fr' : '1fr'}; gap:5px;">
-                ${ad.photos.map(p => `<img src="${p}" class="desapega-img" style="height:150px;" onclick="window.open('${p}', '_blank')" />`).join('')}
-              </div>`;
-            }
-
-            let actionsBtn = (ad.realNick === nick || nick === ADMIN_NICK) ? `
-              <div style="display:flex; gap:5px; margin-top:10px;">
-                <button onclick='editAd("${id}", ${JSON.stringify(ad).replace(/'/g, "&apos;")})' style="background:#3b82f6; border:none; color:white; padding:8px; border-radius:5px; font-size:12px; flex:1;">✏️ Editar</button>
-                <button onclick="deleteAd('${id}')" style="background:#dc2626; border:none; color:white; padding:8px; border-radius:5px; font-size:12px; flex:1;">🗑 Excluir</button>
-              </div>
-            ` : "";
-
-            let repliesHtml = "";
-            if (ad.replies && ad.replies.length > 0) {
-              repliesHtml = `<div style="margin-top:10px; padding-left:10px; border-left:2px solid #f59e0b;">
-                ${ad.replies.map((r, index) => `
-                  <div style="font-size:13px; background:rgba(255,255,255,0.05); padding:5px; border-radius:5px; margin-bottom:5px;">
-                    <div style="display:flex; justify-content:space-between;">
-                      <strong>${r.nick}:</strong>
-                      ${(r.realNick === nick || nick === ADMIN_NICK) ? `<span onclick="deleteAdReply('${id}', ${index})" style="cursor:pointer; color:#dc2626; font-size:10px;">🗑</span>` : ""}
-                    </div>
-                    ${r.text}
-                  </div>
-                `).join('')}
-              </div>`;
-            }
-
-            card.innerHTML = `
-              ${photosHtml}
-              <h3 style="margin:10px 0 5px 0;">${ad.title}</h3>
-              <p class="desapega-price">${ad.price}</p>
-              <p style="font-size:14px; color:#cbd5e1; white-space:pre-line; margin-bottom:10px;">${ad.desc}</p>
-              <p style="font-size:11px; color:#94a3b8;">Postado por: ${ad.nick}</p>
-              
-              <div style="display:flex; gap:10px; margin-top:10px; align-items:center;">
-                <a href="https://api.whatsapp.com/send?phone=55${ad.whatsapp.replace(/\D/g, '')}" class="desapega-contact" target="_blank" style="margin-top:0; flex:1; text-align:center;">📱 WhatsApp</a>
-                <button onclick="showReplyInput('${id}')" style="background:#3b82f6; padding:8px 15px; border-radius:20px; font-size:14px; font-weight:bold; border:none; color:white; cursor:pointer;">💬 Responder</button>
-              </div>
-
-              <div id="replyInputArea_${id}" style="display:none; margin-top:10px;">
-                <div style="display:flex; gap:5px;">
-                  <input type="text" id="replyInput_${id}" placeholder="Escreva sua resposta..." style="flex:1; padding:15px; border-radius:10px; border:none; background:#e5e7eb; color:#1f2937; font-size:18px;" />
-                  <button onclick="sendAdReply('${id}')" style="background:#22c55e; border:none; color:white; padding:15px; border-radius:10px; font-size:18px;">➤</button>
-                </div>
-              </div>
-
-              ${repliesHtml}
-              ${actionsBtn}
-            `;
-            adList.appendChild(card);
-          });
-        });
-    }
-
-    function showReplyInput(id) {
-      const area = document.getElementById(`replyInputArea_${id}`);
-      area.style.display = area.style.display === "none" ? "block" : "none";
-      if (area.style.display === "block") {
-        document.getElementById(`replyInput_${id}`).focus();
-      }
-    }
-
-    async function sendAdReply(adId) {
-      const input = document.getElementById(`replyInput_${adId}`);
-      const text = input.value.trim();
-      if (!text) return;
-      if (!nick) {
-        alert("Você precisa definir um Nick para responder!");
-        return;
-      }
-
-      try {
-        const adRef = db.collection("desapega").doc(adId);
-        const doc = await adRef.get();
-        if (doc.exists) {
-          const replies = doc.data().replies || [];
-          replies.push({
-            nick: nick,
-            realNick: nick,
-            text: text,
-            time: Date.now()
-          });
-          await adRef.update({ replies: replies });
-          input.value = "";
-          document.getElementById(`replyInputArea_${adId}`).style.display = "none";
-        }
-      } catch (e) {
-        console.error("Erro ao responder:", e);
-        alert("Erro ao enviar resposta: " + e.message);
-      }
-    }
-
-    // ✅ CORREÇÃO 4: Função deleteAdReply() - Sem notificação
-    async function deleteAdReply(adId, index) {
-      try {
-        const adRef = db.collection("desapega").doc(adId);
-        const doc = await adRef.get();
-        if (doc.exists) {
-          const replies = doc.data().replies || [];
-          replies.splice(index, 1);
-          await adRef.update({ replies: replies });
-        }
-      } catch (e) {
-        console.error("Erro ao remover resposta:", e);
-      }
-    }
-
-    // ✅ CORREÇÃO 5: Função deleteAd() - Sem notificação
-    function deleteAd(id) {
-      db.collection("desapega").doc(id).delete();
-    }
-
-    window.onload = () => {
-      atualizarDataBar();
-      loadAllContent();
-      listenContentChanges();
-      if(nick){
-        document.getElementById("nickArea").style.display="none";
-        document.getElementById("chatArea").style.display="block";
-        listenChat();
-      }
-    };
-
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('./service-worker.js').then(reg => {
-        console.log("SW registrado");
-      }).catch(err => console.log("Erro SW:", err));
-    }
+    window.onload = () => { loadAllContent(); listenContentChanges(); if(nick) { openPage('chatPage'); } };
   </script>
 </body>
 </html>
