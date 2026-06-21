@@ -105,8 +105,9 @@ body{
   color:white;
   min-height:100vh;
   overflow-x:hidden;
-  
-  .bg-fixa{
+}
+
+.bg-fixa{
   position:fixed;
   top:0;
   left:0;
@@ -122,8 +123,8 @@ body{
   background-repeat:no-repeat;
 
   z-index:-2;
-
 }
+
 button{
   padding:16px;
 
@@ -164,7 +165,7 @@ button:hover{
   text-shadow: 0 0 10px rgba(0,0,0,1);
 }
 
-  .page{
+.page{
   display:none;
   padding:20px;
   line-height:1.7;
@@ -246,69 +247,69 @@ button:hover{
 .internet{background:#3b82f6;}
 .estude{background:#22c55e;}
 .noticias {
-	  background: #000;
-	  color: white;
-	}
-	.desapega {
-	  background: #f59e0b; /* Laranja âmbar */
-	  color: white;
-	}
-	
-	/* Estilos para os Cards do Desapega */
-	.desapega-card {
-	  background: rgba(30, 41, 59, 0.9);
-	  border-radius: 12px;
-	  padding: 15px;
-	  margin-bottom: 15px;
-	  border: 1px solid rgba(255, 255, 255, 0.1);
-	  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-	}
-	.desapega-img {
-	  width: 100%;
-	  max-height: 250px;
-	  object-fit: cover;
-	  border-radius: 8px;
-	  margin-bottom: 10px;
-	}
-	.desapega-price {
-	  font-size: 20px;
-	  font-weight: bold;
-	  color: #22c55e;
-	  margin: 5px 0;
-	}
-	.desapega-contact {
-	  display: inline-block;
-	  background: #25D366;
-	  color: white;
-	  padding: 8px 15px;
-	  border-radius: 20px;
-	  text-decoration: none;
-	  font-size: 14px;
-	  margin-top: 10px;
-	  font-weight: bold;
-	}
-	.btn-postar {
-	  background: #f59e0b;
-	  width: 100%;
-	  margin-bottom: 20px;
-	  padding: 12px;
-	}
-	.desapega-form {
-	  background: rgba(15, 23, 42, 0.8);
-	  padding: 20px;
-	  border-radius: 15px;
-	  margin-bottom: 20px;
-	  display: none;
-	}
-	.desapega-form input, .desapega-form textarea {
-	  width: 100%;
-	  padding: 10px;
-	  margin-bottom: 10px;
-	  border-radius: 8px;
-	  border: none;
-	  background: #e5e7eb;
-	  color: #1f2937;
-	}
+  background: #000;
+  color: white;
+}
+.desapega {
+  background: #f59e0b; /* Laranja âmbar */
+  color: white;
+}
+
+/* Estilos para os Cards do Desapega */
+.desapega-card {
+  background: rgba(30, 41, 59, 0.9);
+  border-radius: 12px;
+  padding: 15px;
+  margin-bottom: 15px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+.desapega-img {
+  width: 100%;
+  max-height: 250px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 10px;
+}
+.desapega-price {
+  font-size: 20px;
+  font-weight: bold;
+  color: #22c55e;
+  margin: 5px 0;
+}
+.desapega-contact {
+  display: inline-block;
+  background: #25D366;
+  color: white;
+  padding: 8px 15px;
+  border-radius: 20px;
+  text-decoration: none;
+  font-size: 14px;
+  margin-top: 10px;
+  font-weight: bold;
+}
+.btn-postar {
+  background: #f59e0b;
+  width: 100%;
+  margin-bottom: 20px;
+  padding: 12px;
+}
+.desapega-form {
+  background: rgba(15, 23, 42, 0.8);
+  padding: 20px;
+  border-radius: 15px;
+  margin-bottom: 20px;
+  display: none;
+}
+.desapega-form input, .desapega-form textarea {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 8px;
+  border: none;
+  background: #e5e7eb;
+  color: #1f2937;
+}
 
 /* NOTES */
 #notesPage textarea{
@@ -410,7 +411,6 @@ button:hover{
   display:flex;
   flex-direction:column;
   height:100vh;
-
 }
 
 #chatBox{
@@ -497,20 +497,14 @@ button:hover{
   0%,100%{ box-shadow:0 0 5px rgba(147,51,234,0.2); transform:scale(1); }
   50%{ box-shadow:0 0 15px rgba(147,51,234,0.5); transform:scale(1.02); }
 }
+
 .menu{
-  display:grid;
-
-  grid-template-columns:
-    repeat(auto-fit,minmax(160px,1fr));
-
+  display: grid;
+  grid-template-columns: repeat(auto-fit,minmax(160px,1fr));
   gap:14px;
-
   padding:20px;
-
   margin-top:82vh;
-
   padding-bottom:150px;
-
   align-items:start;
 }
 </style>
@@ -573,7 +567,7 @@ function onYouTubeIframeAPIReady() {
     <button class="estude" onclick="openDynamic('estude','page')">🎓 Estude na UNILA</button>
     <button class="google" onclick="openDynamic('enem','link')">📝 ENEM – Página do Participante</button>
     <button class="noticias" onclick="openDynamic('noticias','page')">📰 Notícias</button>
-	    <button class="desapega" onclick="openPage('desapegaPage')">🛒 Desapega Unileiro</button>
+    <button class="desapega" onclick="openPage('desapegaPage')">🛒 Desapega Unileiro</button>
     <button class="emergencia" onclick="openDynamic('upa','page')">🏥 Hospitais de Emergência 24h (UPA)</button>
   </div>
 
@@ -739,8 +733,6 @@ function onYouTubeIframeAPIReady() {
     // ============================================
     // SISTEMA DE CONTEÚDO DINÂMICO (Firebase)
     // ============================================
-
-    // Valores padrão (fallback caso não tenha no Firebase)
     const defaultContent = {
       portal_unila: "https://portal.unila.edu.br/",
       sigaa: "https://sig.unila.edu.br/sigaa/verTelaLogin.do",
@@ -758,207 +750,78 @@ function onYouTubeIframeAPIReady() {
       grupo_facebook: "https://facebook.com/groups/1469303078173697/",
       dev: "Para trabalhos e parcerias entre em contato:\n\nFernando - Serviço Social\nContato: +55 45 99949-9759",
       internet: "Para configurar a internet da UNILA (redes UNILA ou eduroam), conecte-se à rede e utilize as configurações abaixo:\n\n📶 Configuração geral:\n• Método EAP: PEAP\n• Autenticação Fase 2: MSCHAPV2\n• Certificado CA: Não validar ou não especificado\n• Identidade/Usuário: seu e-mail institucional (sem @unila.edu.br)\n• Senha: senha do e-mail institucional\n\n📱 Android:\n• Conecte na rede UNILA ou eduroam\n• Use as configurações acima\n\n🍎 iPhone:\n• Conecte na rede\n• Insira login e aceite certificado\n\n⚠ Dispositivos Motorola precisa outras configurações. Problemas: procure suporte da UNILA",
-      estude: "A Universidade Federal da Integração Latino-Americana (UNILA), localizada em Foz do Iguaçu-PR, é uma instituição pública, gratuita e voltada à integração entre os países da América Latina.\n\nA universidade oferece cerca de 29 cursos de graduação presenciais em diversas áreas do conhecimento.\n\n🏛 Estrutura acadêmica:\n• ILAACH – Artes, Cultura e História\n• ILACVN – Ciências da Vida e da Natureza\n• ILAESP – Economia, Sociedade e Política\n• ILATIT – Tecnologia, Infraestrutura e Território\n\n📌 Formas de ingresso:\n• SiSU (nota do ENEM)\n• Processo Seletivo Internacional (PSI)\n• Processo Seletivo para Indígenas (PSIN)\n• Curso de Música com seleção própria\n• Vagas remanescentes\n\n📊 Qualidade acadêmica: Nota 4 (de 5) no IGC do MEC.",
-      enem: "https://enem.inep.gov.br/participante/#!/",
-      noticias: "Comerciantes locais, Bares, Pessoal da Feirinha da Unila, etc, se tiver interesse em divulgar seu negócio aqui entre em contato com o Desenvolvedor do App\n\nPor motivo que grupo o oficial da UNILA no Facebook com aproximadamente 20 mil Membros está desativado por motivo desconhecido, criamos outro que será livre para postar. Clique no botão \"GRUPO NO FACEBOOK\" e participe!\n\nPara salvar o Email institucional neste App faça login no navegador do Google e salve a senha memorizada.\n\nEstudantes não pagam transporte público em Foz.\n\nObras do Campus Arandú estão em fase final e será entregue em 2028.",
-      upa: "📍 UPA João Samek\nAv. Gramado, 450 – Jardim Lancaster\n📞 (45) 2105-8000\n\n📍 UPA Morumbi\nAv. Mário Filho, s/n – Morumbi\n📞 (45) 2105-8200\n\n📍 Hospital Municipal Padre Germano Lauck\nRua Adoniran Barbosa, 370 – Parque Presidente\n📞 (45) 2105-4100\n\n📍 UPA 24h Porto Meira\nRua Airton Moreira, s/n – Porto Meira\n📞 (45) 2105-8300\n\n⚠ Atendimento 24 horas para urgência e emergência.\n\nPara outros tratamentos fora do contexto de urgência e emergência siga para a UBS mais próxima."
+      estude: "A Universidade Federal da Integração Latino-Americana (UNILA), localizada em Foz do Iguaçu-PR, é uma instituição pública..."
     };
 
-    // Títulos dos botões para exibir nas páginas
-    const buttonTitles = {
-      portal_unila: "🌐 Portal Oficial da UNILA",
-      sigaa: "📚 Sistema Acadêmico SIGAA",
-      email: "📧 E-mail Institucional",
-      google: "🔎 Pesquisa Google",
-      instagram: "📸 Instagram UNILA",
-      facebook: "📘 Facebook UNILA",
-      biblioteca: "📖 Biblioteca UNILA",
-      intercampi: "🚌 Transporte Intercampi",
-      smartec: "💻 Smart Tech",
-      editais: "📄 Editais Oficiais",
-      emergencia: "🚨 Telefones de Emergência",
-      enderecos: "🏫 Endereços dos Campus",
-      ru: "🍽️ Restaurantes Universitários",
-      grupo_facebook: "👥 Grupo no Facebook",
-      dev: "👨‍💻 Desenvolvedor",
-      internet: "🌐 Internet UNILA",
-      estude: "🎓 Estude na UNILA",
-      enem: "📝 ENEM – Página do Participante",
-      noticias: "📰 Notícias",
-      upa: "🏥 Hospitais de Emergência 24h (UPA)"
-    };
-
-    // Cache local dos conteúdos
     let contentCache = {};
 
-    // Carregar todos os conteúdos do Firebase ao iniciar
     async function loadAllContent() {
       try {
         const snapshot = await db.collection('admin_content').get();
-        snapshot.forEach(doc => {
-          contentCache[doc.id] = doc.data().value;
-        });
-        console.log("Conteúdos carregados do Firebase:", Object.keys(contentCache).length);
-      } catch(e) {
-        console.log("Usando conteúdos padrão (offline ou erro):", e);
-      }
+        snapshot.forEach(doc => { contentCache[doc.id] = doc.data().value; });
+      } catch(e) { console.log(e); }
     }
 
-    // Escutar mudanças em tempo real
     function listenContentChanges() {
       db.collection('admin_content').onSnapshot(snapshot => {
         snapshot.docChanges().forEach(change => {
-          if (change.type === 'added' || change.type === 'modified') {
-            contentCache[change.doc.id] = change.doc.data().value;
+          contentCache[change.doc.id] = change.doc.data().value;
+          if(document.getElementById('dynamicPage').style.display === 'block' && 
+             document.getElementById('dynamicTitle').textContent === change.doc.id.toUpperCase()) {
+             document.getElementById('dynamicContent').innerHTML = change.doc.data().value;
           }
         });
       });
     }
 
-    // Obter conteúdo (Firebase > Cache > Padrão)
-    function getContent(id) {
-      return contentCache[id] || defaultContent[id] || '';
-    }
+    function getContent(id) { return contentCache[id] || defaultContent[id] || "Conteúdo não encontrado."; }
 
-    // Função principal: abrir conteúdo dinâmico
     async function openDynamic(id, type) {
-      // Tentar buscar do Firebase primeiro (caso tenha atualização recente)
-      let value = getContent(id);
-
-      // Tentar atualizar do Firebase em tempo real
-      try {
-        const doc = await db.collection('admin_content').doc(id).get();
-        if (doc.exists) {
-          value = doc.data().value;
-          contentCache[id] = value;
-        }
-      } catch(e) {
-        // Usa cache/padrão se offline
-      }
-
-      if (type === 'link') {
-        window.open(value, "_blank");
-      } else {
-        // Mostrar página dinâmica
-        document.getElementById("home").style.display = "none";
-        document.querySelectorAll(".page").forEach(p => p.style.display = "none");
-        
-        document.getElementById("dynamicTitle").textContent = buttonTitles[id] || id;
-        document.getElementById("dynamicContent").innerHTML = value;
-        document.getElementById("dynamicPage").style.display = "block";
+      const val = getContent(id);
+      if(type === 'link') { window.open(val, "_blank"); } 
+      else {
+        document.getElementById("dynamicTitle").textContent = id.toUpperCase();
+        document.getElementById("dynamicContent").innerHTML = val;
+        openPage('dynamicPage');
       }
     }
 
-    // ============================================
-    // FUNÇÕES ORIGINAIS DO APP
-    // ============================================
+    // Scroll Automático Suave
+    function scrollToTop() { window.scrollTo({ top: 0, behavior: 'smooth' }); }
 
-    async function generateSignature(params, secret) {
-      const sortedParams = Object.keys(params).sort().map(key => `${key}=${params[key]}`).join('&');
-      const stringToSign = sortedParams + secret;
-      const encoder = new TextEncoder();
-      const data = encoder.encode(stringToSign);
-      const hashBuffer = await crypto.subtle.digest('SHA-1', data);
-      const hashArray = Array.from(new Uint8Array(hashBuffer));
-      return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-    }
-
-    async function uploadImageToCloudinary(file) {
-      const timestamp = Math.round(new Date().getTime() / 1000);
-      const signature = await generateSignature({ timestamp: timestamp }, CLOUDINARY_API_SECRET);
-
-      const formData = new FormData();
-      formData.append('file', file);
-      formData.append('api_key', CLOUDINARY_API_KEY);
-      formData.append('timestamp', timestamp);
-      formData.append('signature', signature);
-
-      try {
-        const response = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`, {
-          method: 'POST',
-          body: formData,
-        });
-        const data = await response.json();
-        if (data.secure_url) {
-          return data.secure_url;
-        } else {
-          console.error('Erro no upload do Cloudinary:', data);
-          alert("Erro no Cloudinary: " + (data.error ? data.error.message : "Desconhecido"));
-          return null;
-        }
-      } catch (error) {
-        console.error('Erro ao conectar com o Cloudinary:', error);
-        return null;
-      }
-    }
-
-    function openLink(u){ window.open(u, "_blank"); }
-
-    function openPage(id){
-      document.getElementById("home").style.display="none";
-      document.querySelectorAll(".page").forEach(p=>p.style.display="none");
-      document.getElementById(id).style.display="block";
-      document.body.style.setProperty('--home-bottom', '90px');
+    function openPage(id) {
+      document.getElementById("home").style.display = "none";
+      document.querySelectorAll(".page").forEach(p => p.style.display = "none");
+      document.getElementById(id).style.display = "block";
+      scrollToTop();
+      if(id === 'chatPage') listenChat();
       if(id === 'notesPage') loadNotes();
       if(id === 'desapegaPage') listenAds();
-      if(id === 'chatPage' && nick) listenChat();
     }
 
-    function goHome(){
-      document.getElementById("home").style.display="grid";
-      document.querySelectorAll(".page").forEach(p=>p.style.display="none");
-      document.getElementById("radioPlayer").style.display="none";
+    function goHome() {
+      document.getElementById("home").style.display = "grid";
+      document.querySelectorAll(".page").forEach(p => p.style.display = "none");
+      scrollToTop();
     }
 
-    function shareApp(){
-      const texto = "📲 Baixe o App da UNILA:";
-      const url = "https://drive.google.com/file/d/1XgYsFJlnd8VuQGAyYopxNI2Huuknsugo/view?usp=drivesdk";
-      const mensagem = encodeURIComponent(texto + " " + url);
-      window.open("https://api.whatsapp.com/send?text=" + mensagem, "_system");
+    function shareApp() {
+      if (navigator.share) {
+        navigator.share({ title: 'UNILA App', text: 'Confira o App da Comunidade UNILA!', url: window.location.href }).catch(console.error);
+      } else { alert("Link do App: " + window.location.href); }
     }
 
-    // Anotações
-    function loadNotes(){
-      let list = document.getElementById("list");
-      list.innerHTML = "";
-      let notes = JSON.parse(localStorage.getItem("notes") || "[]");
-      notes.forEach((n, i) => {
-        let div = document.createElement("div");
-        div.className = "note-item";
-        div.innerHTML = `<span>${n}</span> <button class="delete-btn" onclick="deleteNote(${i})">🗑</button>`;
-        list.appendChild(div);
-      });
+    // LÓGICA DO CHAT
+    async function uploadImageToCloudinary(file) {
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('upload_preset', 'ml_default');
+      try {
+        const response = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`, { method: 'POST', body: formData });
+        const data = await response.json();
+        return data.secure_url;
+      } catch (e) { console.error(e); return null; }
     }
-
-    function saveNote(){
-      let t = document.getElementById("note").value;
-      if(!t) return;
-      let notes = JSON.parse(localStorage.getItem("notes") || "[]");
-      notes.push(t);
-      localStorage.setItem("notes", JSON.stringify(notes));
-      document.getElementById("note").value = "";
-      loadNotes();
-    }
-
-    function deleteNote(i){
-      let notes = JSON.parse(localStorage.getItem("notes") || "[]");
-      notes.splice(i, 1);
-      localStorage.setItem("notes", JSON.stringify(notes));
-      loadNotes();
-    }
-
-    // Data Bar
-    function atualizarDataBar(){
-      const el = document.getElementById("dateBar");
-      function formatarData(){
-        const d = new Date();
-        const dias = ["Dom","Seg","Ter","Qua","Qui","Sex","Sáb"];
-        const meses = ["Jan","Fev","Mar","Abr","Mai","Jun","Jul","Ago","Set","Out","Nov","Dez"];
-        return `${dias[d.getDay()]}, ${d.getDate()} ${meses[d.getMonth()]} ${d.getFullYear()}`;
-      }
-      if(el) el.textContent = formatarData();
-    }
-    setInterval(atualizarDataBar, 60000);
 
     function handleImageSelect(event) {
       const file = event.target.files[0];
@@ -968,715 +831,414 @@ function onYouTubeIframeAPIReady() {
         reader.onload = (e) => {
           document.getElementById("previewImg").src = e.target.result;
           document.getElementById("imagePreview").style.display = "block";
-          document.getElementById("chatInput").placeholder = "Adicione um comentário...";
         };
         reader.readAsDataURL(file);
       }
     }
 
-    function cancelImage() {
-      selectedImage = null;
-      document.getElementById("imagePreview").style.display = "none";
-      document.getElementById("imageUpload").value = "";
-      document.getElementById("chatInput").placeholder = "Digite sua mensagem...";
-    }
+    function cancelImage() { selectedImage = null; document.getElementById("imagePreview").style.display = "none"; document.getElementById("imageUpload").value = ""; }
 
     function setReply(id, user, text) {
-      replyTo = { id, user, text: text || "Imagem" };
-      document.getElementById("replyContent").textContent = `Respondendo a ${user}: ${replyTo.text}`;
+      replyTo = { id, user, text: text.substring(0, 50) + (text.length > 50 ? "..." : "") };
+      document.getElementById("replyContent").textContent = `Respondendo a ${user}: "${replyTo.text}"`;
       document.getElementById("replyPreview").style.display = "block";
       document.getElementById("chatInput").focus();
     }
 
-    function cancelReply() {
-      replyTo = null;
-      document.getElementById("replyPreview").style.display = "none";
-    }
+    function cancelReply() { replyTo = null; document.getElementById("replyPreview").style.display = "none"; }
 
-    function sendMessage(){
+    function sendMessage() {
       const input = document.getElementById("chatInput");
       const text = input.value.trim();
-      
       if (!text && !selectedImage) return;
-
       const isAnonymous = document.getElementById("chatAnonymous").checked;
-      const messageData = {
-        nick: isAnonymous ? "Anônimo 👤" : nick,
-        realNick: nick, // Mantemos o realNick para controle do autor e ADM
-        time: Date.now(),
-        anonymous: isAnonymous
-      };
-
-      if (replyTo) {
-        messageData.reply = replyTo;
-        cancelReply();
-      }
-
+      const messageData = { nick: isAnonymous ? "Anônimo 👤" : nick, realNick: nick, time: Date.now(), anonymous: isAnonymous };
+      if (replyTo) { messageData.reply = replyTo; cancelReply(); }
       if (selectedImage) {
-        const originalPlaceholder = input.placeholder;
-        input.placeholder = "Enviando...";
-        input.disabled = true;
-        
+        const originalPlaceholder = input.placeholder; input.placeholder = "Enviando..."; input.disabled = true;
         uploadImageToCloudinary(selectedImage).then(imageUrl => {
-          input.disabled = false;
-          input.placeholder = originalPlaceholder;
-
-          if (imageUrl) {
-            messageData.imageUrl = imageUrl;
-            messageData.text = text;
-            db.collection("chat").add(messageData);
-            cancelImage();
-            input.value = "";
-          }
+          input.disabled = false; input.placeholder = originalPlaceholder;
+          if (imageUrl) { messageData.imageUrl = imageUrl; messageData.text = text; db.collection("chat").add(messageData); cancelImage(); input.value = ""; }
         });
-      } else {
-        messageData.text = text;
-        db.collection("chat").add(messageData);
-        input.value = "";
-        document.getElementById("chatAnonymous").checked = false;
-      }
+      } else { messageData.text = text; db.collection("chat").add(messageData); input.value = ""; document.getElementById("chatAnonymous").checked = false; }
     }
 
-    let chatMessages = [];
-    let unsubscribeChat = null;
-
     function formatarDataMensagem(timestamp){
-      const data = new Date(timestamp);
-      const agora = new Date();
-      const ontem = new Date();
-      ontem.setDate(agora.getDate() - 1);
-      const mesmoDia = data.toDateString() === agora.toDateString();
-      const ehOntem = data.toDateString() === ontem.toDateString();
+      const data = new Date(timestamp); const agora = new Date(); const ontem = new Date(); ontem.setDate(agora.getDate() - 1);
+      const mesmoDia = data.toDateString() === agora.toDateString(); const ehOntem = data.toDateString() === ontem.toDateString();
       const hora = data.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
-      if(mesmoDia) return `Hoje às ${hora}`;
-      if(ehOntem) return `Ontem às ${hora}`;
+      if(mesmoDia) return `Hoje às ${hora}`; if(ehOntem) return `Ontem às ${hora}`;
       return data.toLocaleDateString('pt-BR') + ` às ${hora}`;
     }
 
     function renderMessages(append = false) {
-      const box = document.getElementById("chatBox");
-      const oldScrollHeight = box.scrollHeight;
-      const oldScrollTop = box.scrollTop;
-
-      if (!append) box.innerHTML = "";
-      
-      const fragment = document.createDocumentFragment();
-      
+      const box = document.getElementById("chatBox"); const oldScrollHeight = box.scrollHeight; const oldScrollTop = box.scrollTop;
+      if (!append) box.innerHTML = ""; const fragment = document.createDocumentFragment();
       chatMessages.forEach(m => {
         if (document.getElementById(m.id)) return;
-
-        // Permite excluir se for o autor real ou o administrador
         let deleteBtn = (m.realNick === nick || nick === ADMIN_NICK) ? `<button onclick="deleteMsg('${m.id}', '${m.realNick || m.nick}')" style="background:none; border:none; color:#94a3b8; cursor:pointer; margin-left:10px;">🗑</button>` : "";
         let replyBtn = `<button onclick="setReply('${m.id}', '${m.nick}', '${(m.text || "Imagem").replace(/'/g, "\\\'")}')" style="background:none; border:none; color:#3b82f6; cursor:pointer;">↩ Responder</button>`;
-        
-        const div = document.createElement("div");
-        div.className = "msg";
-        div.id = m.id;
-        
+        const div = document.createElement("div"); div.className = "msg"; div.id = m.id;
         let messageContent = "";
-        if (m.reply) {
-          messageContent += `<div class="reply-box" onclick="document.getElementById('${m.reply.id}').scrollIntoView({behavior:'smooth'})">
-            <strong>${m.reply.user}</strong>: ${m.reply.text}
-          </div>`;
-        }
-        if (m.imageUrl) {
-          messageContent += `<img src="${m.imageUrl}" style="max-width:100%; max-height:300px; border-radius:8px; margin-top:5px; display:block;" onclick="window.open('${m.imageUrl}', '_blank')" />`;
-        }
-        if (m.text) {
-          messageContent += `<div style="margin-top:5px;">${m.text}</div>`;
-        }
-
+        if (m.reply) { messageContent += `<div class="reply-box" onclick="document.getElementById('${m.reply.id}').scrollIntoView({behavior:'smooth'})"><strong>${m.reply.user}</strong>: ${m.reply.text}</div>`; }
+        if (m.imageUrl) { messageContent += `<img src="${m.imageUrl}" style="max-width:100%; max-height:300px; border-radius:8px; margin-top:5px; display:block;" onclick="window.open('${m.imageUrl}', '_blank')" />`; }
+        if (m.text) { messageContent += `<div style="margin-top:5px;">${m.text}</div>`; }
         div.innerHTML = `<strong>${m.nick}:</strong> ${messageContent}<small>${formatarDataMensagem(m.time)} ${replyBtn} ${deleteBtn}</small>`;
         fragment.appendChild(div);
       });
-
-      if (append) {
-        box.prepend(fragment);
-        box.scrollTop = box.scrollHeight - oldScrollHeight + oldScrollTop;
-      } else {
-        box.appendChild(fragment);
-        box.scrollTop = box.scrollHeight;
-      }
+      if (append) { box.prepend(fragment); box.scrollTop = box.scrollHeight - oldScrollHeight + oldScrollTop; } 
+      else { box.appendChild(fragment); box.scrollTop = box.scrollHeight; }
     }
 
+    let chatMessages = []; let unsubscribeChat = null;
     function listenChat() {
       if (unsubscribeChat) unsubscribeChat();
-      
-      unsubscribeChat = db.collection("chat")
-        .orderBy("time", "desc")
-        .limit(LIMIT)
-        .onSnapshot(snapshot => {
-          const newMessages = [];
-          snapshot.docs.forEach(doc => {
-            newMessages.push({ id: doc.id, ...doc.data() });
-          });
-          
-          const loadedIds = new Set(chatMessages.map(m => m.id));
-          const updates = newMessages.filter(m => !loadedIds.has(m.id));
-          
-          if (updates.length > 0) {
-            chatMessages = [...chatMessages, ...updates].sort((a, b) => a.time - b.time);
-            renderMessages();
-          }
-
-          if (snapshot.docs.length > 0) {
-            lastDoc = snapshot.docs[snapshot.docs.length - 1];
-          }
-        });
-
-      const box = document.getElementById("chatBox");
-      box.onscroll = () => {
-        if (box.scrollTop === 0 && !loadingMore && lastDoc) {
-          loadMoreMessages();
-        }
-      };
+      unsubscribeChat = db.collection("chat").orderBy("time", "desc").limit(LIMIT).onSnapshot(snapshot => {
+        const newMessages = []; snapshot.docs.forEach(doc => { newMessages.push({ id: doc.id, ...doc.data() }); });
+        const loadedIds = new Set(chatMessages.map(m => m.id)); const updates = newMessages.filter(m => !loadedIds.has(m.id));
+        if (updates.length > 0) { chatMessages = [...chatMessages, ...updates].sort((a, b) => a.time - b.time); renderMessages(); }
+        if (snapshot.docs.length > 0) { lastDoc = snapshot.docs[snapshot.docs.length - 1]; }
+      });
+      const box = document.getElementById("chatBox"); box.onscroll = () => { if (box.scrollTop === 0 && !loadingMore && lastDoc) { loadMoreMessages(); } };
     }
 
     async function loadMoreMessages() {
-      loadingMore = true;
-      const loadingDiv = document.createElement("div");
-      loadingDiv.innerHTML = "Carregando mensagens antigas...";
-      loadingDiv.style.textAlign = "center";
-      loadingDiv.style.padding = "10px";
-      loadingDiv.style.fontSize = "12px";
-      document.getElementById("chatBox").prepend(loadingDiv);
-
-      const snapshot = await db.collection("chat")
-        .orderBy("time", "desc")
-        .startAfter(lastDoc)
-        .limit(LIMIT)
-        .get();
-
+      loadingMore = true; const box = document.getElementById("chatBox"); const loadingDiv = document.createElement("div");
+      loadingDiv.innerHTML = "Carregando mensagens antigas..."; loadingDiv.style.textAlign = "center"; loadingDiv.style.padding = "10px"; box.prepend(loadingDiv);
+      const snapshot = await db.collection("chat").orderBy("time", "desc").startAfter(lastDoc).limit(LIMIT).get();
       loadingDiv.remove();
-
       if (snapshot.docs.length > 0) {
-        const olderMessages = [];
-        snapshot.docs.forEach(doc => {
-          olderMessages.push({ id: doc.id, ...doc.data() });
-        });
-        
-        chatMessages = [...olderMessages, ...chatMessages].sort((a, b) => a.time - b.time);
-        lastDoc = snapshot.docs[snapshot.docs.length - 1];
-        renderMessages(true);
+        const olderMessages = []; snapshot.docs.forEach(doc => { olderMessages.push({ id: doc.id, ...doc.data() }); });
+        chatMessages = [...olderMessages, ...chatMessages].sort((a, b) => a.time - b.time); lastDoc = snapshot.docs[snapshot.docs.length - 1]; renderMessages(true);
       }
       loadingMore = false;
     }
 
-    async function deleteMsg(id, msgNick){
-      if(msgNick === nick || nick === ADMIN_NICK) {
-        try {
-          await db.collection("chat").doc(id).delete();
-          const el = document.getElementById(id);
-          if(el) el.remove();
-        } catch (e) {
-          console.error("Erro ao apagar mensagem:", e);
+    async function deleteMsg(id, msgNick){ if(msgNick === nick || nick === ADMIN_NICK) { try { await db.collection("chat").doc(id).delete(); const el = document.getElementById(id); if(el) el.remove(); } catch (e) { console.error(e); } } }
+
+    async function saveNick(){
+      const btn = event.target; const originalText = btn.textContent; const input = document.getElementById("nickInput").value.trim();
+      if(!input) { alert("Digite um Nick!"); return; }
+      try {
+        btn.disabled = true; btn.textContent = "Verificando..."; const nickRef = db.collection("users").doc(input); const doc = await nickRef.get();
+        if(doc.exists && input !== ADMIN_NICK){
+          const data = doc.data(); if(Date.now() - (data.lastActive || 0) < 30000){ alert("Nick em uso!"); btn.disabled = false; btn.textContent = originalText; return; }
         }
+        await nickRef.set({ createdAt: Date.now(), lastActive: Date.now() }); nick = input; localStorage.setItem("chat_nick", nick);
+        document.getElementById("nickArea").style.display="none"; document.getElementById("chatArea").style.display="block";
+        if(nick === ADMIN_NICK) document.getElementById("changeNickBtn").style.display = "block"; listenChat();
+      } catch (e) { alert("Erro: " + e.message); } finally { btn.disabled = false; btn.textContent = originalText; }
+    }
+
+    function changeNick(){ if(nick) db.collection("users").doc(nick).delete(); localStorage.removeItem("chat_nick"); nick = ""; document.getElementById("chatArea").style.display = "none"; document.getElementById("nickArea").style.display = "block"; }
+    function atualizarAtividade(){ if(nick) db.collection("users").doc(nick).update({ lastActive: Date.now() }); }
+    setInterval(atualizarAtividade, 60000);
+
+    function toggleRadioSimples() {
+      const player = document.getElementById("radioPlayer"); const iframe = document.getElementById("ytRadio");
+      if (player.style.display === "none") {
+        player.style.display = "block"; iframe.contentWindow.postMessage(JSON.stringify({event: "command", func: "playVideo", args: []}), "*");
+        setTimeout(() => player.scrollIntoView({ behavior: "smooth" }), 300);
+      } else { player.style.display = "none"; iframe.contentWindow.postMessage(JSON.stringify({event: "command", func: "pauseVideo", args: []}), "*"); }
+    }
+
+    function saveNote() {
+      const noteText = document.getElementById("note").value.trim(); if(!noteText) return;
+      let notes = JSON.parse(localStorage.getItem("notes") || "[]"); notes.push({ id: Date.now(), text: noteText });
+      localStorage.setItem("notes", JSON.stringify(notes)); document.getElementById("note").value = ""; loadNotes();
+    }
+    function loadNotes() {
+      const list = document.getElementById("list"); let notes = JSON.parse(localStorage.getItem("notes") || "[]");
+      list.innerHTML = notes.map(n => `<div class="note-item"><span>${n.text}</span><button class="delete-btn" onclick="deleteNote(${n.id})">🗑</button></div>`).join("");
+    }
+    function deleteNote(id) { let notes = JSON.parse(localStorage.getItem("notes") || "[]"); notes = notes.filter(n => n.id !== id); localStorage.setItem("notes", JSON.stringify(notes)); loadNotes(); }
+
+    function deleteAd(id) { db.collection("desapega").doc(id).delete().catch(console.error); }
+
+    // ============================================
+    // SISTEMA DE ANÚNCIOS (DESAPEGA)
+    // ============================================
+    let adPhotos = {};
+    let editingAdId = null;
+    let replyToAdId = null;
+
+    function toggleDesapegaForm() {
+      const form = document.getElementById("desapegaForm");
+      const isVisible = form.style.display === "block";
+      form.style.display = isVisible ? "none" : "block";
+      if (!isVisible) {
+        document.getElementById("adFormTitle").textContent = "Novo Anúncio";
+        document.getElementById("adId").value = "";
+        document.getElementById("adTitle").value = "";
+        document.getElementById("adPrice").value = "";
+        document.getElementById("adDesc").value = "";
+        document.getElementById("adWhatsapp").value = "";
+        document.getElementById("adAnonymous").checked = false;
+        adPhotos = {};
+        document.getElementById("adPreview1").style.display = "none";
+        document.getElementById("adPreview2").style.display = "none";
+        document.getElementById("btnDelPhoto1").style.display = "none";
+        document.getElementById("btnDelPhoto2").style.display = "none";
+        document.getElementById("adImage1").value = "";
+        document.getElementById("adImage2").value = "";
+        editingAdId = null;
       }
     }
 
-    async function saveNick(){
-      const btn = event.target;
-      const originalText = btn.textContent;
-      const input = document.getElementById("nickInput").value.trim();
-      
-      if(!input) {
-        alert("Por favor, digite um Nick!");
+    function handleAdImageSelect(event, photoNum) {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          adPhotos[photoNum] = e.target.result;
+          const previewId = `adPreview${photoNum}`;
+          const btnDelId = `btnDelPhoto${photoNum}`;
+          document.getElementById(previewId).src = e.target.result;
+          document.getElementById(previewId).style.display = "block";
+          document.getElementById(btnDelId).style.display = "flex";
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    function removeAdPhoto(photoIndex) {
+      const photoNum = photoIndex + 1;
+      delete adPhotos[photoNum];
+      document.getElementById(`adPreview${photoNum}`).style.display = "none";
+      document.getElementById(`btnDelPhoto${photoNum}`).style.display = "none";
+      document.getElementById(`adImage${photoNum}`).value = "";
+    }
+
+    async function saveAd() {
+      const title = document.getElementById("adTitle").value.trim();
+      const price = document.getElementById("adPrice").value.trim();
+      const desc = document.getElementById("adDesc").value.trim();
+      const whatsapp = document.getElementById("adWhatsapp").value.trim();
+      const isAnonymous = document.getElementById("adAnonymous").checked;
+
+      if (!title || !price || !desc || !whatsapp) {
+        alert("Preencha todos os campos!");
         return;
       }
 
+      const btn = document.getElementById("btnSaveAd");
+      const originalText = btn.textContent;
+      btn.disabled = true;
+      btn.textContent = "Salvando...";
+
       try {
-        btn.disabled = true;
-        btn.textContent = "Verificando...";
-        
-        const nickRef = db.collection("users").doc(input);
-        const doc = await nickRef.get();
-        
-        if(doc.exists && input !== ADMIN_NICK){
-          const data = doc.data();
-          // Se o nick já existe e foi ativo nos últimos 30 segundos, está em uso
-          // EXCETO se for o Fernando, que pode entrar sempre
-          if(Date.now() - (data.lastActive || 0) < 30000){
-            alert("❌ Este nick já está em uso!");
-            btn.disabled = false;
-            btn.textContent = originalText;
-            return;
+        const uploadedPhotos = {};
+        for (let photoNum in adPhotos) {
+          const photoData = adPhotos[photoNum];
+          if (photoData && photoData.startsWith('data:')) {
+            // Nova imagem (Base64), precisa de upload
+            const imageUrl = await uploadImageToCloudinary(
+              dataURLtoFile(photoData, `ad_photo_${Date.now()}_${photoNum}.jpg`)
+            );
+            if (imageUrl) uploadedPhotos[photoNum] = imageUrl;
+          } else if (photoData) {
+            // Já é uma URL (Cloudinary), mantém como está
+            uploadedPhotos[photoNum] = photoData;
           }
         }
-        
-        await nickRef.set({ createdAt: Date.now(), lastActive: Date.now() });
-        nick = input;
-        localStorage.setItem("chat_nick", nick);
-        
-        document.getElementById("nickArea").style.display="none";
-        document.getElementById("chatArea").style.display="block";
-        if(nick === ADMIN_NICK) document.getElementById("changeNickBtn").style.display = "block";
-        
-        listenChat();
+
+        const adData = {
+          title,
+          price,
+          desc,
+          whatsapp,
+          photos: uploadedPhotos,
+          postedBy: isAnonymous ? "Anônimo 👤" : nick,
+          realNick: nick,
+          anonymous: isAnonymous,
+          updatedAt: Date.now()
+        };
+
+        if (editingAdId) {
+          // Na edição, não sobrescrevemos o createdAt
+          await db.collection("desapega").doc(editingAdId).update(adData);
+        } else {
+          // No novo anúncio, definimos o createdAt
+          adData.createdAt = Date.now();
+          await db.collection("desapega").add(adData);
+        }
+
+        alert("Anúncio salvo com sucesso!");
+        toggleDesapegaForm();
+        listenAds();
       } catch (e) {
-        console.error("Erro ao salvar nick:", e);
-        alert("❌ Erro ao acessar o chat: " + e.message + "\nVerifique sua conexão ou as configurações do Firebase.");
+        console.error(e);
+        alert("Erro ao salvar: " + e.message);
       } finally {
         btn.disabled = false;
         btn.textContent = originalText;
       }
     }
 
-    function changeNick(){
-      if(nick) db.collection("users").doc(nick).delete();
-      localStorage.removeItem("chat_nick");
-      nick = "";
-      document.getElementById("chatArea").style.display = "none";
-      document.getElementById("nickArea").style.display = "block";
+    function dataURLtoFile(dataurl, filename) {
+      const arr = dataurl.split(',');
+      const mime = arr[0].match(/:(.*?);/)[1];
+      const bstr = atob(arr[1]);
+      let n = bstr.length;
+      const u8arr = new Uint8Array(n);
+      while (n--) u8arr[n] = bstr.charCodeAt(n);
+      return new File([u8arr], filename, { type: mime });
     }
 
-    function atualizarAtividade(){
-      if(nick) db.collection("users").doc(nick).update({ lastActive: Date.now() });
-    }
-    setInterval(atualizarAtividade, 60000);
-
-    // Radio logic
-    function toggleRadioSimples() {
-      const player = document.getElementById("radioPlayer");
-      const iframe = document.getElementById("ytRadio");
-      if (player.style.display === "none") {
-        player.style.display = "block";
-        iframe.contentWindow.postMessage(JSON.stringify({event: "command", func: "playVideo", args: []}), "*");
-        setTimeout(() => player.scrollIntoView({ behavior: "smooth" }), 300);
-      } else {
-        player.style.display = "none";
-        iframe.contentWindow.postMessage(JSON.stringify({event: "command", func: "pauseVideo", args: []}), "*");
-      }
+    function cancelAdEdit() {
+      toggleDesapegaForm();
+      editingAdId = null;
     }
 
-    // Theme colors
-    const colors = ["#1a0033", "#2b0a4a", "#3b0f66", "#120022"];
-    let colorIdx = 0;
-    setInterval(() => {
-      colorIdx = (colorIdx + 1) % colors.length;
-      document.querySelector("meta[name=theme-color]").setAttribute("content", colors[colorIdx]);
-    }, 3000);
+    function editAd(id, adJson) {
+      const ad = typeof adJson === 'string' ? JSON.parse(decodeURIComponent(adJson)) : adJson;
+      editingAdId = id;
+      document.getElementById("adFormTitle").textContent = "Editar Anúncio";
+      document.getElementById("adId").value = id;
+      document.getElementById("adTitle").value = ad.title;
+      document.getElementById("adPrice").value = ad.price;
+      document.getElementById("adDesc").value = ad.desc;
+      document.getElementById("adWhatsapp").value = ad.whatsapp;
+      document.getElementById("adAnonymous").checked = ad.anonymous || false;
+      adPhotos = {};
+      
+      // Resetar inputs de arquivo
+      document.getElementById("adImage1").value = "";
+      document.getElementById("adImage2").value = "";
 
-    // ============================================
-    // LÓGICA DESAPEGA UNILEIRO
-    // ============================================
-    let adPhotos = [null, null];
-    let existingPhotos = [null, null];
-    let unsubscribeAds = null;
-    let lastAdDoc = null;
-    let loadingMoreAds = false;
-    const AD_LIMIT = 10;
-
-    function toggleDesapegaForm() {
-      const form = document.getElementById("desapegaForm");
-      form.style.display = form.style.display === "block" ? "none" : "block";
-      if(form.style.display === "none") resetAdForm();
-    }
-
-    function resetAdForm() {
-      document.getElementById("adId").value = "";
-      document.getElementById("adTitle").value = "";
-      document.getElementById("adPrice").value = "";
-      document.getElementById("adDesc").value = "";
-      document.getElementById("adWhatsapp").value = "";
+      // Limpar previews antes de carregar novos
       document.getElementById("adPreview1").style.display = "none";
       document.getElementById("adPreview2").style.display = "none";
       document.getElementById("btnDelPhoto1").style.display = "none";
       document.getElementById("btnDelPhoto2").style.display = "none";
-      document.getElementById("adImage1").value = "";
-      document.getElementById("adImage2").value = "";
-      document.getElementById("adFormTitle").textContent = "Novo Anúncio";
-      adPhotos = [null, null];
-      existingPhotos = [null, null];
-    }
 
-    function cancelAdEdit() {
-      resetAdForm();
-      toggleDesapegaForm();
-    }
-
-    function handleAdImageSelect(event, index) {
-      const file = event.target.files[0];
-      if (file) {
-        adPhotos[index-1] = file;
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          const preview = document.getElementById("adPreview" + index);
-          preview.src = e.target.result;
-          preview.style.display = "block";
-          document.getElementById("btnDelPhoto" + index).style.display = "flex";
-        };
-        reader.readAsDataURL(file);
-      }
-    }
-
-    function removeAdPhoto(index) {
-      existingPhotos[index] = null;
-      adPhotos[index] = null;
-      const preview = document.getElementById("adPreview" + (index + 1));
-      if (preview) {
-        preview.src = "";
-        preview.style.display = "none";
-      }
-      document.getElementById("btnDelPhoto" + (index + 1)).style.display = "none";
-      // Limpar o input file correspondente para permitir selecionar a mesma imagem novamente se desejar
-      document.getElementById("adImage" + (index + 1)).value = "";
-    }
-
-    async function saveAd() {
-      const adId = document.getElementById("adId").value;
-      const title = document.getElementById("adTitle").value.trim();
-      const price = document.getElementById("adPrice").value.trim();
-      const desc = document.getElementById("adDesc").value.trim();
-      const whatsapp = document.getElementById("adWhatsapp").value.trim();
-      const btn = document.getElementById("btnSaveAd");
-
-      if (!title || !price || !whatsapp) {
-        alert("Preencha os campos obrigatórios!");
-        return;
-      }
-
-      // No modo de edição, permitimos salvar se já existirem fotos. No modo novo, precisa de pelo menos uma nova.
-      if (!adId && !adPhotos[0] && !adPhotos[1]) {
-        alert("Selecione pelo menos uma foto!");
-        return;
-      }
-
-      btn.disabled = true;
-      btn.textContent = "Processando...";
-
-      try {
-        // Garantir que temos um nick
-        if (!nick) {
-          alert("Você precisa estar logado (definir um nick) para postar!");
-          btn.disabled = false;
-          btn.textContent = "Salvar";
-          return;
-        }
-
-        let finalUrls = [existingPhotos[0] || null, existingPhotos[1] || null];
-
-        // Upload de novas fotos (se houver)
-        for (let i = 0; i < 2; i++) {
-          if (adPhotos[i]) {
-            btn.textContent = `Enviando foto ${i+1}...`;
-            const url = await uploadImageToCloudinary(adPhotos[i]);
-            if (url) {
-              finalUrls[i] = url;
-            } else {
-              throw new Error(`Falha no upload da imagem ${i+1}`);
-            }
+      if (ad.photos) {
+        for (let key in ad.photos) {
+          const photoNum = key;
+          const previewId = `adPreview${photoNum}`;
+          const btnDelId = `btnDelPhoto${photoNum}`;
+          if (document.getElementById(previewId)) {
+            document.getElementById(previewId).src = ad.photos[key];
+            document.getElementById(previewId).style.display = "block";
+            document.getElementById(btnDelId).style.display = "flex";
+            adPhotos[photoNum] = ad.photos[key];
           }
         }
-
-        // Filtrar URLs nulas (caso o usuário tenha removido ou não enviado a segunda foto)
-        const validPhotos = finalUrls.filter(u => u !== null);
-        if (validPhotos.length === 0) {
-          alert("O anúncio precisa de pelo menos uma foto!");
-          btn.disabled = false;
-          btn.textContent = "Salvar";
-          return;
-        }
-
-        const isAnonymous = document.getElementById("adAnonymous").checked;
-        const adData = {
-          title,
-          price,
-          desc,
-          whatsapp,
-          photos: validPhotos,
-          nick: isAnonymous ? "Anônimo 👤" : nick,
-          realNick: nick, // Para controle do autor e ADM
-          time: Date.now(),
-          anonymous: isAnonymous
-        };
-
-        btn.textContent = "Salvando dados...";
-        if (adId) {
-          await db.collection("desapega").doc(adId).update(adData);
-          alert("✅ Anúncio atualizado com sucesso!");
-        } else {
-          await db.collection("desapega").add(adData);
-          alert("✅ Anúncio publicado com sucesso!");
-        }
-
-        resetAdForm();
-        document.getElementById("adAnonymous").checked = false;
-        toggleDesapegaForm();
-      } catch (e) {
-        console.error("Erro detalhado:", e);
-        alert("❌ Erro ao salvar: " + e.message);
-      } finally {
-        btn.disabled = false;
-        btn.textContent = "Salvar";
       }
-    }
 
-    function editAd(id, data) {
-      resetAdForm();
-      document.getElementById("adId").value = id;
-      document.getElementById("adTitle").value = data.title;
-      document.getElementById("adPrice").value = data.price;
-      document.getElementById("adDesc").value = data.desc;
-      document.getElementById("adWhatsapp").value = data.whatsapp;
-      document.getElementById("adFormTitle").textContent = "Editar Anúncio";
-      
-      if (data.photos && data.photos.length > 0) {
-        data.photos.forEach((url, i) => {
-          if (i < 2) {
-            existingPhotos[i] = url;
-            const preview = document.getElementById("adPreview" + (i + 1));
-            preview.src = url;
-            preview.style.display = "block";
-            document.getElementById("btnDelPhoto" + (i + 1)).style.display = "flex";
-          }
-        });
-      }
-      
       document.getElementById("desapegaForm").style.display = "block";
-      // Scroll suave para o formulário de edição
-      document.getElementById("desapegaForm").scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-
-    function createAdCard(id, ad) {
-      const card = document.createElement("div");
-      card.className = "desapega-card";
-      card.id = "ad_" + id;
-      
-      let photosHtml = "";
-      if (ad.photos && ad.photos.length > 0) {
-        photosHtml = `<div style="display:grid; grid-template-columns: ${ad.photos.length > 1 ? '1fr 1fr' : '1fr'}; gap:5px;">
-          ${ad.photos.map(p => `<img src="${p}" class="desapega-img" style="height:150px;" onclick="window.open('${p}', '_blank')" />`).join('')}
-        </div>`;
-      }
-
-      let actionsBtn = (ad.realNick === nick || nick === ADMIN_NICK) ? `
-        <div style="display:flex; gap:5px; margin-top:10px;">
-          <button onclick='editAd("${id}", ${JSON.stringify(ad).replace(/'/g, "&apos;")})' style="background:#3b82f6; border:none; color:white; padding:8px; border-radius:5px; font-size:12px; flex:1;">✏️ Editar</button>
-          <button onclick="deleteAd('${id}')" style="background:#dc2626; border:none; color:white; padding:8px; border-radius:5px; font-size:12px; flex:1;">🗑 Excluir</button>
-        </div>
-      ` : "";
-
-      let repliesHtml = "";
-      if (ad.replies && ad.replies.length > 0) {
-        repliesHtml = `<div style="margin-top:10px; padding-left:10px; border-left:2px solid #f59e0b;">
-          ${ad.replies.map((r, index) => `
-            <div style="font-size:13px; background:rgba(255,255,255,0.05); padding:5px; border-radius:5px; margin-bottom:5px;">
-              <div style="display:flex; justify-content:space-between;">
-                <strong>${r.nick}:</strong>
-                ${(r.realNick === nick || nick === ADMIN_NICK) ? `<span onclick="deleteAdReply('${id}', ${index})" style="cursor:pointer; color:#dc2626; font-size:10px;">🗑</span>` : ""}
-              </div>
-              ${r.text}
-            </div>
-          `).join('')}
-        </div>`;
-      }
-
-      card.innerHTML = `
-        ${photosHtml}
-        <h3 style="margin:10px 0 5px 0;">${ad.title}</h3>
-        <p class="desapega-price">${ad.price}</p>
-        <p style="font-size:14px; color:#cbd5e1; white-space:pre-line; margin-bottom:10px;">${ad.desc}</p>
-        <p style="font-size:11px; color:#94a3b8;">Postado por: ${ad.nick}</p>
-        
-        <div style="display:flex; gap:10px; margin-top:10px; align-items:center;">
-          <a href="https://api.whatsapp.com/send?phone=55${ad.whatsapp.replace(/\D/g, '')}" class="desapega-contact" target="_blank" style="margin-top:0; flex:1; text-align:center;">📱 WhatsApp</a>
-          <button onclick="showReplyInput('${id}')" style="background:#3b82f6; padding:8px 15px; border-radius:20px; font-size:14px; font-weight:bold; border:none; color:white; cursor:pointer;">💬 Responder</button>
-        </div>
-
-        <div id="replyInputArea_${id}" style="display:none; margin-top:10px;">
-          <div style="display:flex; gap:5px;">
-            <input type="text" id="replyInput_${id}" placeholder="Escreva sua resposta..." style="flex:1; padding:8px; border-radius:5px; border:none; background:#e5e7eb; color:#1f2937; font-size:13px;" />
-            <button onclick="sendAdReply('${id}')" style="background:#22c55e; border:none; color:white; padding:8px; border-radius:5px; font-size:13px;">➤</button>
-          </div>
-        </div>
-
-        ${repliesHtml}
-        ${actionsBtn}
-      `;
-      return card;
-    }
-
-    function listenAds() {
-      if (unsubscribeAds) unsubscribeAds();
-      const adList = document.getElementById("adList");
-      adList.innerHTML = "";
-      lastAdDoc = null;
-      
-      unsubscribeAds = db.collection("desapega")
-        .orderBy("time", "desc")
-        .limit(AD_LIMIT)
-        .onSnapshot(snapshot => {
-          if (snapshot.empty && !lastAdDoc) {
-            adList.innerHTML = "<p style='text-align:center;'>Nenhum anúncio encontrado.</p>";
-            return;
-          }
-
-          // Para o snapshot inicial ou atualizações de novos itens
-          snapshot.docChanges().forEach(change => {
-            const ad = change.doc.data();
-            const id = change.doc.id;
-            
-            if (change.type === "added") {
-              // Se o card já existe (ex: carregado pelo loadMore), não adiciona de novo
-              if (!document.getElementById("ad_" + id)) {
-                const card = createAdCard(id, ad);
-                // No listenAds (snapshot inicial/novos), adicionamos no topo ou na ordem
-                adList.insertBefore(card, adList.firstChild);
-              }
-            } else if (change.type === "modified") {
-              const oldCard = document.getElementById("ad_" + id);
-              if (oldCard) {
-                const newCard = createAdCard(id, ad);
-                adList.replaceChild(newCard, oldCard);
-              }
-            } else if (change.type === "removed") {
-              const card = document.getElementById("ad_" + id);
-              if (card) card.remove();
-            }
-          });
-
-          if (!lastAdDoc && snapshot.docs.length > 0) {
-            lastAdDoc = snapshot.docs[snapshot.docs.length - 1];
-          }
-        });
-
-      // Evento de scroll para carregar mais
-      const page = document.getElementById("desapegaPage");
-      page.onscroll = () => {
-        if (page.scrollHeight - page.scrollTop <= page.clientHeight + 100) {
-          if (!loadingMoreAds && lastAdDoc) {
-            loadMoreAds();
-          }
-        }
-      };
-    }
-
-    async function loadMoreAds() {
-      if (loadingMoreAds || !lastAdDoc) return;
-      loadingMoreAds = true;
-      
-      const adList = document.getElementById("adList");
-      const loadingDiv = document.createElement("div");
-      loadingDiv.id = "loadingAdsMsg";
-      loadingDiv.innerHTML = "Carregando mais anúncios...";
-      loadingDiv.style.textAlign = "center";
-      loadingDiv.style.padding = "10px";
-      adList.appendChild(loadingDiv);
-
-      try {
-        const snapshot = await db.collection("desapega")
-          .orderBy("time", "desc")
-          .startAfter(lastAdDoc)
-          .limit(AD_LIMIT)
-          .get();
-
-        loadingDiv.remove();
-
-        if (snapshot.empty) {
-          lastAdDoc = null; // Não há mais o que carregar
-          const endMsg = document.createElement("p");
-          endMsg.style.textAlign = "center";
-          endMsg.style.fontSize = "12px";
-          endMsg.style.color = "#94a3b8";
-          endMsg.textContent = "Fim dos anúncios.";
-          adList.appendChild(endMsg);
-          return;
-        }
-
-        snapshot.forEach(doc => {
-          const ad = doc.data();
-          const id = doc.id;
-          if (!document.getElementById("ad_" + id)) {
-            const card = createAdCard(id, ad);
-            adList.appendChild(card);
-          }
-        });
-
-        lastAdDoc = snapshot.docs[snapshot.docs.length - 1];
-      } catch (e) {
-        console.error("Erro ao carregar mais anúncios:", e);
-        loadingDiv.remove();
-      } finally {
-        loadingMoreAds = false;
-      }
-    }
-
-    function showReplyInput(id) {
-      const area = document.getElementById(`replyInputArea_${id}`);
-      area.style.display = area.style.display === "none" ? "block" : "none";
-      if (area.style.display === "block") {
-        document.getElementById(`replyInput_${id}`).focus();
-      }
+      document.getElementById("desapegaForm").scrollIntoView({ behavior: "smooth" });
     }
 
     async function sendAdReply(adId) {
-      const input = document.getElementById(`replyInput_${adId}`);
-      const text = input.value.trim();
+      const replyInput = document.getElementById(`replyInput-${adId}`);
+      const text = replyInput.value.trim();
       if (!text) return;
-      if (!nick) {
-        alert("Você precisa definir um Nick para responder!");
+
+      try {
+        const adRef = db.collection("desapega").doc(adId);
+        const doc = await adRef.get();
+        if (!doc.exists) return;
+
+        const currentReplies = doc.data().replies || [];
+        const newReply = {
+          nick: nick || "Anônimo 👤",
+          text: text,
+          time: Date.now()
+        };
+        
+        await adRef.update({
+          replies: firebase.firestore.FieldValue.arrayUnion(newReply)
+        });
+        
+        replyInput.value = "";
+      } catch (e) {
+        console.error(e);
+        alert("Erro ao responder: " + e.message);
+      }
+    }
+
+    let unsubscribeAds = null;
+
+    function listenAds() {
+      if (unsubscribeAds) unsubscribeAds();
+      unsubscribeAds = db.collection("desapega").orderBy("createdAt", "desc").onSnapshot(snapshot => {
+        renderAdsList(snapshot);
+      });
+    }
+
+    function renderAdsList(snapshot) {
+      const adList = document.getElementById("adList");
+      const ads = [];
+      
+      if (snapshot) {
+        snapshot.forEach(doc => ads.push({ id: doc.id, ...doc.data() }));
+      } else {
         return;
       }
 
-      try {
-        const adRef = db.collection("desapega").doc(adId);
-        const doc = await adRef.get();
-        if (doc.exists) {
-          const replies = doc.data().replies || [];
-          // No Desapega, respostas sempre mostram o nick para segurança da negociação, 
-          // mas se você quiser anonimato aqui também, podemos ajustar. 
-          // Por enquanto, manterei o nick nas respostas para evitar golpes.
-          replies.push({
-            nick: nick,
-            realNick: nick,
-            text: text,
-            time: Date.now()
-          });
-          await adRef.update({ replies: replies });
-          input.value = "";
-          document.getElementById(`replyInputArea_${adId}`).style.display = "none";
-        }
-      } catch (e) {
-        console.error("Erro ao responder:", e);
-        alert("Erro ao enviar resposta: " + e.message);
+      if (ads.length === 0) {
+        adList.innerHTML = "<p style='text-align:center; color:#94a3b8;'>Nenhum anúncio ainda. Seja o primeiro a postar! 🎉</p>";
+        return;
       }
+
+      adList.innerHTML = ads.map(ad => {
+        const isOwner = ad.realNick === nick || nick === ADMIN_NICK;
+        const photo1 = ad.photos && ad.photos[1] ? `<img src="${ad.photos[1]}" class="desapega-img" />` : "";
+        const photo2 = ad.photos && ad.photos[2] ? `<img src="${ad.photos[2]}" class="desapega-img" />` : "";
+        
+        let cleanWhatsapp = ad.whatsapp.replace(/\D/g, '');
+        if (cleanWhatsapp.length === 11) cleanWhatsapp = "55" + cleanWhatsapp;
+        const whatsappUrl = `https://wa.me/${cleanWhatsapp}?text=Olá, vi seu anúncio "${ad.title}" no Unila App e tenho interesse!`;
+        
+        const adJson = encodeURIComponent(JSON.stringify(ad));
+        const editBtn = isOwner ? `<button onclick="editAd('${ad.id}', '${adJson}')" style="background:#3b82f6; padding:8px 12px; border-radius:8px; font-size:12px; margin-top:10px; margin-right:5px;">✏️ Editar</button>` : "";
+        const deleteBtn = isOwner ? `<button onclick="deleteAd('${ad.id}')" style="background:#dc2626; padding:8px 12px; border-radius:8px; font-size:12px; margin-top:10px;">🗑️ Deletar</button>` : "";
+
+        const repliesHtml = (ad.replies || []).map(r => `
+          <div style="background:rgba(255,255,255,0.05); padding:8px; border-radius:8px; margin-top:5px; font-size:13px; border-left:3px solid #22c55e;">
+            <strong style="color:#22c55e;">${r.nick}:</strong> ${r.text}
+          </div>
+        `).join("");
+
+        return `
+          <div class="desapega-card">
+            ${photo1}
+            ${photo2}
+            <h3 style="margin:10px 0; color:#ffffff;">${ad.title}</h3>
+            <div class="desapega-price">${ad.price}</div>
+            <p style="font-size:14px; color:#cbd5e1; margin:8px 0;">${ad.desc}</p>
+            <p style="font-size:12px; color:#94a3b8; margin:8px 0;">Por: <strong>${ad.postedBy}</strong></p>
+            
+            <div style="display:flex; flex-direction:column; gap:10px; margin-top:15px;">
+              <a href="${whatsappUrl}" target="_blank" class="desapega-contact" style="text-align:center; background:#25D366; display:flex; align-items:center; justify-content:center; gap:8px;">
+                <span style="font-size:18px;">📲</span> Entrar em Contato via WhatsApp
+              </a>
+              
+              <div style="margin-top:10px;">
+                <h4 style="font-size:14px; margin-bottom:8px; color:#22c55e;">💬 Perguntas e Respostas</h4>
+                <div id="replies-${ad.id}">${repliesHtml}</div>
+                <div style="display:flex; gap:5px; margin-top:10px;">
+                  <input id="replyInput-${ad.id}" placeholder="Faça uma pergunta..." style="flex:1; padding:8px; border-radius:8px; border:none; background:#e5e7eb; color:#1f2937; font-size:13px;" />
+                  <button onclick="sendAdReply('${ad.id}')" style="background:#22c55e; padding:8px 12px; border-radius:8px; border:none; color:white;">Enviar</button>
+                </div>
+              </div>
+
+              <div style="display:flex; gap:5px;">
+                ${editBtn}
+                ${deleteBtn}
+              </div>
+            </div>
+          </div>
+        `;
+      }).join("");
     }
 
-    async function deleteAdReply(adId, index) {
-      try {
-        const adRef = db.collection("desapega").doc(adId);
-        const doc = await adRef.get();
-        if (doc.exists) {
-          const replies = doc.data().replies || [];
-          replies.splice(index, 1);
-          await adRef.update({ replies: replies });
-        }
-      } catch (e) {
-        console.error("Erro ao remover resposta:", e);
-      }
-    }
+    function atualizarDataBar() { const d = new Date(); document.getElementById("dateBar").textContent = d.toLocaleString(); }
+    setInterval(atualizarDataBar, 1000);
 
-    function deleteAd(id) {
-      db.collection("desapega").doc(id).delete().catch(e => console.error("Erro ao excluir anúncio:", e));
-    }
-
-    window.onload = () => {
-      atualizarDataBar();
-      loadAllContent();
-      listenContentChanges();
-      if(nick){
-        document.getElementById("nickArea").style.display="none";
-        document.getElementById("chatArea").style.display="block";
-        listenChat();
-      }
-    };
-
-    // Service Worker registration
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('./service-worker.js').then(reg => {
-        console.log("SW registrado");
-      }).catch(err => console.log("Erro SW:", err));
-    }
+    window.onload = () => { atualizarDataBar(); loadAllContent(); listenContentChanges(); if(nick){ document.getElementById("nickArea").style.display="none"; document.getElementById("chatArea").style.display="block"; listenChat(); } };
+    if ('serviceWorker' in navigator) { navigator.serviceWorker.register('./service-worker.js').catch(console.error); }
   </script>
 </body>
 </html>
