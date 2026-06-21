@@ -1,44 +1,47 @@
-// Nome do cache (mude versão quando atualizar)
-const CACHE_NAME = "unila-app-v106";
-
-// Arquivos essenciais
-const urlsToCache = [
-  "./",
-  "./index.html",
-  "./manifest.json"
+const CACHE_NAME = 'unila-app-v108';
+const ASSETS = [
+  './',
+  './index.html'
 ];
 
-// INSTALAÇÃO
-self.addEventListener("install", event => {
-  self.skipWaiting();
+// Instalação do Service Worker
+self.addEventListener('install', (event) => {
+  self.skipWaiting(); // Força o Service Worker a se tornar ativo imediatamente
   event.waitUntil(
-    caches.open(CACHE_NAME).then(cache => {
-      return cache.addAll(urlsToCache);
+    caches.open(CACHE_NAME).then((cache) => {
+      return cache.addAll(ASSETS);
     })
   );
 });
 
-// ATIVAÇÃO (limpa caches antigos)
-self.addEventListener("activate", event => {
+// Ativação e limpeza de caches antigos
+self.addEventListener('activate', (event) => {
   event.waitUntil(
-    caches.keys().then(keys => {
+    caches.keys().then((cacheNames) => {
       return Promise.all(
-        keys.map(key => {
-          if (key !== CACHE_NAME) {
-            return caches.delete(key);
+        cacheNames.map((cache) => {
+          if (cache !== CACHE_NAME) {
+            return caches.delete(cache);
           }
         })
       );
     })
   );
-  self.clients.claim();
+  return self.clients.claim(); // Faz o Service Worker assumir o controle das páginas imediatamente
 });
 
-// FETCH (cache inteligente)
-self.addEventListener("fetch", event => {
+// Interceptar requisições
+self.addEventListener('fetch', (event) => {
   event.respondWith(
-    caches.match(event.request).then(response => {
-      return response || fetch(event.request);
+    fetch(event.request).catch(() => {
+      return caches.match(event.request);
     })
   );
+});
+
+// Escutar mensagens do cliente
+self.addEventListener('message', (event) => {
+  if (event.data.action === 'skipWaiting') {
+    self.skipWaiting();
+  }
 });
