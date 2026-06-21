@@ -888,6 +888,7 @@ function onYouTubeIframeAPIReady() {
       document.body.style.setProperty('--home-bottom', '90px');
       if(id === 'notesPage') loadNotes();
       if(id === 'desapegaPage') listenAds();
+      if(id === 'chatPage' && nick) listenChat();
     }
 
     function goHome(){
@@ -1148,33 +1149,67 @@ function onYouTubeIframeAPIReady() {
       loadingMore = false;
     }
 
-    function deleteMsg(id, msgNick){
+    async function deleteMsg(id, msgNick){
       if(msgNick === nick || nick === ADMIN_NICK) {
-        db.collection("chat").doc(id).delete();
-        chatMessages = chatMessages.filter(m => m.id !== id);
-        renderMessages();
+        if(confirm("Deseja apagar esta mensagem?")) {
+          try {
+            await db.collection("chat").doc(id).delete();
+            // O onSnapshot cuidará de remover da lista automaticamente, 
+            // mas podemos remover manualmente para feedback instantâneo
+            const el = document.getElementById(id);
+            if(el) el.remove();
+          } catch (e) {
+            alert("Erro ao apagar: " + e.message);
+          }
+        }
       }
     }
 
     async function saveNick(){
+      const btn = event.target;
+      const originalText = btn.textContent;
       const input = document.getElementById("nickInput").value.trim();
-      if(!input) return;
-      const nickRef = db.collection("users").doc(input);
-      const doc = await nickRef.get();
-      if(doc.exists && input !== ADMIN_NICK){
-        const data = doc.data();
-        if(Date.now() - data.lastActive < 30000){
-          alert("❌ Este nick já está em uso!");
-          return;
-        }
+      
+      if(!input) {
+        alert("Por favor, digite um Nick!");
+        return;
       }
-      await nickRef.set({ createdAt: Date.now(), lastActive: Date.now() });
-      nick = input;
-      localStorage.setItem("chat_nick", nick);
-      document.getElementById("nickArea").style.display="none";
-      document.getElementById("chatArea").style.display="block";
-      if(nick === ADMIN_NICK) document.getElementById("changeNickBtn").style.display = "block";
-      listenChat();
+
+      try {
+        btn.disabled = true;
+        btn.textContent = "Verificando...";
+        
+        const nickRef = db.collection("users").doc(input);
+        const doc = await nickRef.get();
+        
+        if(doc.exists && input !== ADMIN_NICK){
+          const data = doc.data();
+          // Se o nick já existe e foi ativo nos últimos 30 segundos, está em uso
+          // EXCETO se for o Fernando, que pode entrar sempre
+          if(Date.now() - (data.lastActive || 0) < 30000){
+            alert("❌ Este nick já está em uso!");
+            btn.disabled = false;
+            btn.textContent = originalText;
+            return;
+          }
+        }
+        
+        await nickRef.set({ createdAt: Date.now(), lastActive: Date.now() });
+        nick = input;
+        localStorage.setItem("chat_nick", nick);
+        
+        document.getElementById("nickArea").style.display="none";
+        document.getElementById("chatArea").style.display="block";
+        if(nick === ADMIN_NICK) document.getElementById("changeNickBtn").style.display = "block";
+        
+        listenChat();
+      } catch (e) {
+        console.error("Erro ao salvar nick:", e);
+        alert("❌ Erro ao acessar o chat: " + e.message + "\nVerifique sua conexão ou as configurações do Firebase.");
+      } finally {
+        btn.disabled = false;
+        btn.textContent = originalText;
+      }
     }
 
     function changeNick(){
