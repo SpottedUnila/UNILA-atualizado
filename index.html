@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+🇧🇷<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
@@ -498,7 +498,7 @@ button:hover{
   50%{ box-shadow:0 0 15px rgba(147,51,234,0.5); transform:scale(1.02); }
 }
 
-.menu{
+.menu {
   display: grid;
   grid-template-columns: repeat(auto-fit,minmax(160px,1fr));
   gap:14px;
@@ -571,13 +571,11 @@ function onYouTubeIframeAPIReady() {
     <button class="emergencia" onclick="openDynamic('upa','page')">🏥 Hospitais de Emergência 24h (UPA)</button>
   </div>
 
-  <!-- PÁGINA DINÂMICA (conteúdo carregado do Firebase) -->
   <div id="dynamicPage" class="page">
     <h2 id="dynamicTitle"></h2>
     <p id="dynamicContent" style="white-space: pre-line;"></p>
   </div>
 
-  <!-- CHAT -->
   <div id="chatPage" class="page">
     <h2>💬 Chat UNILA</h2>
     <div id="nickArea">
@@ -586,16 +584,12 @@ function onYouTubeIframeAPIReady() {
     </div>
     <div id="chatArea" style="display:none;">
       <div id="chatBox"></div>
-      
-      <!-- Pré-visualização de Resposta -->
       <div id="replyPreview">
         <div style="display:flex; justify-content:space-between; align-items:center;">
           <div id="replyContent" style="font-size:12px; color:#22c55e; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; flex:1;"></div>
           <button onclick="cancelReply()" style="background:none; border:none; color:white; padding:5px;">✕</button>
         </div>
       </div>
-
-      <!-- Pré-visualização de Imagem antes de enviar -->
       <div id="imagePreview" class="image-preview-container">
         <div style="display:flex; align-items:center; gap:10px;">
           <img id="previewImg" src="" style="height:50px; border-radius:5px;" />
@@ -603,7 +597,6 @@ function onYouTubeIframeAPIReady() {
           <button onclick="cancelImage()" style="background:none; border:none; color:white; padding:5px;">✕</button>
         </div>
       </div>
-
       <div id="inputArea">
         <input id="chatInput" placeholder="Digite sua mensagem..." />
         <label for="imageUpload" style="cursor:pointer; background:#3b82f6; width:45px; height:45px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:20px; box-shadow:0 4px 10px rgba(0,0,0,0.3);">
@@ -620,14 +613,12 @@ function onYouTubeIframeAPIReady() {
     </div>
   </div>
 
-  <!-- DEV (fallback) -->
   <div id="devPage" class="page">
     <h2>👨‍💻 Desenvolvedor</h2>
     <p>Para trabalhos e parcerias entre em contato:</p>
     <p>Fernando - Serviço Social<br>Contato: +55 45 99949-9759</p>
   </div>
 
-  <!-- NOTES -->
   <div id="notesPage" class="page">
     <h2>📝 Anotações</h2>
     <textarea id="note" placeholder="Escreva sua anotação aqui..."></textarea>
@@ -635,11 +626,9 @@ function onYouTubeIframeAPIReady() {
     <div id="list" style="margin-top:20px;"></div>
   </div>
 
-  <!-- DESAPEGA UNILEIRO -->
   <div id="desapegaPage" class="page">
     <h2>🛒 Desapega Unileiro</h2>
     <button class="btn-postar" onclick="toggleDesapegaForm()">➕ Postar Anúncio</button>
-    
     <div id="desapegaForm" class="desapega-form">
       <h3 id="adFormTitle">Novo Anúncio</h3>
       <input type="hidden" id="adId" />
@@ -647,7 +636,6 @@ function onYouTubeIframeAPIReady() {
       <input type="text" id="adPrice" placeholder="Preço (Ex: R$ 50,00 ou Grátis)" />
       <textarea id="adDesc" placeholder="Descrição do item..."></textarea>
       <input type="text" id="adWhatsapp" placeholder="Seu WhatsApp (Ex: 45999999999)" />
-      
       <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom:10px;">
         <label style="background:#3b82f6; color:white; padding:10px; border-radius:8px; text-align:center; cursor:pointer; font-size:12px;">
           📷 Foto 1
@@ -658,7 +646,6 @@ function onYouTubeIframeAPIReady() {
           <input type="file" id="adImage2" accept="image/*" style="display:none;" onchange="handleAdImageSelect(event, 2)" />
         </label>
       </div>
-      
       <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom:10px;">
         <div style="position:relative;">
           <img id="adPreview1" src="" style="display:none; width:100%; border-radius:8px; height:80px; object-fit:cover;" />
@@ -669,7 +656,6 @@ function onYouTubeIframeAPIReady() {
           <button onclick="removeAdPhoto(1)" id="btnDelPhoto2" style="display:none; position:absolute; top:2px; right:2px; background:rgba(0,0,0,0.8); padding:4px; border-radius:4px; font-size:10px; width:24px; height:24px; align-items:center; justify-content:center; border:none; color:white;">✕</button>
         </div>
       </div>
-      
       <div style="margin-bottom:10px; display:flex; align-items:center; gap:8px;">
         <input type="checkbox" id="adAnonymous" style="width:20px; height:20px; cursor:pointer;" />
         <label for="adAnonymous" style="font-size:14px; color:white; cursor:pointer;">Postar anonimamente (Ocultar meu Nick)</label>
@@ -679,29 +665,18 @@ function onYouTubeIframeAPIReady() {
         <button onclick="cancelAdEdit()" style="flex:1; background:#dc2626;">Cancelar</button>
       </div>
     </div>
-
     <div id="adList">
       <p style="text-align:center;">Carregando anúncios...</p>
     </div>
   </div>
 
-  <!-- RADIO PLAYER -->
   <div id="radioPlayer" style="display:none; margin-bottom:80px; padding:20px;">
-    <iframe 
-      id="ytRadio"
-      width="100%" 
-      height="200"
-      src="https://www.youtube.com/embed/videoseries?list=PLyTsVCtgNA7Uzq69sB_NhyJJEpNr1ePPM&enablejsapi=1"
-      frameborder="0"
-      allow="autoplay"
-      allowfullscreen>
-    </iframe>
+    <iframe id="ytRadio" width="100%" height="200" src="https://www.youtube.com/embed/videoseries?list=PLyTsVCtgNA7Uzq69sB_NhyJJEpNr1ePPM&enablejsapi=1" frameborder="0" allow="autoplay" allowfullscreen></iframe>
   </div>
 
   <div id="dateBar"></div>
 
   <script>
-    // Configuração Firebase
     const firebaseConfig = {
       apiKey: "AIzaSyDCm8jh-gz3T8OkOH2J6ls66t5QizcKwu8",
       authDomain: "app-unila.firebaseapp.com",
@@ -721,18 +696,45 @@ function onYouTubeIframeAPIReady() {
     const LIMIT = 10;
     let lastDoc = null;
     let loadingMore = false;
-    let loadedMessages = new Set();
+    let chatMessages = [];
+    let unsubscribeChat = null;
     let replyTo = null;
     let selectedImage = null;
 
-    // Credenciais Cloudinary
     const CLOUDINARY_CLOUD_NAME = 'dthnn5flq';
-    const CLOUDINARY_API_KEY = '444299785184934';
-    const CLOUDINARY_API_SECRET = '3dNWqkn-MH4p3wF75K_vgb1opVs';
 
-    // ============================================
-    // SISTEMA DE CONTEÚDO DINÂMICO (Firebase)
-    // ============================================
+    // PWA UPDATE LOGIC
+    function setupPWAUpdate() {
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('./service-worker.js').then(reg => {
+          reg.update();
+          reg.addEventListener('updatefound', () => {
+            const newWorker = reg.installing;
+            newWorker.addEventListener('statechange', () => {
+              if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                newWorker.postMessage({ action: 'skipWaiting' });
+              }
+            });
+          });
+        }).catch(console.error);
+
+        let refreshing = false;
+        navigator.serviceWorker.addEventListener('controllerchange', () => {
+          if (!refreshing) {
+            refreshing = true;
+            window.location.reload();
+          }
+        });
+
+        document.addEventListener('visibilitychange', () => {
+          if (document.visibilityState === 'visible') {
+            navigator.serviceWorker.ready.then(reg => reg.update());
+          }
+        });
+      }
+    }
+
+    // CONTENT LOGIC
     const defaultContent = {
       portal_unila: "https://portal.unila.edu.br/",
       sigaa: "https://sig.unila.edu.br/sigaa/verTelaLogin.do",
@@ -754,7 +756,6 @@ function onYouTubeIframeAPIReady() {
     };
 
     let contentCache = {};
-
     async function loadAllContent() {
       try {
         const snapshot = await db.collection('admin_content').get();
@@ -766,8 +767,7 @@ function onYouTubeIframeAPIReady() {
       db.collection('admin_content').onSnapshot(snapshot => {
         snapshot.docChanges().forEach(change => {
           contentCache[change.doc.id] = change.doc.data().value;
-          if(document.getElementById('dynamicPage').style.display === 'block' && 
-             document.getElementById('dynamicTitle').textContent === change.doc.id.toUpperCase()) {
+          if(document.getElementById('dynamicPage').style.display === 'block' && document.getElementById('dynamicTitle').textContent === change.doc.id.toUpperCase()) {
              document.getElementById('dynamicContent').innerHTML = change.doc.data().value;
           }
         });
@@ -775,7 +775,6 @@ function onYouTubeIframeAPIReady() {
     }
 
     function getContent(id) { return contentCache[id] || defaultContent[id] || "Conteúdo não encontrado."; }
-
     async function openDynamic(id, type) {
       const val = getContent(id);
       if(type === 'link') { window.open(val, "_blank"); } 
@@ -786,9 +785,7 @@ function onYouTubeIframeAPIReady() {
       }
     }
 
-    // Scroll Automático Suave
     function scrollToTop() { window.scrollTo({ top: 0, behavior: 'smooth' }); }
-
     function openPage(id) {
       document.getElementById("home").style.display = "none";
       document.querySelectorAll(".page").forEach(p => p.style.display = "none");
@@ -811,7 +808,7 @@ function onYouTubeIframeAPIReady() {
       } else { alert("Link do App: " + window.location.href); }
     }
 
-    // LÓGICA DO CHAT
+    // CHAT LOGIC
     async function uploadImageToCloudinary(file) {
       const formData = new FormData();
       formData.append('file', file);
@@ -837,14 +834,12 @@ function onYouTubeIframeAPIReady() {
     }
 
     function cancelImage() { selectedImage = null; document.getElementById("imagePreview").style.display = "none"; document.getElementById("imageUpload").value = ""; }
-
     function setReply(id, user, text) {
       replyTo = { id, user, text: text.substring(0, 50) + (text.length > 50 ? "..." : "") };
       document.getElementById("replyContent").textContent = `Respondendo a ${user}: "${replyTo.text}"`;
       document.getElementById("replyPreview").style.display = "block";
       document.getElementById("chatInput").focus();
     }
-
     function cancelReply() { replyTo = null; document.getElementById("replyPreview").style.display = "none"; }
 
     function sendMessage() {
@@ -890,7 +885,6 @@ function onYouTubeIframeAPIReady() {
       else { box.appendChild(fragment); box.scrollTop = box.scrollHeight; }
     }
 
-    let chatMessages = []; let unsubscribeChat = null;
     function listenChat() {
       if (unsubscribeChat) unsubscribeChat();
       unsubscribeChat = db.collection("chat").orderBy("time", "desc").limit(LIMIT).onSnapshot(snapshot => {
@@ -903,10 +897,8 @@ function onYouTubeIframeAPIReady() {
     }
 
     async function loadMoreMessages() {
-      loadingMore = true; const box = document.getElementById("chatBox"); const loadingDiv = document.createElement("div");
-      loadingDiv.innerHTML = "Carregando mensagens antigas..."; loadingDiv.style.textAlign = "center"; loadingDiv.style.padding = "10px"; box.prepend(loadingDiv);
+      loadingMore = true; const box = document.getElementById("chatBox");
       const snapshot = await db.collection("chat").orderBy("time", "desc").startAfter(lastDoc).limit(LIMIT).get();
-      loadingDiv.remove();
       if (snapshot.docs.length > 0) {
         const olderMessages = []; snapshot.docs.forEach(doc => { olderMessages.push({ id: doc.id, ...doc.data() }); });
         chatMessages = [...olderMessages, ...chatMessages].sort((a, b) => a.time - b.time); lastDoc = snapshot.docs[snapshot.docs.length - 1]; renderMessages(true);
@@ -934,6 +926,7 @@ function onYouTubeIframeAPIReady() {
     function atualizarAtividade(){ if(nick) db.collection("users").doc(nick).update({ lastActive: Date.now() }); }
     setInterval(atualizarAtividade, 60000);
 
+    // RADIO LOGIC
     function toggleRadioSimples() {
       const player = document.getElementById("radioPlayer"); const iframe = document.getElementById("ytRadio");
       if (player.style.display === "none") {
@@ -942,6 +935,7 @@ function onYouTubeIframeAPIReady() {
       } else { player.style.display = "none"; iframe.contentWindow.postMessage(JSON.stringify({event: "command", func: "pauseVideo", args: []}), "*"); }
     }
 
+    // NOTES LOGIC
     function saveNote() {
       const noteText = document.getElementById("note").value.trim(); if(!noteText) return;
       let notes = JSON.parse(localStorage.getItem("notes") || "[]"); notes.push({ id: Date.now(), text: noteText });
@@ -953,20 +947,21 @@ function onYouTubeIframeAPIReady() {
     }
     function deleteNote(id) { let notes = JSON.parse(localStorage.getItem("notes") || "[]"); notes = notes.filter(n => n.id !== id); localStorage.setItem("notes", JSON.stringify(notes)); loadNotes(); }
 
-    function deleteAd(id) { db.collection("desapega").doc(id).delete().catch(console.error); }
-
-    // ============================================
-    // SISTEMA DE ANÚNCIOS (DESAPEGA)
-    // ============================================
+    // DESAPEGA LOGIC
     let adPhotos = {};
     let editingAdId = null;
-    let replyToAdId = null;
+    let unsubscribeAds = null;
 
     function toggleDesapegaForm() {
       const form = document.getElementById("desapegaForm");
       const isVisible = form.style.display === "block";
       form.style.display = isVisible ? "none" : "block";
       if (!isVisible) {
+        // Scroll até o formulário ao abrir
+        setTimeout(() => {
+          form.scrollIntoView({ behavior: "smooth", block: "start" });
+        }, 100);
+
         document.getElementById("adFormTitle").textContent = "Novo Anúncio";
         document.getElementById("adId").value = "";
         document.getElementById("adTitle").value = "";
@@ -979,8 +974,6 @@ function onYouTubeIframeAPIReady() {
         document.getElementById("adPreview2").style.display = "none";
         document.getElementById("btnDelPhoto1").style.display = "none";
         document.getElementById("btnDelPhoto2").style.display = "none";
-        document.getElementById("adImage1").value = "";
-        document.getElementById("adImage2").value = "";
         editingAdId = null;
       }
     }
@@ -991,23 +984,15 @@ function onYouTubeIframeAPIReady() {
         const reader = new FileReader();
         reader.onload = (e) => {
           adPhotos[photoNum] = e.target.result;
-          const previewId = `adPreview${photoNum}`;
-          const btnDelId = `btnDelPhoto${photoNum}`;
-          document.getElementById(previewId).src = e.target.result;
-          document.getElementById(previewId).style.display = "block";
-          document.getElementById(btnDelId).style.display = "flex";
+          document.getElementById(`adPreview${photoNum}`).src = e.target.result;
+          document.getElementById(`adPreview${photoNum}`).style.display = "block";
+          document.getElementById(`btnDelPhoto${photoNum}`).style.display = "flex";
         };
         reader.readAsDataURL(file);
       }
     }
 
-    function removeAdPhoto(photoIndex) {
-      const photoNum = photoIndex + 1;
-      delete adPhotos[photoNum];
-      document.getElementById(`adPreview${photoNum}`).style.display = "none";
-      document.getElementById(`btnDelPhoto${photoNum}`).style.display = "none";
-      document.getElementById(`adImage${photoNum}`).value = "";
-    }
+    function removeAdPhoto(num) { delete adPhotos[num+1]; document.getElementById(`adPreview${num+1}`).style.display = "none"; document.getElementById(`btnDelPhoto${num+1}`).style.display = "none"; }
 
     async function saveAd() {
       const title = document.getElementById("adTitle").value.trim();
@@ -1015,230 +1000,101 @@ function onYouTubeIframeAPIReady() {
       const desc = document.getElementById("adDesc").value.trim();
       const whatsapp = document.getElementById("adWhatsapp").value.trim();
       const isAnonymous = document.getElementById("adAnonymous").checked;
-
-      if (!title || !price || !desc || !whatsapp) {
-        alert("Preencha todos os campos!");
-        return;
-      }
-
-      const btn = document.getElementById("btnSaveAd");
-      const originalText = btn.textContent;
-      btn.disabled = true;
-      btn.textContent = "Salvando...";
-
+      if (!title || !price || !desc || !whatsapp) { alert("Preencha tudo!"); return; }
+      const btn = document.getElementById("btnSaveAd"); btn.disabled = true; btn.textContent = "Salvando...";
       try {
         const uploadedPhotos = {};
-        for (let photoNum in adPhotos) {
-          const photoData = adPhotos[photoNum];
-          if (photoData && photoData.startsWith('data:')) {
-            // Nova imagem (Base64), precisa de upload
-            const imageUrl = await uploadImageToCloudinary(
-              dataURLtoFile(photoData, `ad_photo_${Date.now()}_${photoNum}.jpg`)
-            );
-            if (imageUrl) uploadedPhotos[photoNum] = imageUrl;
-          } else if (photoData) {
-            // Já é uma URL (Cloudinary), mantém como está
-            uploadedPhotos[photoNum] = photoData;
-          }
+        for (let num in adPhotos) {
+          if (adPhotos[num] && adPhotos[num].startsWith('data:')) {
+            const url = await uploadImageToCloudinary(dataURLtoFile(adPhotos[num], `ad_${Date.now()}_${num}.jpg`));
+            if (url) uploadedPhotos[num] = url;
+          } else if (adPhotos[num]) { uploadedPhotos[num] = adPhotos[num]; }
         }
+        const adData = { title, price, desc, whatsapp, photos: uploadedPhotos, postedBy: isAnonymous ? "Anônimo 👤" : nick, realNick: nick, anonymous: isAnonymous, updatedAt: Date.now() };
+        
+        // Verifica se existe um ID de edição no input hidden ou na variável global
+        const currentAdId = document.getElementById("adId").value || editingAdId;
 
-        const adData = {
-          title,
-          price,
-          desc,
-          whatsapp,
-          photos: uploadedPhotos,
-          postedBy: isAnonymous ? "Anônimo 👤" : nick,
-          realNick: nick,
-          anonymous: isAnonymous,
-          updatedAt: Date.now()
-        };
-
-        if (editingAdId) {
-          // Na edição, não sobrescrevemos o createdAt
-          await db.collection("desapega").doc(editingAdId).update(adData);
-        } else {
-          // No novo anúncio, definimos o createdAt
-          adData.createdAt = Date.now();
-          await db.collection("desapega").add(adData);
+        if (currentAdId) { 
+          await db.collection("desapega").doc(currentAdId).update(adData); 
+          editingAdId = null;
+          document.getElementById("adId").value = "";
+        } else { 
+          adData.createdAt = Date.now(); 
+          await db.collection("desapega").add(adData); 
         }
-
-        alert("Anúncio salvo com sucesso!");
         toggleDesapegaForm();
-        listenAds();
-      } catch (e) {
-        console.error(e);
-        alert("Erro ao salvar: " + e.message);
-      } finally {
-        btn.disabled = false;
-        btn.textContent = originalText;
-      }
+      } catch (e) { alert("Erro: " + e.message); } finally { btn.disabled = false; btn.textContent = "Salvar"; }
     }
 
     function dataURLtoFile(dataurl, filename) {
-      const arr = dataurl.split(',');
-      const mime = arr[0].match(/:(.*?);/)[1];
-      const bstr = atob(arr[1]);
-      let n = bstr.length;
-      const u8arr = new Uint8Array(n);
-      while (n--) u8arr[n] = bstr.charCodeAt(n);
-      return new File([u8arr], filename, { type: mime });
+      const arr = dataurl.split(','); const mime = arr[0].match(/:(.*?);/)[1];
+      const bstr = atob(arr[1]); let n = bstr.length; const u8arr = new Uint8Array(n);
+      while (n--) u8arr[n] = bstr.charCodeAt(n); return new File([u8arr], filename, { type: mime });
     }
-
-    function cancelAdEdit() {
-      toggleDesapegaForm();
-      editingAdId = null;
-    }
-
-    function editAd(id, adJson) {
-      const ad = typeof adJson === 'string' ? JSON.parse(decodeURIComponent(adJson)) : adJson;
-      editingAdId = id;
-      document.getElementById("adFormTitle").textContent = "Editar Anúncio";
-      document.getElementById("adId").value = id;
-      document.getElementById("adTitle").value = ad.title;
-      document.getElementById("adPrice").value = ad.price;
-      document.getElementById("adDesc").value = ad.desc;
-      document.getElementById("adWhatsapp").value = ad.whatsapp;
-      document.getElementById("adAnonymous").checked = ad.anonymous || false;
-      adPhotos = {};
-      
-      // Resetar inputs de arquivo
-      document.getElementById("adImage1").value = "";
-      document.getElementById("adImage2").value = "";
-
-      // Limpar previews antes de carregar novos
-      document.getElementById("adPreview1").style.display = "none";
-      document.getElementById("adPreview2").style.display = "none";
-      document.getElementById("btnDelPhoto1").style.display = "none";
-      document.getElementById("btnDelPhoto2").style.display = "none";
-
-      if (ad.photos) {
-        for (let key in ad.photos) {
-          const photoNum = key;
-          const previewId = `adPreview${photoNum}`;
-          const btnDelId = `btnDelPhoto${photoNum}`;
-          if (document.getElementById(previewId)) {
-            document.getElementById(previewId).src = ad.photos[key];
-            document.getElementById(previewId).style.display = "block";
-            document.getElementById(btnDelId).style.display = "flex";
-            adPhotos[photoNum] = ad.photos[key];
-          }
-        }
-      }
-
-      document.getElementById("desapegaForm").style.display = "block";
-      document.getElementById("desapegaForm").scrollIntoView({ behavior: "smooth" });
-    }
-
-    async function sendAdReply(adId) {
-      const replyInput = document.getElementById(`replyInput-${adId}`);
-      const text = replyInput.value.trim();
-      if (!text) return;
-
-      try {
-        const adRef = db.collection("desapega").doc(adId);
-        const doc = await adRef.get();
-        if (!doc.exists) return;
-
-        const currentReplies = doc.data().replies || [];
-        const newReply = {
-          nick: nick || "Anônimo 👤",
-          text: text,
-          time: Date.now()
-        };
-        
-        await adRef.update({
-          replies: firebase.firestore.FieldValue.arrayUnion(newReply)
-        });
-        
-        replyInput.value = "";
-      } catch (e) {
-        console.error(e);
-        alert("Erro ao responder: " + e.message);
-      }
-    }
-
-    let unsubscribeAds = null;
 
     function listenAds() {
       if (unsubscribeAds) unsubscribeAds();
       unsubscribeAds = db.collection("desapega").orderBy("createdAt", "desc").onSnapshot(snapshot => {
-        renderAdsList(snapshot);
+        const adList = document.getElementById("adList");
+        const ads = []; snapshot.forEach(doc => ads.push({ id: doc.id, ...doc.data() }));
+        if (ads.length === 0) { adList.innerHTML = "<p style='text-align:center;'>Nenhum anúncio.</p>"; return; }
+        adList.innerHTML = ads.map(ad => {
+          const isOwner = ad.realNick === nick || nick === ADMIN_NICK;
+          const photo1 = ad.photos && ad.photos[1] ? `<img src="${ad.photos[1]}" class="desapega-img" />` : "";
+          const photo2 = ad.photos && ad.photos[2] ? `<img src="${ad.photos[2]}" class="desapega-img" />` : "";
+          let cleanWa = ad.whatsapp.replace(/\D/g, ''); if (cleanWa.length === 11) cleanWa = "55" + cleanWa;
+          const waUrl = `https://wa.me/${cleanWa}?text=Interesse no anúncio: ${ad.title}`;
+          const editBtn = isOwner ? `<button onclick="editAd('${ad.id}', '${encodeURIComponent(JSON.stringify(ad))}')" style="background:#3b82f6; padding:8px; border-radius:8px; font-size:12px;">✏️ Editar</button>` : "";
+          const delBtn = isOwner ? `<button onclick="deleteAd('${ad.id}')" style="background:#dc2626; padding:8px; border-radius:8px; font-size:12px;">🗑️ Deletar</button>` : "";
+          const replies = (ad.replies || []).map(r => `<div style="background:rgba(255,255,255,0.05); padding:5px; border-radius:5px; margin-top:5px; font-size:12px; border-left:2px solid #22c55e;"><strong>${r.nick}:</strong> ${r.text}</div>`).join("");
+          return `<div class="desapega-card">${photo1}${photo2}<h3 style="margin:5px 0;">${ad.title}</h3><div class="desapega-price">${ad.price}</div><p style="font-size:13px; color:#cbd5e1;">${ad.desc}</p><p style="font-size:11px; color:#94a3b8;">Por: ${ad.postedBy}</p><div style="display:flex; flex-direction:column; gap:10px; margin-top:10px;"><a href="${waUrl}" target="_blank" class="desapega-contact" style="text-align:center;">📲 WhatsApp</a><div style="margin-top:5px;"><h4 style="font-size:12px; color:#22c55e;">💬 Perguntas</h4><div>${replies}</div><div style="display:flex; gap:5px; margin-top:5px;"><input id="replyInput-${ad.id}" placeholder="Perguntar..." style="flex:1; padding:5px; border-radius:5px; border:none; background:#e5e7eb; font-size:12px;" /><button onclick="sendAdReply('${ad.id}')" style="background:#22c55e; padding:5px; border-radius:5px; color:white; font-size:12px;">Enviar</button></div></div><div style="display:flex; gap:5px;">${editBtn}${delBtn}</div></div></div>`;
+        }).join("");
       });
     }
 
-    function renderAdsList(snapshot) {
-      const adList = document.getElementById("adList");
-      const ads = [];
-      
-      if (snapshot) {
-        snapshot.forEach(doc => ads.push({ id: doc.id, ...doc.data() }));
-      } else {
-        return;
-      }
-
-      if (ads.length === 0) {
-        adList.innerHTML = "<p style='text-align:center; color:#94a3b8;'>Nenhum anúncio ainda. Seja o primeiro a postar! 🎉</p>";
-        return;
-      }
-
-      adList.innerHTML = ads.map(ad => {
-        const isOwner = ad.realNick === nick || nick === ADMIN_NICK;
-        const photo1 = ad.photos && ad.photos[1] ? `<img src="${ad.photos[1]}" class="desapega-img" />` : "";
-        const photo2 = ad.photos && ad.photos[2] ? `<img src="${ad.photos[2]}" class="desapega-img" />` : "";
-        
-        let cleanWhatsapp = ad.whatsapp.replace(/\D/g, '');
-        if (cleanWhatsapp.length === 11) cleanWhatsapp = "55" + cleanWhatsapp;
-        const whatsappUrl = `https://wa.me/${cleanWhatsapp}?text=Olá, vi seu anúncio "${ad.title}" no Unila App e tenho interesse!`;
-        
-        const adJson = encodeURIComponent(JSON.stringify(ad));
-        const editBtn = isOwner ? `<button onclick="editAd('${ad.id}', '${adJson}')" style="background:#3b82f6; padding:8px 12px; border-radius:8px; font-size:12px; margin-top:10px; margin-right:5px;">✏️ Editar</button>` : "";
-        const deleteBtn = isOwner ? `<button onclick="deleteAd('${ad.id}')" style="background:#dc2626; padding:8px 12px; border-radius:8px; font-size:12px; margin-top:10px;">🗑️ Deletar</button>` : "";
-
-        const repliesHtml = (ad.replies || []).map(r => `
-          <div style="background:rgba(255,255,255,0.05); padding:8px; border-radius:8px; margin-top:5px; font-size:13px; border-left:3px solid #22c55e;">
-            <strong style="color:#22c55e;">${r.nick}:</strong> ${r.text}
-          </div>
-        `).join("");
-
-        return `
-          <div class="desapega-card">
-            ${photo1}
-            ${photo2}
-            <h3 style="margin:10px 0; color:#ffffff;">${ad.title}</h3>
-            <div class="desapega-price">${ad.price}</div>
-            <p style="font-size:14px; color:#cbd5e1; margin:8px 0;">${ad.desc}</p>
-            <p style="font-size:12px; color:#94a3b8; margin:8px 0;">Por: <strong>${ad.postedBy}</strong></p>
-            
-            <div style="display:flex; flex-direction:column; gap:10px; margin-top:15px;">
-              <a href="${whatsappUrl}" target="_blank" class="desapega-contact" style="text-align:center; background:#25D366; display:flex; align-items:center; justify-content:center; gap:8px;">
-                <span style="font-size:18px;">📲</span> Entrar em Contato via WhatsApp
-              </a>
-              
-              <div style="margin-top:10px;">
-                <h4 style="font-size:14px; margin-bottom:8px; color:#22c55e;">💬 Perguntas e Respostas</h4>
-                <div id="replies-${ad.id}">${repliesHtml}</div>
-                <div style="display:flex; gap:5px; margin-top:10px;">
-                  <input id="replyInput-${ad.id}" placeholder="Faça uma pergunta..." style="flex:1; padding:8px; border-radius:8px; border:none; background:#e5e7eb; color:#1f2937; font-size:13px;" />
-                  <button onclick="sendAdReply('${ad.id}')" style="background:#22c55e; padding:8px 12px; border-radius:8px; border:none; color:white;">Enviar</button>
-                </div>
-              </div>
-
-              <div style="display:flex; gap:5px;">
-                ${editBtn}
-                ${deleteBtn}
-              </div>
-            </div>
-          </div>
-        `;
-      }).join("");
+    async function sendAdReply(adId) {
+      const input = document.getElementById(`replyInput-${adId}`); const text = input.value.trim(); if (!text) return;
+      try { await db.collection("desapega").doc(adId).update({ replies: firebase.firestore.FieldValue.arrayUnion({ nick: nick || "Anônimo 👤", text, time: Date.now() }) }); input.value = ""; } catch (e) { console.error(e); }
     }
 
-    function atualizarDataBar() { const d = new Date(); document.getElementById("dateBar").textContent = d.toLocaleString(); }
+    function editAd(id, adJson) {
+      const ad = JSON.parse(decodeURIComponent(adJson)); 
+      editingAdId = id; 
+      toggleDesapegaForm();
+      document.getElementById("adFormTitle").textContent = "Editar Anúncio";
+      document.getElementById("adId").value = id;
+      document.getElementById("adTitle").value = ad.title; 
+      document.getElementById("adPrice").value = ad.price;
+      document.getElementById("adDesc").value = ad.desc; 
+      document.getElementById("adWhatsapp").value = ad.whatsapp;
+      document.getElementById("adAnonymous").checked = ad.anonymous || false;
+      if (ad.photos) { 
+        for (let k in ad.photos) { 
+          adPhotos[k] = ad.photos[k]; 
+          document.getElementById(`adPreview${k}`).src = ad.photos[k]; 
+          document.getElementById(`adPreview${k}`).style.display = "block"; 
+          document.getElementById(`btnDelPhoto${k}`).style.display = "flex"; 
+        } 
+      }
+      // Scroll até o formulário de edição
+      setTimeout(() => {
+        document.getElementById("desapegaForm").scrollIntoView({ behavior: "smooth", block: "start" });
+      }, 100);
+    }
+
+    async function deleteAd(id) { if(confirm("Deletar?")) await db.collection("desapega").doc(id).delete(); }
+
+    function cancelAdEdit() { toggleDesapegaForm(); }
+
+    function atualizarDataBar() { document.getElementById("dateBar").textContent = new Date().toLocaleString(); }
+    setInterval(atualizarAtividade, 60000);
     setInterval(atualizarDataBar, 1000);
 
-    window.onload = () => { atualizarDataBar(); loadAllContent(); listenContentChanges(); if(nick){ document.getElementById("nickArea").style.display="none"; document.getElementById("chatArea").style.display="block"; listenChat(); } };
-    if ('serviceWorker' in navigator) { navigator.serviceWorker.register('./service-worker.js').catch(console.error); }
+    window.onload = () => { 
+      atualizarDataBar(); loadAllContent(); listenContentChanges(); setupPWAUpdate(); 
+      if(nick){ document.getElementById("nickArea").style.display="none"; document.getElementById("chatArea").style.display="block"; listenChat(); } 
+    };
   </script>
 </body>
 </html>
