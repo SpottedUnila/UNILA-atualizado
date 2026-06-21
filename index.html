@@ -1151,16 +1151,12 @@ function onYouTubeIframeAPIReady() {
 
     async function deleteMsg(id, msgNick){
       if(msgNick === nick || nick === ADMIN_NICK) {
-        if(confirm("Deseja apagar esta mensagem?")) {
-          try {
-            await db.collection("chat").doc(id).delete();
-            // O onSnapshot cuidará de remover da lista automaticamente, 
-            // mas podemos remover manualmente para feedback instantâneo
-            const el = document.getElementById(id);
-            if(el) el.remove();
-          } catch (e) {
-            alert("Erro ao apagar: " + e.message);
-          }
+        try {
+          await db.collection("chat").doc(id).delete();
+          const el = document.getElementById(id);
+          if(el) el.remove();
+        } catch (e) {
+          console.error("Erro ao apagar mensagem:", e);
         }
       }
     }
@@ -1634,7 +1630,6 @@ function onYouTubeIframeAPIReady() {
     }
 
     async function deleteAdReply(adId, index) {
-      if (!confirm("Remover esta resposta?")) return;
       try {
         const adRef = db.collection("desapega").doc(adId);
         const doc = await adRef.get();
@@ -1644,14 +1639,12 @@ function onYouTubeIframeAPIReady() {
           await adRef.update({ replies: replies });
         }
       } catch (e) {
-        alert("Erro ao remover resposta: " + e.message);
+        console.error("Erro ao remover resposta:", e);
       }
     }
 
     function deleteAd(id) {
-      if (confirm("Tem certeza que deseja remover este anúncio?")) {
-        db.collection("desapega").doc(id).delete();
-      }
+      db.collection("desapega").doc(id).delete().catch(e => console.error("Erro ao excluir anúncio:", e));
     }
 
     window.onload = () => {
