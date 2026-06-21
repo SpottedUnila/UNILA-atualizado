@@ -1,5 +1,5 @@
 // Nome do cache (mude versão quando atualizar)
-const CACHE_NAME = "unila-app-v104";
+const CACHE_NAME = "unila-app-v105";
 
 // Arquivos essenciais
 const urlsToCache = [
