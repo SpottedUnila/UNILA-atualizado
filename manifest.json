@@ -1,6 +1,6 @@
 {
-  "name": "Spotted Unila",
-  "short_name": "Spotted Unila",
+  "name": "Spotted",
+  "short_name": "Unila",
   "description": "Aplicativo Unila com funções úteis, links, telefones e serviços.",
   "start_url": "index.html",
   "scope": "./",
