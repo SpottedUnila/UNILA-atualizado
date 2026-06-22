@@ -72,12 +72,14 @@
 }
 
 .msg{
-  background:#1e293b;
-  padding:8px;
-  border-radius:8px;
-  margin-bottom:6px;
+  background: rgba(30, 41, 59, 0.1);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  padding: 8px;
+  border-radius: 8px;
+  margin-bottom: 6px;
+  border: 1px solid rgba(255,255,255,0.08);
 }
-
 .msg strong{
   color:#22c55e;
 }
@@ -853,11 +855,17 @@ function onPodcastStateChange(event) {
     }
 
     function shareApp() {
-      if (navigator.share) {
-        navigator.share({ title: 'UNILA App', text: 'Confira o App da Comunidade UNILA!', url: window.location.href }).catch(console.error);
-      } else { alert("Link do App: " + window.location.href); }
-    }
+  const appUrl = "https://drive.google.com/file/d/1XgYsFJlnd8VuQGAyYopxNI2Huuknsugo/view?usp=sharing";
 
+  const mensagem = encodeURIComponent(
+    "Confira o Unila App!\n\n" + appUrl
+  );
+
+  window.open(
+    `https://wa.me/?text=${mensagem}`,
+    "_blank"
+  );
+}
     // CHAT LOGIC
     async function uploadImageToCloudinary(file) {
       const formData = new FormData();
