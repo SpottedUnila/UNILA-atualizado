@@ -436,7 +436,7 @@ button:hover{
 .top-controls {
   position: fixed;
   top: 15px;
-  right: 15px;
+  right: 5px;
   display: flex;
   gap: 10px;
   z-index: 1001;
@@ -446,12 +446,15 @@ button:hover{
   display:flex;
   align-items:center;
   gap:10px;
-  background:rgba(255,255,255,0.05);
+  background: rgba(255,255,255,0.03)
   backdrop-filter:blur(15px);
   padding:5px 5px 5px 15px;
   border-radius:30px;
   border:1px solid rgba(255,255,255,0.1);
   box-shadow:0 8px 32px rgba(0,0,0,0.3);
+}
+.podcast-container{
+  margin-right: 0px;
 }
 
 #radioBtn, #podcastBtn{
@@ -468,12 +471,9 @@ button:hover{
   transition:all 0.3s ease;
 }
 
-#radioBtn {
-  background:linear-gradient(135deg, #9333ea, #5b21b6);
-}
-
+#radioBtn,
 #podcastBtn {
-  background:linear-gradient(135deg, #f97316, #ea580c);
+  background: linear-gradient(135deg, #9333ea, #5b21b6);
 }
 
 #radioBtn:active, #podcastBtn:active{
@@ -1144,7 +1144,28 @@ function onPodcastStateChange(event) {
 
     async function deleteAd(id) { if(confirm("Deletar?")) await db.collection("desapega").doc(id).delete(); }
     function cancelAdEdit() { toggleDesapegaForm(); }
-    function atualizarDataBar() { document.getElementById("dateBar").textContent = new Date().toLocaleString(); }
+    function atualizarDataBar() {
+  const agora = new Date();
+
+  let diaSemana = agora.toLocaleDateString("pt-BR", {
+    weekday: "long"
+  });
+
+  diaSemana =
+    diaSemana.charAt(0).toUpperCase() +
+    diaSemana.slice(1);
+
+  const data = agora.toLocaleDateString("pt-BR");
+
+  const hora = agora.toLocaleTimeString("pt-BR", {
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit"
+  });
+
+  document.getElementById("dateBar").textContent =
+    `${diaSemana}, ${data} ${hora}`;
+}
     setInterval(atualizarAtividade, 60000);
     setInterval(atualizarDataBar, 1000);
 
