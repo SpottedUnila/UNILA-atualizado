@@ -48,19 +48,18 @@
 }
 
 #sendBtn{
-  width:45px;
-  height:45px;
+  width:60px;
+  height:60px;
   border-radius:50%;
   border:none;
   background:#25D366;
   color:white;
-  font-size:18px;
+  font-size:24px;
   display:flex;
   align-items:center;
   justify-content:center;
   box-shadow:0 4px 10px rgba(0,0,0,0.3);
 }
-
 #chatInput{
   flex:1;
   height:45px;
@@ -1030,7 +1029,8 @@ gtag('config', 'G-FJT3X93608');
         const originalPlaceholder = input.placeholder; input.placeholder = "Enviando..."; input.disabled = true;
         uploadImageToCloudinary(selectedImage).then(imageUrl => {
           input.disabled = false; input.placeholder = originalPlaceholder;
-          if (imageUrl) { messageData.imageUrl = imageUrl; messageData.text = text; db.collection("chat")
+          if (imageUrl) { messageData.imageUrl = imageUrl; messageData.text = text;
+          db.collection("chat").add(messageData);
    cancelImage(); input.value = ""; }
         });
       } else { messageData.text = text; db.collection("chat").add(messageData); input.value = ""; document.getElementById("chatAnonymous").checked = false; }
