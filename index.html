@@ -48,19 +48,18 @@
 }
 
 #sendBtn{
-  width:45px;
-  height:45px;
+  width:60px;
+  height:60px;
   border-radius:50%;
   border:none;
   background:#25D366;
   color:white;
-  font-size:18px;
+  font-size:24px;
   display:flex;
   align-items:center;
   justify-content:center;
   box-shadow:0 4px 10px rgba(0,0,0,0.3);
 }
-
 #chatInput{
   flex:1;
   height:45px;
@@ -313,6 +312,66 @@ button:hover{
   color: #1f2937;
 }
 
+/* Estilo para Respostas nos Anúncios */
+.ad-replies {
+  margin-top: 15px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+.ad-reply-item {
+  background: rgba(255, 255, 255, 0.05);
+  padding: 8px;
+  border-radius: 8px;
+  margin-bottom: 5px;
+  font-size: 13px;
+  position: relative;
+}
+.ad-reply-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 4px;
+  font-size: 11px;
+  color: #94a3b8;
+  padding-right: 20px;
+}
+.ad-reply-header strong {
+  color: #22c55e;
+}
+.ad-reply-input-container {
+  display: flex;
+  gap: 5px;
+  margin-top: 10px;
+}
+.ad-reply-input {
+  flex: 1;
+  padding: 8px 12px;
+  border-radius: 20px;
+  border: none;
+  background: #e5e7eb;
+  font-size: 13px;
+  color: #1f2937;
+}
+.ad-reply-btn {
+  background: #22c55e !important;
+  padding: 8px 15px !important;
+  border-radius: 20px !important;
+  font-size: 13px !important;
+  min-width: auto !important;
+  height: auto !important;
+}
+.ad-reply-delete {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  background: none !important;
+  border: none !important;
+  color: #94a3b8 !important;
+  font-size: 10px !important;
+  padding: 2px !important;
+  cursor: pointer;
+  box-shadow: none !important;
+}
+
 /* NOTES */
 #notesPage textarea{
   width:100%;
@@ -476,6 +535,7 @@ button:hover{
 #radioBtn,
 #podcastBtn {
   background: linear-gradient(135deg, #9333ea, #5b21b6);
+
 }
 
 #radioBtn:active, #podcastBtn:active{
@@ -498,7 +558,6 @@ button:hover{
   width:6px;
   height:6px;
   border-radius:50%;
-  animation:blink 1.5s infinite;
 }
 
 .radio-dot {
@@ -509,6 +568,27 @@ button:hover{
 .podcast-dot {
   background:#3b82f6;
   box-shadow:0 0 8px #3b82f6;
+}
+@keyframes piscaPonto {
+    0% {
+        opacity: 0.3;
+        transform: scale(0.9);
+    }
+
+    50% {
+        opacity: 1;
+        transform: scale(1.3);
+    }
+
+    100% {
+        opacity: 0.3;
+        transform: scale(0.9);
+    }
+}
+
+.radio-dot,
+.podcast-dot {
+    animation: piscaPonto 1.5s infinite;
 }
 
 @keyframes blink{
@@ -622,7 +702,7 @@ gtag('config', 'G-FJT3X93608');
     <button class="internet" onclick="openDynamic('internet','page')">🌐 Internet UNILA</button>
     <button class="estude" onclick="openDynamic('estude','page')">🎓 Estude na UNILA</button>
     <button class="google" onclick="openDynamic('enem','link')">📝 ENEM – Página do Participante</button>
-    <button class="noticias" onclick="openDynamic('noticias','page')">📰 Notícias</button>
+    <button class="noticias" onclick="loadNews(); document.getElementById('dynamicTitle').textContent='NOTÍCIAS'; openPage('dynamicPage');">📰 Notícias</button>
     <button class="desapega" onclick="openPage('desapegaPage')">🛒 Desapega Unileiro</button>
     <button class="emergencia" onclick="openDynamic('upa','page')">🏥 Hospitais de Emergência 24h (UPA)</button>
   </div>
@@ -760,6 +840,8 @@ gtag('config', 'G-FJT3X93608');
     let unsubscribeChat = null;
     let replyTo = null;
     let selectedImage = null;
+    let isReacting = false;
+    let shouldScrollToBottom = false;
 
     const CLOUDINARY_CLOUD_NAME = 'dthnn5flq';
 
@@ -807,41 +889,71 @@ gtag('config', 'G-FJT3X93608');
       smartec: "https://www.facebook.com/profile.php?id=61562436416014",
       editais: "https://documentos.unila.edu.br/",
       emergencia: "Polícia Militar: 190\nSAMU (Ambulância): 192\nBombeiros: 193\n\nHospital Municipal: (45) 2105-4100\nGuarda Municipal: (45) 2105-5100\nDelegacia da Mulher: (45) 3521-9200\nDefesa Civil: 199\n\nPolícia Federal: (45) 3522-1174\nPolícia Rodoviária Federal: (45) 3576-1400\n\nPrae-Unila: +55 45 3522-9983\nPrograd-Unila: +55 (45) 3522-9766\n\nDisque Denúncia: 181\nConselho Tutelar: (45) 3521-1112\nCentro de Intoxicações: 0800 722 6001\n\n⚠ Em situações graves, ligue imediatamente.",
-      enderecos: "📍 UNILA Jardim Universitário (JU)\nAv. Tarquínio Joslin dos Santos, 1000 – Polo Universitário\n\n📍 UNILA Parque Tecnológico Itaipu (Parque Tec)\nAv. Tancredo Neves, 6731 – Jardim Itaipu\nCEP: 85867-970\n\n📍 Edifício Rio Almada\nAv. Tancredo Neves, 3838 – Porto Belo\nCEP: 85867-633\n\n📍 Campus Integração\nAv. Tancredo Neves, 3147 – Porto Belo\n\n📍 Almoxarifado / Patrimônio\nRua Macucos, 131 – Portal da Foz\n\n📍 Campus Arandu\nProjeto em construção na Itaipu Binacional",
-      ru: "O Restaurante Universitário (RU) da UNILA oferece alimentação acessível para estudantes e servidores.\n\n📍 Unidade Jardim Universitário (JU)\nAv. Tarquínio Joslin dos Santos, 1000\n\n🕒 Horários:\nCafé: 06h45 – 08h00\nAlmoço: 11h00 – 14h00\nJantar: 17h30 – 19h30\n\n📍 Unidade Itaipu Parquetec (PTI)\nBloco 3\n\n🕒 Horários:\nAlmoço: 11h30 – 14h30\nJantar: 17h30 – 19h15\n\n💰 Valor médio: R$ 4,00\nPode ser gratuito para bolsistas.\n\n⚠ Horários e valores podem sofrer alterações.",
-      grupo_facebook: "https://facebook.com/groups/1469303078173697/",
-      dev: "Para trabalhos e parcerias entre em contato:\n\nFernando - Serviço Social\nContato: +55 45 99949-9759",
-      internet: "Para configurar a internet da UNILA (redes UNILA ou eduroam), conecte-se à rede e utilize as configurações abaixo:\n\n📶 Configuração geral:\n• Método EAP: PEAP\n• Autenticação Fase 2: MSCHAPV2\n• Certificado CA: Não validar ou não especificado\n• Identidade/Usuário: seu e-mail institucional (sem @unila.edu.br)\n• Senha: senha do e-mail institucional\n\n📱 Android:\n• Conecte na rede UNILA ou eduroam\n• Use as configurações acima\n\n🍎 iPhone:\n• Conecte na rede\n• Insira login e aceite certificado\n\n⚠ Dispositivos Motorola precisa outras configurações. Problemas: procure suporte da UNILA",
-      estude: "A Universidade Federal da Integração Latino-Americana (UNILA), localizada em Foz do Iguaçu-PR, é uma instituição pública..."
+      enderecos: "Unila - Campus PTI\nAv. Tancredo Neves, 6731 - PTI, Foz do Iguaçu - PR\n\nUnila - Campus Juarez Távora\nAv. Silvio Américo Sasdelli, 1000 - Vila A, Foz do Iguaçu - PR\n\nUnila - Campus Jardim Universitário (JU)\nAv. Tarquínio Joslin dos Santos, 1000 - Lot. Universitário das Américas, Foz do Iguaçu - PR\n\nUnila - Campus Integração\nAv. Tancredo Neves, 3147 - Foz do Iguaçu - PR",
+      ru: "RU PTI: Segunda a Sexta (11:00 - 14:00 e 17:30 - 20:00)\nRU JU: Segunda a Sexta (11:00 - 14:00 e 17:30 - 20:00)\n\nPreço para Estudantes: R$ 3,50\nPreço para Servidores: R$ 12,00\n\n⚠ Verifique feriados e horários especiais no portal oficial.",
+      dev: "Fernando - Serviço Social\nContato: +55 45 99949-9759",
+      internet: "Rede: UNILA-WIFI\nLogin: Seu CPF ou E-mail Institucional\nSenha: A mesma senha do SIGAA\n\n⚠ Se tiver problemas, procure a TIC do seu campus.",
+      estude: "Ingresso para Brasileiros: Via ENEM/SISU\nIngresso para Estrangeiros: Seleção Internacional Própria\n\nCursos: Mais de 29 opções de graduação.\n\nPara mais informações acesse: portal.unila.edu.br/ingresso",
+      enem: "https://enem.inep.gov.br/participante/",
+      grupo_facebook: "https://www.facebook.com/groups/unila/",
+      noticias: "https://portal.unila.edu.br/noticias",
+      upa: "UPA João Samek (Vila A): (45) 3524-8800\nUPA Morumbi: (45) 3521-1350\n\n⚠ Em casos de emergência com risco de vida, ligue 192 (SAMU)."
     };
 
-    let contentCache = {};
     async function loadAllContent() {
-      try {
-        const snapshot = await db.collection('admin_content').get();
-        snapshot.forEach(doc => { contentCache[doc.id] = doc.data().value; });
-      } catch(e) { console.log(e); }
+      // Carregar conteúdo do admin_content (páginas/links)
+      const snapshot = await db.collection("admin_content").get();
+      snapshot.forEach(doc => { defaultContent[doc.id] = doc.data().value; });
     }
 
     function listenContentChanges() {
-      db.collection('admin_content').onSnapshot(snapshot => {
+      // Escutar mudanças em admin_content
+      db.collection("admin_content").onSnapshot(snapshot => {
         snapshot.docChanges().forEach(change => {
-          contentCache[change.doc.id] = change.doc.data().value;
-          if(document.getElementById('dynamicPage').style.display === 'block' && document.getElementById('dynamicTitle').textContent === change.doc.id.toUpperCase()) {
-             document.getElementById('dynamicContent').innerHTML = change.doc.data().value;
+          if (change.type === "added" || change.type === "modified") {
+            defaultContent[change.doc.id] = change.doc.data().value;
           }
         });
       });
     }
 
-    function getContent(id) { return contentCache[id] || defaultContent[id] || "Conteúdo não encontrado."; }
-    async function openDynamic(id, type) {
-      const val = getContent(id);
-      if(type === 'link') { window.open(val, "_blank"); } 
+    function openDynamic(id, type) {
+      const val = defaultContent[id];
+      if (type === 'link') window.open(val, '_blank');
       else {
         document.getElementById("dynamicTitle").textContent = id.toUpperCase();
         document.getElementById("dynamicContent").innerHTML = val;
         openPage('dynamicPage');
+      }
+    }
+
+    // Carregar notícias da coleção 'news'
+    async function loadNews() {
+      try {
+        const snapshot = await db.collection('news').orderBy('timestamp', 'desc').get();
+        let newsHtml = '';
+        
+        if (snapshot.empty) {
+          newsHtml = '<p style="text-align:center; padding:20px; color:#94a3b8;">Nenhuma notícia publicada ainda.</p>';
+        } else {
+          snapshot.forEach(doc => {
+            const news = doc.data();
+            const date = news.createdAt ? new Date(news.createdAt).toLocaleString('pt-BR') : 'Data indisponível';
+            newsHtml += `
+              <div style="background: rgba(30, 41, 59, 0.6); border-radius: 12px; padding: 15px; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.1);">
+                <h3 style="color:#22c55e; margin-top:0; margin-bottom:10px;">${news.title}</h3>
+                ${news.imageUrl ? `<img src="${news.imageUrl}" style="width:100%; max-height:300px; object-fit:cover; border-radius:8px; margin-bottom:10px;">` : ''}
+                <p style="color:#e0e0e0; line-height:1.6; margin-bottom:10px;">${news.content}</p>
+                <p style="font-size:12px; color:#94a3b8; text-align:right; margin:0;">${date}</p>
+              </div>
+            `;
+          });
+        }
+        
+        document.getElementById('dynamicContent').innerHTML = newsHtml;
+      } catch (e) {
+        console.error('Erro ao carregar notícias:', e);
+        document.getElementById('dynamicContent').innerHTML = '<p style="color:#ef4444;">Erro ao carregar notícias.</p>';
       }
     }
 
@@ -851,7 +963,10 @@ gtag('config', 'G-FJT3X93608');
       document.querySelectorAll(".page").forEach(p => p.style.display = "none");
       document.getElementById(id).style.display = "block";
       scrollToTop();
-      if(id === 'chatPage') listenChat();
+      if(id === 'chatPage') {
+        shouldScrollToBottom = true;
+        listenChat();
+      }
       if(id === 'notesPage') loadNotes();
       if(id === 'desapegaPage') listenAds();
     }
@@ -863,17 +978,11 @@ gtag('config', 'G-FJT3X93608');
     }
 
     function shareApp() {
-  const appUrl = "https://drive.google.com/file/d/1XgYsFJlnd8VuQGAyYopxNI2Huuknsugo/view?usp=sharing";
+      const appUrl = "https://drive.google.com/file/d/1XgYsFJlnd8VuQGAyYopxNI2Huuknsugo/view?usp=sharing";
+      const mensagem = encodeURIComponent("Confira o Unila App!\n\n" + appUrl);
+      window.open(`https://wa.me/?text=${mensagem}`, "_blank");
+    }
 
-  const mensagem = encodeURIComponent(
-    "Confira o Unila App!\n\n" + appUrl
-  );
-
-  window.open(
-    `https://wa.me/?text=${mensagem}`,
-    "_blank"
-  );
-}
     // CHAT LOGIC
     async function uploadImageToCloudinary(file) {
       const formData = new FormData();
@@ -912,6 +1021,7 @@ gtag('config', 'G-FJT3X93608');
       const input = document.getElementById("chatInput");
       const text = input.value.trim();
       if (!text && !selectedImage) return;
+      shouldScrollToBottom = true;
       const isAnonymous = document.getElementById("chatAnonymous").checked;
       const messageData = { nick: isAnonymous ? "Anônimo 👤" : nick, realNick: nick, time: Date.now(), anonymous: isAnonymous };
       if (replyTo) { messageData.reply = replyTo; cancelReply(); }
@@ -919,7 +1029,8 @@ gtag('config', 'G-FJT3X93608');
         const originalPlaceholder = input.placeholder; input.placeholder = "Enviando..."; input.disabled = true;
         uploadImageToCloudinary(selectedImage).then(imageUrl => {
           input.disabled = false; input.placeholder = originalPlaceholder;
-          if (imageUrl) { messageData.imageUrl = imageUrl; messageData.text = text; db.collection("chat").add(messageData); cancelImage(); input.value = ""; }
+          if (imageUrl) { messageData.imageUrl = imageUrl; messageData.text = text; db.collection("chat")
+   cancelImage(); input.value = ""; }
         });
       } else { messageData.text = text; db.collection("chat").add(messageData); input.value = ""; document.getElementById("chatAnonymous").checked = false; }
     }
@@ -933,46 +1044,158 @@ gtag('config', 'G-FJT3X93608');
     }
 
     function renderMessages(append = false) {
-      const box = document.getElementById("chatBox"); const oldScrollHeight = box.scrollHeight; const oldScrollTop = box.scrollTop;
-      if (!append) box.innerHTML = ""; const fragment = document.createDocumentFragment();
+      const box = document.getElementById("chatBox");
+      if (!box) return;
+
+      const oldScrollHeight = box.scrollHeight;
+      const oldScrollTop = box.scrollTop;
+
+      if (!append) {
+        box.innerHTML = "";
+      }
+
+      const fragment = document.createDocumentFragment();
       chatMessages.forEach(m => {
-        if (document.getElementById(m.id)) return;
         let deleteBtn = (m.realNick === nick || nick === ADMIN_NICK) ? `<button onclick="deleteMsg('${m.id}', '${m.realNick || m.nick}')" style="background:none; border:none; color:#94a3b8; cursor:pointer; margin-left:10px;">🗑</button>` : "";
-        let replyBtn = `<button onclick="setReply('${m.id}', '${m.nick}', '${(m.text || "Imagem").replace(/'/g, "\\\'")}')" style="background:none; border:none; color:#3b82f6; cursor:pointer;">↩ Responder</button>`;
+        let replyBtn = `<button onclick="setReply('${m.id}', '${m.nick}', '${(m.text || "Imagem").replace(/'/g, "\\\'")}')" style="background:none; border:none; color:#3b82f6; 
+        
+        cursor:pointer;
+font-size:10px;
+padding:0 2px;">↩ Responder</button>`;
         const div = document.createElement("div"); div.className = "msg"; div.id = m.id;
         let messageContent = "";
         if (m.reply) { messageContent += `<div class="reply-box" onclick="document.getElementById('${m.reply.id}').scrollIntoView({behavior:'smooth'})"><strong>${m.reply.user}</strong>: ${m.reply.text}</div>`; }
         if (m.imageUrl) { messageContent += `<img src="${m.imageUrl}" style="max-width:100%; max-height:300px; border-radius:8px; margin-top:5px; display:block;" onclick="window.open('${m.imageUrl}', '_blank')" />`; }
         if (m.text) { messageContent += `<div style="margin-top:5px;">${m.text}</div>`; }
-        div.innerHTML = `<strong>${m.nick}:</strong> ${messageContent}<small>${formatarDataMensagem(m.time)} ${replyBtn} ${deleteBtn}</small>`;
+        
+        const myReaction = (m.userReactions && nick) ? m.userReactions[nick] : null;
+        const heartActive = myReaction === "heart" ? "background:#ef4444;color:white;" : "";
+        const likeActive = myReaction === "like" ? "background:#2563eb;color:white;" : "";
+        const clownActive = myReaction === "clown" ? "background:#f59e0b;color:white;" : "";
+        const laughActive = myReaction === "laugh" ? "background:#22c55e;color:white;" : "";
+        
+        div.innerHTML = `
+          <strong>${m.nick}:</strong>
+          ${messageContent}
+          <div style="display:flex; gap:2px; flex-wrap:wrap; margin-top:4px; margin-bottom:2px;">
+            <button onclick="reactMessage('${m.id}','heart')" style="padding:4px 6px; font-size:10px; border-radius:10px; min-width:auto; ${heartActive}">❤️ ${m.reactions?.heart || 0}</button>
+            <button onclick="reactMessage('${m.id}','like')" style="padding:4px 6px; font-size:10px; border-radius:10px; min-width:auto; ${likeActive}">👍 ${m.reactions?.like || 0}</button>
+            <button onclick="reactMessage('${m.id}','clown')" style="padding:4px 6px; font-size:10px; border-radius:10px; min-width:auto; ${clownActive}">🤡 ${m.reactions?.clown || 0}</button>
+            <button onclick="reactMessage('${m.id}','laugh')" style="padding:4px 6px; font-size:10px; border-radius:10px; min-width:auto; ${laughActive}">🤣 ${m.reactions?.laugh || 0}</button>
+          </div>
+          <small>${formatarDataMensagem(m.time)} ${replyBtn} ${deleteBtn}</small>
+        `;
         fragment.appendChild(div);
       });
-      if (append) { box.prepend(fragment); box.scrollTop = box.scrollHeight - oldScrollHeight + oldScrollTop; } 
-      else { box.appendChild(fragment); box.scrollTop = box.scrollHeight; }
+
+      if (append) {
+        box.prepend(fragment);
+        box.scrollTop = box.scrollHeight - oldScrollHeight + oldScrollTop;
+      } else {
+        box.appendChild(fragment);
+        if (shouldScrollToBottom && !isReacting) {
+          setTimeout(() => {
+            box.scrollTop = box.scrollHeight;
+            shouldScrollToBottom = false;
+          }, 50);
+        }
+      }
     }
 
     function listenChat() {
       if (unsubscribeChat) unsubscribeChat();
-      unsubscribeChat = db.collection("chat").orderBy("time", "desc").limit(LIMIT).onSnapshot(snapshot => {
-        const newMessages = []; snapshot.docs.forEach(doc => { newMessages.push({ id: doc.id, ...doc.data() }); });
-        const loadedIds = new Set(chatMessages.map(m => m.id)); const updates = newMessages.filter(m => !loadedIds.has(m.id));
-        if (updates.length > 0) { chatMessages = [...chatMessages, ...updates].sort((a, b) => a.time - b.time); renderMessages(); }
-        if (snapshot.docs.length > 0) { lastDoc = snapshot.docs[snapshot.docs.length - 1]; }
-      });
-      const box = document.getElementById("chatBox"); box.onscroll = () => { if (box.scrollTop === 0 && !loadingMore && lastDoc) { loadMoreMessages(); } };
+      unsubscribeChat = db.collection("chat")
+        .orderBy("time", "desc")
+        .limit(LIMIT)
+        .onSnapshot(snapshot => {
+          let changed = false;
+          let isNewMsg = false;
+          snapshot.docChanges().forEach(change => {
+            if (change.type === "added") isNewMsg = true;
+          });
+          
+          snapshot.docs.forEach(doc => {
+            const newData = { id: doc.id, ...doc.data() };
+            const index = chatMessages.findIndex(m => m.id === doc.id);
+            if (index === -1) {
+              chatMessages.push(newData);
+              changed = true;
+            } else {
+              const old = chatMessages[index];
+              if (JSON.stringify(old) !== JSON.stringify(newData)) {
+                chatMessages[index] = newData;
+                changed = true;
+              }
+            }
+          });
+
+          if (changed) {
+            chatMessages.sort((a, b) => a.time - b.time);
+            if (isNewMsg) shouldScrollToBottom = true;
+            renderMessages();
+          }
+          if (snapshot.docs.length > 0) {
+            lastDoc = snapshot.docs[snapshot.docs.length - 1];
+          }
+        });
+
+      const box = document.getElementById("chatBox");
+      box.onscroll = () => {
+        if (box.scrollTop === 0 && !loadingMore && lastDoc) {
+          loadMoreMessages();
+        }
+      };
     }
 
     async function loadMoreMessages() {
-      loadingMore = true; const box = document.getElementById("chatBox");
+      loadingMore = true;
       const snapshot = await db.collection("chat").orderBy("time", "desc").startAfter(lastDoc).limit(LIMIT).get();
       if (snapshot.docs.length > 0) {
-        const olderMessages = []; snapshot.docs.forEach(doc => { olderMessages.push({ id: doc.id, ...doc.data() }); });
-        chatMessages = [...olderMessages, ...chatMessages].sort((a, b) => a.time - b.time); lastDoc = snapshot.docs[snapshot.docs.length - 1]; renderMessages(true);
+        const olderMessages = [];
+        snapshot.docs.forEach(doc => { olderMessages.push({ id: doc.id, ...doc.data() }); });
+        chatMessages = [...olderMessages, ...chatMessages].sort((a, b) => a.time - b.time);
+        lastDoc = snapshot.docs[snapshot.docs.length - 1];
+        renderMessages(true);
       }
       loadingMore = false;
     }
 
-    async function deleteMsg(id, msgNick){ if(msgNick === nick || nick === ADMIN_NICK) { try { await db.collection("chat").doc(id).delete(); const el = document.getElementById(id); if(el) el.remove(); } catch (e) { console.error(e); } } }
+    async function deleteMsg(id, msgNick) {
+      if (msgNick === nick || nick === ADMIN_NICK) {
+        try {
+          await db.collection("chat").doc(id).delete();
+        
+          const el = document.getElementById(id);
+          if (el) el.remove();
+        } catch (e) { console.error(e); }
+      }
+    }
+
+    async function reactMessage(messageId, reactionType) {
+      if (!nick) { alert("Defina um nick para reagir."); return; }
+      isReacting = true;
+      const ref = db.collection("chat").doc(messageId);
+      try {
+        await db.runTransaction(async (transaction) => {
+          const doc = await transaction.get(ref);
+          if (!doc.exists) return;
+          const data = doc.data();
+          const reactions = { heart: data.reactions?.heart || 0, like: data.reactions?.like || 0, clown: data.reactions?.clown || 0, laugh: data.reactions?.laugh || 0 };
+          const userReactions = data.userReactions || {};
+          const currentReaction = userReactions[nick] || null;
+          if (currentReaction === reactionType) {
+            reactions[reactionType] = Math.max(0, reactions[reactionType] - 1);
+            delete userReactions[nick];
+          } else {
+            if (currentReaction && reactions[currentReaction] > 0) reactions[currentReaction]--;
+            reactions[reactionType] = (reactions[reactionType] || 0) + 1;
+            userReactions[nick] = reactionType;
+          }
+          transaction.update(ref, { reactions, userReactions });
+        });
+      } catch (e) { console.error("Erro ao reagir:", e); }
+      finally { setTimeout(() => { isReacting = false; }, 500); }
+    }
 
     async function saveNick(){
       const btn = event.target; const originalText = btn.textContent; const input = document.getElementById("nickInput").value.trim();
@@ -984,7 +1207,9 @@ gtag('config', 'G-FJT3X93608');
         }
         await nickRef.set({ createdAt: Date.now(), lastActive: Date.now() }); nick = input; localStorage.setItem("chat_nick", nick);
         document.getElementById("nickArea").style.display="none"; document.getElementById("chatArea").style.display="block";
-        if(nick === ADMIN_NICK) document.getElementById("changeNickBtn").style.display = "block"; listenChat();
+        if(nick === ADMIN_NICK) document.getElementById("changeNickBtn").style.display = "block";
+        shouldScrollToBottom = true;
+        listenChat();
       } catch (e) { alert("Erro: " + e.message); } finally { btn.disabled = false; btn.textContent = originalText; }
     }
 
@@ -992,37 +1217,26 @@ gtag('config', 'G-FJT3X93608');
     function atualizarAtividade(){ if(nick) db.collection("users").doc(nick).update({ lastActive: Date.now() }); }
     setInterval(atualizarAtividade, 60000);
 
-    // RADIO LOGIC
     function toggleRadioSimples() {
       const player = document.getElementById("radioPlayer"); const iframe = document.getElementById("ytRadio");
       const podPlayer = document.getElementById("podcastPlayer"); const podIframe = document.getElementById("ytPodcast");
-      
-      if (podPlayer.style.display === "block") {
-        podPlayer.style.display = "none"; podIframe.contentWindow.postMessage(JSON.stringify({event: "command", func: "pauseVideo", args: []}), "*");
-      }
-
+      if (podPlayer.style.display === "block") { podPlayer.style.display = "none"; podIframe.contentWindow.postMessage(JSON.stringify({event: "command", func: "pauseVideo", args: []}), "*"); }
       if (player.style.display === "none") {
         player.style.display = "block"; iframe.contentWindow.postMessage(JSON.stringify({event: "command", func: "playVideo", args: []}), "*");
         setTimeout(() => player.scrollIntoView({ behavior: "smooth" }), 300);
       } else { player.style.display = "none"; iframe.contentWindow.postMessage(JSON.stringify({event: "command", func: "pauseVideo", args: []}), "*"); }
     }
 
-    // PODCAST LOGIC
     function togglePodcastSimples() {
       const player = document.getElementById("podcastPlayer"); const iframe = document.getElementById("ytPodcast");
       const radioPlayer = document.getElementById("radioPlayer"); const radioIframe = document.getElementById("ytRadio");
-      
-      if (radioPlayer.style.display === "block") {
-        radioPlayer.style.display = "none"; radioIframe.contentWindow.postMessage(JSON.stringify({event: "command", func: "pauseVideo", args: []}), "*");
-      }
-
+      if (radioPlayer.style.display === "block") { radioPlayer.style.display = "none"; radioIframe.contentWindow.postMessage(JSON.stringify({event: "command", func: "pauseVideo", args: []}), "*"); }
       if (player.style.display === "none") {
         player.style.display = "block"; iframe.contentWindow.postMessage(JSON.stringify({event: "command", func: "playVideo", args: []}), "*");
         setTimeout(() => player.scrollIntoView({ behavior: "smooth" }), 300);
       } else { player.style.display = "none"; iframe.contentWindow.postMessage(JSON.stringify({event: "command", func: "pauseVideo", args: []}), "*"); }
     }
 
-    // NOTES LOGIC
     function saveNote() {
       const noteText = document.getElementById("note").value.trim(); if(!noteText) return;
       let notes = JSON.parse(localStorage.getItem("notes") || "[]"); notes.push({ id: Date.now(), text: noteText });
@@ -1034,7 +1248,6 @@ gtag('config', 'G-FJT3X93608');
     }
     function deleteNote(id) { let notes = JSON.parse(localStorage.getItem("notes") || "[]"); notes = notes.filter(n => n.id !== id); localStorage.setItem("notes", JSON.stringify(notes)); loadNotes(); }
 
-    // DESAPEGA LOGIC
     let adPhotos = {};
     let editingAdId = null;
     let unsubscribeAds = null;
@@ -1046,17 +1259,8 @@ gtag('config', 'G-FJT3X93608');
       if (!isVisible) {
         setTimeout(() => { form.scrollIntoView({ behavior: "smooth", block: "start" }); }, 100);
         document.getElementById("adFormTitle").textContent = "Novo Anúncio";
-        document.getElementById("adId").value = "";
-        document.getElementById("adTitle").value = "";
-        document.getElementById("adPrice").value = "";
-        document.getElementById("adDesc").value = "";
-        document.getElementById("adWhatsapp").value = "";
-        document.getElementById("adAnonymous").checked = false;
-        adPhotos = {};
-        document.getElementById("adPreview1").style.display = "none";
-        document.getElementById("adPreview2").style.display = "none";
-        document.getElementById("btnDelPhoto1").style.display = "none";
-        document.getElementById("btnDelPhoto2").style.display = "none";
+        document.getElementById("adId").value = ""; document.getElementById("adTitle").value = ""; document.getElementById("adPrice").value = ""; document.getElementById("adDesc").value = ""; document.getElementById("adWhatsapp").value = ""; document.getElementById("adAnonymous").checked = false;
+        adPhotos = {}; document.getElementById("adPreview1").style.display = "none"; document.getElementById("adPreview2").style.display = "none"; document.getElementById("btnDelPhoto1").style.display = "none"; document.getElementById("btnDelPhoto2").style.display = "none";
         editingAdId = null;
       }
     }
@@ -1095,13 +1299,8 @@ gtag('config', 'G-FJT3X93608');
         }
         const adData = { title, price, desc, whatsapp, photos: uploadedPhotos, postedBy: isAnonymous ? "Anônimo 👤" : nick, realNick: nick, anonymous: isAnonymous, updatedAt: Date.now() };
         const currentAdId = document.getElementById("adId").value || editingAdId;
-        if (currentAdId) { 
-          await db.collection("desapega").doc(currentAdId).update(adData); 
-          editingAdId = null; document.getElementById("adId").value = "";
-        } else { 
-          adData.createdAt = Date.now(); 
-          await db.collection("desapega").add(adData); 
-        }
+        if (currentAdId) { await db.collection("desapega").doc(currentAdId).update(adData); editingAdId = null; document.getElementById("adId").value = ""; }
+        else { adData.createdAt = Date.now(); await db.collection("desapega").add(adData); }
         toggleDesapegaForm();
       } catch (e) { alert("Erro: " + e.message); } finally { btn.disabled = false; btn.textContent = "Salvar"; }
     }
@@ -1124,70 +1323,132 @@ gtag('config', 'G-FJT3X93608');
           const photo2 = ad.photos && ad.photos[2] ? `<img src="${ad.photos[2]}" class="desapega-img" />` : "";
           let cleanWa = ad.whatsapp.replace(/\D/g, ''); if (cleanWa.length === 11) cleanWa = "55" + cleanWa;
           const waUrl = `https://wa.me/${cleanWa}?text=Interesse no anúncio: ${ad.title}`;
-          const editBtn = isOwner ? `<button onclick="editAd('${ad.id}', '${encodeURIComponent(JSON.stringify(ad))}')" style="background:#3b82f6; padding:8px; border-radius:8px; font-size:12px;">✏️ Editar</button>` : "";
-          const delBtn = isOwner ? `<button onclick="deleteAd('${ad.id}')" style="background:#dc2626; padding:8px; border-radius:8px; font-size:12px;">🗑️ Deletar</button>` : "";
-          const replies = (ad.replies || []).map(r => `<div style="background:rgba(255,255,255,0.05); padding:5px; border-radius:5px; margin-top:5px; font-size:12px; border-left:2px solid #22c55e;"><strong>${r.nick}:</strong> ${r.text}</div>`).join("");
-          return `<div class="desapega-card">${photo1}${photo2}<h3 style="margin:5px 0;">${ad.title}</h3><div class="desapega-price">${ad.price}</div><p style="font-size:13px; color:#cbd5e1;">${ad.desc}</p><p style="font-size:11px; color:#94a3b8;">Por: ${ad.postedBy}</p><div style="display:flex; flex-direction:column; gap:10px; margin-top:10px;"><a href="${waUrl}" target="_blank" class="desapega-contact" style="text-align:center;">📲 WhatsApp</a><div style="margin-top:5px;"><h4 style="font-size:12px; color:#22c55e;">💬 Perguntas</h4><div>${replies}</div><div style="display:flex; gap:5px; margin-top:5px;"><input id="replyInput-${ad.id}" placeholder="Perguntar..." style="flex:1; padding:5px; border-radius:5px; border:none; background:#e5e7eb; font-size:12px;" /><button onclick="sendAdReply('${ad.id}')" style="background:#22c55e; padding:5px; border-radius:5px; color:white; font-size:12px;">Enviar</button></div></div><div style="display:flex; gap:5px;">${editBtn}${delBtn}</div></div></div>`;
+          const editBtn = isOwner ? `<button onclick="editAd('${ad.id}', '${encodeURIComponent(JSON.stringify(ad))}')" style="background:#3b82f6; padding:8px; border-radius:8px; margin-right:5px; font-size:12px;">✏️ Editar</button>` : "";
+          const delBtn = isOwner ? `<button onclick="deleteAd('${ad.id}')" style="background:#dc2626; padding:8px; border-radius:8px; font-size:12px;">🗑 Excluir</button>` : "";
+          
+          // Lógica de Respostas
+          const replies = ad.replies || [];
+          const repliesHtml = replies.map((r, index) => {
+            const canDelete = r.nick === nick || nick === ADMIN_NICK;
+            const deleteBtn = canDelete ? `<button class="ad-reply-delete" onclick="deleteAdReply('${ad.id}', ${index})">🗑</button>` : "";
+            return `
+              <div class="ad-reply-item">
+                <div class="ad-reply-header">
+                  <strong>${r.nick}</strong>
+                  <span>${formatarDataMensagem(r.time)}</span>
+                </div>
+                <div>${r.text}</div>
+                ${deleteBtn}
+              </div>
+            `;
+          }).join("");
+
+          return `
+            <div class="desapega-card">
+              ${photo1} ${photo2}
+              <div class="desapega-price">${ad.price}</div>
+              <h3 style="margin:5px 0;">${ad.title}</h3>
+              <p style="font-size:14px; color:#cbd5e1; margin-bottom:10px;">${ad.desc}</p>
+              <div style="font-size:12px; color:#94a3b8; display:flex; justify-content:space-between;">
+                <span>Vendedor: ${ad.postedBy}</span>
+                <span>${formatarDataMensagem(ad.createdAt)}</span>
+              </div>
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px;">
+                <a href="${waUrl}" target="_blank" class="desapega-contact">WhatsApp</a>
+                <div>${editBtn} ${delBtn}</div>
+              </div>
+              <div class="ad-replies">
+                ${repliesHtml}
+                <div class="ad-reply-input-container">
+                  <input type="text" class="ad-reply-input" id="replyInput_${ad.id}" placeholder="Responder anúncio..." />
+                  <button class="ad-reply-btn" onclick="sendAdReply('${ad.id}')">Enviar</button>
+                </div>
+              </div>
+            </div>
+          `;
         }).join("");
       });
     }
 
     async function sendAdReply(adId) {
-      const input = document.getElementById(`replyInput-${adId}`); const text = input.value.trim(); if (!text) return;
-      try { await db.collection("desapega").doc(adId).update({ replies: firebase.firestore.FieldValue.arrayUnion({ nick: nick || "Anônimo 👤", text, time: Date.now() }) }); input.value = ""; } catch (e) { console.error(e); }
+      if (!nick) { alert("Defina um nick para responder."); return; }
+      const input = document.getElementById(`replyInput_${adId}`);
+      const text = input.value.trim();
+      if (!text) return;
+      
+      const btn = event.target;
+      btn.disabled = true;
+      
+      try {
+        const adRef = db.collection("desapega").doc(adId);
+        await db.runTransaction(async (transaction) => {
+          const doc = await transaction.get(adRef);
+          if (!doc.exists) return;
+          const replies = doc.data().replies || [];
+          replies.push({ nick: nick, time: Date.now(), text: text });
+          transaction.update(adRef, { replies: replies });
+        });
+        input.value = "";
+      } catch (e) { alert("Erro ao responder: " + e.message); }
+      finally { btn.disabled = false; }
+    }
+
+    async function deleteAdReply(adId, replyIndex) {
+      if (!confirm("Excluir esta resposta?")) return;
+      try {
+        const adRef = db.collection("desapega").doc(adId);
+        await db.runTransaction(async (transaction) => {
+          const doc = await transaction.get(adRef);
+          if (!doc.exists) return;
+          const replies = doc.data().replies || [];
+          replies.splice(replyIndex, 1);
+          transaction.update(adRef, { replies: replies });
+        });
+      } catch (e) { alert("Erro ao excluir resposta: " + e.message); }
     }
 
     function editAd(id, adJson) {
-      const ad = JSON.parse(decodeURIComponent(adJson)); 
-      editingAdId = id; toggleDesapegaForm();
+      const ad = JSON.parse(decodeURIComponent(adJson));
+      editingAdId = id;
       document.getElementById("adFormTitle").textContent = "Editar Anúncio";
       document.getElementById("adId").value = id;
-      document.getElementById("adTitle").value = ad.title; 
+      document.getElementById("adTitle").value = ad.title;
       document.getElementById("adPrice").value = ad.price;
-      document.getElementById("adDesc").value = ad.desc; 
+      document.getElementById("adDesc").value = ad.desc;
       document.getElementById("adWhatsapp").value = ad.whatsapp;
       document.getElementById("adAnonymous").checked = ad.anonymous || false;
-      if (ad.photos) { 
-        for (let k in ad.photos) { 
-          adPhotos[k] = ad.photos[k]; 
-          document.getElementById(`adPreview${k}`).src = ad.photos[k]; 
-          document.getElementById(`adPreview${k}`).style.display = "block"; 
-          document.getElementById(`btnDelPhoto${k}`).style.display = "flex"; 
-        } 
-      }
-      setTimeout(() => { document.getElementById("desapegaForm").scrollIntoView({ behavior: "smooth", block: "start" }); }, 100);
+      adPhotos = ad.photos || {};
+      document.getElementById("adPreview1").src = adPhotos[1] || "";
+      document.getElementById("adPreview1").style.display = adPhotos[1] ? "block" : "none";
+      document.getElementById("btnDelPhoto1").style.display = adPhotos[1] ? "flex" : "none";
+      document.getElementById("adPreview2").src = adPhotos[2] || "";
+      document.getElementById("adPreview2").style.display = adPhotos[2] ? "block" : "none";
+      document.getElementById("btnDelPhoto2").style.display = adPhotos[2] ? "flex" : "none";
+      document.getElementById("desapegaForm").style.display = "block";
+      document.getElementById("desapegaForm").scrollIntoView({ behavior: "smooth", block: "start" });
     }
 
-    async function deleteAd(id) { if(confirm("Deletar?")) await db.collection("desapega").doc(id).delete(); }
+    async function deleteAd(id) { if(confirm("Excluir este anúncio?")) { try { await db.collection("desapega").doc(id).delete(); } catch(e) { alert(e.message); } } }
     function cancelAdEdit() { toggleDesapegaForm(); }
+
     function atualizarDataBar() {
-  const agora = new Date();
-
-  let diaSemana = agora.toLocaleDateString("pt-BR", {
-    weekday: "long"
-  });
-
-  diaSemana =
-    diaSemana.charAt(0).toUpperCase() +
-    diaSemana.slice(1);
-
-  const data = agora.toLocaleDateString("pt-BR");
-
-  const hora = agora.toLocaleTimeString("pt-BR", {
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit"
-  });
-
-  document.getElementById("dateBar").textContent =
-    `${diaSemana}, ${data} ${hora}`;
-}
-    setInterval(atualizarAtividade, 60000);
-    setInterval(atualizarDataBar, 1000);
+      const d = new Date();
+      const dias = ["Domingo", "Segunda-feira", "Terça-feira", "Quarta-feira", "Quinta-feira", "Sexta-feira", "Sábado"];
+      const meses = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
+      document.getElementById("dateBar").textContent = `${dias[d.getDay()]}, ${d.getDate()} de ${meses[d.getMonth()]} de ${d.getFullYear()} | ${d.toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'})}`;
+    }
 
     window.onload = () => { 
       atualizarDataBar(); loadAllContent(); listenContentChanges(); setupPWAUpdate(); 
-      if(nick){ document.getElementById("nickArea").style.display="none"; document.getElementById("chatArea").style.display="block"; listenChat(); } 
+      if(nick){
+        document.getElementById("nickArea").style.display="none"; document.getElementById("chatArea").style.display="block";
+        shouldScrollToBottom = true;
+        listenChat();
+      }
+      // Escutar mudanças em notícias em tempo real
+      db.collection('news').onSnapshot(snapshot => {
+        // Notícias serão recarregadas quando o usuário clicar no botão
+      });
     };
   </script>
 </body>
