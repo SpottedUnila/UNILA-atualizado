@@ -928,6 +928,16 @@ gtag('config', 'G-FJT3X93608');
     }
 
     // Carregar notícias da coleção 'news'
+    // Função para otimizar URLs do Cloudinary (formato compacto e automático)
+    function optimizeCloudinary(url, type = 'image') {
+      if (!url || !url.includes('cloudinary.com')) return url;
+      // Adiciona q_auto (qualidade automática) e f_auto (formato automático/mais leve)
+      if (type === 'video') {
+        return url.replace('/video/upload/', '/video/upload/q_auto,f_auto/');
+      }
+      return url.replace('/image/upload/', '/image/upload/q_auto,f_auto/');
+    }
+
     async function loadNews() {
       try {
         const snapshot = await db.collection('news').orderBy('timestamp', 'desc').get();
@@ -939,10 +949,20 @@ gtag('config', 'G-FJT3X93608');
           snapshot.forEach(doc => {
             const news = doc.data();
             const date = news.createdAt ? new Date(news.createdAt).toLocaleString('pt-BR') : 'Data indisponível';
+            
+            // Otimização das URLs para não pesar a memória/armazenamento
+            const optimizedImg = optimizeCloudinary(news.imageUrl, 'image');
+            const optimizedVid = optimizeCloudinary(news.videoUrl, 'video');
+
             newsHtml += `
               <div style="background: rgba(30, 41, 59, 0.6); border-radius: 12px; padding: 15px; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.1);">
                 <h3 style="color:#22c55e; margin-top:0; margin-bottom:10px;">${news.title}</h3>
-                ${news.imageUrl ? `<img src="${news.imageUrl}" style="width:100%; max-height:300px; object-fit:cover; border-radius:8px; margin-bottom:10px;">` : ''}
+                ${news.imageUrl ? `<img src="${optimizedImg}" style="width:100%; max-height:300px; object-fit:cover; border-radius:8px; margin-bottom:10px;">` : ''}
+                ${news.videoUrl ? `
+                  <div style="width:100%; border-radius:8px; overflow:hidden; margin-bottom:10px; background:#000;">
+                    <video src="${optimizedVid}" controls style="width:100%; display:block;" preload="none" playsinline></video>
+                  </div>
+                ` : ''}
                 <p style="color:#e0e0e0; line-height:1.6; margin-bottom:10px;">${news.content}</p>
                 <p style="font-size:12px; color:#94a3b8; text-align:right; margin:0;">${date}</p>
               </div>
