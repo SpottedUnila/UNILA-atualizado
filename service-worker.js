@@ -1,4 +1,4 @@
-const CACHE_NAME = 'unila-app-v118';
+const CACHE_NAME = 'unila-app-v119';
 const ASSETS = [
   './',
   './index.html'
