@@ -246,7 +246,7 @@ button:hover{
 .notes{background:#14b8a6;}
 .share{background:#10b981;}
 .internet{background:#3b82f6;}
-.estude{background:#22c55e;}
+.estuded{background:#22c55e;}
 .noticias {
   background: #000;
   color: white;
@@ -953,6 +953,7 @@ gtag('config', 'G-FJT3X93608');
             // Otimização das URLs para não pesar a memória/armazenamento
             const optimizedImg = optimizeCloudinary(news.imageUrl, 'image');
             const optimizedVid = optimizeCloudinary(news.videoUrl, 'video');
+            const optimizedPoster = optimizeCloudinary(news.videoThumbUrl, 'image');
 
             newsHtml += `
               <div style="background: rgba(30, 41, 59, 0.6); border-radius: 12px; padding: 15px; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.1);">
@@ -960,7 +961,14 @@ gtag('config', 'G-FJT3X93608');
                 ${news.imageUrl ? `<img src="${optimizedImg}" style="width:100%; max-height:300px; object-fit:cover; border-radius:8px; margin-bottom:10px;">` : ''}
                 ${news.videoUrl ? `
                   <div style="width:100%; border-radius:8px; overflow:hidden; margin-bottom:10px; background:#000;">
-                    <video src="${optimizedVid}" controls style="width:100%; display:block;" preload="none" playsinline></video>
+                    <video
+    src="${optimizedVid}"
+    poster="${optimizedPoster}"
+    controls
+    style="width:100%; display:block;"
+    preload="none"
+    playsinline>
+</video>
                   </div>
                 ` : ''}
                 <p style="color:#e0e0e0; line-height:1.6; margin-bottom:10px;">${news.content}</p>
