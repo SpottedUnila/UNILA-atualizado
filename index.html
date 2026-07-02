@@ -958,14 +958,37 @@ gtag('config', 'G-FJT3X93608');
             newsHtml += `
               <div style="background: rgba(30, 41, 59, 0.6); border-radius: 12px; padding: 15px; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.1);">
                 <h3 style="color:#22c55e; margin-top:0; margin-bottom:10px;">${news.title}</h3>
-                ${news.imageUrl ? `<img src="${optimizedImg}" style="width:100%; max-height:300px; object-fit:cover; border-radius:8px; margin-bottom:10px;">` : ''}
+                ${news.imageUrl ? `
+<img
+    src="${optimizedImg}"
+    style="
+        width:100%;
+        height:auto;
+        max-height:650px;
+        object-fit:contain;
+        display:block;
+        margin:auto;
+        border-radius:8px;
+        margin-bottom:10px;
+        background:#000;
+    ">
+` : ''}
                 ${news.videoUrl ? `
                   <div style="width:100%; border-radius:8px; overflow:hidden; margin-bottom:10px; background:#000;">
                     <video
     src="${optimizedVid}"
     poster="${optimizedPoster}"
     controls
-    style="width:100%; display:block;"
+    style="
+width:100%;
+height:auto;
+max-height:650px;
+display:block;
+margin:auto;
+object-fit:contain;
+background:#000;
+border-radius:8px;
+"
     preload="none"
     playsinline>
 </video>
