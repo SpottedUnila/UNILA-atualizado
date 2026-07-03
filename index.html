@@ -709,7 +709,7 @@ gtag('config', 'G-FJT3X93608');
 
   <div id="dynamicPage" class="page">
     <h2 id="dynamicTitle"></h2>
-    <p id="dynamicContent" style="white-space: pre-line;"></p>
+    <div id="dynamicContent"></div>
   </div>
 
   <div id="chatPage" class="page">
@@ -958,42 +958,8 @@ gtag('config', 'G-FJT3X93608');
             newsHtml += `
               <div style="background: rgba(30, 41, 59, 0.6); border-radius: 12px; padding: 15px; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.1);">
                 <h3 style="color:#22c55e; margin-top:0; margin-bottom:10px;">${news.title}</h3>
-                ${news.imageUrl ? `
-<img
-    src="${optimizedImg}"
-    style="
-        width:100%;
-        height:auto;
-        max-height:650px;
-        object-fit:contain;
-        display:block;
-        margin:auto;
-        border-radius:8px;
-        margin-bottom:10px;
-        background:#000;
-    ">
-` : ''}
-                ${news.videoUrl ? `
-                  <div style="width:100%; border-radius:8px; overflow:hidden; margin-bottom:10px; background:#000;">
-                    <video
-    src="${optimizedVid}"
-    poster="${optimizedPoster}"
-    controls
-    style="
-width:100%;
-height:auto;
-max-height:650px;
-display:block;
-margin:auto;
-object-fit:contain;
-background:#000;
-border-radius:8px;
-"
-    preload="none"
-    playsinline>
-</video>
-                  </div>
-                ` : ''}
+                ${news.imageUrl ? `<img src="${optimizedImg}" style="width:100%;height:auto;max-height:650px;object-fit:contain;display:block;margin:0 auto;border-radius:8px;background:#000;">` : ''}
+                ${news.videoUrl ? `<div style="width:100%;border-radius:8px;overflow:hidden;background:#000;"><video src="${optimizedVid}" poster="${optimizedPoster}" controls style="width:100%;height:auto;max-height:650px;display:block;margin:0 auto;object-fit:contain;background:#000;border-radius:8px;" preload="none" playsinline></video></div>` : ''}
                 <p style="color:#e0e0e0; line-height:1.6; margin-bottom:10px;">${news.content}</p>
                 <p style="font-size:12px; color:#94a3b8; text-align:right; margin:0;">${date}</p>
               </div>
