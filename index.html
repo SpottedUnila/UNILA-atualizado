@@ -610,6 +610,83 @@ button:hover{
   padding-bottom:150px;
   align-items:start;
 }
+
+/* CONTROLE DE IDIOMAS - MESMA APARÊNCIA DOS CONTROLES DE PODCAST E MÚSICA */
+.language-control{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  background:transparent;
+  backdrop-filter:none;
+  -webkit-backdrop-filter:none;
+  padding:0;
+  border-radius:0;
+  border:none;
+  box-shadow:none;
+  color:#ffffff;
+  z-index:1002;
+}
+.language-control span{
+  font-size:11px;
+  font-weight:700;
+  color:white;
+  text-transform:uppercase;
+  letter-spacing:1px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  white-space:nowrap;
+  line-height:1;
+}
+.language-control select{
+  appearance:none;
+  -webkit-appearance:none;
+  width:40px;
+  height:40px;
+  border-radius:50%;
+  color:white;
+  font-family:Arial;
+  font-size:11px;
+  font-weight:700;
+  letter-spacing:.2px;
+  text-align:center;
+  border:1px solid rgba(255,255,255,0.15);
+  outline:none;
+  padding:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  transition:all 0.3s ease;
+  background:transparent;
+}
+.language-control select:hover{
+  transform:scale(1.02);
+}
+.language-control select:active{
+  transform:scale(0.9);
+}
+.language-control select option{
+  background:#ffffff;
+  color:#111827;
+}
+@media(max-width:720px){
+  .top-controls{
+    right:4px;
+    gap:5px;
+  }
+  .language-control{
+    gap:5px;
+    padding:0;
+  }
+  .radio-container, .podcast-container{
+    gap:5px;
+    padding-left:8px;
+  }
+  .radio-badge, .podcast-badge{
+    letter-spacing:0;
+  }
+}
 </style>
 
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
@@ -661,6 +738,13 @@ gtag('config', 'G-FJT3X93608');
   <button class="home-btn" onclick="goHome()">🏠</button>
   
   <div class="top-controls">
+    <div id="languageControl" class="language-control" title="Idioma">
+      <select id="languageSelect" aria-label="Idioma">
+        <option value="pt">PT</option>
+        <option value="fr">FR</option>
+        <option value="es">ES</option>
+      </select>
+    </div>
     <div class="podcast-container">
       <div class="podcast-badge">
         <div class="podcast-dot"></div>
@@ -1453,7 +1537,7 @@ padding:0 2px;">↩ Responder</button>`;
       const d = new Date();
       const dias = ["Domingo", "Segunda-feira", "Terça-feira", "Quarta-feira", "Quinta-feira", "Sexta-feira", "Sábado"];
       const meses = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
-      document.getElementById("dateBar").textContent = `${dias[d.getDay()]}, ${d.getDate()} de ${meses[d.getMonth()]} de ${d.getFullYear()} | ${d.toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'})}`;
+      document.getElementById("dateBar").textContent = `${dias[d.getDay()]}, ${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}/${d.getFullYear()}`;
     }
 
     window.onload = () => { 
@@ -1469,5 +1553,400 @@ padding:0 2px;">↩ Responder</button>`;
       });
     };
   </script>
+<script id="unila-i18n-script">
+(function(){
+  "use strict";
+
+  var NL = String.fromCharCode(10);
+  var I18N = {
+    pt: {
+      locale: "pt-BR",
+      weekdays: ["Domingo", "Segunda-feira", "Terça-feira", "Quarta-feira", "Quinta-feira", "Sexta-feira", "Sábado"],
+      t: {
+        appTitle: "Unila App", language: "Idioma", home: "Início", podcast: "Podcast", music: "Música", install: "📲 Instalar App",
+        chatMenu: " Spotted💜 Chat💬", portal: "🌐 Portal Oficial da UNILA", sigaa: "📚 Sistema Acadêmico SIGAA", email: "📧 E-mail Institucional",
+        google: "🔎 Pesquisa Google", instagram: "📸 Instagram UNILA", facebook: "📘 Facebook UNILA", library: "📖 Biblioteca UNILA",
+        intercampus: "🚌 Transporte Intercampi", smart: "💻 Smart Tech", notices: "📄 Editais Oficiais", emergency: "🚨 Telefones de Emergência",
+        addresses: "🏫 Endereços dos Campus", ru: "🍽️ Restaurantes Universitários", group: "👥 Grupo no Facebook", developer: "👨‍💻 Desenvolvedor",
+        notes: "📝 Anotações", share: "📤 Compartilhar App", internet: "🌐 Internet UNILA", study: "🎓 Estude na UNILA",
+        enem: "📝 ENEM – Página do Participante", news: "📰 Notícias", desapega: "🛒 Desapega Unileiro", upa: "🏥 Hospitais de Emergência 24h (UPA)",
+        chatHeading: "💬 Chat UNILA", nickPlaceholder: "Digite seu nick...", enter: "Entrar", imageSelected: "Imagem selecionada",
+        chatPlaceholder: "Digite sua mensagem...", anonymous: "👤 Enviar Anonimamente", changeNick: "🔄 Mudar Nick",
+        developerHeading: "👨‍💻 Desenvolvedor", developerIntro: "Para trabalhos e parcerias entre em contato:", developerService: "Fernando - Serviço Social", contact: "Contato",
+        notesHeading: "📝 Anotações", notePlaceholder: "Escreva sua anotação aqui...", save: "Salvar", desapegaHeading: "🛒 Desapega Unileiro",
+        postAd: "➕ Postar Anúncio", newAd: "Novo Anúncio", editAdTitle: "Editar Anúncio", selling: "O que você está vendendo?",
+        price: "Preço (Ex: R$ 50,00 ou Grátis)", description: "Descrição do item...", whatsappPlaceholder: "Seu WhatsApp (Ex: 45999999999)",
+        photo1: "📷 Foto 1", photo2: "📷 Foto 2", postAnonymous: "Postar anonimamente (Ocultar meu Nick)", cancel: "Cancelar",
+        loadingAds: "Carregando anúncios...", noAds: "Nenhum anúncio.", noNews: "Nenhuma notícia publicada ainda.", newsError: "Erro ao carregar notícias.",
+        seller: "Vendedor", replyAd: "Responder anúncio...", send: "Enviar", edit: "✏️ Editar", delete: "🗑 Excluir", reply: "↩ Responder",
+        replying: "Respondendo a", today: "Hoje às", yesterday: "Ontem às", at: "às", verify: "Verificando...", sending: "Enviando...", saving: "Salvando...",
+        reactNick: "Defina um nick para reagir.", replyNick: "Defina um nick para responder.", typeNick: "Digite um Nick!", nickUsed: "Nick em uso!",
+        fillAll: "Preencha tudo!", deleteReplyConfirm: "Excluir esta resposta?", deleteAdConfirm: "Excluir este anúncio?",
+        error: "Erro: ", errorReply: "Erro ao responder: ", errorDeleteReply: "Erro ao excluir resposta: ", shareMessage: "Confira o Unila App!"
+      },
+      content: {
+        emergencia: "Polícia Militar: 190\nSAMU (Ambulância): 192\nBombeiros: 193\n\nHospital Municipal: (45) 2105-4100\nGuarda Municipal: (45) 2105-5100\nDelegacia da Mulher: (45) 3521-9200\nDefesa Civil: 199\n\nPolícia Federal: (45) 3522-1174\nPolícia Rodoviária Federal: (45) 3576-1400\n\nPrae-Unila: +55 45 3522-9983\nPrograd-Unila: +55 (45) 3522-9766\n\nDisque Denúncia: 181\nConselho Tutelar: (45) 3521-1112\nCentro de Intoxicações: 0800 722 6001\n\n⚠ Em situações graves, ligue imediatamente.",
+        enderecos: "Unila - Campus PTI\nAv. Tancredo Neves, 6731 - PTI, Foz do Iguaçu - PR\n\nUnila - Campus Juarez Távora\nAv. Silvio Américo Sasdelli, 1000 - Vila A, Foz do Iguaçu - PR\n\nUnila - Campus Jardim Universitário (JU)\nAv. Tarquínio Joslin dos Santos, 1000 - Lot. Universitário das Américas, Foz do Iguaçu - PR\n\nUnila - Campus Integração\nAv. Tancredo Neves, 3147 - Foz do Iguaçu - PR",
+        ru: "RU PTI: Segunda a Sexta (11:00 - 14:00 e 17:30 - 20:00)\nRU JU: Segunda a Sexta (11:00 - 14:00 e 17:30 - 20:00)\n\nPreço para Estudantes: R$ 3,50\nPreço para Servidores: R$ 12,00\n\n⚠ Verifique feriados e horários especiais no portal oficial.",
+        dev: "Fernando - Serviço Social\nContato: +55 45 99949-9759",
+        internet: "Rede: UNILA-WIFI\nLogin: Seu CPF ou E-mail Institucional\nSenha: A mesma senha do SIGAA\n\n⚠ Se tiver problemas, procure a TIC do seu campus.",
+        estude: "Ingresso para Brasileiros: Via ENEM/SISU\nIngresso para Estrangeiros: Seleção Internacional Própria\n\nCursos: Mais de 29 opções de graduação.\n\nPara mais informações acesse: portal.unila.edu.br/ingresso",
+        upa: "UPA João Samek (Vila A): (45) 3524-8800\nUPA Morumbi: (45) 3521-1350\n\n⚠ Em casos de emergência com risco de vida, ligue 192 (SAMU)."
+      }
+    },
+    fr: {
+      locale: "fr-FR",
+      weekdays: ["Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"],
+      t: {
+        appTitle: "Unila App", language: "Langue", home: "Accueil", podcast: "Podcast", music: "Musique", install: "📲 Installer l’application",
+        chatMenu: " Spotted💜 Chat💬", portal: "🌐 Portail officiel de l’UNILA", sigaa: "📚 Système académique SIGAA", email: "📧 E-mail institutionnel",
+        google: "🔎 Recherche Google", instagram: "📸 Instagram UNILA", facebook: "📘 Facebook UNILA", library: "📖 Bibliothèque UNILA",
+        intercampus: "🚌 Transport intercampus", smart: "💻 Smart Tech", notices: "📄 Avis officiels", emergency: "🚨 Numéros d’urgence",
+        addresses: "🏫 Adresses des campus", ru: "🍽️ Restaurants universitaires", group: "👥 Groupe Facebook", developer: "👨‍💻 Développeur",
+        notes: "📝 Notes", share: "📤 Partager l’application", internet: "🌐 Internet UNILA", study: "🎓 Étudier à l’UNILA",
+        enem: "📝 ENEM – Page du participant", news: "📰 Actualités", desapega: "🛒 Desapega Unileiro", upa: "🏥 Hôpitaux d’urgence 24 h (UPA)",
+        chatHeading: "💬 Chat UNILA", nickPlaceholder: "Saisissez votre pseudo...", enter: "Entrer", imageSelected: "Image sélectionnée",
+        chatPlaceholder: "Écrivez votre message...", anonymous: "👤 Envoyer anonymement", changeNick: "🔄 Changer de pseudo",
+        developerHeading: "👨‍💻 Développeur", developerIntro: "Pour les travaux et les partenariats, contactez-nous :", developerService: "Fernando - Travail social", contact: "Contact",
+        notesHeading: "📝 Notes", notePlaceholder: "Écrivez votre note ici...", save: "Enregistrer", desapegaHeading: "🛒 Desapega Unileiro",
+        postAd: "➕ Publier une annonce", newAd: "Nouvelle annonce", editAdTitle: "Modifier l’annonce", selling: "Que vendez-vous ?",
+        price: "Prix (Ex. : 50,00 R$ ou gratuit)", description: "Description de l’article...", whatsappPlaceholder: "Votre WhatsApp (Ex. : 45999999999)",
+        photo1: "📷 Photo 1", photo2: "📷 Photo 2", postAnonymous: "Publier anonymement (masquer mon pseudo)", cancel: "Annuler",
+        loadingAds: "Chargement des annonces...", noAds: "Aucune annonce.", noNews: "Aucune actualité publiée pour le moment.", newsError: "Erreur lors du chargement des actualités.",
+        seller: "Vendeur", replyAd: "Répondre à l’annonce...", send: "Envoyer", edit: "✏️ Modifier", delete: "🗑 Supprimer", reply: "↩ Répondre",
+        replying: "Réponse à", today: "Aujourd’hui à", yesterday: "Hier à", at: "à", verify: "Vérification...", sending: "Envoi...", saving: "Enregistrement...",
+        reactNick: "Définissez un pseudo pour réagir.", replyNick: "Définissez un pseudo pour répondre.", typeNick: "Saisissez un pseudo !", nickUsed: "Pseudo déjà utilisé !",
+        fillAll: "Veuillez tout remplir !", deleteReplyConfirm: "Supprimer cette réponse ?", deleteAdConfirm: "Supprimer cette annonce ?",
+        error: "Erreur : ", errorReply: "Erreur lors de la réponse : ", errorDeleteReply: "Erreur lors de la suppression de la réponse : ", shareMessage: "Découvrez l’application Unila !"
+      },
+      content: {
+        emergencia: "Police militaire : 190\nSAMU (Ambulance) : 192\nPompiers : 193\n\nHôpital municipal : (45) 2105-4100\nPolice municipale : (45) 2105-5100\nDélégation des femmes : (45) 3521-9200\nProtection civile : 199\n\nPolice fédérale : (45) 3522-1174\nPolice routière fédérale : (45) 3576-1400\n\nPrae-Unila : +55 45 3522-9983\nPrograd-Unila : +55 (45) 3522-9766\n\nLigne de dénonciation : 181\nConseil tutélaire : (45) 3521-1112\nCentre antipoison : 0800 722 6001\n\n⚠ En cas de situation grave, appelez immédiatement.",
+        enderecos: "Unila - Campus PTI\nAv. Tancredo Neves, 6731 - PTI, Foz do Iguaçu - PR\n\nUnila - Campus Juarez Távora\nAv. Silvio Américo Sasdelli, 1000 - Vila A, Foz do Iguaçu - PR\n\nUnila - Campus Jardim Universitário (JU)\nAv. Tarquínio Joslin dos Santos, 1000 - Lot. Universitário das Américas, Foz do Iguaçu - PR\n\nUnila - Campus Integração\nAv. Tancredo Neves, 3147 - Foz do Iguaçu - PR",
+        ru: "RU PTI : Du lundi au vendredi (11:00 - 14:00 et 17:30 - 20:00)\nRU JU : Du lundi au vendredi (11:00 - 14:00 et 17:30 - 20:00)\n\nPrix étudiant : 3,50 R$\nPrix pour les personnels : 12,00 R$\n\n⚠ Vérifiez les jours fériés et les horaires spéciaux sur le portail officiel.",
+        dev: "Fernando - Travail social\nContact : +55 45 99949-9759",
+        internet: "Réseau : UNILA-WIFI\nIdentifiant : Votre CPF ou e-mail institutionnel\nMot de passe : Le même mot de passe que SIGAA\n\n⚠ En cas de problème, contactez la TIC de votre campus.",
+        estude: "Admission des Brésiliens : via ENEM/SISU\nAdmission des étrangers : sélection internationale propre\n\nFormations : plus de 29 options de licence.\n\nPour plus d’informations, consultez : portal.unila.edu.br/ingresso",
+        upa: "UPA João Samek (Vila A) : (45) 3524-8800\nUPA Morumbi : (45) 3521-1350\n\n⚠ En cas d’urgence vitale, appelez le 192 (SAMU)."
+      }
+    },
+    es: {
+      locale: "es-ES",
+      weekdays: ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"],
+      t: {
+        appTitle: "Unila App", language: "Idioma", home: "Inicio", podcast: "Podcast", music: "Música", install: "📲 Instalar aplicación",
+        chatMenu: " Spotted💜 Chat💬", portal: "🌐 Portal oficial de la UNILA", sigaa: "📚 Sistema Académico SIGAA", email: "📧 Correo institucional",
+        google: "🔎 Búsqueda Google", instagram: "📸 Instagram UNILA", facebook: "📘 Facebook UNILA", library: "📖 Biblioteca UNILA",
+        intercampus: "🚌 Transporte intercampus", smart: "💻 Smart Tech", notices: "📄 Convocatorias oficiales", emergency: "🚨 Teléfonos de emergencia",
+        addresses: "🏫 Direcciones de los campus", ru: "🍽️ Restaurantes universitarios", group: "👥 Grupo de Facebook", developer: "👨‍💻 Desarrollador",
+        notes: "📝 Anotaciones", share: "📤 Compartir aplicación", internet: "🌐 Internet UNILA", study: "🎓 Estudia en la UNILA",
+        enem: "📝 ENEM – Página del participante", news: "📰 Noticias", desapega: "🛒 Desapega Unileiro", upa: "🏥 Hospitales de emergencia 24 h (UPA)",
+        chatHeading: "💬 Chat UNILA", nickPlaceholder: "Escribe tu nick...", enter: "Entrar", imageSelected: "Imagen seleccionada",
+        chatPlaceholder: "Escribe tu mensaje...", anonymous: "👤 Enviar anónimamente", changeNick: "🔄 Cambiar nick",
+        developerHeading: "👨‍💻 Desarrollador", developerIntro: "Para trabajos y alianzas, ponte en contacto:", developerService: "Fernando - Trabajo social", contact: "Contacto",
+        notesHeading: "📝 Anotaciones", notePlaceholder: "Escribe tu anotación aquí...", save: "Guardar", desapegaHeading: "🛒 Desapega Unileiro",
+        postAd: "➕ Publicar anuncio", newAd: "Nuevo anuncio", editAdTitle: "Editar anuncio", selling: "¿Qué estás vendiendo?",
+        price: "Precio (Ej.: R$ 50,00 o gratis)", description: "Descripción del artículo...", whatsappPlaceholder: "Tu WhatsApp (Ej.: 45999999999)",
+        photo1: "📷 Foto 1", photo2: "📷 Foto 2", postAnonymous: "Publicar anónimamente (ocultar mi nick)", cancel: "Cancelar",
+        loadingAds: "Cargando anuncios...", noAds: "Ningún anuncio.", noNews: "Todavía no hay noticias publicadas.", newsError: "Error al cargar las noticias.",
+        seller: "Vendedor", replyAd: "Responder anuncio...", send: "Enviar", edit: "✏️ Editar", delete: "🗑 Eliminar", reply: "↩ Responder",
+        replying: "Respondiendo a", today: "Hoy a las", yesterday: "Ayer a las", at: "a las", verify: "Verificando...", sending: "Enviando...", saving: "Guardando...",
+        reactNick: "Define un nick para reaccionar.", replyNick: "Define un nick para responder.", typeNick: "¡Escribe un nick!", nickUsed: "¡Nick en uso!",
+        fillAll: "¡Completa todos los campos!", deleteReplyConfirm: "¿Eliminar esta respuesta?", deleteAdConfirm: "¿Eliminar este anuncio?",
+        error: "Error: ", errorReply: "Error al responder: ", errorDeleteReply: "Error al eliminar la respuesta: ", shareMessage: "¡Mira la aplicación Unila!"
+      },
+      content: {
+        emergencia: "Policía Militar: 190\nSAMU (Ambulancia): 192\nBomberos: 193\n\nHospital Municipal: (45) 2105-4100\nGuardia Municipal: (45) 2105-5100\nComisaría de la Mujer: (45) 3521-9200\nDefensa Civil: 199\n\nPolicía Federal: (45) 3522-1174\nPolicía Federal de Carreteras: (45) 3576-1400\n\nPrae-Unila: +55 45 3522-9983\nPrograd-Unila: +55 (45) 3522-9766\n\nLínea de denuncias: 181\nConsejo Tutelar: (45) 3521-1112\nCentro de Intoxicaciones: 0800 722 6001\n\n⚠ En situaciones graves, llama inmediatamente.",
+        enderecos: "Unila - Campus PTI\nAv. Tancredo Neves, 6731 - PTI, Foz do Iguaçu - PR\n\nUnila - Campus Juarez Távora\nAv. Silvio Américo Sasdelli, 1000 - Vila A, Foz do Iguaçu - PR\n\nUnila - Campus Jardim Universitário (JU)\nAv. Tarquínio Joslin dos Santos, 1000 - Lot. Universitário das Américas, Foz do Iguaçu - PR\n\nUnila - Campus Integração\nAv. Tancredo Neves, 3147 - Foz do Iguaçu - PR",
+        ru: "RU PTI: De lunes a viernes (11:00 - 14:00 y 17:30 - 20:00)\nRU JU: De lunes a viernes (11:00 - 14:00 y 17:30 - 20:00)\n\nPrecio para estudiantes: R$ 3,50\nPrecio para servidores: R$ 12,00\n\n⚠ Consulta los feriados y horarios especiales en el portal oficial.",
+        dev: "Fernando - Trabajo social\nContacto: +55 45 99949-9759",
+        internet: "Red: UNILA-WIFI\nInicio de sesión: Tu CPF o correo institucional\nContraseña: La misma contraseña de SIGAA\n\n⚠ Si tienes problemas, busca la TIC de tu campus.",
+        estude: "Ingreso para brasileños: por ENEM/SISU\nIngreso para extranjeros: selección internacional propia\n\nCarreras: más de 29 opciones de grado.\n\nPara más información, accede a: portal.unila.edu.br/ingresso",
+        upa: "UPA João Samek (Vila A): (45) 3524-8800\nUPA Morumbi: (45) 3521-1350\n\n⚠ En casos de emergencia con riesgo de vida, llama al 192 (SAMU)."
+      }
+    }
+  };
+
+  var state = {
+    lang: localStorage.getItem("unila_language") || "pt",
+    currentDynamicId: null
+  };
+  if (!I18N[state.lang]) state.lang = "pt";
+
+  function current(){ return I18N[state.lang] || I18N.pt; }
+  function tr(key){ return current().t[key] || I18N.pt.t[key] || key; }
+  function localizedContent(id){
+    if (current().content[id]) return current().content[id];
+    try {
+      if (typeof defaultContent !== "undefined" && defaultContent[id]) return defaultContent[id];
+    } catch(e){}
+    return "";
+  }
+  function setText(selector, value){
+    var el = document.querySelector(selector);
+    if (el && el.textContent !== value) el.textContent = value;
+  }
+  function setOwnText(el, value){
+    if (!el) return;
+    var textNodes = [];
+    for (var i=0; i<el.childNodes.length; i++) {
+      if (el.childNodes[i].nodeType === 3) textNodes.push(el.childNodes[i]);
+    }
+    if (textNodes.length) {
+      textNodes[0].nodeValue = " " + value;
+      for (var j=1; j<textNodes.length; j++) textNodes[j].nodeValue = "";
+    } else {
+      el.appendChild(document.createTextNode(value));
+    }
+  }
+  function setPlaceholder(selector, value){
+    var el = document.querySelector(selector);
+    if (el && el.placeholder !== value) el.placeholder = value;
+  }
+
+  var menuKeys = [
+    "chatMenu", "portal", "sigaa", "email", "google", "instagram", "facebook", "library", "intercampus", "smart", "notices",
+    "emergency", "addresses", "ru", "group", "developer", "notes", "share", "internet", "study", "enem", "news", "desapega", "upa"
+  ];
+
+  function applyStaticTranslations(){
+    document.documentElement.lang = current().locale;
+    document.title = tr("appTitle");
+    var select = document.getElementById("languageSelect");
+    if (select) {
+      select.value = state.lang;
+      select.setAttribute("aria-label", tr("language"));
+    }
+    var languageControl = document.getElementById("languageControl");
+    if (languageControl) languageControl.title = tr("language");
+    var homeButton = document.querySelector(".home-btn");
+    if (homeButton) { homeButton.title = tr("home"); homeButton.setAttribute("aria-label", tr("home")); }
+    var podcastButton = document.getElementById("podcastBtn");
+    if (podcastButton) podcastButton.title = tr("podcast");
+    var radioButton = document.getElementById("radioBtn");
+    if (radioButton) radioButton.title = tr("music");
+
+    var menu = document.querySelectorAll("#home > button");
+    for (var i=0; i<menu.length && i<menuKeys.length; i++) menu[i].textContent = tr(menuKeys[i]);
+    setOwnText(document.querySelector(".podcast-badge"), tr("podcast"));
+    setOwnText(document.querySelector(".radio-badge"), tr("music"));
+    setText("#installBtn", tr("install"));
+
+    setText("#chatPage h2", tr("chatHeading"));
+    setPlaceholder("#nickInput", tr("nickPlaceholder"));
+    setText("#nickArea button", tr("enter"));
+    setText("#imagePreview div[style*='font-size:12px']", tr("imageSelected"));
+    setPlaceholder("#chatInput", tr("chatPlaceholder"));
+    setText("label[for='chatAnonymous']", tr("anonymous"));
+    setText("#changeNickBtn", tr("changeNick"));
+
+    setText("#devPage h2", tr("developerHeading"));
+    setText("#devPage p:nth-of-type(1)", tr("developerIntro"));
+    var devContact = document.querySelector("#devPage p:nth-of-type(2)");
+    if (devContact) devContact.innerHTML = tr("developerService") + "<br>" + tr("contact") + ": +55 45 99949-9759";
+
+    setText("#notesPage h2", tr("notesHeading"));
+    setPlaceholder("#note", tr("notePlaceholder"));
+    setText("#notesPage button", tr("save"));
+
+    setText("#desapegaPage h2", tr("desapegaHeading"));
+    setText(".btn-postar", tr("postAd"));
+    setText("#adFormTitle", tr("newAd"));
+    setPlaceholder("#adTitle", tr("selling"));
+    setPlaceholder("#adPrice", tr("price"));
+    setPlaceholder("#adDesc", tr("description"));
+    setPlaceholder("#adWhatsapp", tr("whatsappPlaceholder"));
+    var photoLabels = document.querySelectorAll("#desapegaForm > div label");
+    if (photoLabels[0]) setOwnText(photoLabels[0], tr("photo1"));
+    if (photoLabels[1]) setOwnText(photoLabels[1], tr("photo2"));
+    setText("label[for='adAnonymous']", tr("postAnonymous"));
+    setText("#btnSaveAd", tr("save"));
+    setText("#desapegaForm button[onclick='cancelAdEdit()']", tr("cancel"));
+    setText("#adList > p", tr("loadingAds"));
+    updateDateBar();
+    updateDynamicPage();
+    translateDynamicUI();
+  }
+
+  function dynamicTitle(id){
+    var titles = {
+      portal_unila: tr("portal"), sigaa: tr("sigaa"), email: tr("email"), google: tr("google"), instagram: tr("instagram"),
+      facebook: tr("facebook"), biblioteca: tr("library"), intercampi: tr("intercampus"), smartec: tr("smart"), editais: tr("notices"),
+      emergencia: tr("emergency"), enderecos: tr("addresses"), ru: tr("ru"), grupo_facebook: tr("group"), dev: tr("developer"),
+      internet: tr("internet"), estude: tr("study"), enem: tr("enem"), noticias: tr("news"), upa: tr("upa")
+    };
+    return titles[id] || String(id || "").toUpperCase();
+  }
+
+  function updateDateBar(){
+    var bar = document.getElementById("dateBar");
+    if (!bar) return;
+    var d = new Date();
+    var day = String(d.getDate()).padStart(2, "0");
+    var month = String(d.getMonth() + 1).padStart(2, "0");
+    bar.textContent = current().weekdays[d.getDay()] + ", " + day + "/" + month + "/" + d.getFullYear();
+  }
+
+  function updateDynamicPage(){
+    if (!state.currentDynamicId) return;
+    var title = document.getElementById("dynamicTitle");
+    if (title) title.textContent = dynamicTitle(state.currentDynamicId);
+    if (state.currentDynamicId !== "noticias") {
+      var content = localizedContent(state.currentDynamicId);
+      if (content) {
+        var dynamicContent = document.getElementById("dynamicContent");
+        if (dynamicContent) dynamicContent.innerHTML = content;
+      }
+    }
+  }
+
+  function translateDynamicUI(){
+    var formTitle = document.getElementById("adFormTitle");
+    if (formTitle) {
+      var desiredFormTitle = false;
+      try { desiredFormTitle = editingAdId ? tr("editAdTitle") : tr("newAd"); } catch(e) { desiredFormTitle = tr("newAd"); }
+      if (formTitle.textContent !== desiredFormTitle) formTitle.textContent = desiredFormTitle;
+    }
+    var roots = [document.getElementById("dynamicContent"), document.getElementById("adList"), document.getElementById("chatBox"), document.getElementById("nickArea"), document.getElementById("desapegaForm")];
+    roots.forEach(function(root){
+      if (!root) return;
+      root.querySelectorAll("p").forEach(function(el){
+        var text = el.textContent.trim();
+        if (text === "Nenhuma notícia publicada ainda.") el.textContent = tr("noNews");
+        if (text === "Erro ao carregar notícias.") el.textContent = tr("newsError");
+        if (text === "Nenhum anúncio.") el.textContent = tr("noAds");
+      });
+      root.querySelectorAll("span").forEach(function(el){
+        var text = el.textContent;
+        if (text.indexOf("Vendedor:") === 0 || text.indexOf("Vendeur:") === 0) {
+          var sellerPrefix = text.indexOf("Vendeur:") === 0 ? "Vendeur:" : "Vendedor:";
+          var translatedSeller = tr("seller") + ":" + text.substring(sellerPrefix.length);
+          if (el.textContent !== translatedSeller) el.textContent = translatedSeller;
+        }
+      });
+      root.querySelectorAll("button").forEach(function(el){
+        var text = el.textContent.trim();
+        if ((text === "✏️ Editar" || text === "✏️ Modifier") && text !== tr("edit")) el.textContent = tr("edit");
+        if ((text === "🗑 Excluir" || text === "🗑 Supprimer" || text === "🗑 Eliminar") && text !== tr("delete")) el.textContent = tr("delete");
+        if ((text === "↩ Responder" || text === "↩ Répondre") && text !== tr("reply")) el.textContent = tr("reply");
+        if ((text === "Enviar" || text === "Envoyer") && text !== tr("send")) el.textContent = tr("send");
+        if ((text === "Verificando..." || text === "Vérification...") && text !== tr("verify")) el.textContent = tr("verify");
+        if ((text === "Enviando..." || text === "Envoi...") && text !== tr("sending")) el.textContent = tr("sending");
+        if ((text === "Salvando..." || text === "Enregistrement...") && text !== tr("saving")) el.textContent = tr("saving");
+        if ((text === "Salvar" || text === "Enregistrer" || text === "Guardar") && text !== tr("save")) el.textContent = tr("save");
+      });
+      root.querySelectorAll("input.ad-reply-input").forEach(function(el){
+        var translatedPlaceholder = tr("replyAd");
+        if (el.placeholder !== translatedPlaceholder) el.placeholder = translatedPlaceholder;
+      });
+      root.querySelectorAll("strong").forEach(function(el){
+        if (el.textContent.trim() === "Anônimo 👤" || el.textContent.trim() === "Anonyme 👤" || el.textContent.trim() === "Anónimo 👤") {
+          var translatedAnonymous = state.lang === "pt" ? "Anônimo 👤" : state.lang === "fr" ? "Anonyme 👤" : "Anónimo 👤";
+          if (el.textContent !== translatedAnonymous) el.textContent = translatedAnonymous;
+        }
+      });
+    });
+  }
+
+  function translatedRuntimeText(message){
+    if (typeof message !== "string") return message;
+    var exact = {
+      "Defina um nick para reagir.": "reactNick", "Defina um nick para responder.": "replyNick", "Digite um Nick!": "typeNick",
+      "Nick em uso!": "nickUsed", "Preencha tudo!": "fillAll", "Excluir esta resposta?": "deleteReplyConfirm", "Excluir este anúncio?": "deleteAdConfirm"
+    };
+    if (exact[message]) return tr(exact[message]);
+    if (message.indexOf("Erro ao responder: ") === 0) return tr("errorReply") + message.substring(20);
+    if (message.indexOf("Erro ao excluir resposta: ") === 0) return tr("errorDeleteReply") + message.substring(27);
+    if (message.indexOf("Erro: ") === 0) return tr("error") + message.substring(6);
+    return message;
+  }
+
+  function changeLanguage(lang){
+    if (!I18N[lang]) return;
+    state.lang = lang;
+    localStorage.setItem("unila_language", lang);
+    applyStaticTranslations();
+  }
+
+  function initialize(){
+    var selector = document.getElementById("languageSelect");
+    if (selector) selector.addEventListener("change", function(){ changeLanguage(this.value); });
+
+    var originalAlert = window.alert.bind(window);
+    var originalConfirm = window.confirm.bind(window);
+    window.alert = function(message){ return originalAlert(translatedRuntimeText(message)); };
+    window.confirm = function(message){ return originalConfirm(translatedRuntimeText(message)); };
+
+    if (typeof window.atualizarDataBar === "function") window.atualizarDataBar = updateDateBar;
+    if (typeof window.formatarDataMensagem === "function") {
+      window.formatarDataMensagem = function(timestamp){
+        var data = new Date(timestamp);
+        var agora = new Date();
+        var ontem = new Date();
+        ontem.setDate(agora.getDate() - 1);
+        var hora = data.toLocaleTimeString(current().locale, {hour:"2-digit", minute:"2-digit"});
+        if (data.toDateString() === agora.toDateString()) return tr("today") + " " + hora;
+        if (data.toDateString() === ontem.toDateString()) return tr("yesterday") + " " + hora;
+        return data.toLocaleDateString(current().locale) + " " + tr("at") + " " + hora;
+      };
+    }
+
+    if (typeof window.openDynamic === "function") {
+      var originalOpenDynamic = window.openDynamic;
+      window.openDynamic = function(id, type){
+        state.currentDynamicId = id;
+        var result = originalOpenDynamic.apply(this, arguments);
+        if (type !== "link") {
+          updateDynamicPage();
+          translateDynamicUI();
+        }
+        return result;
+      };
+    }
+
+    if (typeof window.loadNews === "function") {
+      var originalLoadNews = window.loadNews;
+      window.loadNews = function(){
+        state.currentDynamicId = "noticias";
+        var result = originalLoadNews.apply(this, arguments);
+        setTimeout(function(){
+          var title = document.getElementById("dynamicTitle");
+          if (title) title.textContent = dynamicTitle("noticias");
+          translateDynamicUI();
+        }, 0);
+        if (result && typeof result.then === "function") result.then(translateDynamicUI);
+        return result;
+      };
+    }
+
+    if (typeof window.shareApp === "function") {
+      window.shareApp = function(){
+        var appUrl = "https://drive.google.com/file/d/1XgYsFJlnd8VuQGAyYopxNI2Huuknsugo/view?usp=sharing";
+        var mensagem = encodeURIComponent(tr("shareMessage") + NL + NL + appUrl);
+        window.open("https://wa.me/?text=" + mensagem, "_blank");
+      };
+    }
+
+    if (typeof window.setReply === "function") {
+      var originalSetReply = window.setReply;
+      window.setReply = function(id, user, text){
+        var result = originalSetReply.apply(this, arguments);
+        var preview = document.getElementById("replyContent");
+        if (preview) {
+          var shortText = text.substring(0, 50) + (text.length > 50 ? "..." : "");
+          preview.textContent = tr("replying") + " " + user + ": \"" + shortText + "\"";
+        }
+        return result;
+      };
+    }
+
+    applyStaticTranslations();
+    var observer = new MutationObserver(function(){ translateDynamicUI(); });
+    observer.observe(document.body, {childList:true, subtree:true, attributes:true, attributeFilter:["placeholder"]});
+    setInterval(updateDateBar, 60000);
+  }
+
+  initialize();
+})();
+</script>
 </body>
 </html>
