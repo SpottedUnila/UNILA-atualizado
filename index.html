@@ -237,7 +237,6 @@ button:hover{
 .facebook{background:#1877f2;}
 .biblioteca{background:#8b5cf6;}
 .intercampi{background:#0ea5e9;}
-.smartec{background:#06b6d4;}
 .editais{background:#0d9488;}
 .emergencia{background:#dc2626;}
 .enderecos{background:#eab308;color:black;}
@@ -624,6 +623,7 @@ button:hover{
   border:none;
   box-shadow:none;
   color:#ffffff;
+  transform:translateX(-12px);
   z-index:1002;
 }
 .language-control span{
@@ -779,6 +779,7 @@ gtag('config', 'G-FJT3X93608');
   <div id="home" class="menu">
     <button class="dev" onclick="openPage('chatPage')"> Spotted💜 Chat💬</button>
     <button class="unila" onclick="openDynamic('portal_unila','link')">🌐 Portal Oficial da UNILA</button>
+    <button class="unila" onclick="openDynamic('inscreva','link')">🎓 Portal Inscreva</button>
     <button class="sigaa" onclick="openDynamic('sigaa','link')">📚 Sistema Acadêmico SIGAA</button>
     <button class="gmail" onclick="openDynamic('email','link')">📧 E-mail Institucional</button>
     <button class="google" onclick="openDynamic('google','link')">🔎 Pesquisa Google</button>
@@ -786,7 +787,6 @@ gtag('config', 'G-FJT3X93608');
     <button class="facebook" onclick="openDynamic('facebook','link')">📘 Facebook UNILA</button>
     <button class="biblioteca" onclick="openDynamic('biblioteca','link')">📖 Biblioteca UNILA</button>
     <button class="intercampi" onclick="openDynamic('intercampi','link')">🚌 Transporte Intercampi</button>
-    <button class="smartec" onclick="openDynamic('smartec','link')">💻 Smart Tech</button>
     <button class="editais" onclick="openDynamic('editais','link')">📄 Editais Oficiais</button>
     <button class="emergencia" onclick="openDynamic('emergencia','page')">🚨 Telefones de Emergência</button>
     <button class="enderecos" onclick="openDynamic('enderecos','page')">🏫 Endereços dos Campus</button>
@@ -975,6 +975,7 @@ gtag('config', 'G-FJT3X93608');
     // CONTENT LOGIC
     const defaultContent = {
       portal_unila: "https://portal.unila.edu.br/",
+      inscreva: "https://inscreva.unila.edu.br/",
       sigaa: "https://sig.unila.edu.br/sigaa/verTelaLogin.do",
       email: "https://mail.google.com/",
       google: "https://www.google.com/",
@@ -982,7 +983,6 @@ gtag('config', 'G-FJT3X93608');
       facebook: "https://www.facebook.com/unila.oficial",
       biblioteca: "https://portal.unila.edu.br/biblioteca",
       intercampi: "https://portal.unila.edu.br/proagi/delog/arquivos/horario-intercampi/quadro-de-horario-intercampi.pdf",
-      smartec: "https://www.facebook.com/profile.php?id=61562436416014",
       editais: "https://documentos.unila.edu.br/",
       emergencia: "Polícia Militar: 190\nSAMU (Ambulância): 192\nBombeiros: 193\n\nHospital Municipal: (45) 2105-4100\nGuarda Municipal: (45) 2105-5100\nDelegacia da Mulher: (45) 3521-9200\nDefesa Civil: 199\n\nPolícia Federal: (45) 3522-1174\nPolícia Rodoviária Federal: (45) 3576-1400\n\nPrae-Unila: +55 45 3522-9983\nPrograd-Unila: +55 (45) 3522-9766\n\nDisque Denúncia: 181\nConselho Tutelar: (45) 3521-1112\nCentro de Intoxicações: 0800 722 6001\n\n⚠ Em situações graves, ligue imediatamente.",
       enderecos: "Unila - Campus PTI\nAv. Tancredo Neves, 6731 - PTI, Foz do Iguaçu - PR\n\nUnila - Campus Juarez Távora\nAv. Silvio Américo Sasdelli, 1000 - Vila A, Foz do Iguaçu - PR\n\nUnila - Campus Jardim Universitário (JU)\nAv. Tarquínio Joslin dos Santos, 1000 - Lot. Universitário das Américas, Foz do Iguaçu - PR\n\nUnila - Campus Integração\nAv. Tancredo Neves, 3147 - Foz do Iguaçu - PR",
@@ -1576,9 +1576,9 @@ padding:0 2px;">↩ Responder</button>`;
       weekdays: ["Domingo", "Segunda-feira", "Terça-feira", "Quarta-feira", "Quinta-feira", "Sexta-feira", "Sábado"],
       t: {
         appTitle: "Unila App", language: "Idioma", home: "Início", podcast: "Podcast", music: "Música", install: "📲 Instalar App",
-        chatMenu: " Spotted💜 Chat💬", portal: "🌐 Portal Oficial da UNILA", sigaa: "📚 Sistema Acadêmico SIGAA", email: "📧 E-mail Institucional",
+        chatMenu: " Spotted💜 Chat💬", portal: "🌐 Portal Oficial da UNILA", inscreva: "🎓 Portal Inscreva", sigaa: "📚 Sistema Acadêmico SIGAA", email: "📧 E-mail Institucional",
         google: "🔎 Pesquisa Google", instagram: "📸 Instagram UNILA", facebook: "📘 Facebook UNILA", library: "📖 Biblioteca UNILA",
-        intercampus: "🚌 Transporte Intercampi", smart: "💻 Smart Tech", notices: "📄 Editais Oficiais", emergency: "🚨 Telefones de Emergência",
+        intercampus: "🚌 Transporte Intercampi", notices: "📄 Editais Oficiais", emergency: "🚨 Telefones de Emergência",
         addresses: "🏫 Endereços dos Campus", ru: "🍽️ Restaurantes Universitários", group: "👥 Grupo no Facebook", developer: "👨‍💻 Desenvolvedor",
         notes: "📝 Anotações", share: "📤 Compartilhar App", internet: "🌐 Internet UNILA", study: "🎓 Estude na UNILA",
         enem: "📝 ENEM – Página do Participante", news: "📰 Notícias", desapega: "🛒 Desapega Unileiro", upa: "🏥 Hospitais de Emergência 24h (UPA)",
@@ -1611,9 +1611,9 @@ padding:0 2px;">↩ Responder</button>`;
       weekdays: ["Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"],
       t: {
         appTitle: "Unila App", language: "Langue", home: "Accueil", podcast: "Podcast", music: "Musique", install: "📲 Installer l’application",
-        chatMenu: " Spotted💜 Chat💬", portal: "🌐 Portail officiel de l’UNILA", sigaa: "📚 Système académique SIGAA", email: "📧 E-mail institutionnel",
+        chatMenu: " Spotted💜 Chat💬", portal: "🌐 Portail officiel de l’UNILA", inscreva: "🎓 Portal Inscreva", sigaa: "📚 Système académique SIGAA", email: "📧 E-mail institutionnel",
         google: "🔎 Recherche Google", instagram: "📸 Instagram UNILA", facebook: "📘 Facebook UNILA", library: "📖 Bibliothèque UNILA",
-        intercampus: "🚌 Transport intercampus", smart: "💻 Smart Tech", notices: "📄 Avis officiels", emergency: "🚨 Numéros d’urgence",
+        intercampus: "🚌 Transport intercampus", notices: "📄 Avis officiels", emergency: "🚨 Numéros d’urgence",
         addresses: "🏫 Adresses des campus", ru: "🍽️ Restaurants universitaires", group: "👥 Groupe Facebook", developer: "👨‍💻 Développeur",
         notes: "📝 Notes", share: "📤 Partager l’application", internet: "🌐 Internet UNILA", study: "🎓 Étudier à l’UNILA",
         enem: "📝 ENEM – Page du participant", news: "📰 Actualités", desapega: "🛒 Desapega Unileiro", upa: "🏥 Hôpitaux d’urgence 24 h (UPA)",
@@ -1646,9 +1646,9 @@ padding:0 2px;">↩ Responder</button>`;
       weekdays: ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"],
       t: {
         appTitle: "Unila App", language: "Idioma", home: "Inicio", podcast: "Podcast", music: "Música", install: "📲 Instalar aplicación",
-        chatMenu: " Spotted💜 Chat💬", portal: "🌐 Portal oficial de la UNILA", sigaa: "📚 Sistema Académico SIGAA", email: "📧 Correo institucional",
+        chatMenu: " Spotted💜 Chat💬", portal: "🌐 Portal oficial de la UNILA", inscreva: "🎓 Portal Inscreva", sigaa: "📚 Sistema Académico SIGAA", email: "📧 Correo institucional",
         google: "🔎 Búsqueda Google", instagram: "📸 Instagram UNILA", facebook: "📘 Facebook UNILA", library: "📖 Biblioteca UNILA",
-        intercampus: "🚌 Transporte intercampus", smart: "💻 Smart Tech", notices: "📄 Convocatorias oficiales", emergency: "🚨 Teléfonos de emergencia",
+        intercampus: "🚌 Transporte intercampus", notices: "📄 Convocatorias oficiales", emergency: "🚨 Teléfonos de emergencia",
         addresses: "🏫 Direcciones de los campus", ru: "🍽️ Restaurantes universitarios", group: "👥 Grupo de Facebook", developer: "👨‍💻 Desarrollador",
         notes: "📝 Anotaciones", share: "📤 Compartir aplicación", internet: "🌐 Internet UNILA", study: "🎓 Estudia en la UNILA",
         enem: "📝 ENEM – Página del participante", news: "📰 Noticias", desapega: "🛒 Desapega Unileiro", upa: "🏥 Hospitales de emergencia 24 h (UPA)",
@@ -1716,7 +1716,7 @@ padding:0 2px;">↩ Responder</button>`;
   }
 
   var menuKeys = [
-    "chatMenu", "portal", "sigaa", "email", "google", "instagram", "facebook", "library", "intercampus", "smart", "notices",
+    "chatMenu", "portal", "inscreva", "sigaa", "email", "google", "instagram", "facebook", "library", "intercampus", "notices",
     "emergency", "addresses", "ru", "group", "developer", "notes", "share", "internet", "study", "enem", "news", "desapega", "upa"
   ];
 
@@ -1781,8 +1781,8 @@ padding:0 2px;">↩ Responder</button>`;
 
   function dynamicTitle(id){
     var titles = {
-      portal_unila: tr("portal"), sigaa: tr("sigaa"), email: tr("email"), google: tr("google"), instagram: tr("instagram"),
-      facebook: tr("facebook"), biblioteca: tr("library"), intercampi: tr("intercampus"), smartec: tr("smart"), editais: tr("notices"),
+      portal_unila: tr("portal"), inscreva: tr("inscreva"), sigaa: tr("sigaa"), email: tr("email"), google: tr("google"), instagram: tr("instagram"),
+      facebook: tr("facebook"), biblioteca: tr("library"), intercampi: tr("intercampus"), editais: tr("notices"),
       emergencia: tr("emergency"), enderecos: tr("addresses"), ru: tr("ru"), grupo_facebook: tr("group"), dev: tr("developer"),
       internet: tr("internet"), estude: tr("study"), enem: tr("enem"), noticias: tr("news"), upa: tr("upa")
     };
