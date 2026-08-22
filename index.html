@@ -996,20 +996,43 @@ gtag('config', 'G-FJT3X93608');
       upa: "UPA João Samek (Vila A): (45) 3524-8800\nUPA Morumbi: (45) 3521-1350\n\n⚠ Em casos de emergência com risco de vida, ligue 192 (SAMU)."
     };
 
+    const adminButtonLabels = {};
+    const adminPageContent = {};
+    const adminContentOverrides = {};
+
+    function applyAdminContentDoc(id, value, changeType) {
+      if (changeType === "removed") {
+        if (id.indexOf("button_label_") === 0) delete adminButtonLabels[id];
+        else if (id.indexOf("button_content_") === 0) delete adminPageContent[id];
+        else delete adminContentOverrides[id];
+        return;
+      }
+      if (id.indexOf("button_label_") === 0) adminButtonLabels[id] = String(value == null ? "" : value);
+      else if (id.indexOf("button_content_") === 0) adminPageContent[id] = String(value == null ? "" : value);
+      else {
+        defaultContent[id] = value;
+        adminContentOverrides[id] = true;
+      }
+    }
+
+    function refreshAdminDrivenUI() {
+      if (typeof window.unilaRefreshTranslations === "function") window.unilaRefreshTranslations();
+    }
+
     async function loadAllContent() {
-      // Carregar conteúdo do admin_content (páginas/links)
+      // Carregar links e textos administráveis do admin_content
       const snapshot = await db.collection("admin_content").get();
-      snapshot.forEach(doc => { defaultContent[doc.id] = doc.data().value; });
+      snapshot.forEach(doc => applyAdminContentDoc(doc.id, doc.data().value, doc.type));
+      refreshAdminDrivenUI();
     }
 
     function listenContentChanges() {
-      // Escutar mudanças em admin_content
+      // Escutar mudanças em admin_content em tempo real
       db.collection("admin_content").onSnapshot(snapshot => {
         snapshot.docChanges().forEach(change => {
-          if (change.type === "added" || change.type === "modified") {
-            defaultContent[change.doc.id] = change.doc.data().value;
-          }
+          applyAdminContentDoc(change.doc.id, change.type === "removed" ? null : change.doc.data().value, change.type);
         });
+        refreshAdminDrivenUI();
       });
     }
 
@@ -1685,8 +1708,19 @@ padding:0 2px;">↩ Responder</button>`;
   if (!I18N[state.lang]) state.lang = "pt";
 
   function current(){ return I18N[state.lang] || I18N.pt; }
-  function tr(key){ return current().t[key] || I18N.pt.t[key] || key; }
+  function tr(key){
+    var adminKey = "button_label_" + key + "_" + state.lang;
+    try {
+      if (typeof adminButtonLabels !== "undefined" && Object.prototype.hasOwnProperty.call(adminButtonLabels, adminKey)) return adminButtonLabels[adminKey];
+    } catch(e){}
+    return current().t[key] || I18N.pt.t[key] || key;
+  }
   function localizedContent(id){
+    var adminKey = "button_content_" + id + "_" + state.lang;
+    try {
+      if (typeof adminPageContent !== "undefined" && Object.prototype.hasOwnProperty.call(adminPageContent, adminKey)) return adminPageContent[adminKey];
+      if (typeof adminContentOverrides !== "undefined" && adminContentOverrides[id] && typeof defaultContent !== "undefined" && defaultContent[id]) return defaultContent[id];
+    } catch(e){}
     if (current().content[id]) return current().content[id];
     try {
       if (typeof defaultContent !== "undefined" && defaultContent[id]) return defaultContent[id];
@@ -1957,6 +1991,7 @@ padding:0 2px;">↩ Responder</button>`;
     setInterval(updateDateBar, 60000);
   }
 
+  window.unilaRefreshTranslations = applyStaticTranslations;
   initialize();
 })();
 </script>
