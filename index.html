@@ -688,7 +688,19 @@ button:hover{
   }
 }
 </style>
-
+<style id="spotted-ugc-compliance-style">
+  .ugc-actions{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px;align-items:center}
+  .ugc-action-btn{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.18);color:#e5e7eb;border-radius:8px;padding:4px 7px;font-size:10px;cursor:pointer;line-height:1.2}
+  .ugc-action-btn:hover{background:rgba(255,255,255,0.16)}
+  .ugc-modal{display:none;position:fixed;inset:0;z-index:20000;background:rgba(0,0,0,0.72);align-items:center;justify-content:center;padding:18px}
+  .ugc-modal-card{width:min(520px,100%);max-height:88vh;overflow:auto;background:#130b24;color:#f8fafc;border:1px solid rgba(255,255,255,0.2);border-radius:16px;padding:20px;box-shadow:0 12px 40px rgba(0,0,0,0.5)}
+  .ugc-modal-card h3{margin:0 0 12px;color:#c084fc}
+  .ugc-modal-card p{line-height:1.55;color:#e2e8f0}
+  .ugc-modal-card textarea{width:100%;min-height:100px;box-sizing:border-box;background:rgba(255,255,255,0.08);color:#fff;border:1px solid rgba(255,255,255,0.2);border-radius:10px;padding:10px;resize:vertical}
+  .ugc-modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:15px;flex-wrap:wrap}
+  .ugc-modal-actions button{width:auto;min-width:110px;padding:10px 14px;border-radius:10px}
+  .ugc-danger{background:#b91c1c!important;color:#fff}
+  .ugc-secondary{background:rgba(255,255,255,0.12)!important;color:#fff}</style>
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
@@ -1947,6 +1959,263 @@ padding:0 2px;">↩ Responder</button>`;
 
   initialize();
 })();
+</script>
+
+<div id="ugcPolicyModal" class="ugc-modal" role="dialog" aria-modal="true" aria-labelledby="ugcPolicyTitle">
+  <div class="ugc-modal-card">
+    <h3 id="ugcPolicyTitle">Termos de Uso e Segurança</h3>
+    <p id="ugcPolicyText">Antes de publicar mensagens, respostas, anúncios ou imagens, confirme que você aceita os Termos de Uso. Não publique conteúdo ilegal, ofensivo, discriminatório, sexual, ameaçador ou que viole direitos de terceiros. O aplicativo pode receber denúncias e remover conteúdo inadequado.</p>
+    <label style="display:flex;gap:9px;align-items:flex-start;color:#fff;line-height:1.45;cursor:pointer;">
+      <input type="checkbox" id="ugcPolicyCheck" style="width:18px;height:18px;margin-top:2px;cursor:pointer;" />
+      <span id="ugcPolicyAcceptText">Li e aceito os Termos de Uso e a política de comportamento.</span>
+    </label>
+    <div class="ugc-modal-actions">
+      <button type="button" class="ugc-secondary" onclick="closeUGCPolicy()">Cancelar</button>
+      <button type="button" onclick="acceptUGCPolicy()">Aceitar e continuar</button>
+    </div>
+  </div>
+</div>
+
+<div id="ugcReportModal" class="ugc-modal" role="dialog" aria-modal="true" aria-labelledby="ugcReportTitle">
+  <div class="ugc-modal-card">
+    <h3 id="ugcReportTitle">Denunciar conteúdo ou usuário</h3>
+    <p id="ugcReportDescription">Descreva o motivo da denúncia. A solicitação será registrada para análise e moderação.</p>
+    <textarea id="ugcReportReason" placeholder="Descreva o motivo da denúncia..."></textarea>
+    <div class="ugc-modal-actions">
+      <button type="button" class="ugc-secondary" onclick="closeUGCReport()">Cancelar</button>
+      <button type="button" class="ugc-danger" onclick="submitUGCReport()">Enviar denúncia</button>
+    </div>
+  </div>
+</div>
+<script id="spotted-ugc-compliance">
+(function(){
+  "use strict";
+  var TERMS_KEY = "spotted_ugc_terms_accepted_v1";
+  var BLOCKS_KEY = "spotted_ugc_blocked_users_v1";
+  var pendingAction = null;
+  var reportContext = null;
+  var enhanceTimer = null;
+
+  var labels = {
+    pt: { report:"Denunciar", reportUser:"Denunciar usuário", block:"Bloquear", termsRequired:"Você precisa aceitar os Termos de Uso para publicar conteúdo.", nickRequired:"Defina um nick antes de usar este recurso.", reportSent:"Denúncia enviada para moderação.", reportError:"Não foi possível enviar a denúncia agora.", blocked:"Usuário bloqueado neste dispositivo.", reasonRequired:"Descreva o motivo da denúncia.", message:"mensagem", ad:"anúncio", comment:"comentário", user:"usuário" },
+    fr: { report:"Signaler", reportUser:"Signaler l’utilisateur", block:"Bloquer", termsRequired:"Vous devez accepter les conditions d’utilisation pour publier du contenu.", nickRequired:"Définissez un pseudo avant d’utiliser cette fonction.", reportSent:"Signalement envoyé à la modération.", reportError:"Impossible d’envoyer le signalement maintenant.", blocked:"Utilisateur bloqué sur cet appareil.", reasonRequired:"Décrivez le motif du signalement.", message:"message", ad:"annonce", comment:"commentaire", user:"utilisateur" },
+    es: { report:"Denunciar", reportUser:"Denunciar usuario", block:"Bloquear", termsRequired:"Debes aceptar los Términos de uso para publicar contenido.", nickRequired:"Define un nick antes de usar esta función.", reportSent:"Denuncia enviada a moderación.", reportError:"No se pudo enviar la denuncia ahora.", blocked:"Usuario bloqueado en este dispositivo.", reasonRequired:"Describe el motivo de la denuncia.", message:"mensaje", ad:"anuncio", comment:"comentario", user:"usuario" }
+  };
+
+  function currentLabels(){
+    var lang = localStorage.getItem("spotted_language") || "pt";
+    return labels[lang] || labels.pt;
+  }
+  function getNick(){
+    try { return typeof nick !== "undefined" ? nick : (localStorage.getItem("chat_nick") || ""); } catch(e) { return localStorage.getItem("chat_nick") || ""; }
+  }
+  function getBlocked(){
+    try { return JSON.parse(localStorage.getItem(BLOCKS_KEY) || "[]"); } catch(e) { return []; }
+  }
+  function saveBlocked(items){ localStorage.setItem(BLOCKS_KEY, JSON.stringify(items)); }
+  function isBlocked(user){ return !!user && getBlocked().indexOf(user) !== -1; }
+  function escapeText(value){ return String(value || ""); }
+
+  window.closeUGCPolicy = function(){
+    var modal = document.getElementById("ugcPolicyModal");
+    if (modal) modal.style.display = "none";
+    pendingAction = null;
+  };
+
+  window.acceptUGCPolicy = function(){
+    var check = document.getElementById("ugcPolicyCheck");
+    if (!check || !check.checked) { alert(currentLabels().termsRequired); return; }
+    localStorage.setItem(TERMS_KEY, "yes");
+    var modal = document.getElementById("ugcPolicyModal");
+    if (modal) modal.style.display = "none";
+    pendingAction = null;
+    // O usuário confirma os Termos e toca novamente na ação original.
+    // Assim o evento original do Chat/Desapega permanece intacto.
+  };
+
+  window.requestUGCPolicy = function(action){
+    if (localStorage.getItem(TERMS_KEY) === "yes") { action(); return; }
+    pendingAction = action;
+    var check = document.getElementById("ugcPolicyCheck");
+    if (check) check.checked = false;
+    var modal = document.getElementById("ugcPolicyModal");
+    if (modal) modal.style.display = "flex";
+  };
+
+  window.closeUGCReport = function(){
+    var modal = document.getElementById("ugcReportModal");
+    if (modal) modal.style.display = "none";
+    reportContext = null;
+  };
+
+  window.openUGCReport = function(type, targetId, targetLabel, targetUser){
+    if (!getNick()) { alert(currentLabels().nickRequired); return; }
+    reportContext = { type:type, targetId:String(targetId || ""), targetLabel:String(targetLabel || ""), targetUser:String(targetUser || "") };
+    var reason = document.getElementById("ugcReportReason");
+    if (reason) reason.value = "";
+    var title = document.getElementById("ugcReportTitle");
+    if (title) title.textContent = type === "user" ? currentLabels().reportUser : currentLabels().report + " " + (type === "ad" ? currentLabels().ad : (type === "ad_reply" ? currentLabels().comment : currentLabels().message));
+    var modal = document.getElementById("ugcReportModal");
+    if (modal) modal.style.display = "flex";
+  };
+
+  window.submitUGCReport = async function(){
+    var reasonEl = document.getElementById("ugcReportReason");
+    var reason = reasonEl ? reasonEl.value.trim() : "";
+    if (!reason) { alert(currentLabels().reasonRequired); return; }
+    if (!reportContext || typeof db === "undefined") { alert(currentLabels().reportError); return; }
+    var btn = document.querySelector("#ugcReportModal .ugc-danger");
+    if (btn) btn.disabled = true;
+    try {
+      await db.collection("ugc_reports").add({
+        type: reportContext.type,
+        targetId: reportContext.targetId,
+        targetLabel: reportContext.targetLabel,
+        targetUser: reportContext.targetUser,
+        reason: reason,
+        reporterNick: getNick(),
+        createdAt: Date.now(),
+        status: "open",
+        source: "Spotted"
+      });
+      alert(currentLabels().reportSent);
+      window.closeUGCReport();
+    } catch(e) {
+      console.error("Erro ao registrar denúncia:", e);
+      alert(currentLabels().reportError);
+    } finally { if (btn) btn.disabled = false; }
+  };
+
+  window.blockUGCUser = function(user){
+    user = String(user || "").trim();
+    if (!user || user === getNick()) return;
+    var items = getBlocked();
+    if (items.indexOf(user) === -1) items.push(user);
+    saveBlocked(items);
+    applyBlockedUsers();
+    alert(currentLabels().blocked);
+  };
+
+  function addAction(parent, text, handler){
+    var button = document.createElement("button");
+    button.type = "button";
+    button.className = "ugc-action-btn";
+    button.textContent = text;
+    button.addEventListener("click", handler);
+    parent.appendChild(button);
+  }
+
+  function enhanceChat(){
+    var box = document.getElementById("chatBox");
+    if (!box) return;
+    var allMessages = typeof chatMessages !== "undefined" ? chatMessages : [];
+    box.querySelectorAll(".msg").forEach(function(item){
+      var messageId = item.id;
+      var data = allMessages.find(function(entry){ return entry.id === messageId; });
+      if (!data || item.querySelector(".ugc-actions")) return;
+      var user = String(data.realNick || data.nick || "").trim();
+      var actions = document.createElement("div");
+      actions.className = "ugc-actions";
+      addAction(actions, currentLabels().report, function(){ window.openUGCReport("chat", messageId, data.text || "Imagem", user); });
+      if (user && user !== getNick()) {
+        addAction(actions, currentLabels().reportUser, function(){ window.openUGCReport("user", user, user, user); });
+        addAction(actions, currentLabels().block, function(){ window.blockUGCUser(user); });
+      }
+      item.appendChild(actions);
+    });
+  }
+
+  function enhanceAds(){
+    var list = document.getElementById("adList");
+    if (!list) return;      list.querySelectorAll(".desapega-card").forEach(function(card){
+      enhanceAdReplies(card, card.getAttribute("data-ugc-ad-id") || (card.querySelector("h3") ? card.querySelector("h3").textContent.trim() : "anuncio"));
+      var sellerNode = card.querySelector("div[style*='justify-content:space-between'] span");
+      var sellerText = sellerNode ? sellerNode.textContent.replace(/^Vendedor:\s*/i, "").trim() : "";
+      var titleNode = card.querySelector("h3");
+      var title = titleNode ? titleNode.textContent.trim() : "Anúncio";
+      if (card.querySelector(".ugc-actions")) {
+        if (isBlocked(sellerText)) card.style.display = "none";
+        return;
+      }
+      var actions = document.createElement("div");
+      actions.className = "ugc-actions";
+      addAction(actions, currentLabels().report, function(){ window.openUGCReport("ad", title, title, sellerText); });
+      if (sellerText && sellerText !== getNick() && sellerText !== "Anônimo 👤") {
+        addAction(actions, currentLabels().reportUser, function(){ window.openUGCReport("user", sellerText, sellerText, sellerText); });
+        addAction(actions, currentLabels().block, function(){ window.blockUGCUser(sellerText); });
+      }
+      card.appendChild(actions);
+      if (isBlocked(sellerText)) card.style.display = "none";
+    });
+  }
+
+  function enhanceAdReplies(card, adId){
+    card.querySelectorAll(".ad-reply-item").forEach(function(reply, index){
+      if (reply.querySelector(".ugc-actions")) return;
+      var userNode = reply.querySelector(".ad-reply-header strong");
+      var textNode = reply.querySelector(".ad-reply-header + div");
+      var user = userNode ? userNode.textContent.trim() : "";
+      var text = textNode ? textNode.textContent.trim() : "Comentário";
+      var actions = document.createElement("div");
+      actions.className = "ugc-actions";
+      addAction(actions, currentLabels().report, function(){ window.openUGCReport("ad_reply", String(adId) + ":" + index, text, user); });
+      if (user && user !== getNick()) {
+        addAction(actions, currentLabels().reportUser, function(){ window.openUGCReport("user", user, user, user); });
+        addAction(actions, currentLabels().block, function(){ window.blockUGCUser(user); });
+      }
+      reply.appendChild(actions);
+    });
+  }
+
+  function applyBlockedUsers(){
+    var blocked = getBlocked();
+    document.querySelectorAll("#chatBox .msg").forEach(function(item){
+      var allMessages = typeof chatMessages !== "undefined" ? chatMessages : [];
+      var data = allMessages.find(function(entry){ return entry.id === item.id; });
+      var user = data ? String(data.realNick || data.nick || "").trim() : "";
+      item.style.display = user && blocked.indexOf(user) !== -1 ? "none" : "";
+    });
+    document.querySelectorAll("#adList .desapega-card").forEach(function(card){
+      var sellerNode = card.querySelector("div[style*='justify-content:space-between'] span");
+      var seller = sellerNode ? sellerNode.textContent.replace(/^Vendedor:\s*/i, "").trim() : "";
+      card.style.display = seller && blocked.indexOf(seller) !== -1 ? "none" : "";
+      card.querySelectorAll(".ad-reply-item").forEach(function(reply){
+        var userNode = reply.querySelector(".ad-reply-header strong");
+        var replyUser = userNode ? userNode.textContent.trim() : "";
+        reply.style.display = replyUser && blocked.indexOf(replyUser) !== -1 ? "none" : "";
+      });
+    });
+  }
+
+  function enhanceAll(){
+    enhanceChat();
+    enhanceAds();
+    applyBlockedUsers();
+  }
+
+  var observer = new MutationObserver(function(){
+    clearTimeout(enhanceTimer);
+    enhanceTimer = setTimeout(enhanceAll, 30);
+  });
+  observer.observe(document.body, { childList:true, subtree:true });
+  document.addEventListener("DOMContentLoaded", enhanceAll);
+  setTimeout(enhanceAll, 500);
+
+  function wrapUGCFunction(name){
+    var original = window[name];
+    if (typeof original !== "function" || original.__spottedUGCWrapped) return;
+    var wrapped = function(){
+      var args = arguments;
+      window.requestUGCPolicy(function(){ original.apply(window, args); });
+    };
+    wrapped.__spottedUGCWrapped = true;
+    window[name] = wrapped;
+  }
+  setTimeout(function(){
+    wrapUGCFunction("sendMessage");
+    wrapUGCFunction("saveAd");
+    wrapUGCFunction("sendAdReply");
+  }, 0);})();
 </script>
 </body>
 </html>
