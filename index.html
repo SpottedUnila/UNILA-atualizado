@@ -185,16 +185,25 @@ button:hover{
 }
 
 /* Ajuste para imagens em páginas dinâmicas (Notícias, etc) */
+/* NOTÍCIAS: aproxima o texto da imagem/vídeo */
+#dynamicContent .news-card { white-space: normal; }
+#dynamicContent .news-card h3 { margin: 0 0 5px !important; line-height: 1.2; }
+#dynamicContent .news-card .news-media,
+#dynamicContent .news-card .news-media img,
+#dynamicContent .news-card .news-media video { margin: 0 !important; }
+#dynamicContent .news-card .news-content { margin: 6px 0 4px !important; line-height: 1.45; white-space: pre-wrap; }
+#dynamicContent .news-card .news-date { margin: 0 !important; }
+
 #dynamicContent img {
   width: 100%;
   max-width: 100%;
   height: auto;
   border-radius: 12px;
-  margin: 15px 0;
+  margin: 4px 0 !important;
   display: block;
   box-shadow: 0 4px 12px rgba(0,0,0,0.3);
   background-color: rgba(255,255,255,0.05);
-  min-height: 50px;
+  min-height: 0;
 }
 
 .home-btn{
@@ -1082,12 +1091,12 @@ gtag('config', 'G-FJT3X93608');
             const optimizedPoster = optimizeCloudinary(news.videoThumbUrl, 'image');
 
             newsHtml += `
-              <div style="background: rgba(30, 41, 59, 0.6); border-radius: 12px; padding: 15px; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.1);">
-                <h3 style="color:#22c55e; margin-top:0; margin-bottom:10px;">${news.title}</h3>
-                ${news.imageUrl ? `<img src="${optimizedImg}" style="width:100%;height:auto;max-height:650px;object-fit:contain;display:block;margin:0 auto;border-radius:8px;background:#000;cursor:pointer;" onclick="window.open(this.src, '_blank')">` : ''}
-                ${news.videoUrl ? `<div style="width:100%;border-radius:8px;overflow:hidden;background:#000;"><video src="${optimizedVid}" poster="${optimizedPoster}" controls style="width:100%;height:auto;max-height:650px;display:block;margin:0 auto;object-fit:contain;background:#000;border-radius:8px;" preload="none" playsinline></video></div>` : ''}
-                <p style="color:#e0e0e0; line-height:1.6; margin-bottom:10px;">${news.content}</p>
-                <p style="font-size:12px; color:#94a3b8; text-align:right; margin:0;">${date}</p>
+              <div class="news-card" style="background: rgba(30, 41, 59, 0.6); border-radius: 12px; padding: 10px; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.1);">
+                <h3 style="color:#22c55e; margin:0 0 5px;">${news.title}</h3>
+                ${news.imageUrl ? `<div class="news-media"><img src="${optimizedImg}" style="width:100%;height:auto;max-height:650px;object-fit:contain;display:block;border-radius:8px;background:#000;cursor:pointer;" onclick="window.open(this.src, '_blank')"></div>` : ''}
+                ${news.videoUrl ? `<div class="news-media" style="width:100%;border-radius:8px;overflow:hidden;background:#000;"><video src="${optimizedVid}" poster="${optimizedPoster}" controls style="width:100%;height:auto;max-height:650px;display:block;object-fit:contain;background:#000;border-radius:8px;" preload="none" playsinline></video></div>` : ''}
+                <p class="news-content" style="color:#e0e0e0;">${news.content}</p>
+                <p class="news-date" style="font-size:12px; color:#94a3b8; text-align:right;">${date}</p>
               </div>
             `;
           });
