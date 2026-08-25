@@ -196,6 +196,9 @@ button:hover{
 #dynamicContent .conheca-caption { margin: 7px 0 3px; color: #f8fafc; font-size: 15px; font-weight: 600; line-height: 1.35; white-space: pre-wrap; }
 #dynamicContent .conheca-meta { margin: 0 0 8px; color: #94a3b8; font-size: 11px; line-height: 1.4; }
 #dynamicContent .conheca-media-block { margin: 0 0 12px; }
+#dynamicContent .conheca-media-frame { position: relative; overflow: hidden; border-radius: 8px; background: #000; }
+#dynamicContent .conheca-media-frame img, #dynamicContent .conheca-media-frame video { display: block; }
+#dynamicContent .conheca-date-overlay { position: absolute; right: 8px; bottom: 8px; z-index: 2; padding: 4px 7px; border-radius: 4px; background: rgba(0,0,0,.78); color: #fff; font-size: 11px; line-height: 1.2; pointer-events: none; }
 
 #dynamicContent img {
   width: 100%;
@@ -1199,7 +1202,8 @@ gtag('config', 'G-FJT3X93608');
       const legacyVideo = item.mediaType === "video" ? item.mediaUrl : "";
       return {
         imageUrl: safeMediaUrl(hasModernMediaFields ? item.imageUrl : legacyImage),
-        videoUrl: safeMediaUrl(hasModernMediaFields ? item.videoUrl : legacyVideo)
+        videoUrl: safeMediaUrl(hasModernMediaFields ? item.videoUrl : legacyVideo),
+        videoThumbUrl: safeMediaUrl(item && item.videoThumbUrl)
       };
     }
 
@@ -1248,14 +1252,26 @@ gtag('config', 'G-FJT3X93608');
       return html;
     }
 
+    function formatConhecaPublishedDate(item) {
+      const raw = item && (item.publishedAt || item.updatedAt || item.createdAt);
+      let date = null;
+      if (raw && typeof raw.toDate === 'function') date = raw.toDate();
+      else if (raw && typeof raw.seconds === 'number') date = new Date(raw.seconds * 1000);
+      else if (typeof raw === 'number') date = new Date(raw);
+      else if (typeof raw === 'string') date = new Date(raw);
+      if (!date || Number.isNaN(date.getTime())) return 'Data indisponível';
+      return date.toLocaleDateString('pt-BR');
+    }
+
     function renderConhecaMedia(item) {
       const media = getConhecaMedia(item);
+      const dateOverlay = `<span class="conheca-date-overlay">📅 ${escapeHtml(formatConhecaPublishedDate(item))}</span>`;
       let html = "";
       if (media.imageUrl) {
-        html += `<div class="conheca-media-block"><div class="news-media"><img src="${escapeHtml(optimizeCloudinary(media.imageUrl, "image"))}" alt="Imagem de Conheça a UNILA" style="width:100%;height:auto;max-height:650px;object-fit:contain;display:block;border-radius:8px;background:#000;cursor:pointer;" onclick="window.open(this.src, '_blank')"></div>${renderConhecaCaptionAndMeta(item, "image")}</div>`;
+        html += `<div class="conheca-media-block"><div class="news-media conheca-media-frame"><img src="${escapeHtml(optimizeCloudinary(media.imageUrl, "image"))}" alt="Imagem de Conheça a UNILA" style="width:100%;height:auto;max-height:650px;object-fit:contain;display:block;border-radius:8px;background:#000;cursor:pointer;" onclick="window.open(this.src, '_blank')">${dateOverlay}</div>${renderConhecaCaptionAndMeta(item, "image")}</div>`;
       }
       if (media.videoUrl) {
-        html += `<div class="conheca-media-block"><div class="news-media" style="width:100%;border-radius:8px;overflow:hidden;background:#000;"><video src="${escapeHtml(optimizeCloudinary(media.videoUrl, "video"))}" controls style="width:100%;height:auto;max-height:650px;display:block;object-fit:contain;background:#000;border-radius:8px;" preload="none" playsinline></video></div>${renderConhecaCaptionAndMeta(item, "video")}</div>`;
+        html += `<div class="conheca-media-block"><div class="news-media conheca-media-frame" style="width:100%;"><video src="${escapeHtml(optimizeCloudinary(media.videoUrl, "video"))}" poster="${escapeHtml(optimizeCloudinary(media.videoThumbUrl, "image"))}" controls style="width:100%;height:auto;max-height:650px;display:block;object-fit:contain;background:#000;border-radius:8px;" preload="none" playsinline></video>${dateOverlay}</div>${renderConhecaCaptionAndMeta(item, "video")}</div>`;
       }
       return html;
     }
@@ -1268,7 +1284,7 @@ gtag('config', 'G-FJT3X93608');
         const snapshot = await db.collection("conhecaUnila").get();
         const items = snapshot.docs.map(doc => ({id:doc.id, ...doc.data()}))
           .filter(item => getConhecaMedia(item).imageUrl || getConhecaMedia(item).videoUrl)
-          .sort((a, b) => Number(b.updatedAt || b.createdAt || 0) - Number(a.updatedAt || a.createdAt || 0));
+          .sort((a, b) => Number(b.publishedAt || b.updatedAt || b.createdAt || 0) - Number(a.publishedAt || a.updatedAt || a.createdAt || 0));
         let htmlConheca = "";
         if (!items.length) {
           htmlConheca = '<p style="text-align:center;padding:20px;color:#94a3b8;">Nenhuma imagem ou vídeo publicado ainda.</p>';
