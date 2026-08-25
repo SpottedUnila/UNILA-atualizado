@@ -245,7 +245,7 @@ button:hover{
 }
 
 /* CORES */
-.unila{background:#2563eb;}
+.unila{background:#2563eb;} .conheca-unila-btn{background:#7c3aed;}
 .sigaa{background:#9333ea;}
 .gmail{background:#ea4335;}
 .google{background:#fbbc05;color:black;}
@@ -723,6 +723,7 @@ button:hover{
 
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.youtube.com/iframe_api"></script>
 <script src="https://upload-widget.cloudinary.com/global/all.js" type="text/javascript"></script>
 
@@ -815,6 +816,7 @@ gtag('config', 'G-FJT3X93608');
     <button class="estude" onclick="openDynamic('estude','page')">🎓 Estude na UNILA</button>
     <button class="google" onclick="openDynamic('enem','link')">📝 ENEM – Página do Participante</button>
     <button class="noticias" onclick="loadNews(); document.getElementById('dynamicTitle').textContent='NOTÍCIAS'; openPage('dynamicPage');">📰 Notícias</button>
+    <button class="conheca-unila-btn" onclick="openConhecaUnilaPage()">🏫 Conheça a UNILA</button>
     <button class="desapega" onclick="openPage('desapegaPage')">🛒 Desapega Unileiro</button>
     <button class="emergencia" onclick="openDynamic('upa','page')">🏥 Hospitais de Emergência 24h (UPA)</button>
   </div>
@@ -941,8 +943,73 @@ gtag('config', 'G-FJT3X93608');
 
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
+    const auth = firebase.auth();
     const ADMIN_NICK = "Fernando";
+    const ADMIN_UID = "8NOLMsOmLXNkuQ8BE6IwF3Fh9Yj1";
+
+    // AUTENTICAÇÃO ANÔNIMA DO FIREBASE
+    // Cada instalação/sessão persistente recebe um UID próprio do Firebase.
+    let firebaseUser = null;
+    let firebaseUid = null;
+
+    const authReady = new Promise((resolve, reject) => {
+      const unsubscribeAuth = auth.onAuthStateChanged((user) => {
+        if (user) {
+          firebaseUser = user;
+          firebaseUid = user.uid;
+          console.log("Firebase Authentication ativo. UID:", firebaseUid);
+          unsubscribeAuth();
+          resolve(user);
+        }
+      });
+
+      if (!auth.currentUser) {
+        auth.signInAnonymously().catch((error) => {
+          console.error("Erro ao fazer login anônimo no Firebase:", error);
+          reject(error);
+        });
+      }
+    });
     db.enablePersistence().catch((err) => console.log("Erro offline:", err));
+
+    // VERIFICAÇÃO GLOBAL DE BANIMENTO
+    // O documento em bannedUsers usa o Firebase UID como ID.
+    // Se banned === true, o acesso ao aplicativo é bloqueado.
+    async function checkGlobalBan() {
+      if (!firebaseUid) return false;
+
+      try {
+        const banDoc = await db.collection("bannedUsers").doc(firebaseUid).get();
+        const data = banDoc.exists ? banDoc.data() : null;
+        return !!(data && (data.banned === true || data.blocked === true));
+      } catch (error) {
+        console.error("Erro ao verificar bloqueio/banimento:", error);
+        // Em caso de erro de leitura, não bloqueia o usuário automaticamente.
+        return false;
+      }
+    }
+
+    function showGlobalBanScreen() {
+      if (document.getElementById("globalBanScreen")) return;
+      document.body.innerHTML = `
+        <div id="globalBanScreen" style="min-height:100vh;display:flex;align-items:center;justify-content:center;background:#120018;color:#fff;padding:30px;box-sizing:border-box;font-family:Arial,sans-serif;text-align:center;">
+          <div style="max-width:430px;background:rgba(20,10,30,.96);border:1px solid rgba(255,255,255,.15);border-radius:24px;padding:32px;box-shadow:0 15px 50px rgba(0,0,0,.5);">
+            <div style="font-size:58px;margin-bottom:15px;">🚫</div>
+            <h1 style="margin:0 0 12px;font-size:26px;">Acesso bloqueado</h1>
+            <p style="margin:0;color:#ddd;font-size:16px;line-height:1.5;">Este usuário foi bloqueado ou banido pelo administrador e não pode acessar o App Unila.</p>
+            <p style="margin:18px 0 0;color:#999;font-size:12px;">ID de autenticação: ${firebaseUid}</p>
+          </div>
+        </div>`;
+    }
+
+    let globalRestrictionUnsubscribe = null;
+    function listenGlobalRestriction() {
+      if (!firebaseUid || globalRestrictionUnsubscribe) return;
+      globalRestrictionUnsubscribe = db.collection("bannedUsers").doc(firebaseUid).onSnapshot((doc) => {
+        const data = doc.exists ? (doc.data() || {}) : {};
+        if (data.blocked === true || data.banned === true) showGlobalBanScreen();
+      }, (error) => console.error("Erro ao sincronizar bloqueio/banimento:", error));
+    }
 
     let nick = localStorage.getItem("chat_nick") || "";
     const LIMIT = 10;
@@ -1107,6 +1174,82 @@ gtag('config', 'G-FJT3X93608');
         console.error('Erro ao carregar notícias:', e);
         document.getElementById('dynamicContent').innerHTML = '<p style="color:#ef4444;">Erro ao carregar notícias.</p>';
       }
+    }
+
+
+    // CONHEÇA A UNILA — conteúdo multimídia separado das notícias e administrável pelo painel.
+    function escapeHtml(value) {
+      return String(value == null ? "" : value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/\"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    function safeMediaUrl(value) {
+      const url = String(value || "").trim();
+      return /^https?:\/\//i.test(url) ? url : "";
+    }
+
+    function getConhecaMedia(item) {
+      const hasModernMediaFields = Object.prototype.hasOwnProperty.call(item || {}, "imageUrl") || Object.prototype.hasOwnProperty.call(item || {}, "videoUrl");
+      const legacyImage = item.mediaType === "image" ? item.mediaUrl : "";
+      const legacyVideo = item.mediaType === "video" ? item.mediaUrl : "";
+      return {
+        imageUrl: safeMediaUrl(hasModernMediaFields ? item.imageUrl : legacyImage),
+        videoUrl: safeMediaUrl(hasModernMediaFields ? item.videoUrl : legacyVideo)
+      };
+    }
+
+    function renderConhecaMedia(item) {
+      const media = getConhecaMedia(item);
+      let html = "";
+      if (media.imageUrl) {
+        html += `<div class="news-media"><img src="${escapeHtml(optimizeCloudinary(media.imageUrl, "image"))}" alt="Imagem de Conheça a UNILA" style="width:100%;height:auto;max-height:650px;object-fit:contain;display:block;border-radius:8px;background:#000;cursor:pointer;" onclick="window.open(this.src, '_blank')"></div>`;
+      }
+      if (media.videoUrl) {
+        html += `<div class="news-media" style="width:100%;border-radius:8px;overflow:hidden;background:#000;"><video src="${escapeHtml(optimizeCloudinary(media.videoUrl, "video"))}" controls style="width:100%;height:auto;max-height:650px;display:block;object-fit:contain;background:#000;border-radius:8px;" preload="none" playsinline></video></div>`;
+      }
+      return html;
+    }
+
+    async function loadConhecaUnila() {
+      const box = document.getElementById("dynamicContent");
+      if (!box) return;
+      box.innerHTML = '<p style="text-align:center;padding:20px;color:#94a3b8;">Carregando...</p>';
+      try {
+        const snapshot = await db.collection("conhecaUnila").get();
+        const items = snapshot.docs.map(doc => ({id:doc.id, ...doc.data()}))
+          .filter(item => getConhecaMedia(item).imageUrl || getConhecaMedia(item).videoUrl)
+          .sort((a, b) => Number(b.updatedAt || b.createdAt || 0) - Number(a.updatedAt || a.createdAt || 0));
+        let htmlConheca = "";
+        if (!items.length) {
+          htmlConheca = '<p style="text-align:center;padding:20px;color:#94a3b8;">Nenhuma imagem ou vídeo publicado ainda.</p>';
+        } else {
+          htmlConheca = items.map(item => `<div class="news-card" style="background:rgba(30,41,59,.6);border-radius:12px;padding:10px;margin-bottom:15px;border:1px solid rgba(255,255,255,.1);">${renderConhecaMedia(item)}</div>`).join("");
+        }
+        box.innerHTML = htmlConheca;
+        if (typeof translateDynamicUI === "function") translateDynamicUI();
+      } catch(e) {
+        console.error("Erro ao carregar Conheça a UNILA:", e);
+        box.innerHTML = '<p style="color:#ef4444;">Erro ao carregar as mídias.</p>';
+      }
+    }
+
+    let conhecaMediaUnsubscribe = null;
+    function listenConhecaMediaChanges() {
+      if (conhecaMediaUnsubscribe) return;
+      conhecaMediaUnsubscribe = db.collection("conhecaUnila").onSnapshot(() => {
+        const dynamicPage = document.getElementById("dynamicPage");
+        if (dynamicPage && dynamicPage.style.display === "block" && typeof window.loadConhecaUnila === "function") window.loadConhecaUnila();
+      }, (error) => console.error("Erro ao sincronizar mídias de Conheça a UNILA:", error));
+    }
+
+    function openConhecaUnilaPage() {
+      document.getElementById("dynamicTitle").textContent = "CONHEÇA A UNILA";
+      openPage("dynamicPage");
+      loadConhecaUnila();
     }
 
     function scrollToTop() { window.scrollTo({ top: 0, behavior: 'smooth' }); }
@@ -1354,11 +1497,32 @@ padding:0 2px;">↩ Responder</button>`;
       const btn = event.target; const originalText = btn.textContent; const input = document.getElementById("nickInput").value.trim();
       if(!input) { alert("Digite um Nick!"); return; }
       try {
-        btn.disabled = true; btn.textContent = "Verificando..."; const nickRef = db.collection("users").doc(input); const doc = await nickRef.get();
-        if(doc.exists && input !== ADMIN_NICK){
-          const data = doc.data(); if(Date.now() - (data.lastActive || 0) < 30000){ alert("Nick em uso!"); btn.disabled = false; btn.textContent = originalText; return; }
+        btn.disabled = true; btn.textContent = "Verificando...";
+
+        // O nome Fernando é reservado ao UID do administrador principal.
+        if (input === ADMIN_NICK && firebaseUid !== ADMIN_UID) {
+          alert("Este nick é reservado ao administrador principal.");
+          btn.disabled = false; btn.textContent = originalText;
+          return;
         }
-        await nickRef.set({ createdAt: Date.now(), lastActive: Date.now() }); nick = input; localStorage.setItem("chat_nick", nick);
+
+        const nickRef = db.collection("users").doc(input); const doc = await nickRef.get();
+        if(doc.exists && input !== ADMIN_NICK){
+          const data = doc.data();
+          if (data.uid && data.uid !== firebaseUid) {
+            if(Date.now() - (data.lastActive || 0) < 30000){ alert("Nick em uso!"); btn.disabled = false; btn.textContent = originalText; return; }
+          } else if(Date.now() - (data.lastActive || 0) < 30000){
+            alert("Nick em uso!"); btn.disabled = false; btn.textContent = originalText; return;
+          }
+        }
+
+        await nickRef.set({
+          uid: firebaseUid,
+          createdAt: doc.exists ? (doc.data().createdAt || Date.now()) : Date.now(),
+          lastActive: Date.now()
+        }, { merge: true });
+
+        nick = input; localStorage.setItem("chat_nick", nick);
         document.getElementById("nickArea").style.display="none"; document.getElementById("chatArea").style.display="block";
         if(nick === ADMIN_NICK) document.getElementById("changeNickBtn").style.display = "block";
         shouldScrollToBottom = true;
@@ -1366,8 +1530,8 @@ padding:0 2px;">↩ Responder</button>`;
       } catch (e) { alert("Erro: " + e.message); } finally { btn.disabled = false; btn.textContent = originalText; }
     }
 
-    function changeNick(){ if(nick) db.collection("users").doc(nick).delete(); localStorage.removeItem("chat_nick"); nick = ""; document.getElementById("chatArea").style.display = "none"; document.getElementById("nickArea").style.display = "block"; }
-    function atualizarAtividade(){ if(nick) db.collection("users").doc(nick).update({ lastActive: Date.now() }); }
+    function changeNick(){ if(nick) db.collection("users").doc(nick).delete(); localStorage.removeItem("chat_nick"); nick = ""; document.getElementById("changeNickBtn").style.display = "none"; document.getElementById("chatArea").style.display = "none"; document.getElementById("nickArea").style.display = "block"; }
+    function atualizarAtividade(){ if(nick) db.collection("users").doc(nick).set({ uid: firebaseUid, lastActive: Date.now() }, { merge: true }); }
     setInterval(atualizarAtividade, 60000);
 
     function toggleRadioSimples() {
@@ -1591,10 +1755,26 @@ padding:0 2px;">↩ Responder</button>`;
       document.getElementById("dateBar").textContent = `${dias[d.getDay()]}, ${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}/${d.getFullYear()}`;
     }
 
-    window.onload = () => { 
-      atualizarDataBar(); loadAllContent(); listenContentChanges(); setupPWAUpdate(); 
+    window.onload = async () => {
+      try {
+        await authReady;
+      } catch (error) {
+        console.error("Não foi possível autenticar no Firebase:", error);
+        alert("Não foi possível conectar ao sistema de autenticação. Verifique sua internet e tente novamente.");
+        return;
+      }
+
+      const isBanned = await checkGlobalBan();
+      if (isBanned) {
+        console.warn("Usuário bloqueado globalmente. UID:", firebaseUid);
+        showGlobalBanScreen();
+        return;
+      }
+
+      atualizarDataBar(); loadAllContent(); listenContentChanges(); setupPWAUpdate(); listenGlobalRestriction(); listenConhecaMediaChanges(); 
       if(nick){
         document.getElementById("nickArea").style.display="none"; document.getElementById("chatArea").style.display="block";
+        if (nick === ADMIN_NICK) document.getElementById("changeNickBtn").style.display = "block";
         shouldScrollToBottom = true;
         listenChat();
       }
@@ -1620,7 +1800,7 @@ padding:0 2px;">↩ Responder</button>`;
         intercampus: "🚌 Transporte Intercampi", notices: "📄 Editais Oficiais", emergency: "🚨 Telefones de Emergência",
         addresses: "🏫 Endereços dos Campus", ru: "🍽️ Restaurantes Universitários", group: "👥 Grupo no Facebook", developer: "👨‍💻 Desenvolvedor",
         notes: "📝 Anotações", share: "📤 Compartilhar App", internet: "🌐 Internet UNILA", study: "🎓 Estude na UNILA",
-        enem: "📝 ENEM – Página do Participante", news: "📰 Notícias", desapega: "🛒 Desapega Unileiro", upa: "🏥 Hospitais de Emergência 24h (UPA)",
+        enem: "📝 ENEM – Página do Participante", news: "📰 Notícias", conheca: "🏫 Conheça a UNILA", desapega: "🛒 Desapega Unileiro", upa: "🏥 Hospitais de Emergência 24h (UPA)",
         chatHeading: "💬 Chat UNILA", nickPlaceholder: "Digite seu nick...", enter: "Entrar", imageSelected: "Imagem selecionada",
         chatPlaceholder: "Digite sua mensagem...", anonymous: "👤 Enviar Anonimamente", changeNick: "🔄 Mudar Nick",
         developerHeading: "👨‍💻 Desenvolvedor", developerIntro: "Para trabalhos e parcerias entre em contato:", developerService: "Fernando - Serviço Social", contact: "Contato",
@@ -1655,7 +1835,7 @@ padding:0 2px;">↩ Responder</button>`;
         intercampus: "🚌 Transport intercampus", notices: "📄 Avis officiels", emergency: "🚨 Numéros d’urgence",
         addresses: "🏫 Adresses des campus", ru: "🍽️ Restaurants universitaires", group: "👥 Groupe Facebook", developer: "👨‍💻 Développeur",
         notes: "📝 Notes", share: "📤 Partager l’application", internet: "🌐 Internet UNILA", study: "🎓 Étudier à l’UNILA",
-        enem: "📝 ENEM – Page du participant", news: "📰 Actualités", desapega: "🛒 Desapega Unileiro", upa: "🏥 Hôpitaux d’urgence 24 h (UPA)",
+        enem: "📝 ENEM – Page du participant", news: "📰 Actualités", conheca: "🏫 Découvrez l’UNILA", desapega: "🛒 Desapega Unileiro", upa: "🏥 Hôpitaux d’urgence 24 h (UPA)",
         chatHeading: "💬 Chat UNILA", nickPlaceholder: "Saisissez votre pseudo...", enter: "Entrer", imageSelected: "Image sélectionnée",
         chatPlaceholder: "Écrivez votre message...", anonymous: "👤 Envoyer anonymement", changeNick: "🔄 Changer de pseudo",
         developerHeading: "👨‍💻 Développeur", developerIntro: "Pour les travaux et les partenariats, contactez-nous :", developerService: "Fernando - Travail social", contact: "Contact",
@@ -1690,7 +1870,7 @@ padding:0 2px;">↩ Responder</button>`;
         intercampus: "🚌 Transporte intercampus", notices: "📄 Convocatorias oficiales", emergency: "🚨 Teléfonos de emergencia",
         addresses: "🏫 Direcciones de los campus", ru: "🍽️ Restaurantes universitarios", group: "👥 Grupo de Facebook", developer: "👨‍💻 Desarrollador",
         notes: "📝 Anotaciones", share: "📤 Compartir aplicación", internet: "🌐 Internet UNILA", study: "🎓 Estudia en la UNILA",
-        enem: "📝 ENEM – Página del participante", news: "📰 Noticias", desapega: "🛒 Desapega Unileiro", upa: "🏥 Hospitales de emergencia 24 h (UPA)",
+        enem: "📝 ENEM – Página del participante", news: "📰 Noticias", conheca: "🏫 Conoce la UNILA", desapega: "🛒 Desapega Unileiro", upa: "🏥 Hospitales de emergencia 24 h (UPA)",
         chatHeading: "💬 Chat UNILA", nickPlaceholder: "Escribe tu nick...", enter: "Entrar", imageSelected: "Imagen seleccionada",
         chatPlaceholder: "Escribe tu mensaje...", anonymous: "👤 Enviar anónimamente", changeNick: "🔄 Cambiar nick",
         developerHeading: "👨‍💻 Desarrollador", developerIntro: "Para trabajos y alianzas, ponte en contacto:", developerService: "Fernando - Trabajo social", contact: "Contacto",
@@ -1767,7 +1947,7 @@ padding:0 2px;">↩ Responder</button>`;
 
   var menuKeys = [
     "chatMenu", "portal", "inscreva", "sigaa", "email", "google", "instagram", "facebook", "library", "intercampus", "notices",
-    "emergency", "addresses", "ru", "group", "developer", "notes", "share", "internet", "study", "enem", "news", "desapega", "upa"
+    "emergency", "addresses", "ru", "group", "developer", "notes", "share", "internet", "study", "enem", "news", "conheca", "desapega", "upa"
   ];
 
   function applyStaticTranslations(){
@@ -1834,7 +2014,7 @@ padding:0 2px;">↩ Responder</button>`;
       portal_unila: tr("portal"), inscreva: tr("inscreva"), sigaa: tr("sigaa"), email: tr("email"), google: tr("google"), instagram: tr("instagram"),
       facebook: tr("facebook"), biblioteca: tr("library"), intercampi: tr("intercampus"), editais: tr("notices"),
       emergencia: tr("emergency"), enderecos: tr("addresses"), ru: tr("ru"), grupo_facebook: tr("group"), dev: tr("developer"),
-      internet: tr("internet"), estude: tr("study"), enem: tr("enem"), noticias: tr("news"), upa: tr("upa")
+      internet: tr("internet"), estude: tr("study"), enem: tr("enem"), noticias: tr("news"), conheca: tr("conheca"), upa: tr("upa")
     };
     return titles[id] || String(id || "").toUpperCase();
   }
@@ -1852,7 +2032,7 @@ padding:0 2px;">↩ Responder</button>`;
     if (!state.currentDynamicId) return;
     var title = document.getElementById("dynamicTitle");
     if (title) title.textContent = dynamicTitle(state.currentDynamicId);
-    if (state.currentDynamicId !== "noticias") {
+    if (state.currentDynamicId !== "noticias" && state.currentDynamicId !== "conheca") {
       var content = localizedContent(state.currentDynamicId);
       if (content) {
         var dynamicContent = document.getElementById("dynamicContent");
@@ -1980,6 +2160,21 @@ padding:0 2px;">↩ Responder</button>`;
       };
     }
 
+    if (typeof window.loadConhecaUnila === "function") {
+      var originalLoadConhecaUnila = window.loadConhecaUnila;
+      window.loadConhecaUnila = function(){
+        state.currentDynamicId = "conheca";
+        var result = originalLoadConhecaUnila.apply(this, arguments);
+        setTimeout(function(){
+          var title = document.getElementById("dynamicTitle");
+          if (title) title.textContent = dynamicTitle("conheca");
+          translateDynamicUI();
+        }, 0);
+        if (result && typeof result.then === "function") result.then(translateDynamicUI);
+        return result;
+      };
+    }
+
     if (typeof window.shareApp === "function") {
       window.shareApp = function(){
         var appUrl = "https://drive.google.com/file/d/1XgYsFJlnd8VuQGAyYopxNI2Huuknsugo/view?usp=sharing";
@@ -2042,15 +2237,14 @@ padding:0 2px;">↩ Responder</button>`;
 (function(){
   "use strict";
   var TERMS_KEY = "spotted_ugc_terms_accepted_v1";
-  var BLOCKS_KEY = "spotted_ugc_blocked_users_v1";
   var pendingAction = null;
   var reportContext = null;
   var enhanceTimer = null;
 
   var labels = {
-    pt: { report:"Denunciar", reportUser:"Denunciar usuário", block:"Bloquear", termsRequired:"Você precisa aceitar os Termos de Uso para publicar conteúdo.", nickRequired:"Defina um nick antes de usar este recurso.", reportSent:"Denúncia enviada para moderação.", reportError:"Não foi possível enviar a denúncia agora.", blocked:"Usuário bloqueado neste dispositivo.", reasonRequired:"Descreva o motivo da denúncia.", message:"mensagem", ad:"anúncio", comment:"comentário", user:"usuário" },
+    pt: { report:"Denunciar", reportUser:"Denunciar usuário", termsRequired:"Você precisa aceitar os Termos de Uso para publicar conteúdo.", nickRequired:"Defina um nick antes de usar este recurso.", reportSent:"Denúncia enviada para moderação.", reportError:"Não foi possível enviar a denúncia agora.", blocked:"Usuário bloqueado neste dispositivo.", reasonRequired:"Descreva o motivo da denúncia.", message:"mensagem", ad:"anúncio", comment:"comentário", user:"usuário" },
     fr: { report:"Signaler", reportUser:"Signaler l’utilisateur", block:"Bloquer", termsRequired:"Vous devez accepter les conditions d’utilisation pour publier du contenu.", nickRequired:"Définissez un pseudo avant d’utiliser cette fonction.", reportSent:"Signalement envoyé à la modération.", reportError:"Impossible d’envoyer le signalement maintenant.", blocked:"Utilisateur bloqué sur cet appareil.", reasonRequired:"Décrivez le motif du signalement.", message:"message", ad:"annonce", comment:"commentaire", user:"utilisateur" },
-    es: { report:"Denunciar", reportUser:"Denunciar usuario", block:"Bloquear", termsRequired:"Debes aceptar los Términos de uso para publicar contenido.", nickRequired:"Define un nick antes de usar esta función.", reportSent:"Denuncia enviada a moderación.", reportError:"No se pudo enviar la denuncia ahora.", blocked:"Usuario bloqueado en este dispositivo.", reasonRequired:"Describe el motivo de la denuncia.", message:"mensaje", ad:"anuncio", comment:"comentario", user:"usuario" }
+    es: { report:"Denunciar", reportUser:"Denunciar usuario", termsRequired:"Debes aceptar los Términos de uso para publicar contenido.", nickRequired:"Define un nick antes de usar esta función.", reportSent:"Denuncia enviada a moderación.", reportError:"No se pudo enviar la denuncia ahora.", blocked:"Usuario bloqueado en este dispositivo.", reasonRequired:"Describe el motivo de la denuncia.", message:"mensaje", ad:"anuncio", comment:"comentario", user:"usuario" }
   };
 
   function currentLabels(){
@@ -2060,11 +2254,6 @@ padding:0 2px;">↩ Responder</button>`;
   function getNick(){
     try { return typeof nick !== "undefined" ? nick : (localStorage.getItem("chat_nick") || ""); } catch(e) { return localStorage.getItem("chat_nick") || ""; }
   }
-  function getBlocked(){
-    try { return JSON.parse(localStorage.getItem(BLOCKS_KEY) || "[]"); } catch(e) { return []; }
-  }
-  function saveBlocked(items){ localStorage.setItem(BLOCKS_KEY, JSON.stringify(items)); }
-  function isBlocked(user){ return !!user && getBlocked().indexOf(user) !== -1; }
   function escapeText(value){ return String(value || ""); }
 
   window.closeUGCPolicy = function(){
@@ -2137,16 +2326,6 @@ padding:0 2px;">↩ Responder</button>`;
     } finally { if (btn) btn.disabled = false; }
   };
 
-  window.blockUGCUser = function(user){
-    user = String(user || "").trim();
-    if (!user || user === getNick()) return;
-    var items = getBlocked();
-    if (items.indexOf(user) === -1) items.push(user);
-    saveBlocked(items);
-    applyBlockedUsers();
-    alert(currentLabels().blocked);
-  };
-
   function addAction(parent, text, handler){
     var button = document.createElement("button");
     button.type = "button";
@@ -2170,7 +2349,6 @@ padding:0 2px;">↩ Responder</button>`;
       addAction(actions, currentLabels().report, function(){ window.openUGCReport("chat", messageId, data.text || "Imagem", user); });
       if (user && user !== getNick()) {
         addAction(actions, currentLabels().reportUser, function(){ window.openUGCReport("user", user, user, user); });
-        addAction(actions, currentLabels().block, function(){ window.blockUGCUser(user); });
       }
       item.appendChild(actions);
     });
@@ -2185,7 +2363,6 @@ padding:0 2px;">↩ Responder</button>`;
       var titleNode = card.querySelector("h3");
       var title = titleNode ? titleNode.textContent.trim() : "Anúncio";
       if (card.querySelector(".ugc-actions")) {
-        if (isBlocked(sellerText)) card.style.display = "none";
         return;
       }
       var actions = document.createElement("div");
@@ -2193,10 +2370,8 @@ padding:0 2px;">↩ Responder</button>`;
       addAction(actions, currentLabels().report, function(){ window.openUGCReport("ad", title, title, sellerText); });
       if (sellerText && sellerText !== getNick() && sellerText !== "Anônimo 👤") {
         addAction(actions, currentLabels().reportUser, function(){ window.openUGCReport("user", sellerText, sellerText, sellerText); });
-        addAction(actions, currentLabels().block, function(){ window.blockUGCUser(sellerText); });
       }
       card.appendChild(actions);
-      if (isBlocked(sellerText)) card.style.display = "none";
     });
   }
 
@@ -2212,7 +2387,6 @@ padding:0 2px;">↩ Responder</button>`;
       addAction(actions, currentLabels().report, function(){ window.openUGCReport("ad_reply", String(adId) + ":" + index, text, user); });
       if (user && user !== getNick()) {
         addAction(actions, currentLabels().reportUser, function(){ window.openUGCReport("user", user, user, user); });
-        addAction(actions, currentLabels().block, function(){ window.blockUGCUser(user); });
       }
       reply.appendChild(actions);
     });
