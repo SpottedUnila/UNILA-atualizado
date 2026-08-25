@@ -720,7 +720,14 @@ button:hover{
   .ugc-modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:15px;flex-wrap:wrap}
   .ugc-modal-actions button{width:auto;min-width:110px;padding:10px 14px;border-radius:10px}
   .ugc-danger{background:#b91c1c!important;color:#fff}
-  .ugc-secondary{background:rgba(255,255,255,0.12)!important;color:#fff}</style>
+  .ugc-secondary{background:rgba(255,255,255,0.12)!important;color:#fff}
+  .simple-confirm-modal{display:none;position:fixed;inset:0;z-index:30000;background:rgba(0,0,0,.72);align-items:center;justify-content:center;padding:20px}
+  .simple-confirm-card{width:min(360px,100%);background:#fff;color:#1f2937;border-radius:12px;padding:24px 22px;box-shadow:0 12px 40px rgba(0,0,0,.5);text-align:center}
+  .simple-confirm-message{margin:0;line-height:1.45;font-size:18px;font-weight:500}
+  .simple-confirm-actions{display:flex;justify-content:flex-end;gap:24px;margin-top:24px}
+  .simple-confirm-actions button{width:auto;min-width:90px;padding:10px 12px;border:0;background:transparent;border-radius:8px;font-size:15px;font-weight:700;cursor:pointer}
+  .simple-confirm-cancel{color:#db2777}
+  .simple-confirm-ok{color:#db2777}</style>
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
@@ -818,6 +825,7 @@ gtag('config', 'G-FJT3X93608');
     <button class="share" onclick="shareApp()">📤 Compartilhar App</button>
     <button class="internet" onclick="openDynamic('internet','page')">🌐 Internet UNILA</button>
     <button class="estude" onclick="openDynamic('estude','page')">🎓 Estude na UNILA</button>
+    <button class="unila" onclick="openDynamic('saude_mental','link')">🧠 Saúde Mental</button>
     <button class="google" onclick="openDynamic('enem','link')">📝 ENEM – Página do Participante</button>
     <button class="noticias" onclick="loadNews(); document.getElementById('dynamicTitle').textContent='NOTÍCIAS'; openPage('dynamicPage');">📰 Notícias</button>
     <button class="conheca-unila-btn" onclick="openConhecaUnilaPage()">🏫 Conheça a UNILA</button>
@@ -1077,6 +1085,7 @@ gtag('config', 'G-FJT3X93608');
       dev: "Fernando - Serviço Social\nContato: +55 45 99949-9759",
       internet: "Rede: UNILA-WIFI\nLogin: Seu CPF ou E-mail Institucional\nSenha: A mesma senha do SIGAA\n\n⚠ Se tiver problemas, procure a TIC do seu campus.",
       estude: "Ingresso para Brasileiros: Via ENEM/SISU\nIngresso para Estrangeiros: Seleção Internacional Própria\n\nCursos: Mais de 29 opções de graduação.\n\nPara mais informações acesse: portal.unila.edu.br/ingresso",
+      saude_mental: "https://portal.unila.edu.br/saude-mental",
       enem: "https://enem.inep.gov.br/participante/",
       grupo_facebook: "https://www.facebook.com/groups/unila/",
       noticias: "https://portal.unila.edu.br/noticias",
@@ -1772,8 +1781,33 @@ padding:0 2px;">↩ Responder</button>`;
       finally { btn.disabled = false; }
     }
 
+    let simpleConfirmResolver = null;
+
+    function showSimpleConfirm(message) {
+      return new Promise(resolve => {
+        if (simpleConfirmResolver) simpleConfirmResolver(false);
+        simpleConfirmResolver = resolve;
+        const modal = document.getElementById('simpleConfirmModal');
+        const messageEl = document.getElementById('simpleConfirmMessage');
+        if (messageEl) messageEl.textContent = message;
+        if (modal) modal.style.display = 'flex';
+        const okButton = modal ? modal.querySelector('.simple-confirm-ok') : null;
+        if (okButton) setTimeout(() => okButton.focus(), 0);
+      });
+    }
+
+    function resolveSimpleConfirm(confirmed) {
+      const resolver = simpleConfirmResolver;
+      simpleConfirmResolver = null;
+      const modal = document.getElementById('simpleConfirmModal');
+      if (modal) modal.style.display = 'none';
+      if (resolver) resolver(Boolean(confirmed));
+    }
+
+    window.resolveSimpleConfirm = resolveSimpleConfirm;
+
     async function deleteAdReply(adId, replyIndex) {
-      if (!confirm("Excluir esta resposta?")) return;
+      if (!(await showSimpleConfirm("Excluir esta resposta?"))) return;
       try {
         const adRef = db.collection("desapega").doc(adId);
         await db.runTransaction(async (transaction) => {
@@ -1807,7 +1841,10 @@ padding:0 2px;">↩ Responder</button>`;
       document.getElementById("desapegaForm").scrollIntoView({ behavior: "smooth", block: "start" });
     }
 
-    async function deleteAd(id) { if(confirm("Excluir este anúncio?")) { try { await db.collection("desapega").doc(id).delete(); } catch(e) { alert(e.message); } } }
+    async function deleteAd(id) {
+      if (!(await showSimpleConfirm("Excluir este anúncio?"))) return;
+      try { await db.collection("desapega").doc(id).delete(); } catch(e) { alert(e.message); }
+    }
     function cancelAdEdit() { toggleDesapegaForm(); }
 
     function atualizarDataBar() {
@@ -1861,7 +1898,7 @@ padding:0 2px;">↩ Responder</button>`;
         google: "🔎 Pesquisa Google", instagram: "📸 Instagram UNILA", facebook: "📘 Facebook UNILA", library: "📖 Biblioteca UNILA",
         intercampus: "🚌 Transporte Intercampi", notices: "📄 Editais Oficiais", emergency: "🚨 Telefones de Emergência",
         addresses: "🏫 Endereços dos Campus", ru: "🍽️ Restaurantes Universitários", group: "👥 Grupo no Facebook", developer: "👨‍💻 Desenvolvedor",
-        notes: "📝 Anotações", share: "📤 Compartilhar App", internet: "🌐 Internet UNILA", study: "🎓 Estude na UNILA",
+        notes: "📝 Anotações", share: "📤 Compartilhar App", internet: "🌐 Internet UNILA", study: "🎓 Estude na UNILA", mentalHealth: "🧠 Saúde Mental",
         enem: "📝 ENEM – Página do Participante", news: "📰 Notícias", conheca: "🏫 Conheça a UNILA", desapega: "🛒 Desapega Unileiro", upa: "🏥 Hospitais de Emergência 24h (UPA)",
         chatHeading: "💬 Chat UNILA", nickPlaceholder: "Digite seu nick...", enter: "Entrar", imageSelected: "Imagem selecionada",
         chatPlaceholder: "Digite sua mensagem...", anonymous: "👤 Enviar Anonimamente", changeNick: "🔄 Mudar Nick",
@@ -1896,7 +1933,7 @@ padding:0 2px;">↩ Responder</button>`;
         google: "🔎 Recherche Google", instagram: "📸 Instagram UNILA", facebook: "📘 Facebook UNILA", library: "📖 Bibliothèque UNILA",
         intercampus: "🚌 Transport intercampus", notices: "📄 Avis officiels", emergency: "🚨 Numéros d’urgence",
         addresses: "🏫 Adresses des campus", ru: "🍽️ Restaurants universitaires", group: "👥 Groupe Facebook", developer: "👨‍💻 Développeur",
-        notes: "📝 Notes", share: "📤 Partager l’application", internet: "🌐 Internet UNILA", study: "🎓 Étudier à l’UNILA",
+        notes: "📝 Notes", share: "📤 Partager l’application", internet: "🌐 Internet UNILA", study: "🎓 Étudier à l’UNILA", mentalHealth: "🧠 Santé mentale",
         enem: "📝 ENEM – Page du participant", news: "📰 Actualités", conheca: "🏫 Découvrez l’UNILA", desapega: "🛒 Desapega Unileiro", upa: "🏥 Hôpitaux d’urgence 24 h (UPA)",
         chatHeading: "💬 Chat UNILA", nickPlaceholder: "Saisissez votre pseudo...", enter: "Entrer", imageSelected: "Image sélectionnée",
         chatPlaceholder: "Écrivez votre message...", anonymous: "👤 Envoyer anonymement", changeNick: "🔄 Changer de pseudo",
@@ -1916,9 +1953,9 @@ padding:0 2px;">↩ Responder</button>`;
         emergencia: "Police militaire : 190\nSAMU (Ambulance) : 192\nPompiers : 193\n\nHôpital municipal : (45) 2105-4100\nPolice municipale : (45) 2105-5100\nDélégation des femmes : (45) 3521-9200\nProtection civile : 199\n\nPolice fédérale : (45) 3522-1174\nPolice routière fédérale : (45) 3576-1400\n\nPrae-Unila : +55 45 3522-9983\nPrograd-Unila : +55 (45) 3522-9766\n\nLigne de dénonciation : 181\nConseil tutélaire : (45) 3521-1112\nCentre antipoison : 0800 722 6001\n\n⚠ En cas de situation grave, appelez immédiatement.",
         enderecos: "Unila - Campus PTI\nAv. Tancredo Neves, 6731 - PTI, Foz do Iguaçu - PR\n\nUnila - Campus Juarez Távora\nAv. Silvio Américo Sasdelli, 1000 - Vila A, Foz do Iguaçu - PR\n\nUnila - Campus Jardim Universitário (JU)\nAv. Tarquínio Joslin dos Santos, 1000 - Lot. Universitário das Américas, Foz do Iguaçu - PR\n\nUnila - Campus Integração\nAv. Tancredo Neves, 3147 - Foz do Iguaçu - PR",
         ru: "RU PTI : Du lundi au vendredi (11:00 - 14:00 et 17:30 - 20:00)\nRU JU : Du lundi au vendredi (11:00 - 14:00 et 17:30 - 20:00)\n\nPrix étudiant : 3,50 R$\nPrix pour les personnels : 12,00 R$\n\n⚠ Vérifiez les jours fériés et les horaires spéciaux sur le portail officiel.",
-        dev: "Fernando - Travail social\nContact : +55 45 99949-9759",
-        internet: "Réseau : UNILA-WIFI\nIdentifiant : Votre CPF ou e-mail institutionnel\nMot de passe : Le même mot de passe que SIGAA\n\n⚠ En cas de problème, contactez la TIC de votre campus.",
-        estude: "Admission des Brésiliens : via ENEM/SISU\nAdmission des étrangers : sélection internationale propre\n\nFormations : plus de 29 options de licence.\n\nPour plus d’informations, consultez : portal.unila.edu.br/ingresso",
+        dev: "Fernando - Travail social\nContact : +55 45 99949-9759",      internet: "Réseau : UNILA-WIFI\nIdentifiant : Votre CPF ou e-mail institutionnel\nMot de passe : Le même mot de passe que SIGAA\n\n⚠ En cas de problème, contactez la TIC de votre campus.",
+      saude_mental: "https://portal.unila.edu.br/saude-mental",
+      estude: "Admission des Brésiliens : via ENEM/SISU\nAdmission des étrangers : sélection internationale propre\n\nFormations : plus de 29 options de licence.\n\nPour plus d’informations, consultez : portal.unila.edu.br/ingresso",
         upa: "UPA João Samek (Vila A) : (45) 3524-8800\nUPA Morumbi : (45) 3521-1350\n\n⚠ En cas d’urgence vitale, appelez le 192 (SAMU)."
       }
     },
@@ -1931,7 +1968,7 @@ padding:0 2px;">↩ Responder</button>`;
         google: "🔎 Búsqueda Google", instagram: "📸 Instagram UNILA", facebook: "📘 Facebook UNILA", library: "📖 Biblioteca UNILA",
         intercampus: "🚌 Transporte intercampus", notices: "📄 Convocatorias oficiales", emergency: "🚨 Teléfonos de emergencia",
         addresses: "🏫 Direcciones de los campus", ru: "🍽️ Restaurantes universitarios", group: "👥 Grupo de Facebook", developer: "👨‍💻 Desarrollador",
-        notes: "📝 Anotaciones", share: "📤 Compartir aplicación", internet: "🌐 Internet UNILA", study: "🎓 Estudia en la UNILA",
+        notes: "📝 Anotaciones", share: "📤 Compartir aplicación", internet: "🌐 Internet UNILA", study: "🎓 Estudia en la UNILA", mentalHealth: "🧠 Salud mental",
         enem: "📝 ENEM – Página del participante", news: "📰 Noticias", conheca: "🏫 Conoce la UNILA", desapega: "🛒 Desapega Unileiro", upa: "🏥 Hospitales de emergencia 24 h (UPA)",
         chatHeading: "💬 Chat UNILA", nickPlaceholder: "Escribe tu nick...", enter: "Entrar", imageSelected: "Imagen seleccionada",
         chatPlaceholder: "Escribe tu mensaje...", anonymous: "👤 Enviar anónimamente", changeNick: "🔄 Cambiar nick",
@@ -1951,9 +1988,9 @@ padding:0 2px;">↩ Responder</button>`;
         emergencia: "Policía Militar: 190\nSAMU (Ambulancia): 192\nBomberos: 193\n\nHospital Municipal: (45) 2105-4100\nGuardia Municipal: (45) 2105-5100\nComisaría de la Mujer: (45) 3521-9200\nDefensa Civil: 199\n\nPolicía Federal: (45) 3522-1174\nPolicía Federal de Carreteras: (45) 3576-1400\n\nPrae-Unila: +55 45 3522-9983\nPrograd-Unila: +55 (45) 3522-9766\n\nLínea de denuncias: 181\nConsejo Tutelar: (45) 3521-1112\nCentro de Intoxicaciones: 0800 722 6001\n\n⚠ En situaciones graves, llama inmediatamente.",
         enderecos: "Unila - Campus PTI\nAv. Tancredo Neves, 6731 - PTI, Foz do Iguaçu - PR\n\nUnila - Campus Juarez Távora\nAv. Silvio Américo Sasdelli, 1000 - Vila A, Foz do Iguaçu - PR\n\nUnila - Campus Jardim Universitário (JU)\nAv. Tarquínio Joslin dos Santos, 1000 - Lot. Universitário das Américas, Foz do Iguaçu - PR\n\nUnila - Campus Integração\nAv. Tancredo Neves, 3147 - Foz do Iguaçu - PR",
         ru: "RU PTI: De lunes a viernes (11:00 - 14:00 y 17:30 - 20:00)\nRU JU: De lunes a viernes (11:00 - 14:00 y 17:30 - 20:00)\n\nPrecio para estudiantes: R$ 3,50\nPrecio para servidores: R$ 12,00\n\n⚠ Consulta los feriados y horarios especiales en el portal oficial.",
-        dev: "Fernando - Trabajo social\nContacto: +55 45 99949-9759",
-        internet: "Red: UNILA-WIFI\nInicio de sesión: Tu CPF o correo institucional\nContraseña: La misma contraseña de SIGAA\n\n⚠ Si tienes problemas, busca la TIC de tu campus.",
-        estude: "Ingreso para brasileños: por ENEM/SISU\nIngreso para extranjeros: selección internacional propia\n\nCarreras: más de 29 opciones de grado.\n\nPara más información, accede a: portal.unila.edu.br/ingresso",
+        dev: "Fernando - Trabajo social\nContacto: +55 45 99949-9759",      internet: "Red: UNILA-WIFI\nInicio de sesión: Tu CPF o correo institucional\nContraseña: La misma contraseña de SIGAA\n\n⚠ Si tienes problemas, busca la TIC de tu campus.",
+      saude_mental: "https://portal.unila.edu.br/saude-mental",
+      estude: "Ingreso para brasileños: por ENEM/SISU\nIngreso para extranjeros: selección internacional propia\n\nCarreras: más de 29 opciones de grado.\n\nPara más información, accede a: portal.unila.edu.br/ingresso",
         upa: "UPA João Samek (Vila A): (45) 3524-8800\nUPA Morumbi: (45) 3521-1350\n\n⚠ En casos de emergencia con riesgo de vida, llama al 192 (SAMU)."
       }
     }
@@ -2009,7 +2046,7 @@ padding:0 2px;">↩ Responder</button>`;
 
   var menuKeys = [
     "chatMenu", "portal", "inscreva", "sigaa", "email", "google", "instagram", "facebook", "library", "intercampus", "notices",
-    "emergency", "addresses", "ru", "group", "developer", "notes", "share", "internet", "study", "enem", "news", "conheca", "desapega", "upa"
+    "emergency", "addresses", "ru", "group", "developer", "notes", "share", "internet", "study", "mentalHealth", "enem", "news", "conheca", "desapega", "upa"
   ];
 
   function applyStaticTranslations(){
@@ -2076,7 +2113,7 @@ padding:0 2px;">↩ Responder</button>`;
       portal_unila: tr("portal"), inscreva: tr("inscreva"), sigaa: tr("sigaa"), email: tr("email"), google: tr("google"), instagram: tr("instagram"),
       facebook: tr("facebook"), biblioteca: tr("library"), intercampi: tr("intercampus"), editais: tr("notices"),
       emergencia: tr("emergency"), enderecos: tr("addresses"), ru: tr("ru"), grupo_facebook: tr("group"), dev: tr("developer"),
-      internet: tr("internet"), estude: tr("study"), enem: tr("enem"), noticias: tr("news"), conheca: tr("conheca"), upa: tr("upa")
+      internet: tr("internet"), estude: tr("study"), saude_mental: tr("mentalHealth"), enem: tr("enem"), noticias: tr("news"), conheca: tr("conheca"), upa: tr("upa")
     };
     return titles[id] || String(id || "").toUpperCase();
   }
@@ -2292,6 +2329,16 @@ padding:0 2px;">↩ Responder</button>`;
     <div class="ugc-modal-actions">
       <button type="button" class="ugc-secondary" onclick="closeUGCReport()">Cancelar</button>
       <button type="button" class="ugc-danger" onclick="submitUGCReport()">Enviar denúncia</button>
+    </div>
+  </div>
+</div>
+
+<div id="simpleConfirmModal" class="simple-confirm-modal" role="dialog" aria-modal="true" aria-labelledby="simpleConfirmMessage">
+  <div class="simple-confirm-card">
+    <p id="simpleConfirmMessage" class="simple-confirm-message">Confirmar ação?</p>
+    <div class="simple-confirm-actions">
+      <button type="button" class="simple-confirm-cancel" onclick="resolveSimpleConfirm(false)">CANCELAR</button>
+      <button type="button" class="simple-confirm-ok" onclick="resolveSimpleConfirm(true)">OK</button>
     </div>
   </div>
 </div>
