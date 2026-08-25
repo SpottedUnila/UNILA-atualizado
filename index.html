@@ -193,6 +193,9 @@ button:hover{
 #dynamicContent .news-card .news-media video { margin: 0 !important; }
 #dynamicContent .news-card .news-content { margin: 6px 0 4px !important; line-height: 1.45; white-space: pre-wrap; }
 #dynamicContent .news-card .news-date { margin: 0 !important; }
+#dynamicContent .conheca-caption { margin: 7px 0 3px; color: #f8fafc; font-size: 15px; font-weight: 600; line-height: 1.35; white-space: pre-wrap; }
+#dynamicContent .conheca-meta { margin: 0 0 8px; color: #94a3b8; font-size: 11px; line-height: 1.4; }
+#dynamicContent .conheca-media-block { margin: 0 0 12px; }
 
 #dynamicContent img {
   width: 100%;
@@ -262,10 +265,8 @@ button:hover{
 .share{background:#10b981;}
 .internet{background:#3b82f6;}
 .estuded{background:#22c55e;}
-.noticias {
-  background: #000;
-  color: white;
-}
+.noticias { background: #000; color: white; }
+.conheca-unila-btn { background: #7c3aed; }
 .desapega {
   background: #f59e0b; /* Laranja âmbar */
   color: white;
@@ -1202,14 +1203,59 @@ gtag('config', 'G-FJT3X93608');
       };
     }
 
+    function getConhecaCaption(item, kind) {
+      const specific = kind === "image" ? item && item.imageCaption : item && item.videoCaption;
+      return String(specific || (item && item.caption) || "").trim();
+    }
+
+    function formatConhecaBytes(bytes) {
+      const value = Number(bytes);
+      if (!Number.isFinite(value) || value <= 0) return "";
+      if (value < 1024) return value + " B";
+      if (value < 1024 * 1024) return (value / 1024).toFixed(1) + " KB";
+      if (value < 1024 * 1024 * 1024) return (value / (1024 * 1024)).toFixed(1) + " MB";
+      return (value / (1024 * 1024 * 1024)).toFixed(1) + " GB";
+    }
+
+    function formatConhecaDuration(seconds) {
+      const value = Number(seconds);
+      if (!Number.isFinite(value) || value <= 0) return "";
+      const minutes = Math.floor(value / 60);
+      const remaining = Math.round(value % 60).toString().padStart(2, "0");
+      return `${minutes}:${remaining}`;
+    }
+
+    function getConhecaMediaInfo(item, kind) {
+      const info = kind === "image" ? item && (item.imageInfo || item.imageMetadata) : item && (item.videoInfo || item.videoMetadata);
+      if (!info) return "";
+      const parts = [];
+      if (info.width && info.height) parts.push(`${info.width} × ${info.height}px`);
+      if (info.orientation) parts.push(info.orientation);
+      if (info.mimeType) parts.push(info.mimeType);
+      const size = formatConhecaBytes(info.fileSize);
+      if (size) parts.push(size);
+      const duration = formatConhecaDuration(info.durationSeconds);
+      if (duration) parts.push(`duração ${duration}`);
+      return parts.join(" · ");
+    }
+
+    function renderConhecaCaptionAndMeta(item, kind) {
+      const caption = getConhecaCaption(item, kind);
+      const metadata = getConhecaMediaInfo(item, kind);
+      let html = "";
+      if (caption) html += `<p class="conheca-caption">${escapeHtml(caption)}</p>`;
+      if (metadata) html += `<p class="conheca-meta">${escapeHtml(metadata)}</p>`;
+      return html;
+    }
+
     function renderConhecaMedia(item) {
       const media = getConhecaMedia(item);
       let html = "";
       if (media.imageUrl) {
-        html += `<div class="news-media"><img src="${escapeHtml(optimizeCloudinary(media.imageUrl, "image"))}" alt="Imagem de Conheça a UNILA" style="width:100%;height:auto;max-height:650px;object-fit:contain;display:block;border-radius:8px;background:#000;cursor:pointer;" onclick="window.open(this.src, '_blank')"></div>`;
+        html += `<div class="conheca-media-block"><div class="news-media"><img src="${escapeHtml(optimizeCloudinary(media.imageUrl, "image"))}" alt="Imagem de Conheça a UNILA" style="width:100%;height:auto;max-height:650px;object-fit:contain;display:block;border-radius:8px;background:#000;cursor:pointer;" onclick="window.open(this.src, '_blank')"></div>${renderConhecaCaptionAndMeta(item, "image")}</div>`;
       }
       if (media.videoUrl) {
-        html += `<div class="news-media" style="width:100%;border-radius:8px;overflow:hidden;background:#000;"><video src="${escapeHtml(optimizeCloudinary(media.videoUrl, "video"))}" controls style="width:100%;height:auto;max-height:650px;display:block;object-fit:contain;background:#000;border-radius:8px;" preload="none" playsinline></video></div>`;
+        html += `<div class="conheca-media-block"><div class="news-media" style="width:100%;border-radius:8px;overflow:hidden;background:#000;"><video src="${escapeHtml(optimizeCloudinary(media.videoUrl, "video"))}" controls style="width:100%;height:auto;max-height:650px;display:block;object-fit:contain;background:#000;border-radius:8px;" preload="none" playsinline></video></div>${renderConhecaCaptionAndMeta(item, "video")}</div>`;
       }
       return html;
     }
