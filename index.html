@@ -1489,7 +1489,7 @@ gtag('config', 'G-FJT3X93608');
 
     function updateAcademicGoalsUser() {
       const user = document.getElementById("academicGoalsUser");
-      if (user) user.textContent = nick ? "Plano vinculado ao nick: " + nick : "Defina um nick no Chat da Escola para salvar seu plano.";
+      if (user) user.textContent = nick ? "Plano vinculado ao nick: " + nick : "Defina um nick no Chat para salvar seu plano.";
     }
 
     async function waitForAcademicAuth() {
@@ -1501,7 +1501,7 @@ gtag('config', 'G-FJT3X93608');
       renderAcademicGoals();
       updateAcademicGoalsUser();
       if (!nick) {
-        academicGoalsStatus("Defina um nick no Chat da Escola antes de preencher e salvar suas metas.", true);
+        academicGoalsStatus("Defina um nick no Chat antes de preencher e salvar suas metas.", true);
         return;
       }
       academicGoalsStatus("Carregando seu plano...");
@@ -1528,7 +1528,7 @@ gtag('config', 'G-FJT3X93608');
 
     async function saveAcademicGoals() {
       if (!nick) {
-        academicGoalsStatus("Defina um nick no Chat da Escola antes de salvar.", true);
+        academicGoalsStatus("Defina um nick no Chat antes de salvar.", true);
         return;
       }
       academicGoalsStatus("Salvando seu plano...");
@@ -1967,7 +1967,7 @@ padding:0 2px;">↩ Responder</button>`;
       const list = document.getElementById("list");
       if (!list) return;
       if (!nick) {
-        list.innerHTML = "<p>Defina um nick no Chat da Escola para carregar suas anotações.</p>";
+        list.innerHTML = "<p>Defina um nick no Chat para carregar suas anotações.</p>";
         notesStatus("As anotações ficam vinculadas ao seu nick na nuvem.", true);
         return;
       }
@@ -1999,7 +1999,7 @@ padding:0 2px;">↩ Responder</button>`;
         return;
       }
       if (!nick) {
-        notesStatus("Defina um nick no Chat da Escola antes de salvar.", true);
+        notesStatus("Defina um nick no Chat antes de salvar.", true);
         return;
       }
       notesStatus("Salvando sua anotação na nuvem...");
