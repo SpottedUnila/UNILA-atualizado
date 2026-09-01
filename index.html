@@ -200,6 +200,7 @@ button:hover{
 .resource-open-link{display:inline-block;margin-top:14px;padding:12px 16px;border-radius:12px;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.1);color:#fff;text-decoration:none;font-weight:700;}
 .academic-goals-intro{margin:0 0 16px;color:#e2e8f0;line-height:1.55;}
 .academic-goals-user{display:inline-block;margin:0 0 16px;padding:7px 10px;border-radius:999px;background:rgba(255,255,255,.1);color:#dbeafe;font-size:13px;}
+.academic-nick-notice{margin:0 0 16px;padding:11px 13px;border-radius:12px;background:rgba(250,204,21,.14);border:1px solid rgba(250,204,21,.42);color:#fef08a;font-weight:700;line-height:1.45;}
 .academic-progress-wrap{margin:0 0 18px;padding:12px;border-radius:12px;background:rgba(0,0,0,.28);border:1px solid rgba(255,255,255,.12);}
 .academic-progress-label{display:flex;justify-content:space-between;gap:10px;font-size:13px;color:#dbeafe;margin-bottom:7px;}
 .academic-progress-track{height:8px;border-radius:999px;background:rgba(255,255,255,.16);overflow:hidden;}
@@ -915,6 +916,7 @@ gtag('config', 'G-FJT3X93608');
   <div id="academicGoalsPage" class="page academic-goals-page">
     <h2 id="academicGoalsHeading">📈 Meta Acadêmica</h2>
     <p id="academicGoalsIntro" class="academic-goals-intro"><strong>Carreira Acadêmica: Plano de Metas</strong><br>O Guia Definitivo para o Sucesso na Universidade.<br>Preencha suas respostas seguindo as 14 metas e salve. Ele ficará armazenado e vinculado ao seu nick na nuvem.</p>
+    <p id="academicNickNotice" class="academic-nick-notice">Crie um nick no Chat para inserir as metas acadêmicas.</p>
     <div id="academicGoalsUser" class="academic-goals-user">Usuário: aguardando nick...</div>
     <div class="academic-progress-wrap">
       <div class="academic-progress-label"><span id="academicProgressLabel">Progresso do plano</span><strong id="academicProgressText">0 de 14 preenchidas</strong></div>
@@ -990,6 +992,7 @@ gtag('config', 'G-FJT3X93608');
 
   <div id="notesPage" class="page">
     <h2>📝 Anotações</h2>
+    <p id="notesNickNotice" class="academic-nick-notice">Crie um nick no Chat para inserir suas anotações.</p>
     <textarea id="note" placeholder="Escreva sua anotação aqui..."></textarea>
     <button onclick="saveNote()">Salvar</button>
     <div id="list" style="margin-top:20px;"></div>
@@ -1939,6 +1942,7 @@ padding:0 2px;">↩ Responder</button>`;
         }, { merge: true });
 
         nick = input; localStorage.setItem("chat_nick", nick);
+        if (typeof window.unilaRefreshTranslations === "function") window.unilaRefreshTranslations();
         document.getElementById("nickArea").style.display="none"; document.getElementById("chatArea").style.display="block";
         if(nick === ADMIN_NICK) document.getElementById("changeNickBtn").style.display = "block";
         shouldScrollToBottom = true;
@@ -2440,6 +2444,7 @@ padding:0 2px;">↩ Responder</button>`;
   var ACADEMIC_I18N = {
     pt: {
       heading: "📈 Meta Acadêmica",
+      notice: "Crie um nick no Chat para inserir as metas acadêmicas.",
       introTitle: "Carreira Acadêmica: Plano de Metas", introSubtitle: "O Guia Definitivo para o Sucesso na Universidade.", introSave: "Preencha suas respostas seguindo as 14 metas e salve. Ele ficará armazenado e vinculado ao seu nick na nuvem.",
       userNoNick: "Defina um nick no Chat para preencher e salvar seu plano.", userLinked: "Plano vinculado ao nick: ", progress: "Progresso do plano", progressJoin: " de ", progressSuffix: " preenchidas", placeholder: "Escreva sua resposta aqui...", tipTitle: "💡 Dica de Ouro", tipText: "Não deixe o medo de reprovar, o medo de não conseguir emprego ou o medo de surtar paralisarem você. Encare a universidade como uma maratona: a constância sempre vence o talento isolado!", saveGoals: "💾 Salvar metas", editGoals: "✏️ Editar plano", clearGoals: "🗑 Limpar plano",
       load: "Carregando seu plano...", loaded: "Plano carregado. Você pode editar e salvar novamente.", newPlan: "Novo plano: preencha as metas e toque em Salvar metas.", noNickLoad: "Defina um nick no Chat antes de preencher e salvar suas metas.", noNickSave: "Defina um nick no Chat antes de salvar.", saving: "Salvando seu plano...", saved: "Plano salvo e vinculado ao seu nick na nuvem.", editMode: "Modo de edição ativado. Faça suas alterações e toque em Salvar metas.", clearConfirm: "Limpar o plano de metas salvo para o nick ", cleared: "Plano removido. Você pode preencher um novo plano.", genericError: "Não foi possível carregar o plano agora. Tente novamente quando a sessão estiver pronta.", saveError: "Não foi possível salvar agora. Verifique a conexão e as regras do Firestore.", clearError: "Não foi possível limpar o plano agora. Tente novamente.",
@@ -2449,6 +2454,7 @@ padding:0 2px;">↩ Responder</button>`;
     },
     fr: {
       heading: "📈 Objectif académique",
+      notice: "Créez un pseudo dans le Chat pour saisir vos objectifs académiques.",
       introTitle: "Carrière académique : plan d’objectifs", introSubtitle: "Le guide définitif pour réussir à l’université.", introSave: "Remplissez vos réponses en suivant les 14 objectifs et enregistrez-les. Elles seront stockées dans le nuage et liées à votre pseudo.",
       userNoNick: "Définissez un pseudo dans le Chat pour remplir et enregistrer votre plan.", userLinked: "Plan lié au pseudo : ", progress: "Progression du plan", progressJoin: " sur ", progressSuffix: " remplies", placeholder: "Écrivez votre réponse ici...", tipTitle: "💡 Conseil d’or", tipText: "Ne laissez pas la peur de l’échec, du chômage ou de la surcharge vous paralyser. Considérez l’université comme un marathon : la constance finit toujours par dépasser le talent isolé !", saveGoals: "💾 Enregistrer les objectifs", editGoals: "✏️ Modifier le plan", clearGoals: "🗑 Effacer le plan",
       load: "Chargement de votre plan...", loaded: "Plan chargé. Vous pouvez le modifier et l’enregistrer à nouveau.", newPlan: "Nouveau plan : remplissez les objectifs et appuyez sur Enregistrer.", noNickLoad: "Définissez un pseudo dans le Chat avant de remplir et d’enregistrer vos objectifs.", noNickSave: "Définissez un pseudo dans le Chat avant d’enregistrer.", saving: "Enregistrement de votre plan...", saved: "Plan enregistré et lié à votre pseudo dans le nuage.", editMode: "Mode édition activé. Modifiez vos réponses puis appuyez sur Enregistrer.", clearConfirm: "Effacer le plan enregistré pour le pseudo ", cleared: "Plan supprimé. Vous pouvez en remplir un nouveau.", genericError: "Impossible de charger le plan maintenant. Réessayez lorsque la session sera prête.", saveError: "Impossible d’enregistrer maintenant. Vérifiez la connexion et les règles Firestore.", clearError: "Impossible d’effacer le plan maintenant. Réessayez.",
@@ -2458,6 +2464,7 @@ padding:0 2px;">↩ Responder</button>`;
     },
     es: {
       heading: "📈 Meta académica",
+      notice: "Crea un nick en el Chat para ingresar tus metas académicas.",
       introTitle: "Carrera académica: plan de metas", introSubtitle: "La guía definitiva para el éxito en la universidad.", introSave: "Completa tus respuestas siguiendo las 14 metas y guárdalas. Quedarán almacenadas en la nube y vinculadas a tu nick.",
       userNoNick: "Define un nick en el Chat para completar y guardar tu plan.", userLinked: "Plan vinculado al nick: ", progress: "Progreso del plan", progressJoin: " de ", progressSuffix: " completadas", placeholder: "Escribe tu respuesta aquí...", tipTitle: "💡 Consejo de oro", tipText: "No dejes que el miedo a reprobar, a no conseguir empleo o a sentirte sobrecargado te paralice. Considera la universidad como un maratón: ¡la constancia siempre supera al talento aislado!", saveGoals: "💾 Guardar metas", editGoals: "✏️ Editar plan", clearGoals: "🗑 Limpiar plan",
       load: "Cargando tu plan...", loaded: "Plan cargado. Puedes editarlo y guardarlo nuevamente.", newPlan: "Plan nuevo: completa las metas y toca Guardar metas.", noNickLoad: "Define un nick en el Chat antes de completar y guardar tus metas.", noNickSave: "Define un nick en el Chat antes de guardar.", saving: "Guardando tu plan...", saved: "Plan guardado y vinculado a tu nick en la nube.", editMode: "Modo de edición activado. Haz cambios y toca Guardar metas.", clearConfirm: "¿Limpiar el plan de metas guardado para el nick ", cleared: "Plan eliminado. Puedes completar un nuevo plan.", genericError: "No fue posible cargar el plan ahora. Inténtalo cuando la sesión esté lista.", saveError: "No fue posible guardar ahora. Verifica la conexión y las reglas de Firestore.", clearError: "No fue posible limpiar el plan ahora. Inténtalo de nuevo.",
@@ -2471,11 +2478,14 @@ padding:0 2px;">↩ Responder</button>`;
   function academicGoalsText(){ return academicCopy().goals.map(function(item){ return { id:item[0], title:item[1], prompt:item[2] }; }); }
 
   var NOTES_I18N = {
-    pt: { noNickLoad:"Defina um nick no Chat para carregar suas anotações.", noNotes:"Nenhuma anotação salva ainda.", loading:"Carregando suas anotações...", loaded:"Anotações carregadas e vinculadas ao seu nick.", noNickSave:"Defina um nick no Chat antes de salvar.", empty:"Escreva uma anotação antes de salvar.", saving:"Salvando sua anotação na nuvem...", saved:"Anotação salva e vinculada ao seu nick na nuvem.", deleted:"Anotação excluída da nuvem.", errorLoad:"Não foi possível carregar as anotações agora.", errorTry:"Verifique a conexão e tente novamente.", errorSave:"Não foi possível salvar agora. Verifique a conexão e as regras do Firestore.", errorDelete:"Não foi possível excluir agora. Tente novamente.", confirm:"Excluir esta anotação?" },
-    fr: { noNickLoad:"Définissez un pseudo dans le Chat pour charger vos notes.", noNotes:"Aucune note enregistrée pour le moment.", loading:"Chargement de vos notes...", loaded:"Notes chargées et liées à votre pseudo.", noNickSave:"Définissez un pseudo dans le Chat avant d’enregistrer.", empty:"Écrivez une note avant d’enregistrer.", saving:"Enregistrement de votre note dans le nuage...", saved:"Note enregistrée et liée à votre pseudo dans le nuage.", deleted:"Note supprimée du nuage.", errorLoad:"Impossible de charger les notes maintenant.", errorTry:"Vérifiez la connexion et réessayez.", errorSave:"Impossible d’enregistrer maintenant. Vérifiez la connexion et les règles Firestore.", errorDelete:"Impossible de supprimer maintenant. Réessayez.", confirm:"Supprimer cette note ?" },
-    es: { noNickLoad:"Define un nick en el Chat para cargar tus anotaciones.", noNotes:"Todavía no hay anotaciones guardadas.", loading:"Cargando tus anotaciones...", loaded:"Anotaciones cargadas y vinculadas a tu nick.", noNickSave:"Define un nick en el Chat antes de guardar.", empty:"Escribe una anotación antes de guardar.", saving:"Guardando tu anotación en la nube...", saved:"Anotación guardada y vinculada a tu nick en la nube.", deleted:"Anotación eliminada de la nube.", errorLoad:"No fue posible cargar las anotaciones ahora.", errorTry:"Verifica la conexión e inténtalo nuevamente.", errorSave:"No fue posible guardar ahora. Verifica la conexión y las reglas de Firestore.", errorDelete:"No fue posible eliminar ahora. Inténtalo nuevamente.", confirm:"¿Eliminar esta anotación?" }
+    pt: { notice:"Crie um nick no Chat para inserir suas anotações.", noNickLoad:"Defina um nick no Chat para carregar suas anotações.", noNotes:"Nenhuma anotação salva ainda.", loading:"Carregando suas anotações...", loaded:"Anotações carregadas e vinculadas ao seu nick.", noNickSave:"Defina um nick no Chat antes de salvar.", empty:"Escreva uma anotação antes de salvar.", saving:"Salvando sua anotação na nuvem...", saved:"Anotação salva e vinculada ao seu nick na nuvem.", deleted:"Anotação excluída da nuvem.", errorLoad:"Não foi possível carregar as anotações agora.", errorTry:"Verifique a conexão e tente novamente.", errorSave:"Não foi possível salvar agora. Verifique a conexão e as regras do Firestore.", errorDelete:"Não foi possível excluir agora. Tente novamente.", confirm:"Excluir esta anotação?" },
+    fr: { notice:"Créez un pseudo dans le Chat pour saisir vos notes.", noNickLoad:"Définissez un pseudo dans le Chat pour charger vos notes.", noNotes:"Aucune note enregistrée pour le moment.", loading:"Chargement de vos notes...", loaded:"Notes chargées et liées à votre pseudo.", noNickSave:"Définissez un pseudo dans le Chat avant d’enregistrer.", empty:"Écrivez une note avant d’enregistrer.", saving:"Enregistrement de votre note dans le nuage...", saved:"Note enregistrée et liée à votre pseudo dans le nuage.", deleted:"Note supprimée du nuage.", errorLoad:"Impossible de charger les notes maintenant.", errorTry:"Vérifiez la connexion et réessayez.", errorSave:"Impossible d’enregistrer maintenant. Vérifiez la connexion et les règles Firestore.", errorDelete:"Impossible de supprimer maintenant. Réessayez.", confirm:"Supprimer cette note ?" },
+    es: { notice:"Crea un nick en el Chat para ingresar tus anotaciones.", noNickLoad:"Define un nick en el Chat para cargar tus anotaciones.", noNotes:"Todavía no hay anotaciones guardadas.", loading:"Cargando tus anotaciones...", loaded:"Anotaciones cargadas y vinculadas a tu nick.", noNickSave:"Define un nick en el Chat antes de guardar.", empty:"Escribe una anotación antes de guardar.", saving:"Guardando tu anotación en la nube...", saved:"Anotación guardada y vinculada a tu nick en la nube.", deleted:"Anotación eliminada de la nube.", errorLoad:"No fue posible cargar las anotaciones ahora.", errorTry:"Verifica la conexión e inténtalo nuevamente.", errorSave:"No fue posible guardar ahora. Verifica la conexión y las reglas de Firestore.", errorDelete:"No fue posible eliminar ahora. Inténtalo nuevamente.", confirm:"¿Eliminar esta anotación?" }
   };
   function notesCopy(){ return NOTES_I18N[state.lang] || NOTES_I18N.pt; }
+  window.academicCopy = academicCopy;
+  window.academicGoalsText = academicGoalsText;
+  window.notesCopy = notesCopy;
 
   var RESOURCE_I18N = {
     pt: {
@@ -2503,6 +2513,8 @@ padding:0 2px;">↩ Responder</button>`;
     if (link) { link.textContent = resource.linkText; link.href = url; }
     openPage("resourcePage");
   }
+  window.openLocalizedResource = openLocalizedResource;
+
   function updateLocalizedResource(){
     var page = document.getElementById("resourcePage");
     if (!page || page.style.display !== "block") return;
@@ -2601,6 +2613,8 @@ padding:0 2px;">↩ Responder</button>`;
     if (devContact) devContact.innerHTML = tr("developerService") + "<br>" + tr("contact") + ": <a href=\"mailto:universecreativepixel@gmail.com\">universecreativepixel@gmail.com</a>";
 
       var academic = academicCopy();
+      var academicNotice = document.getElementById("academicNickNotice");
+      if (academicNotice) { academicNotice.textContent = academic.notice; academicNotice.style.display = nick ? "none" : "block"; }
       setText("#academicGoalsHeading", academic.heading);
       var academicIntro = document.getElementById("academicGoalsIntro");
       if (academicIntro) academicIntro.innerHTML = "<strong>" + escapeHtml(academic.introTitle) + "</strong><br>" + escapeHtml(academic.introSubtitle) + "<br>" + escapeHtml(academic.introSave);
@@ -2617,6 +2631,9 @@ padding:0 2px;">↩ Responder</button>`;
         updateAcademicProgress();
       }
 
+      var notesLocale = notesCopy();
+      var notesNotice = document.getElementById("notesNickNotice");
+      if (notesNotice) { notesNotice.textContent = notesLocale.notice; notesNotice.style.display = nick ? "none" : "block"; }
       setText("#notesPage h2", tr("notesHeading"));
       setPlaceholder("#note", tr("notePlaceholder"));
       setText("#notesPage button", tr("save"));
