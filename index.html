@@ -192,6 +192,29 @@ button:hover{
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
+.meta-academica{background:linear-gradient(135deg,rgba(34,197,94,.34),rgba(59,130,246,.34)) !important;border-color:rgba(187,247,208,.48);}
+.meta-academica:hover{background:linear-gradient(135deg,rgba(34,197,94,.48),rgba(59,130,246,.48)) !important;}
+.academic-goals-page{background:rgba(10,22,34,.68);}
+.academic-goals-intro{margin:0 0 16px;color:#e2e8f0;line-height:1.55;}
+.academic-goals-user{display:inline-block;margin:0 0 16px;padding:7px 10px;border-radius:999px;background:rgba(255,255,255,.1);color:#dbeafe;font-size:13px;}
+.academic-progress-wrap{margin:0 0 18px;padding:12px;border-radius:12px;background:rgba(0,0,0,.28);border:1px solid rgba(255,255,255,.12);}
+.academic-progress-label{display:flex;justify-content:space-between;gap:10px;font-size:13px;color:#dbeafe;margin-bottom:7px;}
+.academic-progress-track{height:8px;border-radius:999px;background:rgba(255,255,255,.16);overflow:hidden;}
+.academic-progress-bar{height:100%;width:0;border-radius:999px;background:linear-gradient(90deg,#22c55e,#38bdf8);transition:width .2s ease;}
+.academic-goals-list{display:grid;gap:13px;}
+.academic-goal-card{padding:14px;border-radius:14px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);}
+.academic-goal-card h3{margin:0 0 7px;color:#bbf7d0;font-size:16px;line-height:1.35;}
+.academic-goal-card p{margin:0 0 10px;color:#e2e8f0;font-size:13px;line-height:1.5;}
+.academic-goal-card textarea{display:block;width:100%;min-height:86px;box-sizing:border-box;resize:vertical;padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,.2);background:rgba(0,0,0,.26);color:#fff;font:inherit;line-height:1.45;}
+.academic-goal-card textarea:focus{outline:2px solid rgba(56,189,248,.75);outline-offset:1px;}
+.academic-actions{display:flex;flex-wrap:wrap;gap:9px;margin-top:17px;}
+.academic-actions button{flex:1 1 145px;padding:12px;font-size:14px;}
+.academic-save{background:rgba(34,197,94,.35) !important;}
+.academic-clear{background:rgba(185,28,28,.38) !important;}
+.academic-status{min-height:22px;margin:12px 0 0;color:#bbf7d0;font-size:13px;line-height:1.4;}
+.academic-golden-tip{border-color:rgba(250,204,21,.48);background:rgba(120,80,0,.2);}
+.academic-golden-tip h3{color:#fde68a;}
+
 /* Preserva quebras de linha, espaços e separação entre tópicos nos conteúdos administrativos */
 #dynamicContent {
   white-space: pre-wrap;
@@ -288,6 +311,27 @@ button:hover{
 .desapega {
   background: #f59e0b; /* Laranja âmbar */
   color: white;
+}
+
+/* Aparência única para todos os botões do menu principal */
+#home > button,
+#home > button:hover,
+#home > button:focus,
+#home > button:active {
+  color: #ffffff !important;
+  background: rgba(255, 255, 255, 0.12) !important;
+  border: 1px solid rgba(255, 255, 255, 0.14) !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.28) !important;
+}
+
+#home > button:hover,
+#home > button:focus {
+  background: rgba(255, 255, 255, 0.18) !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.15) !important;
+}
+
+#home > button:active {
+  background: rgba(0, 0, 0, 0.32) !important;
 }
 
 /* Estilos para os Cards do Desapega */
@@ -844,6 +888,8 @@ gtag('config', 'G-FJT3X93608');
     <button class="share" onclick="shareApp()">📤 Compartilhar App</button>
     <button class="internet" onclick="openDynamic('internet','page')">🌐 Internet Unila</button>
     <button class="estude" onclick="openDynamic('estude','page')">🎓 Estude na Unila</button>
+    <button class="meta-academica" onclick="openAcademicGoalsPage()">📈 Meta Acadêmica</button>
+    <button class="auxilio-estudantil" onclick="openDynamic('auxilio_estudantil','link')">🎓 Auxílio Estudantil</button>
     <button class="unila" onclick="openDynamic('saude_mental','link')">🧠 Saúde Mental</button>
     <button class="google" onclick="openDynamic('enem','link')">📝 ENEM – Página do Participante</button>
     <button class="noticias" onclick="loadNews(); document.getElementById('dynamicTitle').textContent='NOTÍCIAS'; openPage('dynamicPage');">📰 Notícias</button>
@@ -855,6 +901,27 @@ gtag('config', 'G-FJT3X93608');
   <div id="dynamicPage" class="page">
     <h2 id="dynamicTitle"></h2>
     <div id="dynamicContent"></div>
+  </div>
+
+  <div id="academicGoalsPage" class="page academic-goals-page">
+    <h2>📈 Meta Acadêmica</h2>
+    <p class="academic-goals-intro"><strong>Carreira Acadêmica: Plano de Metas</strong><br>O Guia Definitivo para o Sucesso na Universidade.<br>Preencha suas respostas seguindo as 14 metas e salve. Ele ficará armazenado e vinculado ao seu nick na nuvem.</p>
+    <div id="academicGoalsUser" class="academic-goals-user">Usuário: aguardando nick...</div>
+    <div class="academic-progress-wrap">
+      <div class="academic-progress-label"><span>Progresso do plano</span><strong id="academicProgressText">0 de 14 preenchidas</strong></div>
+      <div class="academic-progress-track"><div id="academicProgressBar" class="academic-progress-bar"></div></div>
+    </div>
+    <div id="academicGoalsList" class="academic-goals-list"></div>
+    <div class="academic-goal-card academic-golden-tip">
+      <h3>💡 Dica de Ouro</h3>
+      <p>Não deixe o medo de reprovar, o medo de não conseguir emprego ou o medo de surtar paralisarem você. Encare a universidade como uma maratona: a constância sempre vence o talento isolado!</p>
+    </div>
+    <div class="academic-actions">
+      <button type="button" class="academic-save" onclick="saveAcademicGoals()">💾 Salvar metas</button>
+      <button type="button" onclick="editAcademicGoals()">✏️ Editar plano</button>
+      <button type="button" class="academic-clear" onclick="clearAcademicGoals()">🗑 Limpar plano</button>
+    </div>
+    <p id="academicGoalsStatus" class="academic-status" role="status"></p>
   </div>
 
   <div id="chatPage" class="page">
@@ -917,6 +984,7 @@ gtag('config', 'G-FJT3X93608');
     <textarea id="note" placeholder="Escreva sua anotação aqui..."></textarea>
     <button onclick="saveNote()">Salvar</button>
     <div id="list" style="margin-top:20px;"></div>
+    <p id="notesStatus" role="status" style="min-height:22px; margin:12px 0 0; color:#bbf7d0; font-size:13px;"></p>
   </div>
 
   <div id="desapegaPage" class="page">
@@ -1116,6 +1184,7 @@ gtag('config', 'G-FJT3X93608');
       dev: "Equipe Spotted Unila<br>Contato: <a href=\"mailto:universecreativepixel@gmail.com\">universecreativepixel@gmail.com</a>",
       internet: "Rede: Unila-WIFI\nLogin: Seu CPF ou E-mail Institucional\nSenha: A mesma senha do SIGAA\n\n⚠ Se tiver problemas, procure a TIC do seu campus.",
       estude: "Ingresso para Brasileiros: Via ENEM/SISU\nIngresso para Estrangeiros: Seleção Internacional Própria\n\nCursos: Mais de 29 opções de graduação.\n\nPara mais informações acesse: portal.unila.edu.br/ingresso",
+      auxilio_estudantil: "https://portal.unila.edu.br/prae/assistencia-estudantil/auxilios",
       saude_mental: "https://portal.unila.edu.br/saude-mental",
       enem: "https://enem.inep.gov.br/participante/",
       grupo_facebook: "https://www.facebook.com/groups/unila/",
@@ -1366,6 +1435,152 @@ gtag('config', 'G-FJT3X93608');
       }
       if(id === 'notesPage') loadNotes();
       if(id === 'desapegaPage') listenAds();
+    }
+
+    const ACADEMIC_GOALS = [
+      { id: "purpose", title: "META 1: Definição de Propósito", prompt: "Qual é o seu curso desejado e qual cargo profissional você quer ocupar ao se formar? Escreva: Vou me formar em [Curso] e quero trabalhar como [Profissão]." },
+      { id: "faith", title: "META 2: Fé Acadêmica", prompt: "Você acredita na sua capacidade de aprender qualquer matéria? Que pensamento de confiança você quer praticar?" },
+      { id: "mindset", title: "META 3: Programação Mental", prompt: "O que você repete para si mesmo todos os dias? Escreva uma afirmação para fortalecer seu foco." },
+      { id: "specializedSkill", title: "META 4: Habilidade Especializada", prompt: "O que você precisa aprender além da grade curricular? Liste competências e um primeiro passo." },
+      { id: "creativity", title: "META 5: Criatividade", prompt: "Como você pode usar o que aprende para resolver problemas reais? Descreva uma ideia ou projeto." },
+      { id: "studyPlan", title: "META 6: Planejamento de Estudos", prompt: "Como será o seu cronograma do semestre? Registre provas, trabalhos e uma meta diária de estudo." },
+      { id: "strategicDecision", title: "META 7: Decisão Estratégica", prompt: "Em qual área do curso você quer se especializar? Qual curso livre ou ação você pretende buscar?" },
+      { id: "resilience", title: "META 8: Constância e Resiliência", prompt: "O que você fará quando for reprovado ou se sentir sobrecarregado? Escreva sua estratégia para continuar." },
+      { id: "community", title: "META 9: Comunidade Intelectual", prompt: "Com quem você estuda? Liste colegas, professores e profissionais que podem impulsionar sua jornada." },
+      { id: "focusedEnergy", title: "META 10: Energia Focada", prompt: "Para onde está indo sua energia? Como você vai equilibrar estudo, descanso e exercícios?" },
+      { id: "automaticMind", title: "META 11: Mente Automática", prompt: "Quais hábitos você quer criar em relação ao estudo? Defina horários e uma rotina possível." },
+      { id: "professionalTuning", title: "META 12: Sintonização Profissional", prompt: "Como você vai acompanhar o mercado? Liste profissionais, eventos, palestras ou fontes que seguirá." },
+      { id: "opportunity", title: "META 13: Intuição e Oportunidade", prompt: "Quais oportunidades você deseja aproveitar? Como se preparará para estágios, intercâmbios ou projetos?" },
+      { id: "review", title: "META 14: Celebração e Revisão das Conquistas", prompt: "O que você já conseguiu aprender ou superar? Ao final de cada mês, revise suas metas, reconheça seu progresso, corrija o que não funcionou e comemore cada avanço." }
+    ];
+    const ACADEMIC_GOALS_COLLECTION = "academic_goals";
+
+    function academicGoalsStatus(message, isError) {
+      const status = document.getElementById("academicGoalsStatus");
+      if (!status) return;
+      status.textContent = message || "";
+      status.style.color = isError ? "#fecaca" : "#bbf7d0";
+    }
+
+    function updateAcademicProgress() {
+      const filled = ACADEMIC_GOALS.filter(goal => {
+        const field = document.getElementById("academic-goal-" + goal.id);
+        return field && field.value.trim();
+      }).length;
+      const text = document.getElementById("academicProgressText");
+      const bar = document.getElementById("academicProgressBar");
+      if (text) text.textContent = filled + " de " + ACADEMIC_GOALS.length + " preenchidas";
+      if (bar) bar.style.width = Math.round((filled / ACADEMIC_GOALS.length) * 100) + "%";
+    }
+
+    function renderAcademicGoals() {
+      const list = document.getElementById("academicGoalsList");
+      if (!list) return;
+      list.innerHTML = ACADEMIC_GOALS.map(goal => `
+        <section class="academic-goal-card">
+          <h3>${goal.title}</h3>
+          <p>${goal.prompt}</p>
+          <textarea id="academic-goal-${goal.id}" data-goal-id="${goal.id}" aria-label="Resposta da ${goal.title}" placeholder="Escreva sua resposta aqui..."></textarea>
+        </section>
+      `).join("");
+      list.querySelectorAll("textarea").forEach(field => field.addEventListener("input", updateAcademicProgress));
+      updateAcademicProgress();
+    }
+
+    function updateAcademicGoalsUser() {
+      const user = document.getElementById("academicGoalsUser");
+      if (user) user.textContent = nick ? "Plano vinculado ao nick: " + nick : "Defina um nick no Chat da Escola para salvar seu plano.";
+    }
+
+    async function waitForAcademicAuth() {
+      if (typeof authReady !== "undefined") await authReady;
+      if (typeof db === "undefined" || !firebaseUid) throw new Error("Sessão Firebase ainda não está pronta.");
+    }
+
+    async function loadAcademicGoals() {
+      renderAcademicGoals();
+      updateAcademicGoalsUser();
+      if (!nick) {
+        academicGoalsStatus("Defina um nick no Chat da Escola antes de preencher e salvar suas metas.", true);
+        return;
+      }
+      academicGoalsStatus("Carregando seu plano...");
+      try {
+        await waitForAcademicAuth();
+        const snapshot = await db.collection(ACADEMIC_GOALS_COLLECTION).doc(firebaseUid).get();
+        const saved = snapshot.exists ? (snapshot.data().goals || {}) : {};
+        ACADEMIC_GOALS.forEach(goal => {
+          const field = document.getElementById("academic-goal-" + goal.id);
+          if (field) field.value = typeof saved[goal.id] === "string" ? saved[goal.id] : "";
+        });
+        updateAcademicProgress();
+        academicGoalsStatus(snapshot.exists ? "Plano carregado. Você pode editar e salvar novamente." : "Novo plano: preencha as metas e toque em Salvar metas.");
+      } catch (error) {
+        console.error("Erro ao carregar metas acadêmicas:", error);
+        academicGoalsStatus("Não foi possível carregar o plano agora. Tente novamente quando a sessão estiver pronta.", true);
+      }
+    }
+
+    function openAcademicGoalsPage() {
+      openPage("academicGoalsPage");
+      loadAcademicGoals();
+    }
+
+    async function saveAcademicGoals() {
+      if (!nick) {
+        academicGoalsStatus("Defina um nick no Chat da Escola antes de salvar.", true);
+        return;
+      }
+      academicGoalsStatus("Salvando seu plano...");
+      try {
+        await waitForAcademicAuth();
+        const goals = {};
+        ACADEMIC_GOALS.forEach(goal => {
+          const field = document.getElementById("academic-goal-" + goal.id);
+          goals[goal.id] = field ? field.value.trim() : "";
+        });
+        const reference = db.collection(ACADEMIC_GOALS_COLLECTION).doc(firebaseUid);
+        const previous = await reference.get();
+        const now = Date.now();
+        await reference.set({
+          uid: firebaseUid,
+          nick: nick,
+          goals: goals,
+          createdAt: previous.exists && previous.data().createdAt ? previous.data().createdAt : now,
+          updatedAt: now,
+          source: "Spotted Unila"
+        }, { merge: true });
+        updateAcademicProgress();
+        academicGoalsStatus("Plano salvo com sucesso no Firebase e vinculado ao nick " + nick + ".");
+      } catch (error) {
+        console.error("Erro ao salvar metas acadêmicas:", error);
+        academicGoalsStatus("Não foi possível salvar agora. Verifique a conexão e as regras do Firestore.", true);
+      }
+    }
+
+    function editAcademicGoals() {
+      const firstField = document.querySelector("#academicGoalsList textarea");
+      document.querySelectorAll("#academicGoalsList textarea").forEach(field => field.removeAttribute("readonly"));
+      academicGoalsStatus("Modo de edição ativado. Faça suas alterações e toque em Salvar metas.");
+      if (firstField) firstField.focus();
+    }
+
+    async function clearAcademicGoals() {
+      if (!nick) {
+        academicGoalsStatus("Defina um nick antes de limpar o plano.", true);
+        return;
+      }
+      if (!window.confirm("Limpar o plano de metas salvo para o nick " + nick + "?")) return;
+      try {
+        await waitForAcademicAuth();
+        await db.collection(ACADEMIC_GOALS_COLLECTION).doc(firebaseUid).delete();
+        document.querySelectorAll("#academicGoalsList textarea").forEach(field => { field.value = ""; });
+        updateAcademicProgress();
+        academicGoalsStatus("Plano removido do Firebase. Você pode preencher um novo plano.");
+      } catch (error) {
+        console.error("Erro ao limpar metas acadêmicas:", error);
+        academicGoalsStatus("Não foi possível limpar o plano agora. Tente novamente.", true);
+      }
     }
 
     function goHome() {
@@ -1734,16 +1949,107 @@ padding:0 2px;">↩ Responder</button>`;
       } else { player.style.display = "none"; iframe.contentWindow.postMessage(JSON.stringify({event: "command", func: "pauseVideo", args: []}), "*"); }
     }
 
-    function saveNote() {
-      const noteText = document.getElementById("note").value.trim(); if(!noteText) return;
-      let notes = JSON.parse(localStorage.getItem("notes") || "[]"); notes.push({ id: Date.now(), text: noteText });
-      localStorage.setItem("notes", JSON.stringify(notes)); document.getElementById("note").value = ""; loadNotes();
+    const NOTES_COLLECTION = "notes";
+
+    function notesStatus(message, isError) {
+      const status = document.getElementById("notesStatus");
+      if (!status) return;
+      status.textContent = message || "";
+      status.style.color = isError ? "#fecaca" : "#bbf7d0";
     }
-    function loadNotes() {
-      const list = document.getElementById("list"); let notes = JSON.parse(localStorage.getItem("notes") || "[]");
-      list.innerHTML = notes.map(n => `<div class="note-item"><span>${n.text}</span><button class="delete-btn" onclick="deleteNote(${n.id})">🗑</button></div>`).join("");
+
+    async function waitForNotesAuth() {
+      if (typeof authReady !== "undefined") await authReady;
+      if (typeof db === "undefined" || !firebaseUid) throw new Error("Sessão Firebase ainda não está pronta.");
     }
-    function deleteNote(id) { let notes = JSON.parse(localStorage.getItem("notes") || "[]"); notes = notes.filter(n => n.id !== id); localStorage.setItem("notes", JSON.stringify(notes)); loadNotes(); }
+
+    async function loadNotes() {
+      const list = document.getElementById("list");
+      if (!list) return;
+      if (!nick) {
+        list.innerHTML = "<p>Defina um nick no Chat da Escola para carregar suas anotações.</p>";
+        notesStatus("As anotações ficam vinculadas ao seu nick na nuvem.", true);
+        return;
+      }
+      notesStatus("Carregando suas anotações...");
+      try {
+        await waitForNotesAuth();
+        const snapshot = await db.collection(NOTES_COLLECTION).doc(firebaseUid).get();
+        const data = snapshot.exists ? snapshot.data() : {};
+        const notes = Array.isArray(data.notes) ? data.notes : [];
+        list.innerHTML = notes.length ? notes.map(n => `
+          <div class="note-item">
+            <span>${escapeHtml(n.text)}</span>
+            <button class="delete-btn" onclick="deleteNote('${escapeHtml(n.id)}')">🗑</button>
+          </div>
+        `).join("") : "<p>Nenhuma anotação salva ainda.</p>";
+        notesStatus(snapshot.exists ? "Anotações carregadas e vinculadas ao seu nick." : "Nenhuma anotação salva ainda.");
+      } catch (error) {
+        console.error("Erro ao carregar anotações:", error);
+        list.innerHTML = "<p>Não foi possível carregar as anotações agora.</p>";
+        notesStatus("Verifique a conexão e tente novamente.", true);
+      }
+    }
+
+    async function saveNote() {
+      const noteField = document.getElementById("note");
+      const noteText = noteField ? noteField.value.trim() : "";
+      if (!noteText) {
+        notesStatus("Escreva uma anotação antes de salvar.", true);
+        return;
+      }
+      if (!nick) {
+        notesStatus("Defina um nick no Chat da Escola antes de salvar.", true);
+        return;
+      }
+      notesStatus("Salvando sua anotação na nuvem...");
+      try {
+        await waitForNotesAuth();
+        const reference = db.collection(NOTES_COLLECTION).doc(firebaseUid);
+        const previous = await reference.get();
+        const previousNotes = previous.exists && Array.isArray(previous.data().notes) ? previous.data().notes : [];
+        const now = Date.now();
+        const notes = previousNotes.concat([{ id: String(now), text: noteText, createdAt: now, updatedAt: now }]);
+        await reference.set({
+          uid: firebaseUid,
+          nick: nick,
+          notes: notes,
+          updatedAt: now,
+          source: "Spotted Unila"
+        }, { merge: true });
+        if (noteField) noteField.value = "";
+        await loadNotes();
+        notesStatus("Anotação salva e vinculada ao seu nick na nuvem.");
+      } catch (error) {
+        console.error("Erro ao salvar anotação:", error);
+        notesStatus("Não foi possível salvar agora. Verifique a conexão e as regras do Firestore.", true);
+      }
+    }
+
+    async function deleteNote(id) {
+      if (!nick) {
+        notesStatus("Defina um nick antes de excluir uma anotação.", true);
+        return;
+      }
+      if (!window.confirm("Excluir esta anotação?")) return;
+      try {
+        await waitForNotesAuth();
+        const reference = db.collection(NOTES_COLLECTION).doc(firebaseUid);
+        const snapshot = await reference.get();
+        const previousNotes = snapshot.exists && Array.isArray(snapshot.data().notes) ? snapshot.data().notes : [];
+        const notes = previousNotes.filter(note => String(note.id) !== String(id));
+        if (notes.length) {
+          await reference.set({ uid: firebaseUid, nick: nick, notes: notes, updatedAt: Date.now() }, { merge: true });
+        } else if (snapshot.exists) {
+          await reference.delete();
+        }
+        await loadNotes();
+        notesStatus("Anotação excluída da nuvem.");
+      } catch (error) {
+        console.error("Erro ao excluir anotação:", error);
+        notesStatus("Não foi possível excluir agora. Tente novamente.", true);
+      }
+    }
 
     let adPhotos = {};
     let editingAdId = null;
@@ -2011,8 +2317,8 @@ padding:0 2px;">↩ Responder</button>`;
         google: "🔎 Pesquisa Google", instagram: "📸 Instagram Unila", facebook: "📘 Facebook Unila", library: "📖 Biblioteca Unila",
         intercampus: "🚌 Transporte Intercampi", notices: "📄 Editais Oficiais", emergency: "🚨 Telefones de Emergência",
         addresses: "🏫 Endereços dos Campus", ru: "🍽️ Restaurantes Universitários", group: "👥 Grupo no Facebook", developer: "👨‍💻 Desenvolvedor", privacy: "🔒 Privacidade e exclusão",
-        notes: "📝 Anotações", share: "📤 Compartilhar App", internet: "🌐 Internet Unila", study: "🎓 Estude na Unila", mentalHealth: "🧠 Saúde Mental",
-        enem: "📝 ENEM – Página do Participante", news: "📰 Notícias", conheca: "🏫 Conheça a Unila", desapega: "🛒 Desapega Unileiro", upa: "🏥 Hospitais de Emergência 24h (UPA)",
+        notes: "📝 Anotações", share: "📤 Compartilhar App", internet: "🌐 Internet Unila", study: "🎓 Estude na Unila", academicGoals: "📈 Meta Acadêmica", studentAid: "🎓 Auxílio Estudantil", mentalHealth: "🧠 Saúde Mental",
+        enem: "📝 ENEM – Página do Participante", news: "📰 Notícias da Unila", conheca: "🏫 Conheça a Unila", desapega: "🛒 Desapega Unileiro", upa: "🏥 Hospitais de Emergência 24h (UPA)",
         chatHeading: "💬 Chat Unila", nickPlaceholder: "Digite seu nick...", enter: "Entrar", imageSelected: "Imagem selecionada",
         chatPlaceholder: "Digite sua mensagem...", anonymous: "👤 Enviar Anonimamente", changeNick: "🔄 Mudar Nick",
         developerHeading: "👨‍💻 Desenvolvedor", developerIntro: "Para trabalhos e parcerias entre em contato:", developerService: "Equipe Spotted Unila", contact: "Contato",
@@ -2046,8 +2352,8 @@ padding:0 2px;">↩ Responder</button>`;
         google: "🔎 Recherche Google", instagram: "📸 Instagram Unila", facebook: "📘 Facebook Unila", library: "📖 Bibliothèque Unila",
         intercampus: "🚌 Transport intercampus", notices: "📄 Avis officiels", emergency: "🚨 Numéros d’urgence",
         addresses: "🏫 Adresses des campus", ru: "🍽️ Restaurants universitaires", group: "👥 Groupe Facebook", developer: "👨‍💻 Développeur", privacy: "🔒 Confidentialité et suppression",
-        notes: "📝 Notes", share: "📤 Partager l’application", internet: "🌐 Internet Unila", study: "🎓 Étudier à l’Unila", mentalHealth: "🧠 Santé mentale",
-        enem: "📝 ENEM – Page du participant", news: "📰 Actualités", conheca: "🏫 Découvrez l’Unila", desapega: "🛒 Desapega Unileiro", upa: "🏥 Hôpitaux d’urgence 24 h (UPA)",
+        notes: "📝 Notes", share: "📤 Partager l’application", internet: "🌐 Internet Unila", study: "🎓 Étudier à l’Unila", academicGoals: "📈 Objectif académique", studentAid: "🎓 Aide aux étudiants", mentalHealth: "🧠 Santé mentale",
+        enem: "📝 ENEM – Page du participant", news: "📰 Actualités de l’Unila", conheca: "🏫 Découvrez l’Unila", desapega: "🛒 Desapega Unileiro", upa: "🏥 Hôpitaux d’urgence 24 h (UPA)",
         chatHeading: "💬 Chat Unila", nickPlaceholder: "Saisissez votre pseudo...", enter: "Entrer", imageSelected: "Image sélectionnée",
         chatPlaceholder: "Écrivez votre message...", anonymous: "👤 Envoyer anonymement", changeNick: "🔄 Changer de pseudo",
         developerHeading: "👨‍💻 Développeur", developerIntro: "Pour les travaux et les partenariats, contactez-nous :", developerService: "Équipe Spotted Unila", contact: "Contact",
@@ -2081,8 +2387,8 @@ padding:0 2px;">↩ Responder</button>`;
         google: "🔎 Búsqueda Google", instagram: "📸 Instagram Unila", facebook: "📘 Facebook Unila", library: "📖 Biblioteca Unila",
         intercampus: "🚌 Transporte intercampus", notices: "📄 Convocatorias oficiales", emergency: "🚨 Teléfonos de emergencia",
         addresses: "🏫 Direcciones de los campus", ru: "🍽️ Restaurantes universitarios", group: "👥 Grupo de Facebook", developer: "👨‍💻 Desarrollador", privacy: "🔒 Privacidad y eliminación",
-        notes: "📝 Anotaciones", share: "📤 Compartir aplicación", internet: "🌐 Internet Unila", study: "🎓 Estudia en la Unila", mentalHealth: "🧠 Salud mental",
-        enem: "📝 ENEM – Página del participante", news: "📰 Noticias", conheca: "🏫 Conoce la Unila", desapega: "🛒 Desapega Unileiro", upa: "🏥 Hospitales de emergencia 24 h (UPA)",
+        notes: "📝 Anotaciones", share: "📤 Compartir aplicación", internet: "🌐 Internet Unila", study: "🎓 Estudia en la Unila", academicGoals: "📈 Meta académica", studentAid: "🎓 Ayuda estudiantil", mentalHealth: "🧠 Salud mental",
+        enem: "📝 ENEM – Página del participante", news: "📰 Noticias de la Unila", conheca: "🏫 Conoce la Unila", desapega: "🛒 Desapega Unileiro", upa: "🏥 Hospitales de emergencia 24 h (UPA)",
         chatHeading: "💬 Chat Unila", nickPlaceholder: "Escribe tu nick...", enter: "Entrar", imageSelected: "Imagen seleccionada",
         chatPlaceholder: "Escribe tu mensaje...", anonymous: "👤 Enviar anónimamente", changeNick: "🔄 Cambiar nick",
         developerHeading: "👨‍💻 Desarrollador", developerIntro: "Para trabajos y alianzas, ponte en contacto:", developerService: "Equipo Spotted Unila", contact: "Contacto",
@@ -2159,7 +2465,7 @@ padding:0 2px;">↩ Responder</button>`;
 
   var menuKeys = [
     "chatMenu", "portal", "inscreva", "sigaa", "email", "google", "instagram", "facebook", "library", "intercampus", "notices",
-    "emergency", "addresses", "ru", "group", "developer", "privacy", "notes", "share", "internet", "study", "mentalHealth", "enem", "news", "conheca", "desapega", "upa"
+    "emergency", "addresses", "ru", "group", "developer", "privacy", "notes", "share", "internet", "study", "academicGoals", "studentAid", "mentalHealth", "enem", "news", "conheca", "desapega", "upa"
   ];
 
   function applyStaticTranslations(){
