@@ -195,6 +195,9 @@ button:hover{
 .meta-academica{background:linear-gradient(135deg,rgba(34,197,94,.34),rgba(59,130,246,.34)) !important;border-color:rgba(187,247,208,.48);}
 .meta-academica:hover{background:linear-gradient(135deg,rgba(34,197,94,.48),rgba(59,130,246,.48)) !important;}
 .academic-goals-page{background:rgba(10,22,34,.68);}
+.resource-page{background:rgba(10,22,34,.68);}
+.resource-page-description{color:#e2e8f0;line-height:1.6;}
+.resource-open-link{display:inline-block;margin-top:14px;padding:12px 16px;border-radius:12px;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.1);color:#fff;text-decoration:none;font-weight:700;}
 .academic-goals-intro{margin:0 0 16px;color:#e2e8f0;line-height:1.55;}
 .academic-goals-user{display:inline-block;margin:0 0 16px;padding:7px 10px;border-radius:999px;background:rgba(255,255,255,.1);color:#dbeafe;font-size:13px;}
 .academic-progress-wrap{margin:0 0 18px;padding:12px;border-radius:12px;background:rgba(0,0,0,.28);border:1px solid rgba(255,255,255,.12);}
@@ -889,8 +892,8 @@ gtag('config', 'G-FJT3X93608');
     <button class="internet" onclick="openDynamic('internet','page')">🌐 Internet Unila</button>
     <button class="estude" onclick="openDynamic('estude','page')">🎓 Estude na Unila</button>
     <button class="meta-academica" onclick="openAcademicGoalsPage()">📈 Meta Acadêmica</button>
-    <button class="auxilio-estudantil" onclick="openDynamic('auxilio_estudantil','link')">🎓 Auxílio Estudantil</button>
-    <button class="unila" onclick="openDynamic('saude_mental','link')">🧠 Saúde Mental</button>
+    <button class="auxilio-estudantil" onclick="openLocalizedResource('studentAid')">🎓 Auxílio Estudantil</button>
+    <button class="unila" onclick="openLocalizedResource('mentalHealth')">🧠 Saúde Mental</button>
     <button class="google" onclick="openDynamic('enem','link')">📝 ENEM – Página do Participante</button>
     <button class="noticias" onclick="loadNews(); document.getElementById('dynamicTitle').textContent='NOTÍCIAS'; openPage('dynamicPage');">📰 Notícias</button>
     <button class="conheca-unila-btn" onclick="openConhecaUnilaPage()">🏫 Conheça a Unila</button>
@@ -901,6 +904,12 @@ gtag('config', 'G-FJT3X93608');
   <div id="dynamicPage" class="page">
     <h2 id="dynamicTitle"></h2>
     <div id="dynamicContent"></div>
+  </div>
+
+  <div id="resourcePage" class="page resource-page">
+    <h2 id="resourcePageTitle"></h2>
+    <p id="resourcePageDescription" class="resource-page-description"></p>
+    <a id="resourcePageLink" class="resource-open-link" href="#" target="_blank" rel="noopener noreferrer"></a>
   </div>
 
   <div id="academicGoalsPage" class="page academic-goals-page">
@@ -2468,6 +2477,40 @@ padding:0 2px;">↩ Responder</button>`;
   };
   function notesCopy(){ return NOTES_I18N[state.lang] || NOTES_I18N.pt; }
 
+  var RESOURCE_I18N = {
+    pt: {
+      mentalHealth: { title: "🧠 Saúde Mental", description: "Acesse o portal oficial da Unila para consultar informações, orientações e serviços relacionados à saúde mental.", linkText: "Abrir portal de Saúde Mental" },
+      studentAid: { title: "🎓 Auxílio Estudantil", description: "Consulte o portal oficial da Unila para conhecer auxílios, critérios, inscrições e orientações de assistência estudantil.", linkText: "Abrir portal de Auxílio Estudantil" }
+    },
+    fr: {
+      mentalHealth: { title: "🧠 Santé mentale", description: "Accédez au portail officiel de l’Unila pour consulter des informations, des conseils et des services liés à la santé mentale.", linkText: "Ouvrir le portail de santé mentale" },
+      studentAid: { title: "🎓 Aide aux étudiants", description: "Consultez le portail officiel de l’Unila pour connaître les aides, les critères, les inscriptions et les orientations d’assistance étudiante.", linkText: "Ouvrir le portail d’aide aux étudiants" }
+    },
+    es: {
+      mentalHealth: { title: "🧠 Salud mental", description: "Accede al portal oficial de la Unila para consultar información, orientaciones y servicios relacionados con la salud mental.", linkText: "Abrir portal de Salud Mental" },
+      studentAid: { title: "🎓 Ayuda estudiantil", description: "Consulta el portal oficial de la Unila para conocer ayudas, criterios, inscripciones y orientaciones de asistencia estudiantil.", linkText: "Abrir portal de Ayuda Estudiantil" }
+    }
+  };
+  function resourceCopy(key){ return (RESOURCE_I18N[state.lang] || RESOURCE_I18N.pt)[key]; }
+  function openLocalizedResource(key){
+    var resource = resourceCopy(key);
+    var url = key === "mentalHealth" ? defaultContent.saude_mental : defaultContent.auxilio_estudantil;
+    var title = document.getElementById("resourcePageTitle");
+    var description = document.getElementById("resourcePageDescription");
+    var link = document.getElementById("resourcePageLink");
+    if (title) { title.textContent = resource.title; title.setAttribute("data-resource-key", key); }
+    if (description) description.textContent = resource.description;
+    if (link) { link.textContent = resource.linkText; link.href = url; }
+    openPage("resourcePage");
+  }
+  function updateLocalizedResource(){
+    var page = document.getElementById("resourcePage");
+    if (!page || page.style.display !== "block") return;
+    var title = document.getElementById("resourcePageTitle");
+    var key = title && title.getAttribute("data-resource-key");
+    if (key) openLocalizedResource(key);
+  }
+
   var state = {
     lang: localStorage.getItem("unila_language") || "pt",
     currentDynamicId: null
@@ -2577,6 +2620,8 @@ padding:0 2px;">↩ Responder</button>`;
       setText("#notesPage h2", tr("notesHeading"));
       setPlaceholder("#note", tr("notePlaceholder"));
       setText("#notesPage button", tr("save"));
+      var notesPage = document.getElementById("notesPage");
+      if (notesPage && notesPage.style.display === "block" && typeof loadNotes === "function") loadNotes();
 
     setText("#desapegaPage h2", tr("desapegaHeading"));
     setText(".btn-postar", tr("postAd"));
@@ -2593,6 +2638,7 @@ padding:0 2px;">↩ Responder</button>`;
     setText("#desapegaForm button[onclick='cancelAdEdit()']", tr("cancel"));
     setText("#adList > p", tr("loadingAds"));
     updateDateBar();
+    updateLocalizedResource();
     updateDynamicPage();
     translateDynamicUI();
     normalizeVisibleUnila(document.body);
