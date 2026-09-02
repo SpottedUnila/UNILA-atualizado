@@ -938,11 +938,13 @@ gtag('config', 'G-FJT3X93608');
   <div id="chatPage" class="page">
     <h2>💬 Chat Unila</h2>
     <div id="nickArea">
-      <input id="nickInput" placeholder="Digite seu nick..." style="padding:10px; border-radius:10px; border:none; margin-bottom:10px; width:80%;" />
-      <button id="nickEnterBtn" onclick="saveNick(this)">Entrar</button>
+      <input id="nickInput" autocomplete="username" placeholder="Digite seu nick..." style="padding:10px; border-radius:10px; border:none; margin-bottom:10px; width:80%;" />
+      <input id="nickPasswordInput" type="password" autocomplete="current-password" minlength="6" placeholder="Crie uma senha com pelo menos 6 caracteres" style="padding:10px; border-radius:10px; border:none; margin-bottom:10px; width:80%;" />
+      <button id="nickEnterBtn" onclick="saveNick(this)">Entrar / criar acesso</button>
+      <small style="display:block; width:80%; margin:4px auto 12px; color:#cbd5e1; line-height:1.35;">No primeiro acesso, a senha cria seu acesso. Depois, use o mesmo nick e a mesma senha para entrar em qualquer dispositivo.</small>
       <div id="adminLoginArea" style="display:none; margin-top:14px; padding:14px; border:1px solid rgba(255,255,255,.2); border-radius:12px; background:rgba(0,0,0,.2);">
         <strong style="display:block; margin-bottom:8px;">Entrada administrativa</strong>
-        <input id="adminEmailInput" type="email" autocomplete="username" value="fernando2018a1986@gmail.com" placeholder="E-mail administrativo" style="display:block; width:100%; box-sizing:border-box; padding:10px; border-radius:8px; border:none; margin-bottom:8px;" />
+        <input id="adminEmailInput" type="email" autocomplete="username" value="" placeholder="E-mail administrativo" style="display:block; width:100%; box-sizing:border-box; padding:10px; border-radius:8px; border:none; margin-bottom:8px;" />
         <input id="adminPasswordInput" type="password" autocomplete="current-password" placeholder="Senha do Firebase" style="display:block; width:100%; box-sizing:border-box; padding:10px; border-radius:8px; border:none; margin-bottom:8px;" />
         <div style="display:flex; gap:8px; flex-wrap:wrap;">
           <button id="adminLoginBtn" type="button" onclick="loginAsAdmin()">Entrar como Fernando</button>
@@ -978,6 +980,12 @@ gtag('config', 'G-FJT3X93608');
       <div style="position:fixed; bottom:20px; left:15px; display:flex; align-items:center; gap:8px; padding:6px 15px; background:rgba(0,0,0,0.6); width:fit-content; border-radius:20px; border:1px solid rgba(255,255,255,0.2); backdrop-filter:blur(10px); z-index:999; box-shadow:0 4px 15px rgba(0,0,0,0.4);">
         <input type="checkbox" id="chatAnonymous" style="width:18px; height:18px; cursor:pointer;" />
         <label for="chatAnonymous" style="font-size:13px; color:#ffffff; cursor:pointer; font-weight:600; text-shadow:0 1px 2px rgba(0,0,0,0.5);">👤 Enviar Anonimamente</label>
+      </div>
+      <div id="nickPasswordManage" style="display:none; margin-top:16px; padding:14px; border:1px solid rgba(255,255,255,.18); border-radius:12px; background:rgba(0,0,0,.2);">
+        <strong style="display:block; margin-bottom:8px;">Proteja seu acesso</strong>
+        <small style="display:block; margin-bottom:8px; color:#cbd5e1; line-height:1.35;">Crie uma senha para poder entrar novamente depois de limpar os dados ou trocar de dispositivo.</small>
+        <input id="nickPasswordManageInput" type="password" autocomplete="new-password" minlength="6" placeholder="Nova senha — mínimo de 6 caracteres" style="display:block; width:100%; box-sizing:border-box; padding:10px; border-radius:8px; border:none; margin-bottom:8px;" />
+        <button id="nickPasswordManageBtn" type="button" onclick="createNickPassword()">Criar senha de acesso</button>
       </div>
       <button id="changeNickBtn" onclick="changeNick()" style="display:none; margin-top:10px;">🔄 Mudar Nick</button>
     </div>
@@ -1098,6 +1106,73 @@ gtag('config', 'G-FJT3X93608');
       return false;
     });
 
+    // Diálogos internos evitam o alerta nativo do navegador, que exibe a
+    // origem/endereço da página no título da notificação.
+    const appDialogState = { queue: [], active: false };
+    function sanitizeDialogText(value) {
+      return String(value == null ? "" : value)
+        .replace(/https?:\/\/\S+/gi, "")
+        .replace(/www\.\S+/gi, "")
+        .replace(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/gi, "")
+        .replace(/\s{2,}/g, " ")
+        .trim();
+    }
+    function ensureAppDialog() {
+      if (document.getElementById("appDialogOverlay")) return document.getElementById("appDialogOverlay");
+      const style = document.createElement("style");
+      style.id = "app-dialog-style";
+      style.textContent = `
+        #appDialogOverlay{position:fixed;inset:0;z-index:100000;display:none;align-items:center;justify-content:center;padding:22px;background:rgba(4,0,15,.72);backdrop-filter:blur(8px)}
+        #appDialogCard{width:min(420px,calc(100vw - 36px));box-sizing:border-box;padding:24px;border:1px solid rgba(255,255,255,.2);border-radius:20px;background:linear-gradient(145deg,#25123d,#15091f);color:#fff;box-shadow:0 20px 80px rgba(0,0,0,.6);font-family:Arial,sans-serif}
+        #appDialogTitle{margin:0 0 12px;font-size:20px;font-weight:700}
+        #appDialogMessage{margin:0;white-space:pre-wrap;line-height:1.5;color:#f2eafa;font-size:15px}
+        #appDialogActions{display:flex;justify-content:flex-end;gap:10px;margin-top:22px}
+        #appDialogActions button{min-width:92px;padding:10px 16px;border:1px solid rgba(255,255,255,.25);border-radius:12px;background:#7c3aed;color:#fff;font-weight:700;cursor:pointer}
+        #appDialogCancel{background:transparent!important;color:#ddd!important}
+      `;
+      document.head.appendChild(style);
+      const overlay = document.createElement("div");
+      overlay.id = "appDialogOverlay";
+      overlay.setAttribute("role", "dialog");
+      overlay.setAttribute("aria-modal", "true");
+      overlay.innerHTML = `<div id="appDialogCard"><h3 id="appDialogTitle">Spotted Unila</h3><p id="appDialogMessage"></p><div id="appDialogActions"><button id="appDialogCancel" type="button">Cancelar</button><button id="appDialogOk" type="button">OK</button></div></div>`;
+      document.body.appendChild(overlay);
+      return overlay;
+    }
+    function renderNextAppDialog() {
+      if (appDialogState.active || !appDialogState.queue.length) return;
+      const item = appDialogState.queue.shift();
+      const overlay = ensureAppDialog();
+      const message = document.getElementById("appDialogMessage");
+      const cancel = document.getElementById("appDialogCancel");
+      const ok = document.getElementById("appDialogOk");
+      appDialogState.active = true;
+      message.textContent = sanitizeDialogText(item.message);
+      cancel.style.display = item.confirm ? "inline-block" : "none";
+      overlay.style.display = "flex";
+      const finish = (result) => {
+        overlay.style.display = "none";
+        appDialogState.active = false;
+        item.resolve(result);
+        setTimeout(renderNextAppDialog, 0);
+      };
+      ok.onclick = () => finish(true);
+      cancel.onclick = () => finish(false);
+      ok.focus();
+    }
+    function appAlert(message) {
+      return new Promise(resolve => {
+        appDialogState.queue.push({ message: message, confirm: false, resolve: resolve });
+        renderNextAppDialog();
+      });
+    }
+    function appConfirm(message) {
+      return new Promise(resolve => {
+        appDialogState.queue.push({ message: message, confirm: true, resolve: resolve });
+        renderNextAppDialog();
+      });
+    }
+
     const FIRESTORE_RETRY_LIMIT = 3;
     function delay(ms) {
       return new Promise(resolve => setTimeout(resolve, ms));
@@ -1192,6 +1267,154 @@ gtag('config', 'G-FJT3X93608');
     }
     function userClaimDocId(uid) {
       return "__uid__" + String(uid || "");
+    }
+
+    const NICK_PASSWORD_MIN_LENGTH = 6;
+    function nickAuthKey(value) {
+      const text = normalizeNick(value);
+      let first = 2166136261;
+      let second = 2654435761;
+      for (let index = 0; index < text.length; index++) {
+        const code = text.charCodeAt(index);
+        first ^= code;
+        first = Math.imul(first, 16777619);
+        second ^= code + index;
+        second = Math.imul(second, 2246822519);
+      }
+      return (first >>> 0).toString(16).padStart(8, "0") + (second >>> 0).toString(16).padStart(8, "0");
+    }
+    // O e-mail abaixo é apenas um identificador técnico interno do Firebase.
+    // O usuário nunca precisa conhecer, confirmar ou receber esse endereço.
+    function nickAuthEmail(value) {
+      return "nick." + nickAuthKey(value) + "@auth.spottedunila.app";
+    }
+    function authErrorCode(error) { return error && error.code ? String(error.code) : ""; }
+    function authErrorIsEmailInUse(error) {
+      return ["auth/email-already-in-use", "auth/credential-already-in-use", "auth/provider-already-linked"].includes(authErrorCode(error));
+    }
+    function refreshNickCredentialUI() {
+      const panel = document.getElementById("nickPasswordManage");
+      if (panel) panel.style.display = (nick && firebaseUser && firebaseUser.isAnonymous) ? "block" : "none";
+    }
+    async function createNickPassword() {
+      const passwordField = document.getElementById("nickPasswordManageInput");
+      const button = document.getElementById("nickPasswordManageBtn");
+      const password = passwordField ? passwordField.value : "";
+      if (!nick) { appAlert("Defina um nick antes de criar a senha."); return; }
+      if (password.length < NICK_PASSWORD_MIN_LENGTH) { appAlert("Crie uma senha com pelo menos 6 caracteres."); return; }
+      if (!firebaseUser || !firebaseUser.isAnonymous) { appAlert("Este acesso já possui uma senha."); return; }
+      const originalText = button ? button.textContent : "Criar senha de acesso";
+      try {
+        if (button) { button.disabled = true; button.textContent = "Salvando..."; }
+        const email = nickAuthEmail(nick);
+        const credential = firebase.auth.EmailAuthProvider.credential(email, password);
+        try {
+          const linked = await firebaseUser.linkWithCredential(credential);
+          firebaseUser = linked.user;
+          firebaseUid = linked.user.uid;
+        } catch (error) {
+          if (!authErrorIsEmailInUse(error)) throw error;
+          await auth.signOut();
+          const signedIn = await auth.signInWithEmailAndPassword(email, password);
+          firebaseUser = signedIn.user;
+          firebaseUid = signedIn.user.uid;
+        }
+        await reserveNickForCurrentUser(nick);
+        localStorage.setItem("chat_nick", nick);
+        localStorage.setItem("chat_uid", firebaseUid);
+        if (passwordField) passwordField.value = "";
+        refreshNickCredentialUI();
+        appAlert("Senha criada. Agora você poderá entrar com este nick e esta senha em outro dispositivo.");
+      } catch (error) {
+        console.error("Erro ao criar senha do nick:", error);
+        if (authErrorCode(error) === "auth/weak-password") appAlert("A senha precisa ter pelo menos 6 caracteres.");
+        else if (authErrorIsEmailInUse(error)) appAlert("Esse acesso já existe. Use o mesmo nick e senha na tela de entrada.");
+        else appAlert("Não foi possível criar a senha agora. Tente novamente.");
+      } finally {
+        if (button) { button.disabled = false; button.textContent = originalText; }
+      }
+    }
+    async function readNickOwnership(input) {
+      const users = db.collection(USERS_COLLECTION);
+      const canonical = await firestoreGet(users.doc(nickClaimDocId(input)));
+      const legacy = await firestoreGet(users.doc(String(input).trim()));
+      const canonicalData = canonical.exists ? (canonical.data() || {}) : {};
+      const legacyData = legacy.exists ? (legacy.data() || {}) : {};
+      const ownerUid = canonicalData.uid || legacyData.uid || null;
+      return {
+        found: canonical.exists || legacy.exists,
+        ownerUid: ownerUid,
+        canonical: canonicalData,
+        legacy: legacyData
+      };
+    }
+    function nickLoginError(code, message) {
+      const error = new Error(message);
+      error.code = code;
+      return error;
+    }
+    async function loginOrCreateNick(input, password){
+      await waitForFirebaseReady();
+      const current = auth.currentUser;
+      const ownership = await readNickOwnership(input);
+      const email = nickAuthEmail(input);
+      const currentOwnsNick = !!(ownership.ownerUid && current && ownership.ownerUid === current.uid);
+      let reservationCreatedByThisAttempt = false;
+
+      if (current && current.isAnonymous && (!ownership.ownerUid || currentOwnsNick)) {
+        // Reserva o nick enquanto a conta ainda é anônima. Como o UID não muda
+        // ao usar linkWithCredential, o nick continua pertencendo ao usuário.
+        if (!currentOwnsNick) {
+          await reserveNickForCurrentUser(input);
+          reservationCreatedByThisAttempt = true;
+        }
+        try {
+          const credential = firebase.auth.EmailAuthProvider.credential(email, password);
+          const linked = await current.linkWithCredential(credential);
+          firebaseUser = linked.user;
+          firebaseUid = linked.user.uid;
+        } catch (error) {
+          if (!authErrorIsEmailInUse(error)) throw error;
+          if (reservationCreatedByThisAttempt) await releaseNickReservation(input, current.uid);
+          await auth.signOut();
+          const credential = await auth.signInWithEmailAndPassword(email, password);
+          firebaseUser = credential.user;
+          firebaseUid = credential.user.uid;
+        }
+      } else {
+        // O nick já tem uma credencial: o novo dispositivo entra por ela.
+        if (auth.currentUser) await auth.signOut();
+        const credential = await auth.signInWithEmailAndPassword(email, password);
+        firebaseUser = credential.user;
+        firebaseUid = credential.user.uid;
+      }
+
+      const afterAuth = await readNickOwnership(input);
+      if (afterAuth.ownerUid && afterAuth.ownerUid !== firebaseUid) {
+        await auth.signOut();
+        const anonymous = await auth.signInAnonymously();
+        firebaseUser = anonymous.user;
+        firebaseUid = anonymous.user.uid;
+        throw nickLoginError("nick-already-taken", "Esse nick já está vinculado a outro usuário.");
+      }
+
+      return reserveNickForCurrentUser(input);
+    }
+
+    async function releaseNickReservation(ownerNick, ownerUid) {
+      if (!ownerNick || !ownerUid) return;
+      await withFirestoreRetry(() => db.runTransaction(async transaction => {
+        const users = db.collection(USERS_COLLECTION);
+        const legacyRef = users.doc(ownerNick);
+        const canonicalRef = users.doc(nickClaimDocId(ownerNick));
+        const uidRef = users.doc(userClaimDocId(ownerUid));
+        const uidDoc = await transaction.get(uidRef);
+        const canonicalDoc = await transaction.get(canonicalRef);
+        const legacyDoc = await transaction.get(legacyRef);
+        if (uidDoc.exists && (uidDoc.data() || {}).uid === ownerUid) transaction.delete(uidRef);
+        if (canonicalDoc.exists && (canonicalDoc.data() || {}).uid === ownerUid) transaction.delete(canonicalRef);
+        if (legacyDoc.exists && (legacyDoc.data() || {}).uid === ownerUid) transaction.delete(legacyRef);
+      }));
     }
 
     async function reserveNickForCurrentUser(input) {
@@ -1309,6 +1532,18 @@ gtag('config', 'G-FJT3X93608');
         return true;
       }
 
+      // Ao trocar de nick, a credencial anterior deixa de ser a identidade
+      // ativa e uma nova senha poderá ser criada para o novo nick.
+      if (firebaseUser && !firebaseUser.isAnonymous) {
+        try {
+          await auth.signOut();
+          const anonymous = await auth.signInAnonymously();
+          firebaseUser = anonymous.user;
+          firebaseUid = anonymous.user.uid;
+        } catch (error) {
+          console.warn("Não foi possível iniciar uma nova sessão anônima:", error);
+        }
+      }
       localStorage.removeItem("chat_nick");
       localStorage.removeItem("chat_uid");
       nick = "";
@@ -1856,11 +2091,11 @@ gtag('config', 'G-FJT3X93608');
     const MAX_IMAGE_UPLOAD_BYTES = 5 * 1024 * 1024;
     function isValidImageFile(file) {
       if (!file || !file.type || !file.type.startsWith('image/')) {
-        alert('Selecione um arquivo de imagem válido.');
+        appAlert('Selecione um arquivo de imagem válido.');
         return false;
       }
       if (file.size > MAX_IMAGE_UPLOAD_BYTES) {
-        alert('A imagem deve ter no máximo 5 MB.');
+        appAlert('A imagem deve ter no máximo 5 MB.');
         return false;
       }
       return true;
@@ -1876,7 +2111,7 @@ gtag('config', 'G-FJT3X93608');
         const data = await response.json();
         if (!response.ok || !data.secure_url) throw new Error(data.error?.message || 'Upload rejeitado.');
         return data.secure_url;
-      } catch (e) { console.error(e); alert('Não foi possível enviar a imagem.'); return null; }
+      } catch (e) { console.error(e); appAlert('Não foi possível enviar a imagem.'); return null; }
     }
 
     function handleImageSelect(event) {
@@ -2058,7 +2293,7 @@ padding:0 2px;">↩ Responder</button>`;
     }
 
     async function reactMessage(messageId, reactionType) {
-      if (!nick) { alert("Defina um nick para reagir."); return; }
+      if (!nick) { appAlert("Defina um nick para reagir."); return; }
       isReacting = true;
       const ref = db.collection("chat").doc(messageId);
       try {
@@ -2102,15 +2337,15 @@ padding:0 2px;">↩ Responder</button>`;
     async function sendAdminResetEmail(){
       const emailEl = document.getElementById("adminEmailInput");
       const email = (emailEl ? emailEl.value : "").trim().toLowerCase();
-      if (email !== ADMIN_EMAIL) { alert("Use o e-mail administrativo autorizado."); return; }
+      if (email !== ADMIN_EMAIL) { appAlert("Use o e-mail administrativo autorizado."); return; }
       const btn = document.getElementById("adminResetBtn");
       if (btn) { btn.disabled = true; btn.textContent = "Enviando..."; }
       try {
         await auth.sendPasswordResetEmail(email);
-        alert("Enviamos um link de redefinição para o e-mail administrativo. Verifique também a pasta de spam.");
+        appAlert("Enviamos um link de redefinição para o e-mail administrativo. Verifique também a pasta de spam.");
       } catch (e) {
         console.error("Erro ao enviar redefinição:", e);
-        alert("Não foi possível enviar a redefinição. Verifique se a conta existe no Firebase Authentication e se o provedor e-mail/senha está habilitado.");
+        appAlert("Não foi possível enviar a redefinição. Verifique se a conta existe no Firebase Authentication e se o provedor e-mail/senha está habilitado.");
       } finally {
         if (btn) { btn.disabled = false; btn.textContent = "Esqueci a senha"; }
       }
@@ -2122,7 +2357,7 @@ padding:0 2px;">↩ Responder</button>`;
       const btn = document.getElementById("adminLoginBtn");
       const email = (emailEl ? emailEl.value : "").trim().toLowerCase();
       const password = passwordEl ? passwordEl.value : "";
-      if (!email || !password) { alert("Informe o e-mail e a senha administrativa."); return; }
+      if (!email || !password) { appAlert("Informe o e-mail e a senha administrativa."); return; }
       if (btn) { btn.disabled = true; btn.textContent = "Entrando..."; }
       try {
         const credential = await auth.signInWithEmailAndPassword(email, password);
@@ -2138,7 +2373,7 @@ padding:0 2px;">↩ Responder</button>`;
         await saveNick(document.getElementById("nickEnterBtn"));
       } catch (e) {
         console.error("Erro no login administrativo:", e);
-        alert("Não foi possível entrar como Fernando. Verifique se o login por e-mail/senha está habilitado no Firebase e se a conta está correta.");
+        appAlert("Não foi possível entrar como Fernando. Verifique se o login por e-mail/senha está habilitado no Firebase e se a conta está correta.");
       } finally {
         if (btn) { btn.disabled = false; btn.textContent = "Entrar como Fernando"; }
       }
@@ -2148,29 +2383,61 @@ padding:0 2px;">↩ Responder</button>`;
       const btn = triggerButton || ((typeof event !== "undefined" && event && event.target) ? event.target : document.getElementById("nickEnterBtn"));
       const originalText = btn ? btn.textContent : "Entrar";
       const input = document.getElementById("nickInput").value.trim();
-      if(!input) { alert("Digite um Nick!"); return; }
+      const passwordField = document.getElementById("nickPasswordInput");
+      const password = passwordField ? passwordField.value : "";
+      if(!input) { appAlert("Digite um nick."); return; }
 
-      if (input === ADMIN_NICK && (!firebaseUser || (firebaseUser.email || "").toLowerCase() !== ADMIN_EMAIL)) {
-        showAdminLogin();
+      // O acesso administrativo continua usando o fluxo separado por e-mail.
+      if (input === ADMIN_NICK) {
+        if (!firebaseUser || (firebaseUser.email || "").toLowerCase() !== ADMIN_EMAIL) {
+          showAdminLogin();
+          return;
+        }
+        try {
+          if (btn) { btn.disabled = true; btn.textContent = "Verificando..."; }
+          const reservation = await reserveNickForCurrentUser(input);
+          nick = reservation.nick || input;
+          localStorage.setItem("chat_nick", nick);
+          localStorage.setItem("chat_uid", firebaseUid);
+          document.getElementById("nickArea").style.display="none";
+          document.getElementById("chatArea").style.display="block";
+          document.getElementById("changeNickBtn").style.display = "block";
+          shouldScrollToBottom = true;
+          listenChat();
+        } catch (error) {
+          if (error && error.code === "nick-already-taken") appAlert("Nick em uso e vinculado a outro usuário.");
+          else appAlert("Não foi possível confirmar o acesso agora.");
+        } finally {
+          if (btn) { btn.disabled = false; btn.textContent = originalText; }
+        }
+        return;
+      }
+
+      if (password.length < NICK_PASSWORD_MIN_LENGTH) {
+        appAlert("Crie uma senha com pelo menos 6 caracteres.");
         return;
       }
 
       try {
-        if (btn) { btn.disabled = true; btn.textContent = "Verificando..."; }
-        await reserveNickForCurrentUser(input);
-        nick = input;
+        if (btn) { btn.disabled = true; btn.textContent = "Entrando..."; }
+        const reservation = await loginOrCreateNick(input, password);
+        nick = reservation.nick || input;
         localStorage.setItem("chat_nick", nick);
         localStorage.setItem("chat_uid", firebaseUid);
+        if (passwordField) passwordField.value = "";
         if (typeof window.unilaRefreshTranslations === "function") window.unilaRefreshTranslations();
         document.getElementById("nickArea").style.display="none";
         document.getElementById("chatArea").style.display="block";
-        if(nick === ADMIN_NICK) document.getElementById("changeNickBtn").style.display = "block";
+        document.getElementById("changeNickBtn").style.display = "none";
         shouldScrollToBottom = true;
+        refreshNickCredentialUI();
         listenChat();
-      } catch (e) {
-        if (e && e.code === "nick-already-taken") alert("Nick em uso e vinculado a outro usuário.");
-        else if (e && e.code === "nick-already-owned") alert("Este usuário já possui outro nick.");
-        else alert("Erro: " + e.message);
+      } catch (error) {
+        if (error && error.code === "nick-already-taken") appAlert("Nick em uso e vinculado a outro usuário.");
+        else if (error && error.code === "nick-already-owned") appAlert("Este usuário já possui outro nick.");
+        else if (["auth/wrong-password", "auth/invalid-credential", "auth/user-not-found"].includes(authErrorCode(error))) appAlert("Nick ou senha inválidos.");
+        else if (authErrorCode(error) === "auth/weak-password") appAlert("A senha precisa ter pelo menos 6 caracteres.");
+        else appAlert("Não foi possível entrar agora. Verifique o nick e a senha.");
       } finally {
         if (btn) { btn.disabled = false; btn.textContent = originalText; }
       }
@@ -2179,22 +2446,19 @@ padding:0 2px;">↩ Responder</button>`;
     async function changeNick(){
       const oldNick = nick;
       try {
-        if (oldNick && firebaseUid) {
-          await withFirestoreRetry(() => db.runTransaction(async transaction => {
-            const users = db.collection(USERS_COLLECTION);
-            const legacyRef = users.doc(oldNick);
-            const canonicalRef = users.doc(nickClaimDocId(oldNick));
-            const uidRef = users.doc(userClaimDocId(firebaseUid));
-            const uidDoc = await transaction.get(uidRef);
-            const canonicalDoc = await transaction.get(canonicalRef);
-            const legacyDoc = await transaction.get(legacyRef);
-            if (uidDoc.exists && (uidDoc.data() || {}).uid === firebaseUid) transaction.delete(uidRef);
-            if (canonicalDoc.exists && (canonicalDoc.data() || {}).uid === firebaseUid) transaction.delete(canonicalRef);
-            if (legacyDoc.exists && (legacyDoc.data() || {}).uid === firebaseUid) transaction.delete(legacyRef);
-          }));
-        }
+        if (oldNick && firebaseUid) await releaseNickReservation(oldNick, firebaseUid);
       } catch (error) {
         console.warn("Não foi possível liberar a reserva anterior do nick:", error);
+      }
+      if (firebaseUser && !firebaseUser.isAnonymous) {
+        try {
+          await auth.signOut();
+          const anonymous = await auth.signInAnonymously();
+          firebaseUser = anonymous.user;
+          firebaseUid = anonymous.user.uid;
+        } catch (error) {
+          console.warn("Não foi possível iniciar uma nova sessão anônima:", error);
+        }
       }
       localStorage.removeItem("chat_nick");
       localStorage.removeItem("chat_uid");
@@ -2430,7 +2694,7 @@ padding:0 2px;">↩ Responder</button>`;
       const desc = document.getElementById("adDesc").value.trim();
       const whatsapp = document.getElementById("adWhatsapp").value.trim();
       const isAnonymous = document.getElementById("adAnonymous").checked;
-      if (!title || !price || !desc || !whatsapp) { alert("Preencha tudo!"); return; }
+      if (!title || !price || !desc || !whatsapp) { appAlert("Preencha tudo!"); return; }
       const btn = document.getElementById("btnSaveAd"); btn.disabled = true; btn.textContent = "Salvando...";
       try {
         const uploadedPhotos = {};
@@ -2445,7 +2709,7 @@ padding:0 2px;">↩ Responder</button>`;
         if (currentAdId) { await db.collection("desapega").doc(currentAdId).update(adData); editingAdId = null; document.getElementById("adId").value = ""; }
         else { adData.createdAt = Date.now(); adData.replies = []; await db.collection("desapega").add(adData); }
         toggleDesapegaForm();
-      } catch (e) { alert("Erro: " + e.message); } finally { btn.disabled = false; btn.textContent = "Salvar"; }
+      } catch (e) { appAlert("Erro: " + e.message); } finally { btn.disabled = false; btn.textContent = "Salvar"; }
     }
 
     function dataURLtoFile(dataurl, filename) {
@@ -2514,7 +2778,7 @@ padding:0 2px;">↩ Responder</button>`;
     }
 
     async function sendAdReply(adId) {
-      if (!nick) { alert("Defina um nick para responder."); return; }
+      if (!nick) { appAlert("Defina um nick para responder."); return; }
       const input = document.getElementById(`replyInput_${adId}`);
       const text = input.value.trim();
       if (!text) return;
@@ -2532,7 +2796,7 @@ padding:0 2px;">↩ Responder</button>`;
           transaction.update(adRef, { replies: replies });
         });
         input.value = "";
-      } catch (e) { alert("Erro ao responder: " + e.message); }
+      } catch (e) { appAlert("Erro ao responder: " + e.message); }
       finally { btn.disabled = false; }
     }
 
@@ -2572,7 +2836,7 @@ padding:0 2px;">↩ Responder</button>`;
           replies.splice(replyIndex, 1);
           transaction.update(adRef, { replies: replies });
         });
-      } catch (e) { alert("Erro ao excluir resposta: " + e.message); }
+      } catch (e) { appAlert("Erro ao excluir resposta: " + e.message); }
     }
 
     function editAd(id, adJson) {
@@ -2598,7 +2862,7 @@ padding:0 2px;">↩ Responder</button>`;
 
     async function deleteAd(id) {
       if (!(await showSimpleConfirm("Excluir este anúncio?"))) return;
-      try { await db.collection("desapega").doc(id).delete(); } catch(e) { alert(e.message); }
+      try { await db.collection("desapega").doc(id).delete(); } catch(e) { appAlert(e.message); }
     }
     function cancelAdEdit() { toggleDesapegaForm(); }
 
@@ -2614,7 +2878,7 @@ padding:0 2px;">↩ Responder</button>`;
         await authReady;
       } catch (error) {
         console.error("Não foi possível autenticar no Firebase:", error);
-        alert("Não foi possível conectar ao sistema de autenticação. Verifique sua internet e tente novamente.");
+        appAlert("Não foi possível conectar ao sistema de autenticação. Verifique sua internet e tente novamente.");
         return;
       }
 
@@ -2627,6 +2891,7 @@ padding:0 2px;">↩ Responder</button>`;
 
       atualizarDataBar(); loadAllContent(); listenContentChanges(); setupPWAUpdate(); listenGlobalRestriction(); listenConhecaMediaChanges();
       await restoreNickForCurrentUser();
+      refreshNickCredentialUI();
       if (nick === ADMIN_NICK && (!firebaseUser || (firebaseUser.email || "").toLowerCase() !== ADMIN_EMAIL)) {
         nick = "";
         localStorage.removeItem("chat_nick");
@@ -3099,10 +3364,8 @@ padding:0 2px;">↩ Responder</button>`;
     var selector = document.getElementById("languageSelect");
     if (selector) selector.addEventListener("change", function(){ changeLanguage(this.value); });
 
-    var originalAlert = window.alert.bind(window);
-    var originalConfirm = window.confirm.bind(window);
-    window.alert = function(message){ return originalAlert(translatedRuntimeText(message)); };
-    window.confirm = function(message){ return originalConfirm(translatedRuntimeText(message)); };
+    // As mensagens são exibidas pelo diálogo interno do app, sem diálogos nativos
+    // e sem revelar a origem/endereço da página.
 
     if (typeof window.atualizarDataBar === "function") window.atualizarDataBar = updateDateBar;
     if (typeof window.formatarDataMensagem === "function") {
@@ -3253,10 +3516,10 @@ padding:0 2px;">↩ Responder</button>`;
   function escapeText(value){ return String(value || ""); }
   window.requestDataDeletion = async function(){
     if (typeof db === "undefined" || typeof firebaseUid === "undefined" || !firebaseUid) {
-      alert("A sessão ainda não está pronta. Tente novamente em alguns segundos.");
+      appAlert("A sessão ainda não está pronta. Tente novamente em alguns segundos.");
       return;
     }
-    if (!window.confirm("Excluir seus dados do Spotted Unila? Esta ação tenta remover seu nick, mensagens, anúncios, respostas e preferências locais.")) return;
+    if (!await appConfirm("Excluir seus dados do Spotted Unila? Esta ação tenta remover seu nick, mensagens, anúncios, respostas e preferências locais.")) return;
     var currentNick = getNick();
     var deletedChat = new Set();
     var deletedAds = new Set();
@@ -3312,14 +3575,14 @@ padding:0 2px;">↩ Responder</button>`;
       ["chat_nick", "chat_uid", "notes", "spotted_blocked_users", TERMS_KEY, "spotted_academic_draft_v1_" + firebaseUid, "spotted_notes_backup_v1_" + firebaseUid].forEach(function(key){ localStorage.removeItem(key); });
       nick = "";
       if (authDeletionError) {
-        alert("Os dados próprios e as preferências locais foram removidos. Respostas em anúncios de terceiros foram encaminhadas para revisão manual; use também o canal externo da Política de Privacidade.");
+        appAlert("Os dados próprios e as preferências locais foram removidos. Respostas em anúncios de terceiros foram encaminhadas para revisão manual; use também o canal externo da Política de Privacidade.");
       } else {
-        alert("Solicitação concluída: seus dados próprios e preferências locais foram removidos. Respostas em anúncios de terceiros foram encaminhadas para revisão manual.");
+        appAlert("Solicitação concluída: seus dados próprios e preferências locais foram removidos. Respostas em anúncios de terceiros foram encaminhadas para revisão manual.");
       }
       window.location.reload();
     } catch (error) {
       console.error("Erro ao excluir dados:", error);
-      alert("Não foi possível concluir a exclusão agora. Use o canal externo da Política de Privacidade para solicitar revisão.");
+      appAlert("Não foi possível concluir a exclusão agora. Use o canal externo da Política de Privacidade para solicitar revisão.");
     }
   };
   function getBlocked(){
@@ -3334,7 +3597,7 @@ padding:0 2px;">↩ Responder</button>`;
     var blocked = getBlocked();
     if (blocked.indexOf(user) === -1) blocked.push(user);
     localStorage.setItem("spotted_blocked_users", JSON.stringify(blocked));
-    alert(currentLabels().blocked);
+    appAlert(currentLabels().blocked);
     applyBlockedUsers();
   };
 
@@ -3346,7 +3609,7 @@ padding:0 2px;">↩ Responder</button>`;
 
   window.acceptUGCPolicy = function(){
     var check = document.getElementById("ugcPolicyCheck");
-    if (!check || !check.checked) { alert(currentLabels().termsRequired); return; }
+    if (!check || !check.checked) { appAlert(currentLabels().termsRequired); return; }
     localStorage.setItem(TERMS_KEY, "yes");
     var modal = document.getElementById("ugcPolicyModal");
     if (modal) modal.style.display = "none";
@@ -3371,7 +3634,7 @@ padding:0 2px;">↩ Responder</button>`;
   };
 
   window.openUGCReport = function(type, targetId, targetLabel, targetUser){
-    if (!getNick()) { alert(currentLabels().nickRequired); return; }
+    if (!getNick()) { appAlert(currentLabels().nickRequired); return; }
     reportContext = { type:type, targetId:String(targetId || ""), targetLabel:String(targetLabel || ""), targetUser:String(targetUser || "") };
     var reason = document.getElementById("ugcReportReason");
     if (reason) reason.value = "";
@@ -3384,8 +3647,8 @@ padding:0 2px;">↩ Responder</button>`;
   window.submitUGCReport = async function(){
     var reasonEl = document.getElementById("ugcReportReason");
     var reason = reasonEl ? reasonEl.value.trim() : "";
-    if (!reason) { alert(currentLabels().reasonRequired); return; }
-    if (!reportContext || typeof db === "undefined") { alert(currentLabels().reportError); return; }
+    if (!reason) { appAlert(currentLabels().reasonRequired); return; }
+    if (!reportContext || typeof db === "undefined") { appAlert(currentLabels().reportError); return; }
     var btn = document.querySelector("#ugcReportModal .ugc-danger");
     if (btn) btn.disabled = true;
     try {
@@ -3401,11 +3664,11 @@ padding:0 2px;">↩ Responder</button>`;
         status: "open",
         source: "Spotted Unila"
       });
-      alert(currentLabels().reportSent);
+      appAlert(currentLabels().reportSent);
       window.closeUGCReport();
     } catch(e) {
       console.error("Erro ao registrar denúncia:", e);
-      alert(currentLabels().reportError);
+      appAlert(currentLabels().reportError);
     } finally { if (btn) btn.disabled = false; }
   };
 
