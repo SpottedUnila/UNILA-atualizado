@@ -592,7 +592,7 @@ button:hover{
   display:flex;
   align-items:center;
   gap:10px;
-  background: rgba(255,255,255,0.03)
+  background: rgba(255,255,255,0.03);
   backdrop-filter:blur(15px);
   padding:5px 5px 5px 15px;
   border-radius:30px;
@@ -1070,30 +1070,75 @@ gtag('config', 'G-FJT3X93608');
     const ADMIN_NICK = "Fernando";
     const ADMIN_EMAIL = "fernando2018a1986@gmail.com";
 
-    // AUTENTICAÇÃO ANÔNIMA DO FIREBASE
-    // Cada instalação/sessão persistente recebe um UID próprio do Firebase.
+    // AUTENTICAÇÃO PERSISTENTE DO FIREBASE
+    // A persistência LOCAL mantém o mesmo UID entre reinicializações do app,
+    // permitindo recuperar o nick, as anotações e as metas do usuário.
     let firebaseUser = null;
     let firebaseUid = null;
 
-    const authReady = new Promise((resolve, reject) => {
-      const unsubscribeAuth = auth.onAuthStateChanged((user) => {
-        if (user) {
-          firebaseUser = user;
-          firebaseUid = user.uid;
-          console.log("Firebase Authentication ativo. UID:", firebaseUid);
-          unsubscribeAuth();
-          resolve(user);
-        }
-      });
-
-      if (!auth.currentUser) {
-        auth.signInAnonymously().catch((error) => {
-          console.error("Erro ao fazer login anônimo no Firebase:", error);
-          reject(error);
-        });
+    const authReady = (async () => {
+      try {
+        await auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
+      } catch (error) {
+        console.warn("Não foi possível ativar a persistência local do Firebase:", error);
       }
+      if (!auth.currentUser) await auth.signInAnonymously();
+      firebaseUser = auth.currentUser;
+      firebaseUid = firebaseUser ? firebaseUser.uid : null;
+      if (!firebaseUser || !firebaseUid) throw new Error("O Firebase não retornou um usuário autenticado.");
+      console.log("Firebase Authentication ativo. UID:", firebaseUid);
+      return firebaseUser;
+    })().catch((error) => {
+      console.error("Erro ao iniciar a autenticação do Firebase:", error);
+      throw error;
     });
-    db.enablePersistence().catch((err) => console.log("Erro offline:", err));
+
+    const firestorePersistenceReady = db.enablePersistence().catch((err) => {
+      console.warn("Persistência offline indisponível nesta aba:", err);
+      return false;
+    });
+
+    const FIRESTORE_RETRY_LIMIT = 3;
+    function delay(ms) {
+      return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    function isRetryableFirestoreError(error) {
+      return !!(error && ["aborted", "deadline-exceeded", "failed-precondition", "internal", "network-request-failed", "resource-exhausted", "unavailable"].includes(error.code));
+    }
+
+    async function waitForFirebaseReady() {
+      await authReady;
+      await firestorePersistenceReady;
+      if (!firebaseUid) throw new Error("Sessão Firebase ainda não está pronta.");
+    }
+
+    async function withFirestoreRetry(operation) {
+      await waitForFirebaseReady();
+      let lastError = null;
+      for (let attempt = 0; attempt < FIRESTORE_RETRY_LIMIT; attempt++) {
+        try {
+          return await operation();
+        } catch (error) {
+          lastError = error;
+          if (!isRetryableFirestoreError(error) || attempt === FIRESTORE_RETRY_LIMIT - 1) throw error;
+          await delay(350 * (attempt + 1));
+        }
+      }
+      throw lastError || new Error("Operação Firestore não concluída.");
+    }
+
+    function firestoreGet(reference) {
+      return withFirestoreRetry(() => reference.get());
+    }
+
+    function firestoreSet(reference, value, options) {
+      return withFirestoreRetry(() => reference.set(value, options || {}));
+    }
+
+    function firestoreDelete(reference) {
+      return withFirestoreRetry(() => reference.delete());
+    }
 
     // VERIFICAÇÃO GLOBAL DE BANIMENTO
     // O documento em bannedUsers usa o Firebase UID como ID.
@@ -1135,6 +1180,141 @@ gtag('config', 'G-FJT3X93608');
     }
 
     let nick = localStorage.getItem("chat_nick") || "";
+
+    // Reservas canônicas: um documento por nick normalizado e um documento
+    // por UID. O vínculo não expira por inatividade e é validado em transação.
+    const USERS_COLLECTION = "users";
+    function normalizeNick(value) {
+      return String(value || "").trim().normalize("NFKC").toLocaleLowerCase("pt-BR").replace(/\s+/g, " ");
+    }
+    function nickClaimDocId(value) {
+      return "__nick__" + encodeURIComponent(normalizeNick(value));
+    }
+    function userClaimDocId(uid) {
+      return "__uid__" + String(uid || "");
+    }
+
+    async function reserveNickForCurrentUser(input) {
+      const displayNick = String(input || "").trim();
+      const normalized = normalizeNick(displayNick);
+      if (!displayNick || !normalized) throw new Error("Digite um nick válido.");
+      if (/[\/]/.test(displayNick)) {
+        const error = new Error("O nick não pode conter barras.");
+        error.code = "invalid-nick";
+        throw error;
+      }
+      if (displayNick.startsWith("__uid__") || displayNick.startsWith("__nick__")) {
+        const error = new Error("Esse formato de nick é reservado pelo sistema.");
+        error.code = "invalid-nick";
+        throw error;
+      }
+
+      const users = db.collection(USERS_COLLECTION);
+      const legacyRef = users.doc(displayNick);
+      const canonicalRef = users.doc(nickClaimDocId(displayNick));
+      const uidRef = users.doc(userClaimDocId(firebaseUid));
+
+      return withFirestoreRetry(() => db.runTransaction(async transaction => {
+        // Todas as leituras vêm antes das gravações para que dois usuários que
+        // tentem o mesmo nick ao mesmo tempo não consigam ambos reservá-lo.
+        // O documento canônico usa o nick normalizado como ID, portanto também
+        // impede diferenças artificiais de maiúsculas/minúsculas e espaços.
+        const legacyDoc = await transaction.get(legacyRef);
+        const canonicalDoc = await transaction.get(canonicalRef);
+        const uidDoc = await transaction.get(uidRef);
+
+        const owners = [];
+        if (legacyDoc.exists) owners.push((legacyDoc.data() || {}).uid);
+        if (canonicalDoc.exists) owners.push((canonicalDoc.data() || {}).uid);
+        if (owners.filter(Boolean).some(owner => owner !== firebaseUid)) {
+          const error = new Error("Esse nick já está vinculado a outro usuário.");
+          error.code = "nick-already-taken";
+          throw error;
+        }
+
+        const uidData = uidDoc.exists ? (uidDoc.data() || {}) : {};
+        if (uidData.nickNormalized && uidData.nickNormalized !== normalized) {
+          const error = new Error("Este usuário já possui outro nick reservado.");
+          error.code = "nick-already-owned";
+          throw error;
+        }
+
+        const legacyData = legacyDoc.exists ? (legacyDoc.data() || {}) : {};
+        const canonicalData = canonicalDoc.exists ? (canonicalDoc.data() || {}) : {};
+        const now = Date.now();
+        const createdAt = legacyData.createdAt || canonicalData.createdAt || uidData.createdAt || now;
+        const reservation = {
+          uid: firebaseUid,
+          ownerUid: firebaseUid,
+          nick: displayNick,
+          nickNormalized: normalized,
+          lastActive: now,
+          updatedAt: now,
+          createdAt: createdAt,
+          source: "Spotted Unila"
+        };
+
+        transaction.set(legacyRef, reservation, { merge: true });
+        transaction.set(canonicalRef, reservation, { merge: true });
+        transaction.set(uidRef, {
+          uid: firebaseUid,
+          nick: displayNick,
+          nickNormalized: normalized,
+          nickClaimId: nickClaimDocId(displayNick),
+          createdAt: createdAt,
+          updatedAt: now,
+          source: "Spotted Unila"
+        }, { merge: true });
+        return reservation;
+      }));
+    }
+
+    async function restoreNickForCurrentUser() {
+      const savedNick = String(localStorage.getItem("chat_nick") || "").trim();
+      const savedUid = String(localStorage.getItem("chat_uid") || "");
+      if (!savedNick || !firebaseUid) {
+        nick = "";
+        return false;
+      }
+      if (savedUid && savedUid !== firebaseUid) {
+        localStorage.removeItem("chat_nick");
+        localStorage.removeItem("chat_uid");
+        nick = "";
+        return false;
+      }
+
+      try {
+        const claim = await firestoreGet(db.collection(USERS_COLLECTION).doc(userClaimDocId(firebaseUid)));
+        if (claim.exists && claim.data().uid === firebaseUid && claim.data().nick) {
+          nick = String(claim.data().nick);
+          localStorage.setItem("chat_nick", nick);
+          localStorage.setItem("chat_uid", firebaseUid);
+          return true;
+        }
+
+        // Migração de usuários da versão antiga, que possuía apenas users/{nick}.
+        const legacy = await firestoreGet(db.collection(USERS_COLLECTION).doc(savedNick));
+        if (legacy.exists && legacy.data().uid === firebaseUid) {
+          await reserveNickForCurrentUser(savedNick);
+          nick = savedNick;
+          localStorage.setItem("chat_nick", nick);
+          localStorage.setItem("chat_uid", firebaseUid);
+          return true;
+        }
+      } catch (error) {
+        // Mantém a sessão local somente quando o UID persistido é o mesmo;
+        // isso evita desconectar o usuário durante uma falha temporária de rede.
+        console.warn("Não foi possível validar o nick agora; mantendo a sessão local:", error);
+        nick = savedNick;
+        return true;
+      }
+
+      localStorage.removeItem("chat_nick");
+      localStorage.removeItem("chat_uid");
+      nick = "";
+      return false;
+    }
+
     const LIMIT = 10;
     let lastDoc = null;
     let loadingMore = false;
@@ -1466,6 +1646,29 @@ gtag('config', 'G-FJT3X93608');
       { id: "review", title: "META 14: Celebração e Revisão das Conquistas", prompt: "O que você já conseguiu aprender ou superar? Ao final de cada mês, revise suas metas, reconheça seu progresso, corrija o que não funcionou e comemore cada avanço." }
     ];
     const ACADEMIC_GOALS_COLLECTION = "academic_goals";
+    const ACADEMIC_DRAFT_KEY_PREFIX = "spotted_academic_draft_v1_";
+    function academicDraftStorageKey() { return ACADEMIC_DRAFT_KEY_PREFIX + String(firebaseUid || "pending"); }
+    function readAcademicDraft() {
+      try {
+        const draft = JSON.parse(localStorage.getItem(academicDraftStorageKey()) || "{}");
+        return draft && typeof draft === "object" ? draft : {};
+      } catch (error) { return {}; }
+    }
+    function saveAcademicDraft(goals) {
+      try { localStorage.setItem(academicDraftStorageKey(), JSON.stringify(goals || {})); }
+      catch (error) { console.warn("Não foi possível guardar o rascunho das metas:", error); }
+    }
+    function clearAcademicDraft() {
+      try { localStorage.removeItem(academicDraftStorageKey()); } catch (error) {}
+    }
+    function collectAcademicGoals() {
+      const goals = {};
+      ACADEMIC_GOALS.forEach(goal => {
+        const field = document.getElementById("academic-goal-" + goal.id);
+        goals[goal.id] = field ? field.value.trim() : "";
+      });
+      return goals;
+    }
 
     function academicGoalsStatus(message, isError) {
       const status = document.getElementById("academicGoalsStatus");
@@ -1491,9 +1694,11 @@ gtag('config', 'G-FJT3X93608');
       const goals = academicGoalsText();
       const copy = academicCopy();
       const existingValues = {};
+      const draft = readAcademicDraft();
       ACADEMIC_GOALS.forEach(goal => {
         const field = document.getElementById("academic-goal-" + goal.id);
         if (field) existingValues[goal.id] = field.value;
+        else if (typeof draft[goal.id] === "string") existingValues[goal.id] = draft[goal.id];
       });
       list.innerHTML = goals.map(goal => `
         <section class="academic-goal-card">
@@ -1503,7 +1708,10 @@ gtag('config', 'G-FJT3X93608');
         </section>
       `).join("");
       list.querySelectorAll("textarea").forEach(field => {
-        field.addEventListener("input", updateAcademicProgress);
+        field.addEventListener("input", () => {
+          updateAcademicProgress();
+          saveAcademicDraft(collectAcademicGoals());
+        });
         const goalId = field.getAttribute("data-goal-id");
         if (Object.prototype.hasOwnProperty.call(existingValues, goalId)) field.value = existingValues[goalId];
       });
@@ -1531,18 +1739,41 @@ gtag('config', 'G-FJT3X93608');
       academicGoalsStatus(academicCopy().load);
       try {
         await waitForAcademicAuth();
-        const snapshot = await db.collection(ACADEMIC_GOALS_COLLECTION).doc(firebaseUid).get();
-        const saved = snapshot.exists ? (snapshot.data().goals || {}) : {};
+        const snapshot = await firestoreGet(db.collection(ACADEMIC_GOALS_COLLECTION).doc(firebaseUid));
+        const reference = db.collection(ACADEMIC_GOALS_COLLECTION).doc(firebaseUid);
+        const cloudGoals = snapshot.exists ? (snapshot.data().goals || {}) : {};
+        const localDraft = readAcademicDraft();
+        // Um rascunho local representa uma alteração ainda não confirmada na
+        // nuvem e, por isso, tem prioridade até o próximo salvamento bem-sucedido.
+        const saved = Object.assign({}, cloudGoals, localDraft);
+        const hasLocalDraft = Object.keys(localDraft).some(key => String(localDraft[key] || "").trim());
+        let draftSynced = false;
+        if (hasLocalDraft) {
+          try {
+            await firestoreSet(reference, {
+              uid: firebaseUid,
+              nick: nick,
+              goals: saved,
+              createdAt: snapshot.exists && snapshot.data().createdAt ? snapshot.data().createdAt : Date.now(),
+              updatedAt: Date.now(),
+              source: "Spotted Unila"
+            }, { merge: true });
+            clearAcademicDraft();
+            draftSynced = true;
+          } catch (syncError) {
+            console.warn("Não foi possível sincronizar o rascunho das metas:", syncError);
+          }
+        }
         ACADEMIC_GOALS.forEach(goal => {
           const field = document.getElementById("academic-goal-" + goal.id);
           if (field) field.value = typeof saved[goal.id] === "string" ? saved[goal.id] : "";
         });
         updateAcademicProgress();
         const copy = academicCopy();
-        academicGoalsStatus(snapshot.exists ? copy.loaded : copy.newPlan);
+        academicGoalsStatus(draftSynced ? copy.saved : (snapshot.exists ? copy.loaded : copy.newPlan));
       } catch (error) {
         console.error("Erro ao carregar metas acadêmicas:", error);
-        academicGoalsStatus(academicCopy().genericError, true);
+        academicGoalsStatus(academicCopy().genericError + (error && error.code ? " (" + error.code + ")" : ""), true);
       }
     }
 
@@ -1559,27 +1790,27 @@ gtag('config', 'G-FJT3X93608');
       academicGoalsStatus(academicCopy().saving);
       try {
         await waitForAcademicAuth();
-        const goals = {};
-        ACADEMIC_GOALS.forEach(goal => {
-          const field = document.getElementById("academic-goal-" + goal.id);
-          goals[goal.id] = field ? field.value.trim() : "";
-        });
+        const goals = collectAcademicGoals();
+        saveAcademicDraft(goals);
         const reference = db.collection(ACADEMIC_GOALS_COLLECTION).doc(firebaseUid);
-        const previous = await reference.get();
+        let previous = null;
+        try { previous = await firestoreGet(reference); }
+        catch (error) { console.warn("Não foi possível ler a data anterior das metas:", error); }
         const now = Date.now();
-        await reference.set({
+        await firestoreSet(reference, {
           uid: firebaseUid,
           nick: nick,
           goals: goals,
-          createdAt: previous.exists && previous.data().createdAt ? previous.data().createdAt : now,
+          createdAt: previous && previous.exists && previous.data().createdAt ? previous.data().createdAt : now,
           updatedAt: now,
           source: "Spotted Unila"
         }, { merge: true });
+        clearAcademicDraft();
         updateAcademicProgress();
         academicGoalsStatus(academicCopy().saved);
       } catch (error) {
         console.error("Erro ao salvar metas acadêmicas:", error);
-        academicGoalsStatus(academicCopy().saveError, true);
+        academicGoalsStatus(academicCopy().saveError + (error && error.code ? " (" + error.code + ")" : ""), true);
       }
     }
 
@@ -1598,13 +1829,14 @@ gtag('config', 'G-FJT3X93608');
       // A exclusão do plano não exibe nick, e-mail, UID ou qualquer outro identificador.
       try {
         await waitForAcademicAuth();
-        await db.collection(ACADEMIC_GOALS_COLLECTION).doc(firebaseUid).delete();
+        await firestoreDelete(db.collection(ACADEMIC_GOALS_COLLECTION).doc(firebaseUid));
+        clearAcademicDraft();
         document.querySelectorAll("#academicGoalsList textarea").forEach(field => { field.value = ""; });
         updateAcademicProgress();
         academicGoalsStatus(academicCopy().cleared);
       } catch (error) {
         console.error("Erro ao limpar metas acadêmicas:", error);
-        academicGoalsStatus(academicCopy().clearError, true);
+        academicGoalsStatus(academicCopy().clearError + (error && error.code ? " (" + error.code + ")" : ""), true);
       }
     }
 
@@ -1925,34 +2157,58 @@ padding:0 2px;">↩ Responder</button>`;
 
       try {
         if (btn) { btn.disabled = true; btn.textContent = "Verificando..."; }
-        const nickRef = db.collection("users").doc(input); const doc = await nickRef.get();
-        if(doc.exists && input !== ADMIN_NICK){
-          const data = doc.data();
-          if (data.uid && data.uid !== firebaseUid) {
-            if(Date.now() - (data.lastActive || 0) < 30000){ alert("Nick em uso!"); return; }
-          } else if(Date.now() - (data.lastActive || 0) < 30000){
-            alert("Nick em uso!"); return;
-          }
-        }
-
-        await nickRef.set({
-          uid: firebaseUid,
-          createdAt: doc.exists ? (doc.data().createdAt || Date.now()) : Date.now(),
-          lastActive: Date.now()
-        }, { merge: true });
-
-        nick = input; localStorage.setItem("chat_nick", nick);
+        await reserveNickForCurrentUser(input);
+        nick = input;
+        localStorage.setItem("chat_nick", nick);
+        localStorage.setItem("chat_uid", firebaseUid);
         if (typeof window.unilaRefreshTranslations === "function") window.unilaRefreshTranslations();
-        document.getElementById("nickArea").style.display="none"; document.getElementById("chatArea").style.display="block";
+        document.getElementById("nickArea").style.display="none";
+        document.getElementById("chatArea").style.display="block";
         if(nick === ADMIN_NICK) document.getElementById("changeNickBtn").style.display = "block";
         shouldScrollToBottom = true;
         listenChat();
-      } catch (e) { alert("Erro: " + e.message); }
-      finally { if (btn) { btn.disabled = false; btn.textContent = originalText; } }
+      } catch (e) {
+        if (e && e.code === "nick-already-taken") alert("Nick em uso e vinculado a outro usuário.");
+        else if (e && e.code === "nick-already-owned") alert("Este usuário já possui outro nick.");
+        else alert("Erro: " + e.message);
+      } finally {
+        if (btn) { btn.disabled = false; btn.textContent = originalText; }
+      }
     }
 
-    function changeNick(){ if(nick) db.collection("users").doc(nick).delete(); localStorage.removeItem("chat_nick"); nick = ""; document.getElementById("changeNickBtn").style.display = "none"; document.getElementById("chatArea").style.display = "none"; document.getElementById("nickArea").style.display = "block"; }
-    function atualizarAtividade(){ if(nick) db.collection("users").doc(nick).set({ uid: firebaseUid, lastActive: Date.now() }, { merge: true }); }
+    async function changeNick(){
+      const oldNick = nick;
+      try {
+        if (oldNick && firebaseUid) {
+          await withFirestoreRetry(() => db.runTransaction(async transaction => {
+            const users = db.collection(USERS_COLLECTION);
+            const legacyRef = users.doc(oldNick);
+            const canonicalRef = users.doc(nickClaimDocId(oldNick));
+            const uidRef = users.doc(userClaimDocId(firebaseUid));
+            const uidDoc = await transaction.get(uidRef);
+            const canonicalDoc = await transaction.get(canonicalRef);
+            const legacyDoc = await transaction.get(legacyRef);
+            if (uidDoc.exists && (uidDoc.data() || {}).uid === firebaseUid) transaction.delete(uidRef);
+            if (canonicalDoc.exists && (canonicalDoc.data() || {}).uid === firebaseUid) transaction.delete(canonicalRef);
+            if (legacyDoc.exists && (legacyDoc.data() || {}).uid === firebaseUid) transaction.delete(legacyRef);
+          }));
+        }
+      } catch (error) {
+        console.warn("Não foi possível liberar a reserva anterior do nick:", error);
+      }
+      localStorage.removeItem("chat_nick");
+      localStorage.removeItem("chat_uid");
+      nick = "";
+      document.getElementById("changeNickBtn").style.display = "none";
+      document.getElementById("chatArea").style.display = "none";
+      document.getElementById("nickArea").style.display = "block";
+    }
+    function atualizarAtividade(){
+      if (!nick || !firebaseUid) return;
+      const now = Date.now();
+      firestoreSet(db.collection(USERS_COLLECTION).doc(nickClaimDocId(nick)), { uid: firebaseUid, nick: nick, lastActive: now, updatedAt: now }, { merge: true }).catch(error => console.warn("Não foi possível atualizar a atividade do nick:", error));
+      firestoreSet(db.collection(USERS_COLLECTION).doc(nick), { uid: firebaseUid, nick: nick, lastActive: now, updatedAt: now }, { merge: true }).catch(error => console.warn("Não foi possível atualizar o registro do nick:", error));
+    }
     setInterval(atualizarAtividade, 60000);
 
     function toggleRadioSimples() {
@@ -1976,6 +2232,25 @@ padding:0 2px;">↩ Responder</button>`;
     }
 
     const NOTES_COLLECTION = "notes";
+    const NOTES_BACKUP_KEY_PREFIX = "spotted_notes_backup_v1_";
+    function notesBackupStorageKey() { return NOTES_BACKUP_KEY_PREFIX + String(firebaseUid || "pending"); }
+    function readNotesBackup() {
+      try {
+        const notes = JSON.parse(localStorage.getItem(notesBackupStorageKey()) || "[]");
+        return Array.isArray(notes) ? notes : [];
+      } catch (error) { return []; }
+    }
+    function writeNotesBackup(notes) {
+      try { localStorage.setItem(notesBackupStorageKey(), JSON.stringify(Array.isArray(notes) ? notes : [])); }
+      catch (error) { console.warn("Não foi possível guardar a cópia local das anotações:", error); }
+    }
+    function mergeNotes(primary, secondary) {
+      const map = new Map();
+      [...(Array.isArray(primary) ? primary : []), ...(Array.isArray(secondary) ? secondary : [])].forEach(note => {
+        if (note && note.id != null) map.set(String(note.id), note);
+      });
+      return Array.from(map.values()).sort((a, b) => Number(b.updatedAt || b.createdAt || 0) - Number(a.updatedAt || a.createdAt || 0));
+    }
 
     function notesStatus(message, isError) {
       const status = document.getElementById("notesStatus");
@@ -1989,7 +2264,7 @@ padding:0 2px;">↩ Responder</button>`;
       if (typeof db === "undefined" || !firebaseUid) throw new Error("Sessão Firebase ainda não está pronta.");
     }
 
-    async function loadNotes() {
+    async function loadNotes(){
       const list = document.getElementById("list");
       if (!list) return;
       if (!nick) {
@@ -1998,23 +2273,47 @@ padding:0 2px;">↩ Responder</button>`;
         return;
       }
       notesStatus(notesCopy().loading);
+      let notes = [];
+      let snapshot = null;
       try {
         await waitForNotesAuth();
-        const snapshot = await db.collection(NOTES_COLLECTION).doc(firebaseUid).get();
-        const data = snapshot.exists ? snapshot.data() : {};
-        const notes = Array.isArray(data.notes) ? data.notes : [];
-        list.innerHTML = notes.length ? notes.map(n => `
-          <div class="note-item">
-            <span>${escapeHtml(n.text)}</span>
-            <button class="delete-btn" onclick="deleteNote('${escapeHtml(n.id)}')">🗑</button>
-          </div>
-        `).join("") : "<p>" + escapeHtml(notesCopy().noNotes) + "</p>";
-        notesStatus(snapshot.exists ? notesCopy().loaded : notesCopy().noNotes);
+        const reference = db.collection(NOTES_COLLECTION).doc(firebaseUid);
+        snapshot = await firestoreGet(reference);
+        const cloudNotes = snapshot.exists && Array.isArray(snapshot.data().notes) ? snapshot.data().notes : [];
+        const localNotes = readNotesBackup();
+        notes = mergeNotes(cloudNotes, localNotes);
+        const cloudIds = new Set(cloudNotes.map(note => String(note && note.id != null ? note.id : "")));
+        const hasLocalOnlyNotes = localNotes.some(note => note && !cloudIds.has(String(note.id)));
+        if (hasLocalOnlyNotes) {
+          try {
+            await firestoreSet(reference, {
+              uid: firebaseUid,
+              nick: nick,
+              notes: notes,
+              updatedAt: Date.now(),
+              source: "Spotted Unila"
+            }, { merge: true });
+          } catch (syncError) {
+            console.warn("Não foi possível sincronizar a cópia local das anotações:", syncError);
+          }
+        }
+        writeNotesBackup(notes);
       } catch (error) {
         console.error("Erro ao carregar anotações:", error);
-        list.innerHTML = "<p>" + escapeHtml(notesCopy().errorLoad) + "</p>";
-        notesStatus(notesCopy().errorTry, true);
+        notes = readNotesBackup();
+        if (!notes.length) {
+          list.innerHTML = "<p>" + escapeHtml(notesCopy().errorLoad) + "</p>";
+          notesStatus(notesCopy().errorTry + (error && error.code ? " (" + error.code + ")" : ""), true);
+          return;
+        }
       }
+      list.innerHTML = notes.length ? notes.map(n => `
+        <div class="note-item">
+          <span>${escapeHtml(n.text)}</span>
+          <button class="delete-btn" onclick="deleteNote('${escapeHtml(n.id)}')">🗑</button>
+        </div>
+      `).join("") : "<p>" + escapeHtml(notesCopy().noNotes) + "</p>";
+      notesStatus(snapshot && snapshot.exists ? notesCopy().loaded : (notes.length ? notesCopy().loaded : notesCopy().noNotes));
     }
 
     async function saveNote() {
@@ -2032,11 +2331,18 @@ padding:0 2px;">↩ Responder</button>`;
       try {
         await waitForNotesAuth();
         const reference = db.collection(NOTES_COLLECTION).doc(firebaseUid);
-        const previous = await reference.get();
-        const previousNotes = previous.exists && Array.isArray(previous.data().notes) ? previous.data().notes : [];
+        let previousNotes = readNotesBackup();
+        try {
+          const previous = await firestoreGet(reference);
+          const cloudNotes = previous.exists && Array.isArray(previous.data().notes) ? previous.data().notes : [];
+          previousNotes = mergeNotes(cloudNotes, previousNotes);
+        } catch (error) {
+          console.warn("Não foi possível ler as anotações anteriores; usando a cópia local:", error);
+        }
         const now = Date.now();
-        const notes = previousNotes.concat([{ id: String(now), text: noteText, createdAt: now, updatedAt: now }]);
-        await reference.set({
+        const notes = mergeNotes(previousNotes, [{ id: String(now), text: noteText, createdAt: now, updatedAt: now }]);
+        writeNotesBackup(notes);
+        await firestoreSet(reference, {
           uid: firebaseUid,
           nick: nick,
           notes: notes,
@@ -2048,7 +2354,7 @@ padding:0 2px;">↩ Responder</button>`;
         notesStatus(notesCopy().saved);
       } catch (error) {
         console.error("Erro ao salvar anotação:", error);
-        notesStatus(notesCopy().errorSave, true);
+        notesStatus(notesCopy().errorSave + (error && error.code ? " (" + error.code + ")" : ""), true);
       }
     }
 
@@ -2061,19 +2367,27 @@ padding:0 2px;">↩ Responder</button>`;
       try {
         await waitForNotesAuth();
         const reference = db.collection(NOTES_COLLECTION).doc(firebaseUid);
-        const snapshot = await reference.get();
-        const previousNotes = snapshot.exists && Array.isArray(snapshot.data().notes) ? snapshot.data().notes : [];
+        let previousNotes = readNotesBackup();
+        let snapshot = null;
+        try {
+          snapshot = await firestoreGet(reference);
+          const cloudNotes = snapshot.exists && Array.isArray(snapshot.data().notes) ? snapshot.data().notes : [];
+          previousNotes = mergeNotes(cloudNotes, previousNotes);
+        } catch (error) {
+          console.warn("Não foi possível ler as anotações antes da exclusão:", error);
+        }
         const notes = previousNotes.filter(note => String(note.id) !== String(id));
         if (notes.length) {
-          await reference.set({ uid: firebaseUid, nick: nick, notes: notes, updatedAt: Date.now() }, { merge: true });
-        } else if (snapshot.exists) {
-          await reference.delete();
+          await firestoreSet(reference, { uid: firebaseUid, nick: nick, notes: notes, updatedAt: Date.now() }, { merge: true });
+        } else if (snapshot && snapshot.exists) {
+          await firestoreDelete(reference);
         }
+        writeNotesBackup(notes);
         await loadNotes();
         notesStatus(notesCopy().deleted);
       } catch (error) {
         console.error("Erro ao excluir anotação:", error);
-        notesStatus(notesCopy().errorDelete, true);
+        notesStatus(notesCopy().errorDelete + (error && error.code ? " (" + error.code + ")" : ""), true);
       }
     }
 
@@ -2311,10 +2625,12 @@ padding:0 2px;">↩ Responder</button>`;
         return;
       }
 
-      atualizarDataBar(); loadAllContent(); listenContentChanges(); setupPWAUpdate(); listenGlobalRestriction(); listenConhecaMediaChanges(); 
+      atualizarDataBar(); loadAllContent(); listenContentChanges(); setupPWAUpdate(); listenGlobalRestriction(); listenConhecaMediaChanges();
+      await restoreNickForCurrentUser();
       if (nick === ADMIN_NICK && (!firebaseUser || (firebaseUser.email || "").toLowerCase() !== ADMIN_EMAIL)) {
         nick = "";
         localStorage.removeItem("chat_nick");
+        localStorage.removeItem("chat_uid");
       }
       if(nick){
         document.getElementById("nickArea").style.display="none"; document.getElementById("chatArea").style.display="block";
@@ -2928,7 +3244,7 @@ padding:0 2px;">↩ Responder</button>`;
   };
 
   function currentLabels(){
-    var lang = localStorage.getItem("spotted_language") || "pt";
+    var lang = localStorage.getItem("unila_language") || "pt";
     return labels[lang] || labels.pt;
   }
   function getNick(){
@@ -2968,6 +3284,8 @@ padding:0 2px;">↩ Responder</button>`;
       deletedAds.forEach(function(id){ enqueue(function(currentBatch){ currentBatch.delete(db.collection("desapega").doc(id)); }); });
 
       if (currentNick) enqueue(function(currentBatch){ currentBatch.delete(db.collection("users").doc(currentNick)); });
+      enqueue(function(currentBatch){ currentBatch.delete(db.collection("notes").doc(firebaseUid)); });
+      enqueue(function(currentBatch){ currentBatch.delete(db.collection("academic_goals").doc(firebaseUid)); });
       if (operationCount > 0) batches.push(batch.commit());
       await Promise.all(batches);
 
@@ -2991,7 +3309,7 @@ padding:0 2px;">↩ Responder</button>`;
         if (firebaseUser && typeof firebaseUser.delete === "function") await firebaseUser.delete();
       } catch (error) { authDeletionError = error; }
 
-      ["chat_nick", "notes", "spotted_blocked_users", TERMS_KEY].forEach(function(key){ localStorage.removeItem(key); });
+      ["chat_nick", "chat_uid", "notes", "spotted_blocked_users", TERMS_KEY, "spotted_academic_draft_v1_" + firebaseUid, "spotted_notes_backup_v1_" + firebaseUid].forEach(function(key){ localStorage.removeItem(key); });
       nick = "";
       if (authDeletionError) {
         alert("Os dados próprios e as preferências locais foram removidos. Respostas em anúncios de terceiros foram encaminhadas para revisão manual; use também o canal externo da Política de Privacidade.");
