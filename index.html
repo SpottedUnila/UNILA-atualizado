@@ -939,9 +939,9 @@ gtag('config', 'G-FJT3X93608');
     <h2>💬 Chat Unila</h2>
     <div id="nickArea">
       <input id="nickInput" autocomplete="username" placeholder="Digite seu nick..." style="padding:10px; border-radius:10px; border:none; margin-bottom:10px; width:80%;" />
-      <input id="nickPasswordInput" type="password" autocomplete="current-password" minlength="6" placeholder="Crie uma senha com pelo menos 6 caracteres" style="padding:10px; border-radius:10px; border:none; margin-bottom:10px; width:80%;" />
+      <input id="nickPasswordInput" type="password" autocomplete="current-password" minlength="6" placeholder="Digite sua senha ou crie uma senha" style="padding:10px; border-radius:10px; border:none; margin-bottom:10px; width:80%;" />
       <button id="nickEnterBtn" onclick="saveNick(this)">Entrar / criar acesso</button>
-      <small style="display:block; width:80%; margin:4px auto 12px; color:#cbd5e1; line-height:1.35;">No primeiro acesso, a senha cria seu acesso. Depois, use o mesmo nick e a mesma senha para entrar em qualquer dispositivo.</small>
+      <small style="display:block; width:80%; margin:4px auto 12px; color:#cbd5e1; line-height:1.35;">Digite o nick e a senha para entrar. No primeiro acesso, essa senha cria seu acesso; depois, use os mesmos dados em qualquer dispositivo.</small>
       <div id="adminLoginArea" style="display:none; margin-top:14px; padding:14px; border:1px solid rgba(255,255,255,.2); border-radius:12px; background:rgba(0,0,0,.2);">
         <strong style="display:block; margin-bottom:8px;">Entrada administrativa</strong>
         <input id="adminEmailInput" type="email" autocomplete="username" value="" placeholder="E-mail administrativo" style="display:block; width:100%; box-sizing:border-box; padding:10px; border-radius:8px; border:none; margin-bottom:8px;" />
@@ -981,11 +981,17 @@ gtag('config', 'G-FJT3X93608');
         <input type="checkbox" id="chatAnonymous" style="width:18px; height:18px; cursor:pointer;" />
         <label for="chatAnonymous" style="font-size:13px; color:#ffffff; cursor:pointer; font-weight:600; text-shadow:0 1px 2px rgba(0,0,0,0.5);">👤 Enviar Anonimamente</label>
       </div>
-      <div id="nickPasswordManage" style="display:none; margin-top:16px; padding:14px; border:1px solid rgba(255,255,255,.18); border-radius:12px; background:rgba(0,0,0,.2);">
-        <strong style="display:block; margin-bottom:8px;">Proteja seu acesso</strong>
-        <small style="display:block; margin-bottom:8px; color:#cbd5e1; line-height:1.35;">Crie uma senha para poder entrar novamente depois de limpar os dados ou trocar de dispositivo.</small>
-        <input id="nickPasswordManageInput" type="password" autocomplete="new-password" minlength="6" placeholder="Nova senha — mínimo de 6 caracteres" style="display:block; width:100%; box-sizing:border-box; padding:10px; border-radius:8px; border:none; margin-bottom:8px;" />
-        <button id="nickPasswordManageBtn" type="button" onclick="createNickPassword()">Criar senha de acesso</button>
+      <button id="deleteNickAccountBtn" type="button" onclick="openNickDeleteDialog()" aria-label="Excluir conta" title="Excluir conta" style="display:none; position:fixed; left:12px; bottom:2px; z-index:1001; width:auto; min-width:116px; height:34px; padding:0 12px 0 10px; align-items:center; justify-content:center; gap:7px; border:1px solid rgba(255,255,255,.55); border-radius:17px; background:#dc2626; color:#fff; font-size:13px; font-weight:700; line-height:1; box-shadow:0 3px 12px rgba(0,0,0,.45);">✕ <span>Excluir conta</span></button>
+      <div id="nickDeleteDialog" role="dialog" aria-modal="true" aria-labelledby="nickDeleteDialogTitle" style="display:none; position:fixed; inset:0; z-index:10000; align-items:center; justify-content:center; padding:20px; background:rgba(0,0,0,.72);">
+        <div style="width:min(390px,100%); box-sizing:border-box; padding:22px; border:1px solid rgba(248,113,113,.45); border-radius:18px; background:#1b0b25; color:#fff; box-shadow:0 18px 60px rgba(0,0,0,.55);">
+          <h3 id="nickDeleteDialogTitle" style="margin:0 0 10px;">Excluir nick e dados</h3>
+          <p style="margin:0 0 14px; color:#fecaca; line-height:1.45;">Digite sua senha para confirmar a exclusão permanente do nick e dos dados relacionados.</p>
+          <input id="nickDeletePasswordInput" type="password" autocomplete="current-password" placeholder="Sua senha" style="display:block; width:100%; box-sizing:border-box; padding:11px; border-radius:9px; border:none; margin-bottom:14px;" />
+          <div style="display:flex; justify-content:flex-end; gap:8px;">
+            <button type="button" onclick="closeNickDeleteDialog()" style="background:transparent; border:1px solid rgba(255,255,255,.3);">Cancelar</button>
+            <button id="nickDeleteConfirmBtn" type="button" onclick="confirmNickAccountDeletion()" style="background:#b91c1c;">Excluir dados</button>
+          </div>
+        </div>
       </div>
       <button id="changeNickBtn" onclick="changeNick()" style="display:none; margin-top:10px;">🔄 Mudar Nick</button>
     </div>
@@ -1293,8 +1299,21 @@ gtag('config', 'G-FJT3X93608');
       return ["auth/email-already-in-use", "auth/credential-already-in-use", "auth/provider-already-linked"].includes(authErrorCode(error));
     }
     function refreshNickCredentialUI() {
-      const panel = document.getElementById("nickPasswordManage");
-      if (panel) panel.style.display = (nick && firebaseUser && firebaseUser.isAnonymous) ? "block" : "none";
+      const passwordPanel = document.getElementById("nickPasswordManage");
+      const accountPanel = document.getElementById("nickAccountManage");
+      const deletePassword = document.getElementById("nickDeletePasswordInput");
+      const activeUser = firebaseUser || (typeof auth !== "undefined" ? auth.currentUser : null);
+      const activeNick = String((typeof nick !== "undefined" && nick) || localStorage.getItem("chat_nick") || "").trim();
+      const activeUid = firebaseUid || (activeUser && activeUser.uid) || "";
+      const active = !!(activeNick && activeUser && activeUid);
+      if (passwordPanel) passwordPanel.style.display = "none";
+      if (accountPanel) accountPanel.style.display = "none";
+      const deleteButton = document.getElementById("deleteNickAccountBtn");
+      if (deleteButton) {
+        deleteButton.style.setProperty("display", active ? "flex" : "none", "important");
+        deleteButton.setAttribute("aria-hidden", active ? "false" : "true");
+      }
+      if (deletePassword) deletePassword.style.display = "block";
     }
     async function createNickPassword() {
       const passwordField = document.getElementById("nickPasswordManageInput");
@@ -2431,6 +2450,8 @@ padding:0 2px;">↩ Responder</button>`;
         document.getElementById("changeNickBtn").style.display = "none";
         shouldScrollToBottom = true;
         refreshNickCredentialUI();
+        const deleteButton = document.getElementById("deleteNickAccountBtn");
+        if (deleteButton) deleteButton.style.setProperty("display", "flex", "important");
         listenChat();
       } catch (error) {
         if (error && error.code === "nick-already-taken") appAlert("Nick em uso e vinculado a outro usuário.");
@@ -3182,6 +3203,8 @@ padding:0 2px;">↩ Responder</button>`;
 
     setText("#chatPage h2", tr("chatHeading"));
     setPlaceholder("#nickInput", tr("nickPlaceholder"));
+    setPlaceholder("#nickPasswordInput", "Digite sua senha ou crie uma senha");
+    setPlaceholder("#nickDeletePasswordInput", "Digite sua senha para confirmar a exclusão");
     setText("#nickArea button", tr("enter"));
     setText("#imagePreview div[style*='font-size:12px']", tr("imageSelected"));
     setPlaceholder("#chatInput", tr("chatPlaceholder"));
@@ -3514,13 +3537,27 @@ padding:0 2px;">↩ Responder</button>`;
     try { return typeof nick !== "undefined" ? nick : (localStorage.getItem("chat_nick") || ""); } catch(e) { return localStorage.getItem("chat_nick") || ""; }
   }
   function escapeText(value){ return String(value || ""); }
-  window.requestDataDeletion = async function(){
+  async function deleteCurrentAccountData() {
     if (typeof db === "undefined" || typeof firebaseUid === "undefined" || !firebaseUid) {
-      appAlert("A sessão ainda não está pronta. Tente novamente em alguns segundos.");
-      return;
+      throw new Error("A sessão ainda não está pronta.");
     }
-    if (!await appConfirm("Excluir seus dados do Spotted Unila? Esta ação tenta remover seu nick, mensagens, anúncios, respostas e preferências locais.")) return;
     var currentNick = getNick();
+    var uidToDelete = firebaseUid;
+    var userToDelete = firebaseUser || (typeof auth !== "undefined" ? auth.currentUser : null);
+    var deletePassword = (document.getElementById("nickDeletePasswordInput") || {}).value || "";
+
+    // A exclusão da credencial é preparada antes de apagar os dados. Para
+    // contas com senha, o Firebase pode exigir uma reautenticação recente.
+    if (userToDelete && !userToDelete.isAnonymous) {
+      if (!deletePassword || deletePassword.length < NICK_PASSWORD_MIN_LENGTH) {
+        var passwordError = new Error("Digite sua senha para confirmar a exclusão.");
+        passwordError.code = "delete-password-required";
+        throw passwordError;
+      }
+      var credential = firebase.auth.EmailAuthProvider.credential(userToDelete.email, deletePassword);
+      await userToDelete.reauthenticateWithCredential(credential);
+    }
+
     var deletedChat = new Set();
     var deletedAds = new Set();
     var batches = [];
@@ -3536,53 +3573,115 @@ padding:0 2px;">↩ Responder</button>`;
       }
     }
     async function collectQuery(collectionName, field, value, idSet){
+      if (!value) return;
       var snapshot = await db.collection(collectionName).where(field, "==", value).get();
       snapshot.forEach(function(doc){ idSet.add(doc.id); });
     }
-    try {
-      await collectQuery("chat", "uid", firebaseUid, deletedChat);
-      await collectQuery("desapega", "uid", firebaseUid, deletedAds);
 
-      deletedChat.forEach(function(id){ enqueue(function(currentBatch){ currentBatch.delete(db.collection("chat").doc(id)); }); });
-      deletedAds.forEach(function(id){ enqueue(function(currentBatch){ currentBatch.delete(db.collection("desapega").doc(id)); }); });
+    await Promise.all([
+      collectQuery("chat", "uid", uidToDelete, deletedChat),
+      collectQuery("chat", "realNick", currentNick, deletedChat),
+      collectQuery("chat", "nick", currentNick, deletedChat),
+      collectQuery("desapega", "uid", uidToDelete, deletedAds),
+      collectQuery("desapega", "realNick", currentNick, deletedAds)
+    ]);
 
-      if (currentNick) enqueue(function(currentBatch){ currentBatch.delete(db.collection("users").doc(currentNick)); });
-      enqueue(function(currentBatch){ currentBatch.delete(db.collection("notes").doc(firebaseUid)); });
-      enqueue(function(currentBatch){ currentBatch.delete(db.collection("academic_goals").doc(firebaseUid)); });
-      if (operationCount > 0) batches.push(batch.commit());
-      await Promise.all(batches);
-
-      // Respostas em anúncios de terceiros não são alteradas pelo usuário.
-      // A solicitação fica na fila administrativa para remoção manual segura.
-      await db.collection("ugc_reports").add({
-        type: "data_deletion",
-        targetId: "account",
-        targetLabel: currentNick || "sessão anônima",
-        targetUser: currentNick || "",
-        reason: "Solicitação de exclusão de dados; revisar respostas associadas ao UID.",
-        reporterNick: currentNick || "",
-        reporterUid: firebaseUid,
-        createdAt: Date.now(),
-        status: "open",
-        source: "Spotted Unila"
+    // Remove também respostas do usuário publicadas em anúncios de terceiros.
+    // A regra do Firestore permite a alteração limitada do campo replies.
+    var allAds = await db.collection("desapega").get();
+    allAds.forEach(function(doc){
+      if (deletedAds.has(doc.id)) return;
+      var data = doc.data() || {};
+      var replies = Array.isArray(data.replies) ? data.replies : [];
+      var filtered = replies.filter(function(reply){
+        return !(String(reply && reply.uid || "") === String(uidToDelete)
+          || (!!currentNick && String(reply && reply.nick || "") === String(currentNick)));
       });
-
-      var authDeletionError = null;
-      try {
-        if (firebaseUser && typeof firebaseUser.delete === "function") await firebaseUser.delete();
-      } catch (error) { authDeletionError = error; }
-
-      ["chat_nick", "chat_uid", "notes", "spotted_blocked_users", TERMS_KEY, "spotted_academic_draft_v1_" + firebaseUid, "spotted_notes_backup_v1_" + firebaseUid].forEach(function(key){ localStorage.removeItem(key); });
-      nick = "";
-      if (authDeletionError) {
-        appAlert("Os dados próprios e as preferências locais foram removidos. Respostas em anúncios de terceiros foram encaminhadas para revisão manual; use também o canal externo da Política de Privacidade.");
-      } else {
-        appAlert("Solicitação concluída: seus dados próprios e preferências locais foram removidos. Respostas em anúncios de terceiros foram encaminhadas para revisão manual.");
+      if (filtered.length !== replies.length) {
+        enqueue(function(currentBatch){
+          currentBatch.update(db.collection("desapega").doc(doc.id), { replies: filtered, updatedAt: Date.now() });
+        });
       }
+    });
+
+    deletedChat.forEach(function(id){ enqueue(function(currentBatch){ currentBatch.delete(db.collection("chat").doc(id)); }); });
+    deletedAds.forEach(function(id){ enqueue(function(currentBatch){ currentBatch.delete(db.collection("desapega").doc(id)); }); });
+
+    if (currentNick) {
+      enqueue(function(currentBatch){ currentBatch.delete(db.collection("users").doc(currentNick)); });
+      enqueue(function(currentBatch){ currentBatch.delete(db.collection("users").doc(nickClaimDocId(currentNick))); });
+    }
+    enqueue(function(currentBatch){ currentBatch.delete(db.collection("users").doc(userClaimDocId(uidToDelete))); });
+    enqueue(function(currentBatch){ currentBatch.delete(db.collection("notes").doc(uidToDelete)); });
+    enqueue(function(currentBatch){ currentBatch.delete(db.collection("academic_goals").doc(uidToDelete)); });
+    if (operationCount > 0) batches.push(batch.commit());
+    await Promise.all(batches);
+
+    ["chat_nick", "chat_uid", "notes", "spotted_blocked_users", TERMS_KEY, "spotted_academic_draft_v1_" + uidToDelete, "spotted_notes_backup_v1_" + uidToDelete].forEach(function(key){ localStorage.removeItem(key); });
+    nick = "";
+    var authDeletionError = null;
+    try {
+      if (userToDelete && typeof userToDelete.delete === "function") await userToDelete.delete();
+    } catch (error) {
+      authDeletionError = error;
+      console.warn("Os dados foram removidos, mas a credencial precisa de uma etapa adicional:", error);
+    }
+    return { messages: deletedChat.size, ads: deletedAds.size, uid: uidToDelete, authDeletionError: authDeletionError };
+  }
+
+  window.openNickDeleteDialog = function(){
+    if (!getNick()) { appAlert("Nenhum nick ativo para excluir."); return; }
+    const dialog = document.getElementById("nickDeleteDialog");
+    const input = document.getElementById("nickDeletePasswordInput");
+    const button = document.getElementById("nickDeleteConfirmBtn");
+    if (button) { button.disabled = false; button.textContent = "Excluir dados"; }
+    if (input) input.value = "";
+    if (dialog) dialog.style.display = "flex";
+    if (input) setTimeout(() => input.focus(), 50);
+  };
+  window.closeNickDeleteDialog = function(){
+    const dialog = document.getElementById("nickDeleteDialog");
+    if (dialog) dialog.style.display = "none";
+  };
+  window.confirmNickAccountDeletion = async function(){
+    if (!getNick()) { closeNickDeleteDialog(); appAlert("Nenhum nick ativo para excluir."); return; }
+    const input = document.getElementById("nickDeletePasswordInput");
+    const button = document.getElementById("nickDeleteConfirmBtn");
+    const password = input ? input.value : "";
+    if (password.length < NICK_PASSWORD_MIN_LENGTH) { appAlert("Digite sua senha para confirmar a exclusão."); return; }
+    if (!await appConfirm("Excluir este nick e todos os dados relacionados? Essa ação não pode ser desfeita.")) return;
+    try {
+      if (button) { button.disabled = true; button.textContent = "Excluindo..."; }
+      const deletionResult = await deleteCurrentAccountData();
+      closeNickDeleteDialog();
+      await appAlert(deletionResult.authDeletionError ? "Os dados foram excluídos. A credencial será encerrada na próxima entrada." : "Nick e dados relacionados excluídos.");
+      window.location.reload();
+    } catch (error) {
+      console.error("Erro ao excluir a conta do nick:", error);
+      if (error && ["auth/wrong-password", "auth/invalid-credential", "auth/user-mismatch"].includes(error.code)) appAlert("A senha informada não confere.");
+      else if (error && error.code === "auth/requires-recent-login") appAlert("Entre novamente com o nick e a senha e tente a exclusão outra vez.");
+      else appAlert("Não foi possível excluir a conta agora. Verifique a conexão e tente novamente.");
+    } finally {
+      if (button) { button.disabled = false; button.textContent = "Excluir dados"; }
+    }
+  };
+  // Compatibilidade com chamadas antigas do aplicativo.
+  window.deleteNickAccount = window.openNickDeleteDialog;
+
+  window.requestDataDeletion = async function(){
+    if (!getNick()) {
+      appAlert("Nenhum nick ativo para excluir.");
+      return;
+    }
+    if (!await appConfirm("Excluir seus dados do Spotted Unila? Esta ação remove seu nick, mensagens, anúncios, respostas, anotações e metas.")) return;
+    try {
+      const deletionResult = await deleteCurrentAccountData();
+      await appAlert(deletionResult.authDeletionError ? "Os dados foram excluídos. A credencial será encerrada na próxima entrada." : "Nick e dados relacionados excluídos.");
       window.location.reload();
     } catch (error) {
       console.error("Erro ao excluir dados:", error);
-      appAlert("Não foi possível concluir a exclusão agora. Use o canal externo da Política de Privacidade para solicitar revisão.");
+      if (error && error.code === "delete-password-required") appAlert("Digite sua senha no painel da conta para confirmar a exclusão.");
+      else appAlert("Não foi possível concluir a exclusão agora. Verifique a conexão e tente novamente.");
     }
   };
   function getBlocked(){
