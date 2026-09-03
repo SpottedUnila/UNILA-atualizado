@@ -1,47 +1,64 @@
-const CACHE_NAME = 'unila-app-v150';
-const ASSETS = [
+const CACHE_NAME = 'spotted-unila-cache-v151';
+const APP_SHELL = [
   './',
-  './index.html'
+  './index35.html',
+  './spotted-bg.jpg'
 ];
 
-// Instalação do Service Worker
-self.addEventListener('install', (event) => {
-  self.skipWaiting(); // Força o Service Worker a se tornar ativo imediatamente
+self.addEventListener('install', event => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(ASSETS);
+    caches.open(CACHE_NAME).then(async cache => {
+      await cache.add('./').catch(() => {});
+      await cache.add('./index35.html').catch(() => {});
+      await cache.add('./spotted-bg.jpg').catch(() => {});
+      return self.skipWaiting();
     })
   );
 });
 
-// Ativação e limpeza de caches antigos
-self.addEventListener('activate', (event) => {
+self.addEventListener('activate', event => {
   event.waitUntil(
-    caches.keys().then((cacheNames) => {
-      return Promise.all(
-        cacheNames.map((cache) => {
-          if (cache !== CACHE_NAME) {
-            return caches.delete(cache);
-          }
-        })
-      );
-    })
-  );
-  return self.clients.claim(); // Faz o Service Worker assumir o controle das páginas imediatamente
-});
-
-// Interceptar requisições
-self.addEventListener('fetch', (event) => {
-  event.respondWith(
-    fetch(event.request).catch(() => {
-      return caches.match(event.request);
-    })
+    caches.keys().then(keys => Promise.all(
+      keys
+        .filter(key => key !== CACHE_NAME)
+        .map(key => caches.delete(key))
+    )).then(() => self.clients.claim())
   );
 });
 
-// Escutar mensagens do cliente
-self.addEventListener('message', (event) => {
-  if (event.data.action === 'skipWaiting') {
-    self.skipWaiting();
+self.addEventListener('fetch', event => {
+  const request = event.request;
+
+  if (request.method !== 'GET') return;
+
+  const url = new URL(request.url);
+  const isBackground = url.pathname.endsWith('/spotted-bg.jpg');
+  const isAppNavigation = request.mode === 'navigate';
+
+  if (!isBackground && !isAppNavigation && url.origin !== self.location.origin) {
+    return;
   }
+
+  event.respondWith(
+    caches.match(request).then(cached => {
+      if (cached) return cached;
+
+      return fetch(request).then(response => {
+        if (response && response.ok && (isBackground || url.origin === self.location.origin)) {
+          const copy = response.clone();
+          caches.open(CACHE_NAME).then(cache => {
+            cache.put(request, copy);
+          });
+        }
+
+        return response;
+      }).catch(() => {
+        if (isAppNavigation) {
+          return caches.match('./index35.html');
+        }
+
+        return Response.error();
+      });
+    })
+  );
 });
