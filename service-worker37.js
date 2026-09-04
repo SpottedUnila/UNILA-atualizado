@@ -1,8 +1,9 @@
-const CACHE_NAME = 'spotted-unila-cache-v159';
+const CACHE_NAME = 'spotted-unila-cache-v160';
 const APP_SHELL = [
   './',
   './index.html',
-  './spotted-bg.jpg'
+  './spotted-bg.jpg',
+  './background.mp4'
 ];
 
 self.addEventListener('install', event => {
@@ -13,6 +14,7 @@ self.addEventListener('install', event => {
       // Se o arquivo ainda não estiver disponível durante a instalação,
       // o Service Worker continua ativo e fará cache quando ele for usado.
       await cache.add('./spotted-bg.jpg').catch(() => {});
+      await cache.add('./background.mp4').catch(() => {});
       return self.skipWaiting();
     })
   );
@@ -31,7 +33,7 @@ self.addEventListener('fetch', event => {
   if (request.method !== 'GET') return;
 
   const url = new URL(request.url);
-  const isBackground = url.pathname.endsWith('/spotted-bg.jpg');
+  const isBackground = url.pathname.endsWith('/spotted-bg.jpg') || url.pathname.endsWith('/background.mp4');
   const isAppNavigation = request.mode === 'navigate';
 
   if (!isBackground && !isAppNavigation && url.origin !== self.location.origin) return;

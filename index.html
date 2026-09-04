@@ -131,15 +131,28 @@ body::after{
 
   overflow:hidden;
 
+  background:#000;
   background-image:url("spotted-bg.jpg");
-  background-size:cover ;
+  background-size:cover;
   background-position:top center;
   background-repeat:no-repeat;
 
   z-index:-2;
 }
 
-/* O fundo permanece estático; não há camada de animação sobre a imagem. */
+.bg-fixa video{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  object-position:center;
+  display:block;
+  pointer-events:none;
+  background:#000;
+}
+
+/* O vídeo toca uma vez, sem som e permanece no último quadro. */
 
 button{
   padding:16px;
@@ -838,7 +851,11 @@ gtag('config', 'G-FJT3X93608');
 </head>
 
 <body>
-  <div class="bg-fixa"></div>
+  <div class="bg-fixa">
+    <video id="appBackgroundVideo" autoplay muted playsinline preload="auto" aria-hidden="true">
+      <source src="background.mp4" type="video/mp4">
+    </video>
+  </div>
   <div id="aranduTag" style="position:fixed; top:10px; left:10px; font-size:24px; z-index:1000;">💜</div>
 
   <button class="home-btn" onclick="goHome()">🏠</button>
