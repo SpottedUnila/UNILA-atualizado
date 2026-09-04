@@ -884,6 +884,64 @@ gtag('config', 'G-FJT3X93608');
     </video>
   </div>
   <img class="slogan-overlay" src="slogan.png" alt="" aria-hidden="true">
+  <script>
+    (() => {
+      const backgroundVideo = document.getElementById('appBackgroundVideo');
+      if (!backgroundVideo) return;
+
+      const requestOfflineCache = () => {
+        if (!('serviceWorker' in navigator)) return;
+        navigator.serviceWorker.ready.then(registration => {
+          const worker = registration.active || registration.waiting || registration.installing;
+          if (worker) worker.postMessage({ action: 'cache-app-assets' });
+        }).catch(() => {});
+      };
+
+      backgroundVideo.muted = true;
+      backgroundVideo.defaultMuted = true;
+      backgroundVideo.volume = 0;
+      backgroundVideo.loop = false;
+      backgroundVideo.playsInline = true;
+
+      const startBackgroundVideo = (restart = false) => {
+        backgroundVideo.muted = true;
+        backgroundVideo.defaultMuted = true;
+        backgroundVideo.volume = 0;
+        backgroundVideo.loop = false;
+        backgroundVideo.playsInline = true;
+        requestOfflineCache();
+
+        if (restart || backgroundVideo.ended) {
+          try {
+            backgroundVideo.currentTime = 0;
+          } catch (_) {
+            backgroundVideo.load();
+          }
+        }
+
+        const attempt = backgroundVideo.play();
+        if (attempt && typeof attempt.catch === 'function') {
+          attempt.catch(() => {
+            setTimeout(() => {
+              backgroundVideo.muted = true;
+              backgroundVideo.play().catch(() => {});
+            }, 250);
+          });
+        }
+      };
+
+      window.startBackgroundVideo = startBackgroundVideo;
+      backgroundVideo.addEventListener('loadeddata', () => startBackgroundVideo(false));
+      backgroundVideo.addEventListener('canplay', () => startBackgroundVideo(false));
+      window.addEventListener('pageshow', () => startBackgroundVideo(true));
+      window.addEventListener('focus', () => startBackgroundVideo(true));
+      document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'visible') startBackgroundVideo(true);
+      });
+      document.addEventListener('resume', () => startBackgroundVideo(true));
+      startBackgroundVideo(false);
+    })();
+  </script>
   <div id="aranduTag" style="position:fixed; top:10px; left:10px; font-size:24px; z-index:1000;">💜</div>
 
   <button class="home-btn" onclick="goHome()">🏠</button>

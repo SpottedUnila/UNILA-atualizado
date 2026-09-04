@@ -7,19 +7,26 @@ const APP_SHELL = [
   './slogan.png'
 ];
 
+async function cacheAppAssets() {
+  const cache = await caches.open(CACHE_NAME);
+  await Promise.all(APP_SHELL.map(asset =>
+    fetch(asset, { cache: 'no-cache' })
+      .then(response => {
+        if (response && response.ok) return cache.put(asset, response.clone());
+        return null;
+      })
+      .catch(() => null)
+  ));
+}
+
 self.addEventListener('install', event => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then(async cache => {
-      await cache.add('./').catch(() => {});
-      await cache.add('./index.html').catch(() => {});
-      // Se o arquivo ainda não estiver disponível durante a instalação,
-      // o Service Worker continua ativo e fará cache quando ele for usado.
-      await cache.add('./spotted-bg.jpg').catch(() => {});
-      await cache.add('./background.mp4').catch(() => {});
-      await cache.add('./slogan.png').catch(() => {});
-      return self.skipWaiting();
-    })
-  );
+  event.waitUntil(cacheAppAssets().then(() => self.skipWaiting()));
+});
+
+self.addEventListener('message', event => {
+  if (event.data && event.data.action === 'cache-app-assets') {
+    event.waitUntil(cacheAppAssets());
+  }
 });
 
 self.addEventListener('activate', event => {
