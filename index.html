@@ -167,6 +167,12 @@ body::after{
   filter:drop-shadow(0 3px 12px rgba(0,0,0,.65));
 }
 
+/* Todos os controles permanecem acima do slogan. */
+button, input, select, textarea{
+  position:relative;
+  z-index:1;
+}
+
 @media (max-width:600px){
   .slogan-overlay{
     left:3vw;
