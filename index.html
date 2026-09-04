@@ -106,6 +106,7 @@ body{
   color:white;
   min-height:100vh;
   overflow-x:hidden;
+  isolation:isolate;
 }
 
 /* Faixa inferior arco-íris de 20 px, atrás da data e da navegação do Android. */
@@ -137,7 +138,8 @@ body::after{
   background-position:top center;
   background-repeat:no-repeat;
 
-  z-index:-2;
+  z-index:-1;
+  pointer-events:none;
 }
 
 .bg-fixa video{
@@ -152,7 +154,7 @@ body::after{
   background:#000;
 }
 
-/* O vídeo toca uma vez, sem som e permanece no último quadro. */
+/* O vídeo toca em loop contínuo, sem som. */
 .slogan-overlay{
   position:fixed;
   left:3vw;
@@ -879,7 +881,7 @@ gtag('config', 'G-FJT3X93608');
 
 <body>
   <div class="bg-fixa">
-    <video id="appBackgroundVideo" autoplay muted playsinline preload="auto" aria-hidden="true">
+    <video id="appBackgroundVideo" autoplay muted loop playsinline preload="auto" poster="spotted-bg.jpg" aria-hidden="true">
       <source src="background.mp4" type="video/mp4">
     </video>
   </div>
@@ -900,14 +902,14 @@ gtag('config', 'G-FJT3X93608');
       backgroundVideo.muted = true;
       backgroundVideo.defaultMuted = true;
       backgroundVideo.volume = 0;
-      backgroundVideo.loop = false;
+      backgroundVideo.loop = true;
       backgroundVideo.playsInline = true;
 
       const startBackgroundVideo = (restart = false) => {
         backgroundVideo.muted = true;
         backgroundVideo.defaultMuted = true;
         backgroundVideo.volume = 0;
-        backgroundVideo.loop = false;
+        backgroundVideo.loop = true;
         backgroundVideo.playsInline = true;
         requestOfflineCache();
 
