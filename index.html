@@ -153,6 +153,27 @@ body::after{
 }
 
 /* O vídeo toca uma vez, sem som e permanece no último quadro. */
+.slogan-overlay{
+  position:fixed;
+  left:3vw;
+  top:50%;
+  transform:translateY(-50%);
+  width:min(360px, 38vw);
+  max-width:42vw;
+  height:auto;
+  z-index:0;
+  pointer-events:none;
+  object-fit:contain;
+  filter:drop-shadow(0 3px 12px rgba(0,0,0,.65));
+}
+
+@media (max-width:600px){
+  .slogan-overlay{
+    left:3vw;
+    width:min(300px, 44vw);
+    max-width:44vw;
+  }
+}
 
 button{
   padding:16px;
@@ -856,6 +877,7 @@ gtag('config', 'G-FJT3X93608');
       <source src="background.mp4" type="video/mp4">
     </video>
   </div>
+  <img class="slogan-overlay" src="slogan.png" alt="" aria-hidden="true">
   <div id="aranduTag" style="position:fixed; top:10px; left:10px; font-size:24px; z-index:1000;">💜</div>
 
   <button class="home-btn" onclick="goHome()">🏠</button>
