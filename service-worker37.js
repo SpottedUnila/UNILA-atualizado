@@ -1,9 +1,13 @@
-const CACHE_NAME = 'spotted-unila-cache-v169';
+const CACHE_NAME = 'spotted-unila-cache-v170';
 const APP_SHELL = [
   './',
   './index.html',
   './background.mp4',
-  './slogan.png'
+  './slogan.png',
+  './icon-192.png',
+  './icon-512.png',
+  './favicon.png',
+  './apple-touch-icon.png'
 ];
 
 async function cacheAppAssets() {
