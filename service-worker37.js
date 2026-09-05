@@ -1,4 +1,4 @@
-const CACHE_NAME = 'spotted-unila-cache-v168';
+const CACHE_NAME = 'spotted-unila-cache-v169';
 const APP_SHELL = [
   './',
   './index.html',
@@ -41,7 +41,8 @@ self.addEventListener('fetch', event => {
   if (request.method !== 'GET') return;
 
   const url = new URL(request.url);
-  const isBackground = url.pathname.endsWith('/background.mp4') || url.pathname.endsWith('/slogan.png');
+  const isVideo = url.pathname.endsWith('/background.mp4');
+  const isBackground = isVideo || url.pathname.endsWith('/slogan.png');
   const isAppNavigation = request.mode === 'navigate';
 
   if (!isBackground && !isAppNavigation && url.origin !== self.location.origin) return;
@@ -67,10 +68,10 @@ self.addEventListener('fetch', event => {
   }
 
   event.respondWith(
-    caches.match(request)
+    caches.match(new Request(url.href))
       .then(cached => cached || fetch(request).then(response => {
         if (response && response.ok && isBackground) {
-          caches.open(CACHE_NAME).then(cache => cache.put(request, response.clone()));
+          caches.open(CACHE_NAME).then(cache => cache.put(new Request(url.href), response.clone()));
         }
         return response;
       }))

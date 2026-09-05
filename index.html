@@ -885,24 +885,50 @@ gtag('config', 'G-FJT3X93608');
     </video>
   </div>
   <img class="slogan-overlay" src="slogan.png" alt="" aria-hidden="true">
-  <script>
-    (() => {
+  <script>    (async () => {
       const backgroundVideo = document.getElementById('appBackgroundVideo');
       if (!backgroundVideo) return;
 
+      const videoUrl = new URL('background.mp4', window.location.href).href;
+      let objectUrl = null;
+      let cacheRequested = false;
+
       const requestOfflineCache = () => {
-        if (!('serviceWorker' in navigator)) return;
+        if (cacheRequested || !('serviceWorker' in navigator)) return;
+        cacheRequested = true;
         navigator.serviceWorker.ready.then(registration => {
           const worker = registration.active || registration.waiting || registration.installing;
           if (worker) worker.postMessage({ action: 'cache-app-assets' });
         }).catch(() => {});
       };
 
+      const usePersistedVideo = async () => {
+        try {
+          if (typeof caches === 'undefined') return false;
+          const response = await caches.match(videoUrl);
+          if (!response || !response.ok) return false;
+          const blob = await response.blob();
+          if (!blob || !blob.size) return false;
+          if (objectUrl) URL.revokeObjectURL(objectUrl);
+          objectUrl = URL.createObjectURL(blob);
+          backgroundVideo.src = objectUrl;
+          backgroundVideo.load();
+          return true;
+        } catch (_) {
+          return false;
+        }
+      };
+
       backgroundVideo.muted = true;
       backgroundVideo.defaultMuted = true;
       backgroundVideo.volume = 0;
       backgroundVideo.loop = true;
+      backgroundVideo.autoplay = true;
       backgroundVideo.playsInline = true;
+      backgroundVideo.setAttribute('muted', '');
+      backgroundVideo.setAttribute('autoplay', '');
+      backgroundVideo.setAttribute('loop', '');
+      backgroundVideo.setAttribute('playsinline', '');
 
       const startBackgroundVideo = (restart = false) => {
         backgroundVideo.muted = true;
@@ -911,27 +937,20 @@ gtag('config', 'G-FJT3X93608');
         backgroundVideo.loop = true;
         backgroundVideo.playsInline = true;
         requestOfflineCache();
-
         if (restart || backgroundVideo.ended) {
-          try {
-            backgroundVideo.currentTime = 0;
-          } catch (_) {
-            backgroundVideo.load();
-          }
+          try { backgroundVideo.currentTime = 0; } catch (_) {}
         }
-
         const attempt = backgroundVideo.play();
         if (attempt && typeof attempt.catch === 'function') {
-          attempt.catch(() => {
-            setTimeout(() => {
-              backgroundVideo.muted = true;
-              backgroundVideo.play().catch(() => {});
-            }, 250);
-          });
+          attempt.catch(() => setTimeout(() => {
+            backgroundVideo.muted = true;
+            backgroundVideo.play().catch(() => {});
+          }, 150));
         }
       };
 
       window.startBackgroundVideo = startBackgroundVideo;
+      backgroundVideo.addEventListener('ended', () => startBackgroundVideo(true));
       backgroundVideo.addEventListener('loadeddata', () => startBackgroundVideo(false));
       backgroundVideo.addEventListener('canplay', () => startBackgroundVideo(false));
       window.addEventListener('pageshow', () => startBackgroundVideo(true));
@@ -940,8 +959,15 @@ gtag('config', 'G-FJT3X93608');
         if (document.visibilityState === 'visible') startBackgroundVideo(true);
       });
       document.addEventListener('resume', () => startBackgroundVideo(true));
+
+      requestOfflineCache();
+      const persisted = await usePersistedVideo();
+      if (!persisted) {
+        backgroundVideo.src = videoUrl;
+        backgroundVideo.load();
+      }
       startBackgroundVideo(false);
-    })();
+    })();;
   </script>
   <div id="aranduTag" style="position:fixed; top:10px; left:10px; font-size:24px; z-index:1000;">💜</div>
 
