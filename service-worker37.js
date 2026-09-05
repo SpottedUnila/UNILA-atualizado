@@ -1,8 +1,7 @@
-const CACHE_NAME = 'spotted-unila-cache-v167';
+const CACHE_NAME = 'spotted-unila-cache-v168';
 const APP_SHELL = [
   './',
   './index.html',
-  './spotted-bg.jpg',
   './background.mp4',
   './slogan.png'
 ];
@@ -11,29 +10,29 @@ async function cacheAppAssets() {
   const cache = await caches.open(CACHE_NAME);
   await Promise.all(APP_SHELL.map(asset =>
     fetch(asset, { cache: 'no-cache' })
-      .then(response => {
-        if (response && response.ok) return cache.put(asset, response.clone());
-        return null;
-      })
+      .then(response => response && response.ok ? cache.put(asset, response.clone()) : null)
       .catch(() => null)
   ));
 }
 
 self.addEventListener('install', event => {
-  event.waitUntil(cacheAppAssets().then(() => self.skipWaiting()));
+  event.waitUntil(cacheAppAssets().catch(() => null).then(() => self.skipWaiting()));
 });
 
 self.addEventListener('message', event => {
-  if (event.data && event.data.action === 'cache-app-assets') {
+  if (!event.data) return;
+  if (event.data.action === 'cache-app-assets') {
     event.waitUntil(cacheAppAssets());
+  } else if (event.data.action === 'skipWaiting') {
+    event.waitUntil(self.skipWaiting());
   }
 });
 
 self.addEventListener('activate', event => {
   event.waitUntil(
-    caches.keys().then(keys => Promise.all(
-      keys.filter(key => key !== CACHE_NAME).map(key => caches.delete(key))
-    )).then(() => self.clients.claim())
+    caches.keys()
+      .then(keys => Promise.all(keys.filter(key => key !== CACHE_NAME).map(key => caches.delete(key))))
+      .then(() => self.clients.claim())
   );
 });
 
@@ -42,7 +41,7 @@ self.addEventListener('fetch', event => {
   if (request.method !== 'GET') return;
 
   const url = new URL(request.url);
-  const isBackground = url.pathname.endsWith('/spotted-bg.jpg') || url.pathname.endsWith('/background.mp4') || url.pathname.endsWith('/slogan.png');
+  const isBackground = url.pathname.endsWith('/background.mp4') || url.pathname.endsWith('/slogan.png');
   const isAppNavigation = request.mode === 'navigate';
 
   if (!isBackground && !isAppNavigation && url.origin !== self.location.origin) return;
@@ -55,27 +54,26 @@ self.addEventListener('fetch', event => {
         cache: 'no-store',
         credentials: request.credentials,
         redirect: 'follow'
-      })).then(response => {
-        if (response && response.ok) {
-          caches.open(CACHE_NAME).then(cache => cache.put('./index.html', response.clone()));
-        }
-        return response;
-      }).catch(() =>
-        caches.match('./index.html').then(cached => cached || Response.error())
-      )
+      }))
+        .then(response => {
+          if (response && response.ok) {
+            caches.open(CACHE_NAME).then(cache => cache.put('./index.html', response.clone()));
+          }
+          return response;
+        })
+        .catch(() => caches.match('./index.html').then(cached => cached || Response.error()))
     );
     return;
   }
 
   event.respondWith(
-    caches.match(request).then(cached => {
-      if (cached) return cached;
-      return fetch(request).then(response => {
+    caches.match(request)
+      .then(cached => cached || fetch(request).then(response => {
         if (response && response.ok && isBackground) {
           caches.open(CACHE_NAME).then(cache => cache.put(request, response.clone()));
         }
         return response;
-      }).catch(() => Response.error());
-    })
+      }))
+      .catch(() => Response.error())
   );
 });
