@@ -2240,8 +2240,14 @@ gtag('config', 'G-FJT3X93608');
     }
 
     function shareApp() {
-      const appUrl = "https://spottedunila.github.io/UNILA-atualizado/";
-      const mensagem = encodeURIComponent("Confira o Spotted Unila!\n\n" + appUrl);
+      const driveUrl = "https://drive.google.com/file/d/103mylmu6SsIXUJJyBBFPNrw0IeCuVxHN/view?usp=drivesdk";
+      const siteUrl = "https://spottedunila.github.io/UNILA-atualizado/?v=159";
+      const mensagem = encodeURIComponent(
+        "Confira o Spotted Unila!\n\n" +
+        "Para Android, baixe pelo Drive ou para iOS ou outros dispositivos, entre pelo link no site.\n\n" +
+        "Download para Android (Drive):\n" + driveUrl + "\n\n" +
+        "Site para iOS e outros dispositivos:\n" + siteUrl
+      );
       window.open(`https://wa.me/?text=${mensagem}`, "_blank");
     }
 
@@ -3590,8 +3596,14 @@ padding:0 2px;">↩ Responder</button>`;
 
     if (typeof window.shareApp === "function") {
       window.shareApp = function(){
-        var appUrl = "https://drive.google.com/file/d/1XgYsFJlnd8VuQGAyYopxNI2Huuknsugo/view?usp=sharing";
-        var mensagem = encodeURIComponent(tr("shareMessage") + NL + NL + appUrl);
+        var driveUrl = "https://drive.google.com/file/d/103mylmu6SsIXUJJyBBFPNrw0IeCuVxHN/view?usp=drivesdk";
+        var siteUrl = "https://spottedunila.github.io/UNILA-atualizado/?v=159";
+        var mensagem = encodeURIComponent(
+          "Confira o Spotted Unila!" + NL + NL +
+          "Para Android, baixe pelo Drive ou para iOS ou outros dispositivos, entre pelo link no site." + NL + NL +
+          "Download para Android (Drive):" + NL + driveUrl + NL + NL +
+          "Site para iOS e outros dispositivos:" + NL + siteUrl
+        );
         window.open("https://wa.me/?text=" + mensagem, "_blank");
       };
     }
