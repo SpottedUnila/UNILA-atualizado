@@ -1042,7 +1042,7 @@ gtag('config', 'G-FJT3X93608');
   <div id="resourcePage" class="page resource-page">
     <h2 id="resourcePageTitle"></h2>
     <p id="resourcePageDescription" class="resource-page-description"></p>
-    <a id="resourcePageLink" class="resource-open-link" href="#" target="_blank" rel="noopener noreferrer"></a>
+    <a id="resourcePageLink" class="resource-open-link" href="#" target="_self"></a>
   </div>
 
   <div id="academicGoalsPage" class="page academic-goals-page">
@@ -1821,7 +1821,9 @@ gtag('config', 'G-FJT3X93608');
 
     function openDynamic(id, type) {
       const val = defaultContent[id];
-      if (type === 'link') window.open(val, '_blank');
+      if (type === 'link') {
+        if (val) window.location.href = val;
+      }
       else {
         document.getElementById("dynamicTitle").textContent = id.toUpperCase();
         document.getElementById("dynamicContent").innerHTML = val;
