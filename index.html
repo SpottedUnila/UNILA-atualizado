@@ -1874,16 +1874,19 @@ gtag('config', 'G-FJT3X93608');
           records.forEach(news => {
             const date = newsDateText(news);
             
-            // Otimização das URLs para não pesar a memória/armazenamento
-            const optimizedImg = optimizeCloudinary(news.imageUrl, 'image');
-            const optimizedVid = optimizeCloudinary(news.videoUrl, 'video');
-            const optimizedPoster = optimizeCloudinary(news.videoThumbUrl, 'image');
+            // Normaliza URLs do storage do AdminPanel antes da otimização.
+            const imageUrl = safeMediaUrl(news.imageUrl);
+            const videoUrl = safeMediaUrl(news.videoUrl);
+            const videoThumbUrl = safeMediaUrl(news.videoThumbUrl);
+            const optimizedImg = optimizeCloudinary(imageUrl, 'image');
+            const optimizedVid = optimizeCloudinary(videoUrl, 'video');
+            const optimizedPoster = optimizeCloudinary(videoThumbUrl, 'image');
 
             newsHtml += `
               <div class="news-card" style="background: rgba(30, 41, 59, 0.6); border-radius: 12px; padding: 10px; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.1);">
                 <h3 style="color:#22c55e; margin:0 0 5px;">${escapeHtml(news.title || 'Notícia')}</h3>
-                ${news.imageUrl ? `<div class="news-media"><img src="${optimizedImg}" style="width:100%;height:auto;max-height:650px;object-fit:contain;display:block;border-radius:8px;background:#000;cursor:pointer;" onclick="window.open(this.src, '_blank')"></div>` : ''}
-                ${news.videoUrl ? `<div class="news-media" style="width:100%;border-radius:8px;overflow:hidden;background:#000;"><video src="${optimizedVid}" poster="${optimizedPoster}" controls style="width:100%;height:auto;max-height:650px;display:block;object-fit:contain;background:#000;border-radius:8px;" preload="none" playsinline></video></div>` : ''}
+                ${imageUrl ? `<div class="news-media"><img src="${optimizedImg}" style="width:100%;height:auto;max-height:650px;object-fit:contain;display:block;border-radius:8px;background:#000;cursor:pointer;" onclick="window.open(this.src, '_blank')"></div>` : ''}
+                ${videoUrl ? `<div class="news-media" style="width:100%;border-radius:8px;overflow:hidden;background:#000;"><video src="${optimizedVid}" poster="${optimizedPoster}" controls style="width:100%;height:auto;max-height:650px;display:block;object-fit:contain;background:#000;border-radius:8px;" preload="none" playsinline></video></div>` : ''}
                 <p class="news-content" style="color:#e0e0e0;">${escapeHtml(news.content || '')}</p>
                 <p class="news-date" style="font-size:12px; color:#94a3b8; text-align:right;">${date}</p>
               </div>
