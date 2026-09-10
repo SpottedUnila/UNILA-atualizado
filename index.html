@@ -2343,23 +2343,47 @@ gtag('config', 'G-FJT3X93608');
     }
     function cancelReply() { replyTo = null; document.getElementById("replyPreview").style.display = "none"; }
 
-    function sendMessage() {
+    async function sendMessage() {
       const input = document.getElementById("chatInput");
       const text = input.value.trim();
       if (!text && !selectedImage) return;
+      if (!nick || !firebaseUid) {
+        await appAlert("Crie ou entre com um nick antes de enviar mensagens.");
+        return;
+      }
       shouldScrollToBottom = true;
       const isAnonymous = document.getElementById("chatAnonymous").checked;
       const messageData = { nick: isAnonymous ? "Anônimo 👤" : nick, realNick: nick, uid: firebaseUid, time: Date.now(), anonymous: isAnonymous };
       if (replyTo) { messageData.reply = replyTo; cancelReply(); }
       if (selectedImage) {
         const originalPlaceholder = input.placeholder; input.placeholder = "Enviando..."; input.disabled = true;
-        uploadImageToCloudinary(selectedImage).then(imageUrl => {
-          input.disabled = false; input.placeholder = originalPlaceholder;
-          if (imageUrl) { messageData.imageUrl = imageUrl; messageData.text = text;
-          db.collection("chat").add(messageData);
-   cancelImage(); input.value = ""; }
-        });
-      } else { messageData.text = text; db.collection("chat").add(messageData); input.value = ""; document.getElementById("chatAnonymous").checked = false; }
+        try {
+          const imageUrl = await uploadImageToCloudinary(selectedImage);
+          if (!imageUrl) return;
+          messageData.imageUrl = imageUrl;
+          messageData.text = text;
+          await db.collection("chat").add(messageData);
+          cancelImage();
+          input.value = "";
+          document.getElementById("chatAnonymous").checked = false;
+        } catch (error) {
+          console.error("Erro ao enviar mensagem com imagem:", error);
+          await appAlert("Não foi possível enviar a mensagem." + (error && error.code ? " (" + error.code + ")" : ""));
+        } finally {
+          input.disabled = false;
+          input.placeholder = originalPlaceholder;
+        }
+      } else {
+        try {
+          messageData.text = text;
+          await db.collection("chat").add(messageData);
+          input.value = "";
+          document.getElementById("chatAnonymous").checked = false;
+        } catch (error) {
+          console.error("Erro ao enviar mensagem:", error);
+          await appAlert("Não foi possível enviar a mensagem." + (error && error.code ? " (" + error.code + ")" : ""));
+        }
+      }
     }
 
     function formatarDataMensagem(timestamp){
@@ -2465,6 +2489,9 @@ padding:0 2px;">↩ Responder</button>`;
           if (snapshot.docs.length > 0) {
             lastDoc = snapshot.docs[snapshot.docs.length - 1];
           }
+        }, error => {
+          console.error("Erro ao carregar o chat:", error);
+          appAlert("Não foi possível carregar o chat." + (error && error.code ? " (" + error.code + ")" : ""));
         });
 
       const box = document.getElementById("chatBox");
@@ -2477,15 +2504,21 @@ padding:0 2px;">↩ Responder</button>`;
 
     async function loadMoreMessages() {
       loadingMore = true;
-      const snapshot = await db.collection("chat").orderBy("time", "desc").startAfter(lastDoc).limit(LIMIT).get();
-      if (snapshot.docs.length > 0) {
-        const olderMessages = [];
-        snapshot.docs.forEach(doc => { olderMessages.push({ id: doc.id, ...doc.data() }); });
-        chatMessages = [...olderMessages, ...chatMessages].sort((a, b) => a.time - b.time);
-        lastDoc = snapshot.docs[snapshot.docs.length - 1];
-        renderMessages(true);
+      try {
+        const snapshot = await db.collection("chat").orderBy("time", "desc").startAfter(lastDoc).limit(LIMIT).get();
+        if (snapshot.docs.length > 0) {
+          const olderMessages = [];
+          snapshot.docs.forEach(doc => { olderMessages.push({ id: doc.id, ...doc.data() }); });
+          chatMessages = [...olderMessages, ...chatMessages].sort((a, b) => a.time - b.time);
+          lastDoc = snapshot.docs[snapshot.docs.length - 1];
+          renderMessages(true);
+        }
+      } catch (error) {
+        console.error("Erro ao carregar mensagens antigas:", error);
+        appAlert("Não foi possível carregar mensagens antigas." + (error && error.code ? " (" + error.code + ")" : ""));
+      } finally {
+        loadingMore = false;
       }
-      loadingMore = false;
     }
 
     async function deleteMsg(id, msgNick) {
@@ -2645,7 +2678,6 @@ padding:0 2px;">↩ Responder</button>`;
         if (error && error.code === "nick-already-taken") appAlert("Esse nick já existe. Crie outro nick.");
         else if (error && error.code === "nick-already-owned") appAlert("Este usuário já possui outro nick.");
         else if (authErrorIsEmailInUse(error)) appAlert("Esse nick já existe. Crie outro nick.");
-        else if (ownership.ownerUid && ["auth/wrong-password", "auth/invalid-credential", "auth/user-not-found"].includes(authErrorCode(error))) appAlert("Esse nick já existe. Se você é um novo usuário, crie outro nick; se já possui esse nick, confira a senha.");
         else if (["auth/wrong-password", "auth/invalid-credential", "auth/user-not-found"].includes(authErrorCode(error))) appAlert("Nick ou senha inválidos.");
         else if (authErrorCode(error) === "auth/weak-password") appAlert("A senha precisa ter pelo menos 6 caracteres.");
         else appAlert("Não foi possível entrar agora. Verifique o nick e a senha.");
