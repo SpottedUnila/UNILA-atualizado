@@ -1911,7 +1911,23 @@ gtag('config', 'G-FJT3X93608');
 
     function safeMediaUrl(value) {
       const url = String(value || "").trim();
-      return /^https?:\/\//i.test(url) ? url : "";
+      if (/^https?:\/\//i.test(url)) return url;
+      // O storage do AdminPanel retorna caminhos relativos. Como o app público
+      // está no GitHub Pages, esses caminhos precisam apontar ao domínio do painel.
+      if (url.startsWith("/manus-storage/")) return new URL(url, "https://spottedash-g7yfwvxv.manus.space").toString();
+      return "";
+    }
+    function mediaDateValue(value) {
+      if (!value) return 0;
+      if (typeof value.toMillis === "function") return value.toMillis();
+      if (typeof value.toDate === "function") return value.toDate().getTime();
+      if (typeof value.seconds === "number") return value.seconds * 1000 + Math.floor((value.nanoseconds || 0) / 1000000);
+      if (typeof value === "number") return value;
+      const parsed = new Date(value).getTime();
+      return Number.isNaN(parsed) ? 0 : parsed;
+    }
+    function conhecaDateValue(item) {
+      return mediaDateValue(item && (item.publishedAt || item.updatedAt || item.createdAt));
     }
 
     function getConhecaMedia(item) {
@@ -2002,7 +2018,7 @@ gtag('config', 'G-FJT3X93608');
         const snapshot = await db.collection("conhecaUnila").get();
         const items = snapshot.docs.map(doc => ({id:doc.id, ...doc.data()}))
           .filter(item => getConhecaMedia(item).imageUrl || getConhecaMedia(item).videoUrl)
-          .sort((a, b) => Number(b.publishedAt || b.updatedAt || b.createdAt || 0) - Number(a.publishedAt || a.updatedAt || a.createdAt || 0));
+          .sort((a, b) => conhecaDateValue(b) - conhecaDateValue(a));
         let htmlConheca = "";
         if (!items.length) {
           htmlConheca = '<p style="text-align:center;padding:20px;color:#94a3b8;">Nenhuma imagem ou vídeo publicado ainda.</p>';
