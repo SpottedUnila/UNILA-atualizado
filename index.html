@@ -2407,7 +2407,9 @@ gtag('config', 'G-FJT3X93608');
 
       const fragment = document.createDocumentFragment();
       chatMessages.forEach(m => {
-        let deleteBtn = (m.realNick === nick || nick === ADMIN_NICK) ? `<button onclick="deleteMsg('${m.id}', '${m.realNick || m.nick}')" style="background:none; border:none; color:#94a3b8; cursor:pointer; margin-left:10px;">🗑</button>` : "";
+        const messageBelongsToCurrentUser = !!firebaseUid && String(m.uid || "") === String(firebaseUid);
+        const canDeleteMessage = nick === ADMIN_NICK || messageBelongsToCurrentUser;
+        let deleteBtn = canDeleteMessage ? `<button type="button" aria-label="Excluir mensagem" title="Excluir mensagem" data-message-id="${escapeHtml(m.id)}" data-message-uid="${escapeHtml(m.uid || '')}" onclick="deleteMsg(this.dataset.messageId, this.dataset.messageUid)" style="background:none; border:none; color:#94a3b8; cursor:pointer; margin-left:10px;">🗑</button>` : "";
         let replyBtn = `<button onclick="setReply('${m.id}', '${m.nick}', '${(m.text || "Imagem").replace(/'/g, "\\\'")}')" style="background:none; border:none; color:#3b82f6; 
         
         cursor:pointer;
@@ -2521,14 +2523,17 @@ padding:0 2px;">↩ Responder</button>`;
       }
     }
 
-    async function deleteMsg(id, msgNick) {
-      if (msgNick === nick || nick === ADMIN_NICK) {
-        try {
-          await db.collection("chat").doc(id).delete();
-        
-          const el = document.getElementById(id);
-          if (el) el.remove();
-        } catch (e) { console.error(e); }
+    async function deleteMsg(id, msgUid) {
+      const isOwner = nick === ADMIN_NICK
+        || (!!firebaseUid && String(msgUid || "") === String(firebaseUid));
+      if (!isOwner) return;
+      try {
+        await db.collection("chat").doc(id).delete();
+        const el = document.getElementById(id);
+        if (el) el.remove();
+      } catch (error) {
+        console.error("Erro ao excluir mensagem:", error);
+        await appAlert("Não foi possível apagar esta mensagem." + (error && error.code ? " (" + error.code + ")" : ""));
       }
     }
 
