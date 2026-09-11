@@ -2083,6 +2083,7 @@ gtag('config', 'G-FJT3X93608');
     ];
     const ACADEMIC_GOALS_COLLECTION = "academic_goals";
     const ACADEMIC_DRAFT_KEY_PREFIX = "spotted_academic_draft_v1_";
+    let academicGoalsEditMode = false;
     function academicDraftStorageKey() { return ACADEMIC_DRAFT_KEY_PREFIX + String(firebaseUid || "pending"); }
     function readAcademicDraft() {
       try {
@@ -2140,13 +2141,13 @@ gtag('config', 'G-FJT3X93608');
         <section class="academic-goal-card">
           <h3>${escapeHtml(goal.title)}</h3>
           <p>${escapeHtml(goal.prompt)}</p>
-          <textarea id="academic-goal-${goal.id}" data-goal-id="${goal.id}" aria-label="${escapeHtml(goal.title)}" placeholder="${escapeHtml(copy.placeholder)}"></textarea>
+          <textarea id="academic-goal-${goal.id}" data-goal-id="${goal.id}" aria-label="${escapeHtml(goal.title)}" placeholder="${escapeHtml(copy.placeholder)}" readonly></textarea>
         </section>
       `).join("");
       list.querySelectorAll("textarea").forEach(field => {
         field.addEventListener("input", () => {
           updateAcademicProgress();
-          saveAcademicDraft(collectAcademicGoals());
+          if (academicGoalsEditMode) saveAcademicDraft(collectAcademicGoals());
         });
         const goalId = field.getAttribute("data-goal-id");
         if (Object.prototype.hasOwnProperty.call(existingValues, goalId)) field.value = existingValues[goalId];
@@ -2178,35 +2179,15 @@ gtag('config', 'G-FJT3X93608');
         const snapshot = await firestoreGet(db.collection(ACADEMIC_GOALS_COLLECTION).doc(firebaseUid));
         const reference = db.collection(ACADEMIC_GOALS_COLLECTION).doc(firebaseUid);
         const cloudGoals = snapshot.exists ? (snapshot.data().goals || {}) : {};
-        const localDraft = readAcademicDraft();
-        // Um rascunho local representa uma alteração ainda não confirmada na
-        // nuvem e, por isso, tem prioridade até o próximo salvamento bem-sucedido.
-        const saved = Object.assign({}, cloudGoals, localDraft);
-        const hasLocalDraft = Object.keys(localDraft).some(key => String(localDraft[key] || "").trim());
-        let draftSynced = false;
-        if (hasLocalDraft) {
-          try {
-            await firestoreSet(reference, {
-              uid: firebaseUid,
-              nick: nick,
-              goals: saved,
-              createdAt: snapshot.exists && snapshot.data().createdAt ? snapshot.data().createdAt : Date.now(),
-              updatedAt: Date.now(),
-              source: "Spotted Unila"
-            }, { merge: true });
-            clearAcademicDraft();
-            draftSynced = true;
-          } catch (syncError) {
-            console.warn("Não foi possível sincronizar o rascunho das metas:", syncError);
-          }
-        }
+        const saved = cloudGoals;
+        clearAcademicDraft();
         ACADEMIC_GOALS.forEach(goal => {
           const field = document.getElementById("academic-goal-" + goal.id);
           if (field) field.value = typeof saved[goal.id] === "string" ? saved[goal.id] : "";
         });
         updateAcademicProgress();
         const copy = academicCopy();
-        academicGoalsStatus(draftSynced ? copy.saved : (snapshot.exists ? copy.loaded : copy.newPlan));
+        academicGoalsStatus(snapshot.exists ? copy.loaded : copy.newPlan);
       } catch (error) {
         console.error("Erro ao carregar metas acadêmicas:", error);
         academicGoalsStatus(academicCopy().genericError + (error && error.code ? " (" + error.code + ")" : ""), true);
@@ -2214,6 +2195,7 @@ gtag('config', 'G-FJT3X93608');
     }
 
     function openAcademicGoalsPage() {
+      academicGoalsEditMode = false;
       openPage("academicGoalsPage");
       loadAcademicGoals();
     }
@@ -2221,6 +2203,10 @@ gtag('config', 'G-FJT3X93608');
     async function saveAcademicGoals() {
       if (!nick) {
         academicGoalsStatus(academicCopy().noNickSave, true);
+        return;
+      }
+      if (!academicGoalsEditMode) {
+        academicGoalsStatus("Clique em Editar plano antes de alterar ou salvar.", true);
         return;
       }
       academicGoalsStatus(academicCopy().saving);
@@ -2243,6 +2229,8 @@ gtag('config', 'G-FJT3X93608');
         }, { merge: true });
         clearAcademicDraft();
         updateAcademicProgress();
+        academicGoalsEditMode = false;
+        document.querySelectorAll("#academicGoalsList textarea").forEach(field => field.setAttribute("readonly", "readonly"));
         academicGoalsStatus(academicCopy().saved);
       } catch (error) {
         console.error("Erro ao salvar metas acadêmicas:", error);
@@ -2252,6 +2240,7 @@ gtag('config', 'G-FJT3X93608');
 
     function editAcademicGoals() {
       const firstField = document.querySelector("#academicGoalsList textarea");
+      academicGoalsEditMode = true;
       document.querySelectorAll("#academicGoalsList textarea").forEach(field => field.removeAttribute("readonly"));
       academicGoalsStatus(academicCopy().editMode);
       if (firstField) firstField.focus();
@@ -2267,7 +2256,9 @@ gtag('config', 'G-FJT3X93608');
         await waitForAcademicAuth();
         await firestoreDelete(db.collection(ACADEMIC_GOALS_COLLECTION).doc(firebaseUid));
         clearAcademicDraft();
+        academicGoalsEditMode = false;
         document.querySelectorAll("#academicGoalsList textarea").forEach(field => { field.value = ""; });
+        document.querySelectorAll("#academicGoalsList textarea").forEach(field => field.setAttribute("readonly", "readonly"));
         updateAcademicProgress();
         academicGoalsStatus(academicCopy().cleared);
       } catch (error) {
@@ -3840,7 +3831,7 @@ padding:0 2px;">↩ Responder</button>`;
     }
     var currentNick = getNick();
     var uidToDelete = firebaseUid;
-    var userToDelete = firebaseUser || (typeof auth !== "undefined" ? auth.currentUser : null);
+    var userToDelete = (typeof auth !== "undefined" && auth.currentUser) || firebaseUser;
     var deletePassword = (document.getElementById("nickDeletePasswordInput") || {}).value || "";
 
     // A exclusão da credencial é preparada antes de apagar os dados. Para
@@ -3887,24 +3878,6 @@ padding:0 2px;">↩ Responder</button>`;
       collectQuery("desapega", "realNick", currentNick, deletedAds),
       collectQuery("desapega", "nick", currentNick, deletedAds)
     ]);
-
-    // Remove também respostas do usuário publicadas em anúncios de terceiros.
-    // A regra do Firestore permite a alteração limitada do campo replies.
-    var allAds = await db.collection("desapega").get();
-    allAds.forEach(function(doc){
-      if (deletedAds.has(doc.id)) return;
-      var data = doc.data() || {};
-      var replies = Array.isArray(data.replies) ? data.replies : [];
-      var filtered = replies.filter(function(reply){
-        return !(String(reply && (reply.uid || reply.userId || reply.authorUid) || "") === String(uidToDelete)
-          || (!!currentNick && String(reply && (reply.nick || reply.realNick) || "") === String(currentNick)));
-      });
-      if (filtered.length !== replies.length) {
-        enqueue(function(currentBatch){
-          currentBatch.update(db.collection("desapega").doc(doc.id), { replies: filtered, updatedAt: Date.now() });
-        });
-      }
-    });
 
     deletedChat.forEach(function(id){ enqueue(function(currentBatch){ currentBatch.delete(db.collection("chat").doc(id)); }); });
     deletedAds.forEach(function(id){ enqueue(function(currentBatch){ currentBatch.delete(db.collection("desapega").doc(id)); }); });
