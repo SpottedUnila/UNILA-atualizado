@@ -1025,7 +1025,6 @@ gtag('config', 'G-FJT3X93608');
     <button class="internet" onclick="openDynamic('internet','page')">🌐 Internet Unila</button>
     <button class="estude" onclick="openDynamic('estude','page')">🎓 Estude na Unila</button>
     <button class="meta-academica" onclick="openAcademicGoalsPage()">📈 Meta Acadêmica</button>
-    <button class="lost-found" onclick="openLostFoundPage()">🔎 Achados e Perdidos</button>
     <button class="auxilio-estudantil" onclick="openLocalizedResource('studentAid')">🎓 Auxílio Estudantil</button>
     <button class="unila" onclick="openLocalizedResource('mentalHealth')">🧠 Saúde Mental</button>
     <button class="google" onclick="openDynamic('enem','link')">📝 ENEM – Página do Participante</button>
@@ -1066,27 +1065,6 @@ gtag('config', 'G-FJT3X93608');
       <button id="academicClearBtn" type="button" class="academic-clear" onclick="clearAcademicGoals()">🗑 Limpar plano</button>
     </div>
     <p id="academicGoalsStatus" class="academic-status" role="status"></p>
-  </div>
-  <div id="lostFoundPage" class="page">
-    <h2>🔎 Achados e Perdidos</h2>
-    <p style="color:#cbd5e1;">Publique um item perdido ou encontrado. Não informe senhas, documentos ou dados sensíveis.</p>
-    <div id="lostFoundForm" style="background:rgba(30,41,59,.6);border-radius:12px;padding:14px;margin-bottom:16px;">
-      <select id="lostFoundType" style="width:100%;box-sizing:border-box;padding:10px;border-radius:8px;margin-bottom:8px;">
-        <option value="found">ENCONTREI</option>
-        <option value="lost">PERDI</option>
-      </select>
-      <input id="lostFoundTitle" type="text" maxlength="100" placeholder="Título (ex.: Chave encontrada)" style="width:100%;box-sizing:border-box;padding:10px;border-radius:8px;border:0;margin-bottom:8px;" />
-      <textarea id="lostFoundDescription" maxlength="500" placeholder="Descrição do item" style="width:100%;box-sizing:border-box;padding:10px;border-radius:8px;border:0;margin-bottom:8px;"></textarea>
-      <input id="lostFoundLocation" type="text" maxlength="100" placeholder="Local (ex.: PTI)" style="width:100%;box-sizing:border-box;padding:10px;border-radius:8px;border:0;margin-bottom:8px;" />
-      <label style="display:block;background:#3b82f6;color:#fff;padding:10px;border-radius:8px;text-align:center;cursor:pointer;margin-bottom:8px;">
-        📷 Adicionar imagem (opcional)
-        <input id="lostFoundImage" type="file" accept="image/*" style="display:none;" onchange="handleLostFoundImage(event)" />
-      </label>
-      <div id="lostFoundImagePreview" style="display:none;margin-bottom:8px;"><img id="lostFoundPreview" alt="Pré-visualização" style="max-width:100%;max-height:180px;border-radius:8px;display:block;margin:auto;" /><button type="button" onclick="clearLostFoundImage()" style="margin-top:6px;">Remover imagem</button></div>
-      <button type="button" id="lostFoundSaveBtn" onclick="saveLostFound()" style="background:#22c55e;">Publicar</button>
-    </div>
-    <p id="lostFoundStatus" role="status" style="min-height:22px;color:#bbf7d0;"></p>
-    <div id="lostFoundList"><p style="text-align:center;">Carregando...</p></div>
   </div>
 
   <div id="chatPage" class="page">
@@ -2084,93 +2062,7 @@ gtag('config', 'G-FJT3X93608');
         listenChat();
       }
       if(id === 'notesPage') loadNotes();
-      if(id === 'lostFoundPage') listenLostFound();
       if(id === 'desapegaPage') listenAds();
-    }
-
-    const LOST_FOUND_COLLECTION = "lost_found";
-    let lostFoundImageFile = null;
-    let unsubscribeLostFound = null;
-    function lostFoundStatus(message, isError) {
-      const el = document.getElementById("lostFoundStatus");
-      if (el) { el.textContent = message || ""; el.style.color = isError ? "#fecaca" : "#bbf7d0"; }
-    }
-    function handleLostFoundImage(event) {
-      const file = event.target.files && event.target.files[0];
-      if (!file || !isValidImageFile(file)) return;
-      lostFoundImageFile = file;
-      const reader = new FileReader();
-      reader.onload = e => {
-        document.getElementById("lostFoundPreview").src = e.target.result;
-        document.getElementById("lostFoundImagePreview").style.display = "block";
-      };
-      reader.readAsDataURL(file);
-    }
-    function clearLostFoundImage() {
-      lostFoundImageFile = null;
-      const input = document.getElementById("lostFoundImage");
-      const preview = document.getElementById("lostFoundImagePreview");
-      if (input) input.value = "";
-      if (preview) preview.style.display = "none";
-    }
-    function openLostFoundPage() { openPage("lostFoundPage"); }
-    function renderLostFound(items) {
-      const list = document.getElementById("lostFoundList");
-      if (!list) return;
-      items.sort((a, b) => Number(b.createdAt || 0) - Number(a.createdAt || 0));
-      if (!items.length) { list.innerHTML = "<p style='text-align:center;'>Nenhum item publicado.</p>"; return; }
-      list.innerHTML = items.map(item => {
-        const own = nick === ADMIN_NICK || (!!firebaseUid && String(item.uid || "") === String(firebaseUid));
-        const type = item.type === "lost" ? "PERDI" : "ENCONTREI";
-        const status = item.status === "resolved" ? "RESOLVIDO" : "ABERTO";
-        const image = item.imageUrl ? `<img src="${escapeHtml(item.imageUrl)}" alt="Imagem do item" style="max-width:100%;max-height:240px;border-radius:8px;display:block;margin:8px auto;" />` : "";
-        const actions = own ? `<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;"><button type="button" onclick="resolveLostFound('${escapeHtml(item.id)}')">${item.status === "resolved" ? "Reabrir" : "Marcar como resolvido"}</button><button type="button" style="background:#dc2626;" onclick="deleteLostFound('${escapeHtml(item.id)}')">Apagar</button></div>` : "";
-        return `<article style="background:rgba(30,41,59,.6);border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:12px;margin-bottom:12px;"><strong>[${type}] ${escapeHtml(item.title || "Item")}</strong><div style="color:#cbd5e1;margin-top:6px;">Local: ${escapeHtml(item.location || "não informado")}</div><p style="white-space:pre-wrap;margin:8px 0;">${escapeHtml(item.description || "")}</p>${image}<small style="color:#94a3b8;">Publicado por: ${escapeHtml(item.nick || "Usuário")} · ${status}</small>${actions}</article>`;
-      }).join("");
-    }
-    function listenLostFound() {
-      if (unsubscribeLostFound) unsubscribeLostFound();
-      unsubscribeLostFound = db.collection(LOST_FOUND_COLLECTION).onSnapshot(snapshot => {
-        renderLostFound(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
-      }, error => {
-        console.error("Erro ao carregar Achados e Perdidos:", error);
-        lostFoundStatus("Não foi possível carregar os itens." + (error && error.code ? " (" + error.code + ")" : ""), true);
-      });
-    }
-    async function saveLostFound() {
-      if (!nick) { lostFoundStatus("Crie um nick no Chat antes de publicar.", true); return; }
-      const title = document.getElementById("lostFoundTitle").value.trim();
-      const description = document.getElementById("lostFoundDescription").value.trim();
-      const location = document.getElementById("lostFoundLocation").value.trim();
-      if (!title || !description || !location) { lostFoundStatus("Preencha título, descrição e local.", true); return; }
-      const button = document.getElementById("lostFoundSaveBtn");
-      button.disabled = true; lostFoundStatus("Publicando...");
-      try {
-        await waitForFirebaseReady();
-        let imageUrl = "";
-        if (lostFoundImageFile) imageUrl = await uploadImageToCloudinary(lostFoundImageFile) || "";
-        await db.collection(LOST_FOUND_COLLECTION).add({
-          type: document.getElementById("lostFoundType").value,
-          title, description, location, imageUrl,
-          nick, uid: firebaseUid, status: "open", createdAt: Date.now(), updatedAt: Date.now(), source: "Spotted Unila"
-        });
-        document.getElementById("lostFoundTitle").value = "";
-        document.getElementById("lostFoundDescription").value = "";
-        document.getElementById("lostFoundLocation").value = "";
-        clearLostFoundImage();
-        lostFoundStatus("Publicado com sucesso.");
-      } catch (error) {
-        console.error("Erro ao publicar Achados e Perdidos:", error);
-        lostFoundStatus("Não foi possível publicar." + (error && error.code ? " (" + error.code + ")" : ""), true);
-      } finally { button.disabled = false; }
-    }
-    async function resolveLostFound(id) {
-      try { await db.collection(LOST_FOUND_COLLECTION).doc(id).update({ status: "resolved", updatedAt: Date.now() }); }
-      catch (error) { lostFoundStatus("Não foi possível atualizar o item." + (error && error.code ? " (" + error.code + ")" : ""), true); }
-    }
-    async function deleteLostFound(id) {
-      try { await db.collection(LOST_FOUND_COLLECTION).doc(id).delete(); }
-      catch (error) { lostFoundStatus("Não foi possível apagar o item." + (error && error.code ? " (" + error.code + ")" : ""), true); }
     }
 
     const ACADEMIC_GOALS = [
@@ -3886,7 +3778,7 @@ padding:0 2px;">↩ Responder</button>`;
     try { if (typeof conhecaMediaUnsubscribe === "function") { conhecaMediaUnsubscribe(); conhecaMediaUnsubscribe = null; } } catch (error) { console.warn("Não foi possível encerrar o listener de mídia:", error); }
 
     // Limpa imediatamente qualquer conteúdo que ainda esteja renderizado.
-    ["chatBox", "list", "dynamicContent", "academicGoalsList", "adList", "lostFoundList"].forEach(function(id) {
+    ["chatBox", "list", "dynamicContent", "academicGoalsList", "adList"].forEach(function(id) {
       var element = document.getElementById(id);
       if (element) element.replaceChildren();
     });
@@ -3894,7 +3786,7 @@ padding:0 2px;">↩ Responder</button>`;
       var element = document.getElementById(id);
       if (element) element.value = "";
     });
-    ["chatArea", "academicGoalsPage", "notesPage", "dynamicPage", "desapegaPage", "lostFoundPage"].forEach(function(id) {
+    ["chatArea", "academicGoalsPage", "notesPage", "dynamicPage", "desapegaPage"].forEach(function(id) {
       var element = document.getElementById(id);
       if (element) element.style.display = "none";
     });
@@ -3963,7 +3855,6 @@ padding:0 2px;">↩ Responder</button>`;
 
     var deletedChat = new Set();
     var deletedAds = new Set();
-    var deletedLostFound = new Set();
     var batches = [];
     var batch = db.batch();
     var operationCount = 0;
@@ -3992,8 +3883,7 @@ padding:0 2px;">↩ Responder</button>`;
       collectQuery("desapega", "userId", uidToDelete, deletedAds),
       collectQuery("desapega", "ownerUid", uidToDelete, deletedAds),
       collectQuery("desapega", "realNick", currentNick, deletedAds),
-      collectQuery("desapega", "nick", currentNick, deletedAds),
-      collectQuery("lost_found", "uid", uidToDelete, deletedLostFound)
+      collectQuery("desapega", "nick", currentNick, deletedAds)
     ]);
 
     // Remove também respostas do usuário publicadas em anúncios de terceiros.
@@ -4016,7 +3906,6 @@ padding:0 2px;">↩ Responder</button>`;
 
     deletedChat.forEach(function(id){ enqueue(function(currentBatch){ currentBatch.delete(db.collection("chat").doc(id)); }); });
     deletedAds.forEach(function(id){ enqueue(function(currentBatch){ currentBatch.delete(db.collection("desapega").doc(id)); }); });
-    deletedLostFound.forEach(function(id){ enqueue(function(currentBatch){ currentBatch.delete(db.collection("lost_found").doc(id)); }); });
 
     if (currentNick) {
       enqueue(function(currentBatch){ currentBatch.delete(db.collection("users").doc(currentNick)); });
