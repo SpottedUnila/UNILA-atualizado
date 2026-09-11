@@ -2407,9 +2407,11 @@ gtag('config', 'G-FJT3X93608');
 
       const fragment = document.createDocumentFragment();
       chatMessages.forEach(m => {
-        const messageBelongsToCurrentUser = !!firebaseUid && String(m.uid || "") === String(firebaseUid);
+        const messageUidCandidates = [m.uid, m.userId, m.authorUid].map(value => String(value || ""));
+        const messageBelongsToCurrentUser = !!firebaseUid && messageUidCandidates.includes(String(firebaseUid));
+        const messageAuthorUid = messageUidCandidates.find(value => value === String(firebaseUid)) || messageUidCandidates.find(Boolean) || "";
         const canDeleteMessage = nick === ADMIN_NICK || messageBelongsToCurrentUser;
-        let deleteBtn = canDeleteMessage ? `<button type="button" aria-label="Excluir mensagem" title="Excluir mensagem" data-message-id="${escapeHtml(m.id)}" data-message-uid="${escapeHtml(m.uid || '')}" onclick="deleteMsg(this.dataset.messageId, this.dataset.messageUid)" style="background:none; border:none; color:#94a3b8; cursor:pointer; margin-left:10px;">🗑</button>` : "";
+        let deleteBtn = canDeleteMessage ? `<button type="button" aria-label="Excluir mensagem" title="Excluir mensagem" data-message-id="${escapeHtml(m.id)}" data-message-uid="${escapeHtml(messageAuthorUid)}" onclick="deleteMsg(this.dataset.messageId, this.dataset.messageUid)" style="background:none; border:none; color:#94a3b8; cursor:pointer; margin-left:10px;">🗑</button>` : "";
         let replyBtn = `<button onclick="setReply('${m.id}', '${m.nick}', '${(m.text || "Imagem").replace(/'/g, "\\\'")}')" style="background:none; border:none; color:#3b82f6; 
         
         cursor:pointer;
