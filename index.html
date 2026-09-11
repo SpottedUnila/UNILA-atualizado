@@ -816,6 +816,17 @@ button:hover{
     letter-spacing:0;
   }
 }
+/* Busca global */
+.global-search{position:fixed;top:58px;left:50%;transform:translateX(-50%);width:min(560px,calc(100% - 34px));z-index:1004}
+.global-search-wrap{display:flex;align-items:center;gap:8px;padding:3px 12px;border:1px solid rgba(255,255,255,.24);border-radius:14px;background:rgba(18,9,34,.78);box-shadow:0 8px 25px rgba(0,0,0,.28);backdrop-filter:blur(14px)}
+#globalSearchInput{width:100%;height:38px;border:0;outline:0;color:#fff;background:transparent;font-size:14px}
+#globalSearchInput::placeholder{color:rgba(255,255,255,.68)}
+.global-search-clear{display:none;width:26px!important;height:26px!important;padding:0!important;border-radius:50%!important;background:rgba(255,255,255,.12)!important;color:#fff}
+.global-search-results{display:none;max-height:56vh;overflow-y:auto;margin-top:7px;padding:7px;border:1px solid rgba(255,255,255,.18);border-radius:14px;background:rgba(13,7,27,.94);box-shadow:0 16px 40px rgba(0,0,0,.45)}
+.global-search-result{display:block;width:100%;padding:11px 12px;border:0;border-radius:10px;color:#f8fafc;background:transparent;text-align:left;cursor:pointer}
+.global-search-result:hover,.global-search-result:focus-visible{outline:none;background:rgba(168,85,247,.24)}
+.global-search-result strong{display:block;color:#e9d5ff}.global-search-result small{display:block;overflow:hidden;margin-top:3px;color:#cbd5e1;text-overflow:ellipsis;white-space:nowrap}.global-search-empty{padding:13px 12px;color:#cbd5e1}
+@media(max-width:720px){.global-search{top:54px;width:calc(100% - 22px)}}
 </style>
 <style id="spotted-ugc-compliance-style">
   .ugc-actions{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px;align-items:center}
@@ -1001,6 +1012,10 @@ gtag('config', 'G-FJT3X93608');
   </div>
 
   <button id="installBtn" class="install-btn">📲 Instalar App</button>
+  <div id="globalSearch" class="global-search" role="search">
+    <div class="global-search-wrap"><span aria-hidden="true">🔎</span><input id="globalSearchInput" type="search" autocomplete="off" placeholder="Buscar no Spotted Unila..." aria-label="Busca global"><button id="globalSearchClear" class="global-search-clear" type="button" aria-label="Limpar busca">×</button></div>
+    <div id="globalSearchResults" class="global-search-results" role="listbox" aria-live="polite"></div>
+  </div>
 
   <div id="home" class="menu">
     <button class="dev" onclick="openPage('chatPage')"> Spotted💜 Chat💬</button>
@@ -3393,6 +3408,40 @@ padding:0 2px;">↩ Responder</button>`;
     if (el && el.placeholder !== value) el.placeholder = value;
   }
 
+  function normalizeSearchText(value){ return String(value || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase(); }
+  function globalSearchItems(){
+    var items = [];
+    document.querySelectorAll("#home > button").forEach(function(button){
+      var label = (button.textContent || "").trim();
+      if (label) items.push({label: label, detail: tr("home"), action: function(){ button.click(); }});
+    });
+    document.querySelectorAll(".page").forEach(function(page){
+      var heading = page.querySelector("h1, h2"), title = heading ? heading.textContent.trim() : "";
+      var body = (page.textContent || "").replace(/\s+/g, " ").trim();
+      if (title || body) items.push({label: title || body.slice(0, 80), detail: body.replace(title, "").slice(0, 150), action: function(){ openPage(page.id); }});
+    });
+    return items;
+  }
+  function closeGlobalSearch(){ var results = document.getElementById("globalSearchResults"); if (results) { results.style.display = "none"; results.innerHTML = ""; } }
+  function renderGlobalSearch(){
+    var input = document.getElementById("globalSearchInput"), results = document.getElementById("globalSearchResults"), clear = document.getElementById("globalSearchClear");
+    if (!input || !results) return;
+    var query = input.value.trim(); if (clear) clear.style.display = query ? "block" : "none";
+    if (!query) { closeGlobalSearch(); return; }
+    var normalized = normalizeSearchText(query), matches = globalSearchItems().filter(function(item){ return normalizeSearchText(item.label + " " + item.detail).indexOf(normalized) !== -1; }).slice(0, 12);
+    results.innerHTML = matches.length ? matches.map(function(item){ return '<button type="button" class="global-search-result"><strong>' + escapeHtml(item.label) + '</strong><small>' + escapeHtml(item.detail || tr("home")) + '</small></button>'; }).join("") : '<div class="global-search-empty">Nenhum conteúdo encontrado.</div>';
+    results.style.display = "block";
+    results.querySelectorAll(".global-search-result").forEach(function(button, index){ button.addEventListener("click", function(){ var match = matches[index]; closeGlobalSearch(); input.value = ""; if (clear) clear.style.display = "none"; if (match) match.action(); }); });
+  }
+  function setupGlobalSearch(){
+    var input = document.getElementById("globalSearchInput"), clear = document.getElementById("globalSearchClear");
+    if (!input || input.__globalSearchReady) return; input.__globalSearchReady = true;
+    input.addEventListener("input", renderGlobalSearch);
+    input.addEventListener("keydown", function(event){ if (event.key === "Escape") { input.value = ""; closeGlobalSearch(); input.blur(); } });
+    if (clear) clear.addEventListener("click", function(){ input.value = ""; closeGlobalSearch(); clear.style.display = "none"; input.focus(); });
+    document.addEventListener("click", function(event){ if (!event.target.closest("#globalSearch")) closeGlobalSearch(); });
+  }
+
   var menuKeys = [
     "chatMenu", "portal", "inscreva", "sigaa", "email", "google", "instagram", "facebook", "library", "intercampus", "notices",
     "emergency", "addresses", "ru", "group", "developer", "privacy", "notes", "share", "internet", "study", "academicGoals", "studentAid", "mentalHealth", "enem", "news", "conheca", "desapega", "upa"
@@ -3420,6 +3469,9 @@ padding:0 2px;">↩ Responder</button>`;
     setOwnText(document.querySelector(".podcast-badge"), tr("podcast"));
     setOwnText(document.querySelector(".radio-badge"), tr("music"));
     setText("#installBtn", tr("install"));
+    setupGlobalSearch();
+    var globalSearchInput = document.getElementById("globalSearchInput");
+    if (globalSearchInput) globalSearchInput.placeholder = state.lang === "fr" ? "Rechercher dans Spotted Unila..." : (state.lang === "es" ? "Buscar en Spotted Unila..." : "Buscar no Spotted Unila...");
 
     setText("#chatPage h2", tr("chatHeading"));
     setPlaceholder("#nickInput", tr("nickPlaceholder"));
