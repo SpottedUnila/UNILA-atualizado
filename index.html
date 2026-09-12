@@ -847,7 +847,21 @@ button:hover{
   .simple-confirm-actions{display:flex;justify-content:flex-end;gap:24px;margin-top:24px}
   .simple-confirm-actions button{width:auto;min-width:90px;padding:10px 12px;border:0;background:transparent;border-radius:8px;font-size:15px;font-weight:700;cursor:pointer}
   .simple-confirm-cancel{color:#db2777}
-  .simple-confirm-ok{color:#db2777}</style>
+  .simple-confirm-ok{color:#db2777}
+  .app-search{width:min(620px,calc(100% - 28px));margin:10px auto 14px;position:relative;z-index:5}
+  .app-search-bar{display:flex;align-items:center;gap:8px;background:rgba(15,23,42,.78);border:1px solid rgba(255,255,255,.28);border-radius:18px;padding:7px 12px;box-shadow:0 6px 20px rgba(0,0,0,.25);backdrop-filter:blur(8px)}
+  .app-search-bar span{font-size:18px;opacity:.9}
+  #appSearchInput{width:100%;box-sizing:border-box;border:0;outline:0;background:transparent;color:#fff;font-size:15px;padding:7px 2px}
+  #appSearchInput::placeholder{color:rgba(255,255,255,.72)}
+  .app-search-results{display:none;margin-top:6px;max-height:42vh;overflow:auto;background:rgba(15,23,42,.96);border:1px solid rgba(255,255,255,.2);border-radius:14px;padding:6px;box-shadow:0 10px 28px rgba(0,0,0,.4)}
+  .app-search-result{display:block;width:100%;text-align:left;background:transparent;border:0;border-bottom:1px solid rgba(255,255,255,.1);color:#fff;padding:10px 12px;cursor:pointer;border-radius:9px}
+  .app-search-result:last-child{border-bottom:0}
+  .app-search-result:hover,.app-search-result:focus{background:rgba(168,85,247,.25);outline:0}
+  .app-search-result strong{display:block;font-size:14px}
+  .app-search-result small{display:block;color:#cbd5e1;font-size:11px;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .app-search-empty{padding:12px;color:#cbd5e1;font-size:13px}
+  @media (max-width:600px){.app-search{margin-top:6px}.app-search-results{max-height:48vh}}
+  </style>
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
@@ -1017,9 +1031,14 @@ gtag('config', 'G-FJT3X93608');
     <div id="globalSearchResults" class="global-search-results" role="listbox" aria-live="polite"></div>
   </div>
 
+  <div id="appSearch" class="app-search" role="search">
+    <div class="app-search-bar"><span aria-hidden="true">🔎</span><input id="appSearchInput" type="search" autocomplete="off" placeholder="Pesquisar no Spotted Unila..." aria-label="Pesquisar no Spotted Unila"><button id="appSearchClear" type="button" aria-label="Limpar pesquisa" style="display:none;background:none;border:0;color:#fff;font-size:18px;cursor:pointer">×</button></div>
+    <div id="appSearchResults" class="app-search-results" role="listbox" aria-label="Resultados da pesquisa"></div>
+  </div>
+
   <div id="home" class="menu">
-    <button class="dev" onclick="openPage('chatPage')"> Spotted💜 Chat💬</button>
-    <button class="unila" onclick="openDynamic('portal_unila','link')">🌐 Portal Oficial da Unila</button>
+    <button class="dev" data-search-key="chat" onclick="openPage('chatPage')"> Spotted💜 Chat💬</button>
+    <button class="unila" data-search-key="portal_unila" onclick="openDynamic('portal_unila','link')">🌐 Portal Oficial da Unila</button>
     <button class="unila" onclick="openDynamic('inscreva','link')">🎓 Portal Inscreva</button>
     <button class="sigaa" onclick="openDynamic('sigaa','link')">📚 Sistema Acadêmico SIGAA</button>
     <button class="gmail" onclick="openDynamic('email','link')">📧 E-mail Institucional</button>
@@ -1031,7 +1050,7 @@ gtag('config', 'G-FJT3X93608');
     <button class="editais" onclick="openDynamic('editais','link')">📄 Editais Oficiais</button>
     <button class="emergencia" onclick="openDynamic('emergencia','page')">🚨 Telefones de Emergência</button>
     <button class="enderecos" onclick="openDynamic('enderecos','page')">🏫 Endereços dos Campus</button>
-    <button class="ru" onclick="openDynamic('ru','page')">🍽️ Restaurantes Universitários</button>
+    <button class="ru" data-search-key="ru" onclick="openDynamic('ru','page')">🍽️ Restaurantes Universitários</button>
     <button class="facebook" onclick="openDynamic('grupo_facebook','link')">👥 Grupo no Facebook</button>
     <button class="dev" onclick="openDynamic('dev','page')">👨‍💻 Desenvolvedor</button>
     <button class="dev" onclick="window.location.href='privacy.html'">🔒 Privacidade e exclusão</button>
@@ -1046,7 +1065,7 @@ gtag('config', 'G-FJT3X93608');
     <button class="noticias" onclick="loadNews(); document.getElementById('dynamicTitle').textContent='NOTÍCIAS'; openPage('dynamicPage');">📰 Notícias</button>
     <button class="conheca-unila-btn" onclick="openConhecaUnilaPage()">🏫 Conheça a Unila</button>
     <button class="desapega" onclick="openPage('desapegaPage')">🔎 Achados e Perdidos e Desapega</button>
-    <button class="emergencia" onclick="openDynamic('upa','page')">🏥 Hospitais de Emergência 24h (UPA)</button>
+    <button class="emergencia" data-search-key="upa" onclick="openDynamic('upa','page')">🏥 Hospitais de Emergência 24h (UPA)</button>
   </div>
 
   <div id="dynamicPage" class="page">
@@ -4217,6 +4236,7 @@ padding:0 2px;">↩ Responder</button>`;
     wrapUGCFunction("saveAd");
     wrapUGCFunction("sendAdReply");
   }, 0);})();
-</script>
+  </script>
+  <script src="app-search.js" defer></script>
 </body>
 </html>
