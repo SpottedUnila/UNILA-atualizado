@@ -2091,13 +2091,13 @@ gtag('config', 'G-FJT3X93608');
     }
     function openNewsPage() {
       window.__activeDynamicPage = "noticias";
-      document.getElementById("dynamicTitle").textContent = dynamicTitle("noticias");
+      document.getElementById("dynamicTitle").textContent = typeof window.unilaTranslate === "function" ? window.unilaTranslate("news") : "📰 Notícias da Unila";
       openPage("dynamicPage");
       loadNews();
     }
     function openConhecaUnilaPage() {
       window.__activeDynamicPage = "conheca";
-      document.getElementById("dynamicTitle").textContent = dynamicTitle("conheca");
+      document.getElementById("dynamicTitle").textContent = typeof window.unilaTranslate === "function" ? window.unilaTranslate("conheca") : "🏫 Conheça a Unila";
       openPage("dynamicPage");
       loadConhecaUnila();
     }
