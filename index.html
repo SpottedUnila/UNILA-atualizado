@@ -1842,13 +1842,13 @@ gtag('config', 'G-FJT3X93608');
     }
 
     function openUPAPage() {
-      state.currentDynamicId = "upa";
-      openDynamic("upa", "page");
+      window.__activeDynamicPage = "upa";
+      window.openDynamic("upa", "page");
     }
     function openDynamic(id, type) {
-      // Define a página antes de qualquer renderização para impedir que listeners
-      // assíncronos de Notícias/Conheça reutilizem o conteúdo anterior.
-      state.currentDynamicId = id;
+      // O estado da tradução vive em outro escopo; a página ativa é compartilhada
+      // por uma propriedade global segura entre os dois scripts.
+      window.__activeDynamicPage = id;
       const contentMap = window.unilaDefaultContent || {};
       const getContent = window.unilaLocalizedContent;
       const val = (typeof getContent === "function" ? getContent(id) : "") || contentMap[id] || "";
@@ -2084,19 +2084,19 @@ gtag('config', 'G-FJT3X93608');
       conhecaMediaUnsubscribe = db.collection("conhecaUnila").onSnapshot(() => {
         const dynamicPage = document.getElementById("dynamicPage");
         // O listener não pode sobrescrever UPA, Notícias ou qualquer outra página.
-        if (state.currentDynamicId === "conheca" && dynamicPage && dynamicPage.style.display === "block" && typeof window.loadConhecaUnila === "function") {
+        if (window.__activeDynamicPage === "conheca" && dynamicPage && dynamicPage.style.display === "block" && typeof window.loadConhecaUnila === "function") {
           window.loadConhecaUnila();
         }
       }, (error) => console.error("Erro ao sincronizar mídias de Conheça a Unila:", error));
     }
     function openNewsPage() {
-      state.currentDynamicId = "noticias";
+      window.__activeDynamicPage = "noticias";
       document.getElementById("dynamicTitle").textContent = dynamicTitle("noticias");
       openPage("dynamicPage");
       loadNews();
     }
     function openConhecaUnilaPage() {
-      state.currentDynamicId = "conheca";
+      window.__activeDynamicPage = "conheca";
       document.getElementById("dynamicTitle").textContent = dynamicTitle("conheca");
       openPage("dynamicPage");
       loadConhecaUnila();
@@ -3743,6 +3743,7 @@ padding:0 2px;">↩ Responder</button>`;
       var originalOpenDynamic = window.openDynamic;
       window.openDynamic = function(id, type){
         state.currentDynamicId = id;
+        window.__activeDynamicPage = id;
         var result = originalOpenDynamic.apply(this, arguments);
         if (type !== "link") {
           updateDynamicPage();
@@ -3756,6 +3757,7 @@ padding:0 2px;">↩ Responder</button>`;
       var originalLoadNews = window.loadNews;
       window.loadNews = function(){
         state.currentDynamicId = "noticias";
+        window.__activeDynamicPage = "noticias";
         var result = originalLoadNews.apply(this, arguments);
         setTimeout(function(){
           var title = document.getElementById("dynamicTitle");
@@ -3771,6 +3773,7 @@ padding:0 2px;">↩ Responder</button>`;
       var originalLoadConhecaUnila = window.loadConhecaUnila;
       window.loadConhecaUnila = function(){
         state.currentDynamicId = "conheca";
+        window.__activeDynamicPage = "conheca";
         var result = originalLoadConhecaUnila.apply(this, arguments);
         setTimeout(function(){
           var title = document.getElementById("dynamicTitle");
