@@ -1806,8 +1806,14 @@ gtag('config', 'G-FJT3X93608');
         else delete adminContentOverrides[id];
         return;
       }
-      if (id.indexOf("button_label_") === 0) adminButtonLabels[id] = String(value == null ? "" : value);
-      else if (id.indexOf("button_content_") === 0) adminPageContent[id] = String(value == null ? "" : value);
+      if (id.indexOf("button_label_") === 0) {
+        var labelValue = String(value == null ? "" : value).trim();
+        if (labelValue) adminButtonLabels[id] = labelValue; else delete adminButtonLabels[id];
+      }
+      else if (id.indexOf("button_content_") === 0) {
+        var contentValue = String(value == null ? "" : value);
+        if (contentValue.trim()) adminPageContent[id] = contentValue; else delete adminPageContent[id];
+      }
       else {
         defaultContent[id] = value;
         adminContentOverrides[id] = true;
@@ -1836,13 +1842,19 @@ gtag('config', 'G-FJT3X93608');
     }
 
     function openDynamic(id, type) {
-      const val = defaultContent[id];
+      const val = localizedContent(id) || defaultContent[id] || "";
       if (type === 'link') {
         if (val) window.location.href = val;
       }
       else {
-        document.getElementById("dynamicTitle").textContent = id.toUpperCase();
-        document.getElementById("dynamicContent").innerHTML = val;
+        const titleKey = id === "emergencia" ? "emergency" : id === "upa" ? "upa" : id;
+        const title = document.getElementById("dynamicTitle");
+        const content = document.getElementById("dynamicContent");
+        if (title) title.textContent = tr(titleKey);
+        if (content) {
+          content.innerHTML = String(val).replace(/\n/g, "<br>");
+          content.style.whiteSpace = "normal";
+        }
         openPage('dynamicPage');
       }
     }
