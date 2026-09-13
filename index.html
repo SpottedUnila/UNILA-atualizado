@@ -1741,7 +1741,7 @@ gtag('config', 'G-FJT3X93608');
     // PWA UPDATE LOGIC
     function setupPWAUpdate() {
       if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./service-worker37.js').then(reg => {
+        navigator.serviceWorker.register('./service-worker37.js?v=178', { updateViaCache: 'none' }).then(reg => {
           reg.update();
           reg.addEventListener('updatefound', () => {
             const newWorker = reg.installing;
@@ -3430,13 +3430,20 @@ padding:0 2px;">↩ Responder</button>`;
     if (el && el.textContent !== value) el.textContent = value;
   }
   function normalizeMenuLabel(key, value){
-    var text = String(value == null ? "" : value);
-    // Impede que um valor administrativo repetido exiba o mesmo rótulo duas vezes.
-    if (key === "conheca") {
-      text = text.replace(/(🏫\s*Conheça a Unila)(?:\s*\1)+/g, "$1");
-      text = text.replace(/(Conheça a Unila)(?:\s+\1)+/g, "$1");
+    var text = String(value == null ? "" : value).trim();
+    // Impede que valores administrativos repetidos exibam o mesmo rótulo duas vezes.
+    // A regra é genérica para PT, FR e ES e também cobre ícones repetidos.
+    for (var parts = 2; parts <= 4; parts++) {
+      if (!text || text.length % parts !== 0) continue;
+      var size = text.length / parts;
+      var first = text.slice(0, size);
+      var repeated = true;
+      for (var part = 1; part < parts; part++) {
+        if (text.slice(part * size, (part + 1) * size) !== first) { repeated = false; break; }
+      }
+      if (repeated) { text = first.trim(); break; }
     }
-    return text.trim();
+    return text;
   }
   function setOwnText(el, value){
     if (!el) return;
