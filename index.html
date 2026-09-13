@@ -1842,7 +1842,9 @@ gtag('config', 'G-FJT3X93608');
     }
 
     function openDynamic(id, type) {
-      const val = localizedContent(id) || defaultContent[id] || "";
+      const contentMap = window.unilaDefaultContent || {};
+      const getContent = window.unilaLocalizedContent;
+      const val = (typeof getContent === "function" ? getContent(id) : "") || contentMap[id] || "";
       if (type === 'link') {
         if (val) window.location.href = val;
       }
@@ -1850,7 +1852,7 @@ gtag('config', 'G-FJT3X93608');
         const titleKey = id === "emergencia" ? "emergency" : id === "upa" ? "upa" : id;
         const title = document.getElementById("dynamicTitle");
         const content = document.getElementById("dynamicContent");
-        if (title) title.textContent = tr(titleKey);
+        if (title) title.textContent = typeof window.unilaTranslate === "function" ? window.unilaTranslate(titleKey) : titleKey.toUpperCase();
         if (content) {
           content.innerHTML = String(val).replace(/\n/g, "<br>");
           content.style.whiteSpace = "normal";
@@ -3399,6 +3401,9 @@ padding:0 2px;">↩ Responder</button>`;
     } catch(e){}
     return "";
   }
+  window.unilaLocalizedContent = localizedContent;
+  window.unilaDefaultContent = defaultContent;
+  window.unilaTranslate = tr;
   function setText(selector, value){
     var el = document.querySelector(selector);
     if (el && el.textContent !== value) el.textContent = value;
