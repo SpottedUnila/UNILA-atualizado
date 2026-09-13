@@ -1044,7 +1044,7 @@ gtag('config', 'G-FJT3X93608');
     <button class="auxilio-estudantil" onclick="openLocalizedResource('studentAid')">🎓 Auxílio Estudantil</button>
     <button class="unila" onclick="openLocalizedResource('mentalHealth')">🧠 Saúde Mental</button>
     <button class="google" onclick="openDynamic('enem','link')">📝 ENEM – Página do Participante</button>
-    <button class="noticias" onclick="loadNews(); document.getElementById('dynamicTitle').textContent='NOTÍCIAS'; openPage('dynamicPage');">📰 Notícias</button>
+    <button class="noticias" onclick="openNewsPage()">📰 Notícias</button>
     <button class="conheca-unila-btn" onclick="openConhecaUnilaPage()">🏫 Conheça a Unila</button>
     <button class="desapega" onclick="openPage('desapegaPage')">🔎 Achados e Perdidos e Desapega</button>
     <button class="emergencia" data-search-key="upa" onclick="openDynamic('upa','page')">🏥 Hospitais de Emergência 24h (UPA)</button>
@@ -1842,6 +1842,9 @@ gtag('config', 'G-FJT3X93608');
     }
 
     function openDynamic(id, type) {
+      // Define a página antes de qualquer renderização para impedir que listeners
+      // assíncronos de Notícias/Conheça reutilizem o conteúdo anterior.
+      state.currentDynamicId = id;
       const contentMap = window.unilaDefaultContent || {};
       const getContent = window.unilaLocalizedContent;
       const val = (typeof getContent === "function" ? getContent(id) : "") || contentMap[id] || "";
@@ -1854,8 +1857,13 @@ gtag('config', 'G-FJT3X93608');
         const content = document.getElementById("dynamicContent");
         if (title) title.textContent = typeof window.unilaTranslate === "function" ? window.unilaTranslate(titleKey) : titleKey.toUpperCase();
         if (content) {
-          content.innerHTML = String(val).replace(/\n/g, "<br>");
-          content.style.whiteSpace = "normal";
+          if (id === "upa" || id === "emergencia") {
+            content.textContent = String(val);
+            content.style.whiteSpace = "pre-wrap";
+          } else {
+            content.innerHTML = String(val).replace(/\n/g, "<br>");
+            content.style.whiteSpace = "normal";
+          }
         }
         openPage('dynamicPage');
       }
@@ -2071,12 +2079,21 @@ gtag('config', 'G-FJT3X93608');
       if (conhecaMediaUnsubscribe) return;
       conhecaMediaUnsubscribe = db.collection("conhecaUnila").onSnapshot(() => {
         const dynamicPage = document.getElementById("dynamicPage");
-        if (dynamicPage && dynamicPage.style.display === "block" && typeof window.loadConhecaUnila === "function") window.loadConhecaUnila();
+        // O listener não pode sobrescrever UPA, Notícias ou qualquer outra página.
+        if (state.currentDynamicId === "conheca" && dynamicPage && dynamicPage.style.display === "block" && typeof window.loadConhecaUnila === "function") {
+          window.loadConhecaUnila();
+        }
       }, (error) => console.error("Erro ao sincronizar mídias de Conheça a Unila:", error));
     }
-
+    function openNewsPage() {
+      state.currentDynamicId = "noticias";
+      document.getElementById("dynamicTitle").textContent = dynamicTitle("noticias");
+      openPage("dynamicPage");
+      loadNews();
+    }
     function openConhecaUnilaPage() {
-      document.getElementById("dynamicTitle").textContent = "Conheça a Unila";
+      state.currentDynamicId = "conheca";
+      document.getElementById("dynamicTitle").textContent = dynamicTitle("conheca");
       openPage("dynamicPage");
       loadConhecaUnila();
     }
@@ -3588,18 +3605,26 @@ padding:0 2px;">↩ Responder</button>`;
     bar.textContent = current().weekdays[d.getDay()] + ", " + day + "/" + month + "/" + d.getFullYear();
   }
 
-  function updateDynamicPage(){
-    if (!state.currentDynamicId) return;
-    var title = document.getElementById("dynamicTitle");
-    if (title) title.textContent = dynamicTitle(state.currentDynamicId);
-    if (state.currentDynamicId !== "noticias" && state.currentDynamicId !== "conheca") {
-      var content = localizedContent(state.currentDynamicId);
-      if (content) {
-        var dynamicContent = document.getElementById("dynamicContent");
-        if (dynamicContent) dynamicContent.innerHTML = content;
+    function updateDynamicPage(){
+      if (!state.currentDynamicId) return;
+      var title = document.getElementById("dynamicTitle");
+      if (title) title.textContent = dynamicTitle(state.currentDynamicId);
+      if (state.currentDynamicId !== "noticias" && state.currentDynamicId !== "conheca") {
+        var content = localizedContent(state.currentDynamicId);
+        if (content) {
+          var dynamicContent = document.getElementById("dynamicContent");
+          if (dynamicContent) {
+            if (state.currentDynamicId === "upa" || state.currentDynamicId === "emergencia") {
+              dynamicContent.textContent = String(content);
+              dynamicContent.style.whiteSpace = "pre-wrap";
+            } else {
+              dynamicContent.innerHTML = String(content);
+              dynamicContent.style.whiteSpace = "normal";
+            }
+          }
+        }
       }
     }
-  }
 
   function translateDynamicUI(){
     var formTitle = document.getElementById("adFormTitle");
