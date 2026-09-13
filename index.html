@@ -1047,7 +1047,7 @@ gtag('config', 'G-FJT3X93608');
     <button class="noticias" onclick="openNewsPage()">📰 Notícias</button>
     <button class="conheca-unila-btn" onclick="openConhecaUnilaPage()">🏫 Conheça a Unila</button>
     <button class="desapega" onclick="openPage('desapegaPage')">🔎 Achados e Perdidos e Desapega</button>
-    <button class="emergencia" data-search-key="upa" onclick="openDynamic('upa','page')">🏥 Hospitais de Emergência 24h (UPA)</button>
+    <button class="emergencia" data-search-key="upa" onclick="openUPAPage()">🏥 Hospitais de Emergência 24h (UPA)</button>
   </div>
 
   <div id="dynamicPage" class="page">
@@ -1841,6 +1841,10 @@ gtag('config', 'G-FJT3X93608');
       });
     }
 
+    function openUPAPage() {
+      state.currentDynamicId = "upa";
+      openDynamic("upa", "page");
+    }
     function openDynamic(id, type) {
       // Define a página antes de qualquer renderização para impedir que listeners
       // assíncronos de Notícias/Conheça reutilizem o conteúdo anterior.
@@ -3425,6 +3429,15 @@ padding:0 2px;">↩ Responder</button>`;
     var el = document.querySelector(selector);
     if (el && el.textContent !== value) el.textContent = value;
   }
+  function normalizeMenuLabel(key, value){
+    var text = String(value == null ? "" : value);
+    // Impede que um valor administrativo repetido exiba o mesmo rótulo duas vezes.
+    if (key === "conheca") {
+      text = text.replace(/(🏫\s*Conheça a Unila)(?:\s*\1)+/g, "$1");
+      text = text.replace(/(Conheça a Unila)(?:\s+\1)+/g, "$1");
+    }
+    return text.trim();
+  }
   function setOwnText(el, value){
     if (!el) return;
     var textNodes = [];
@@ -3500,7 +3513,7 @@ padding:0 2px;">↩ Responder</button>`;
     if (radioButton) radioButton.title = tr("music");
 
     var menu = document.querySelectorAll("#home > button");
-    for (var i=0; i<menu.length && i<menuKeys.length; i++) menu[i].textContent = tr(menuKeys[i]);
+    for (var i=0; i<menu.length && i<menuKeys.length; i++) menu[i].textContent = normalizeMenuLabel(menuKeys[i], tr(menuKeys[i]));
     setOwnText(document.querySelector(".podcast-badge"), tr("podcast"));
     setOwnText(document.querySelector(".radio-badge"), tr("music"));
     setText("#installBtn", tr("install"));
