@@ -46,8 +46,7 @@ service cloud.firestore {
 
     // Reservas e vínculos de nick.
     // O cliente pode ler somente seus próprios documentos; o administrador pode ler tudo.
-    // A palavra-chave de recuperação só deve ser escrita pelas Cloud Functions,
-    // pois o cliente não tem acesso ao hash.
+    // O e-mail de recuperação pode ser atualizado pelo próprio usuário após reautenticação.
     match /users/{document} {
       allow read: if isAdmin()
         || (isSignedIn() && resource.data.uid == request.auth.uid);

@@ -1746,16 +1746,22 @@ gtag('config', 'G-FJT3X93608');
     }
 
     async function reserveNickForCurrentUser(input, recoveryEmail) {
-      const displayNick = String(input || "").trim();
+      const displayNick = String(input || "")
+        .replace(/[\u200B-\u200D\uFEFF]/g, "")
+        .trim();
       const normalized = normalizeNick(displayNick);
       const normalizedEmail = normalizeRecoveryEmail(recoveryEmail);
-      if (!displayNick || !normalized) throw new Error("Digite um nick válido.");
-      if (/[\/]/.test(displayNick)) {
-        const error = new Error("O nick não pode conter barras.");
+      if (!displayNick || !normalized) {
+        const error = new Error("Digite um nick com pelo menos um caractere.");
         error.code = "invalid-nick";
         throw error;
       }
-      if (displayNick.startsWith("__uid__") || displayNick.startsWith("__nick__")) {
+      if (/[\/]/.test(displayNick)) {
+        const error = new Error("O nick não pode conter barras (/ ou \\).");
+        error.code = "invalid-nick";
+        throw error;
+      }
+      if (normalized.startsWith("__uid__") || normalized.startsWith("__nick__")) {
         const error = new Error("Esse formato de nick é reservado pelo sistema.");
         error.code = "invalid-nick";
         throw error;
@@ -2912,6 +2918,7 @@ padding:0 2px;">↩ Responder</button>`;
       } catch (error) {
         if (error && error.code === "nick-already-taken") appAlert("Esse nick já existe. Crie outro nick.");
         else if (error && error.code === "nick-already-owned") appAlert("Este usuário já possui outro nick.");
+        else if (error && error.code === "invalid-nick") appAlert(error.message || "Esse nick não pode ser usado.");
         else if (error && error.code === "email-required") appAlert("Para criar um novo acesso, informe um e-mail de recuperação.");
         else if (error && error.code === "auth-timeout") appAlert("A autenticação demorou demais. Verifique a conexão do app e tente novamente.");
         else if (authErrorIsEmailInUse(error)) appAlert("Esse nick já existe. Crie outro nick.");
