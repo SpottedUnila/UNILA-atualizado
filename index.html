@@ -928,7 +928,6 @@ button:hover{
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-functions-compat.js"></script>
 <script src="https://www.youtube.com/iframe_api"></script>
 <script src="https://upload-widget.cloudinary.com/global/all.js" type="text/javascript"></script>
 
@@ -1164,30 +1163,22 @@ gtag('config', 'G-FJT3X93608');
     <h2>💬 Chat Unila</h2>
     <div id="nickArea">
       <input id="nickInput" autocomplete="username" placeholder="Digite seu nick..." style="padding:10px; border-radius:10px; border:none; margin-bottom:10px; width:80%;" />
+      <input id="nickEmailInput" type="email" autocomplete="email" placeholder="E-mail para recuperação (obrigatório no novo acesso)" style="padding:10px; border-radius:10px; border:none; margin-bottom:10px; width:80%;" />
       <div class="auth-field-wrap">
         <input id="nickPasswordInput" type="password" autocomplete="current-password" minlength="6" placeholder="Digite sua senha ou crie uma senha" style="padding:10px; border-radius:10px; border:none; margin-bottom:10px; width:80%;" />
         <button type="button" class="password-toggle" onclick="togglePasswordVisibility('nickPasswordInput', this)" aria-label="Mostrar senha">Mostrar</button>
       </div>
       <button id="nickEnterBtn" onclick="saveNick(this)">Entrar / criar acesso</button>
       <button type="button" class="auth-link-button" onclick="openNickRecoveryDialog()">Esqueci minha senha</button>
-      <small style="display:block; width:80%; margin:4px auto 12px; color:#cbd5e1; line-height:1.35;">Digite o nick e a senha para entrar. No primeiro acesso, essa senha cria seu acesso; depois, use os mesmos dados em qualquer dispositivo.</small>
+      <small style="display:block; width:80%; margin:4px auto 12px; color:#cbd5e1; line-height:1.35;">No primeiro acesso, informe um e-mail real para poder recuperar a senha. Contas antigas podem continuar entrando com o e-mail técnico do nick.</small>
       <div id="nickRecoveryDialog" role="dialog" aria-modal="true" aria-labelledby="nickRecoveryTitle" style="display:none; position:fixed; inset:0; z-index:10000; align-items:center; justify-content:center; padding:20px; background:rgba(0,0,0,.72);">
         <div style="width:min(410px,100%); box-sizing:border-box; padding:22px; border:1px solid rgba(167,139,250,.5); border-radius:18px; background:#1b0b25; color:#fff; box-shadow:0 18px 60px rgba(0,0,0,.55);">
-          <h3 id="nickRecoveryTitle" style="margin:0 0 10px;">Recuperar senha</h3>
-          <p style="margin:0 0 14px; color:#ddd; line-height:1.45;">Informe seu nick, a palavra-chave cadastrada e crie uma nova senha.</p>
-          <input id="nickRecoveryNickInput" autocomplete="username" placeholder="Seu nick" style="display:block; width:100%; box-sizing:border-box; padding:11px; border-radius:9px; border:none; margin-bottom:9px;" />
-          <input id="nickRecoveryKeywordInput" type="password" autocomplete="off" placeholder="Palavra-chave" style="display:block; width:100%; box-sizing:border-box; padding:11px; border-radius:9px; border:none; margin-bottom:9px;" />
-          <div class="auth-field-wrap full">
-            <input id="nickRecoveryPasswordInput" type="password" autocomplete="new-password" minlength="6" placeholder="Nova senha (mínimo 6 caracteres)" style="display:block; width:100%; box-sizing:border-box; padding:11px; border-radius:9px; border:none; margin-bottom:9px;" />
-            <button type="button" class="password-toggle" onclick="togglePasswordVisibility('nickRecoveryPasswordInput', this)" aria-label="Mostrar nova senha">Mostrar</button>
-          </div>
-          <div class="auth-field-wrap full">
-            <input id="nickRecoveryPasswordConfirmInput" type="password" autocomplete="new-password" minlength="6" placeholder="Repita a nova senha" style="display:block; width:100%; box-sizing:border-box; padding:11px; border-radius:9px; border:none; margin-bottom:14px;" />
-            <button type="button" class="password-toggle" onclick="togglePasswordVisibility('nickRecoveryPasswordConfirmInput', this)" aria-label="Mostrar confirmação">Mostrar</button>
-          </div>
+          <h3 id="nickRecoveryTitle" style="margin:0 0 10px;">Recuperar senha por e-mail</h3>
+          <p style="margin:0 0 14px; color:#ddd; line-height:1.45;">Informe o e-mail vinculado ao seu acesso. Enviaremos um link oficial do Firebase para criar uma nova senha.</p>
+          <input id="nickRecoveryEmailInput" type="email" autocomplete="email" placeholder="seu@email.com" style="display:block; width:100%; box-sizing:border-box; padding:11px; border-radius:9px; border:none; margin-bottom:14px;" />
           <div style="display:flex; justify-content:flex-end; gap:8px;">
             <button type="button" onclick="closeNickRecoveryDialog()" style="background:transparent; border:1px solid rgba(255,255,255,.3);">Cancelar</button>
-            <button id="nickRecoveryConfirmBtn" type="button" onclick="recoverNickPassword()" style="background:#7c3aed;">Redefinir senha</button>
+            <button id="nickRecoveryConfirmBtn" type="button" onclick="sendNickRecoveryEmail()" style="background:#7c3aed;">Enviar link</button>
           </div>
         </div>
       </div>
@@ -1232,12 +1223,11 @@ gtag('config', 'G-FJT3X93608');
       </div>
       <button id="deleteNickAccountBtn" type="button" onclick="openNickDeleteDialog()" aria-label="Excluir conta" title="Excluir conta" style="display:none; position:fixed; left:12px; bottom:-40px; z-index:1001; width:auto; min-width:116px; height:34px; padding:0 12px 0 10px; align-items:center; justify-content:center; gap:7px; border:1px solid rgba(255,255,255,.55); border-radius:17px; background:#dc2626; color:#fff; font-size:13px; font-weight:700; line-height:1; box-shadow:0 3px 12px rgba(0,0,0,.45);">✕ <span>Excluir conta</span></button>
       <div id="nickRecoveryManage" style="display:none; margin:12px auto; width:min(390px,90%); padding:12px; border:1px solid rgba(167,139,250,.35); border-radius:12px; background:rgba(0,0,0,.2);">
-        <strong style="display:block; margin-bottom:8px;">Palavra-chave de recuperação</strong>
+        <strong style="display:block; margin-bottom:8px;">E-mail de recuperação</strong>
         <input id="nickRecoveryCurrentPasswordInput" type="password" autocomplete="current-password" placeholder="Senha atual" style="width:100%; box-sizing:border-box; padding:9px; border-radius:8px; border:none; margin-bottom:7px;" />
-        <input id="nickRecoveryKeywordManageInput" type="password" autocomplete="off" minlength="4" placeholder="Crie uma palavra-chave (mínimo 4 caracteres)" style="width:100%; box-sizing:border-box; padding:9px; border-radius:8px; border:none; margin-bottom:7px;" />
-        <input id="nickRecoveryKeywordConfirmInput" type="password" autocomplete="off" minlength="4" placeholder="Repita a palavra-chave" style="width:100%; box-sizing:border-box; padding:9px; border-radius:8px; border:none; margin-bottom:8px;" />
-        <button id="nickRecoveryManageBtn" type="button" onclick="saveRecoveryKeyword()">Salvar palavra-chave</button>
-        <small style="display:block; margin-top:7px; color:#cbd5e1; line-height:1.35;">A palavra-chave é armazenada somente como hash no servidor. Ela não substitui a senha durante o login.</small>
+        <input id="nickRecoveryEmailManageInput" type="email" autocomplete="email" placeholder="seu@email.com" style="width:100%; box-sizing:border-box; padding:9px; border-radius:8px; border:none; margin-bottom:8px;" />
+        <button id="nickRecoveryManageBtn" type="button" onclick="saveRecoveryEmail()">Salvar e-mail de recuperação</button>
+        <small style="display:block; margin-top:7px; color:#cbd5e1; line-height:1.35;">O Firebase usará este e-mail para enviar o link de redefinição.</small>
       </div>
       <div id="nickDeleteDialog" role="dialog" aria-modal="true" aria-labelledby="nickDeleteDialogTitle" style="display:none; position:fixed; inset:0; z-index:10000; align-items:center; justify-content:center; padding:20px; background:rgba(0,0,0,.72);">
         <div style="width:min(390px,100%); box-sizing:border-box; padding:22px; border:1px solid rgba(248,113,113,.45); border-radius:18px; background:#1b0b25; color:#fff; box-shadow:0 18px 60px rgba(0,0,0,.55);">
@@ -1338,10 +1328,6 @@ gtag('config', 'G-FJT3X93608');
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
     const auth = firebase.auth();
-    const functions = firebase.functions();
-    const setRecoveryKeywordCallable = functions.httpsCallable("setRecoveryKeyword");
-    const recoverNickPasswordCallable = functions.httpsCallable("recoverNickPassword");
-    const deleteNickAccountCallable = functions.httpsCallable("deleteNickAccount");
     const ADMIN_NICK = "Fernando";
     const ADMIN_EMAIL = "fernando2018a1986@gmail.com";
 
@@ -1592,68 +1578,57 @@ gtag('config', 'G-FJT3X93608');
       input.type = showing ? "password" : "text";
       if (button) { button.textContent = showing ? "Mostrar" : "Ocultar"; button.setAttribute("aria-label", showing ? "Mostrar senha" : "Ocultar senha"); }
     }
+    function normalizeRecoveryEmail(value) {
+      return String(value || "").trim().toLowerCase();
+    }
     function openNickRecoveryDialog() {
       const dialog = document.getElementById("nickRecoveryDialog");
-      const nickInput = document.getElementById("nickRecoveryNickInput");
-      const source = document.getElementById("nickInput");
-      if (nickInput && !nickInput.value && source) nickInput.value = source.value.trim();
+      const input = document.getElementById("nickRecoveryEmailInput");
+      const active = firebaseUser && !firebaseUser.isAnonymous ? firebaseUser.email : "";
+      if (input && !input.value && active && !active.endsWith("@auth.spottedunila.app")) input.value = active;
       if (dialog) dialog.style.display = "flex";
-      if (nickInput) nickInput.focus();
+      if (input) input.focus();
     }
     function closeNickRecoveryDialog() {
       const dialog = document.getElementById("nickRecoveryDialog");
       if (dialog) dialog.style.display = "none";
     }
-    async function saveRecoveryKeyword() {
+    async function sendNickRecoveryEmail() {
+      const email = normalizeRecoveryEmail((document.getElementById("nickRecoveryEmailInput") || {}).value);
+      const button = document.getElementById("nickRecoveryConfirmBtn");
+      if (!email || !email.includes("@")) { await appAlert("Informe um e-mail válido."); return; }
+      try {
+        if (button) { button.disabled = true; button.textContent = "Enviando..."; }
+        await auth.sendPasswordResetEmail(email);
+        closeNickRecoveryDialog();
+        const input = document.getElementById("nickRecoveryEmailInput");
+        if (input) input.value = "";
+        await appAlert("Se existir um acesso com esse e-mail, enviaremos um link para redefinir a senha. Verifique também o spam.");
+      } catch (error) {
+        console.error("Erro ao enviar recuperação por e-mail:", error);
+        await appAlert("Não foi possível enviar o e-mail agora. Confira o endereço e tente novamente.");
+      } finally { if (button) { button.disabled = false; button.textContent = "Enviar link"; } }
+    }
+    async function saveRecoveryEmail() {
       const currentPassword = (document.getElementById("nickRecoveryCurrentPasswordInput") || {}).value || "";
-      const keyword = ((document.getElementById("nickRecoveryKeywordManageInput") || {}).value || "").trim();
-      const confirmation = ((document.getElementById("nickRecoveryKeywordConfirmInput") || {}).value || "").trim();
+      const email = normalizeRecoveryEmail((document.getElementById("nickRecoveryEmailManageInput") || {}).value);
       const button = document.getElementById("nickRecoveryManageBtn");
-      if (!nick || !firebaseUser || firebaseUser.isAnonymous) { await appAlert("Entre com seu nick e senha antes de cadastrar a palavra-chave."); return; }
-      if (currentPassword.length < NICK_PASSWORD_MIN_LENGTH) { await appAlert("Informe sua senha atual para confirmar."); return; }
-      if (keyword.length < 4) { await appAlert("A palavra-chave precisa ter pelo menos 4 caracteres."); return; }
-      if (keyword !== confirmation) { await appAlert("As palavras-chave não coincidem."); return; }
+      if (!nick || !firebaseUser || firebaseUser.isAnonymous) { await appAlert("Entre com seu nick e senha antes de cadastrar o e-mail."); return; }
+      if (currentPassword.length < NICK_PASSWORD_MIN_LENGTH || !email.includes("@")) { await appAlert("Informe a senha atual e um e-mail válido."); return; }
       try {
         if (button) { button.disabled = true; button.textContent = "Salvando..."; }
-        const credential = firebase.auth.EmailAuthProvider.credential(nickAuthEmail(nick), currentPassword);
+        const credential = firebase.auth.EmailAuthProvider.credential(firebaseUser.email || nickAuthEmail(nick), currentPassword);
         await firebaseUser.reauthenticateWithCredential(credential);
-        await setRecoveryKeywordCallable({ nick: nick, keyword: keyword });
-        ["nickRecoveryCurrentPasswordInput","nickRecoveryKeywordManageInput","nickRecoveryKeywordConfirmInput"].forEach(id => { const el=document.getElementById(id); if(el) el.value=""; });
-        await appAlert("Palavra-chave cadastrada. Use-a em ‘Esqueci minha senha’ se precisar recuperar o acesso.");
+        await firebaseUser.updateEmail(email);
+        await reserveNickForCurrentUser(nick, email);
+        ["nickRecoveryCurrentPasswordInput", "nickRecoveryEmailManageInput"].forEach(id => { const el=document.getElementById(id); if(el) el.value=""; });
+        await appAlert("E-mail de recuperação salvo. A partir de agora, use esse endereço para redefinir sua senha.");
       } catch (error) {
-        console.error("Erro ao salvar palavra-chave:", error);
+        console.error("Erro ao salvar e-mail de recuperação:", error);
         const code = authErrorCode(error);
-        await appAlert(code === "auth/wrong-password" || code === "auth/invalid-credential" ? "A senha atual não confere." : "Não foi possível cadastrar a palavra-chave agora.");
-      } finally { if (button) { button.disabled = false; button.textContent = "Salvar palavra-chave"; } }
+        await appAlert(code === "auth/email-already-in-use" ? "Esse e-mail já está vinculado a outro acesso." : "Não foi possível salvar o e-mail. Confira a senha atual e tente novamente.");
+      } finally { if (button) { button.disabled = false; button.textContent = "Salvar e-mail de recuperação"; } }
     }
-    async function recoverNickPassword() {
-      const recoveryNick = ((document.getElementById("nickRecoveryNickInput") || {}).value || "").trim();
-      const keyword = ((document.getElementById("nickRecoveryKeywordInput") || {}).value || "").trim();
-      const password = (document.getElementById("nickRecoveryPasswordInput") || {}).value || "";
-      const confirmation = (document.getElementById("nickRecoveryPasswordConfirmInput") || {}).value || "";
-      const button = document.getElementById("nickRecoveryConfirmBtn");
-      if (!recoveryNick || !keyword) { await appAlert("Informe o nick e a palavra-chave."); return; }
-      if (password.length < NICK_PASSWORD_MIN_LENGTH) { await appAlert("A nova senha precisa ter pelo menos 6 caracteres."); return; }
-      if (password !== confirmation) { await appAlert("As novas senhas não coincidem."); return; }
-      try {
-        if (button) { button.disabled = true; button.textContent = "Redefinindo..."; }
-        await recoverNickPasswordCallable({ nick: recoveryNick, keyword: keyword, newPassword: password });
-        closeNickRecoveryDialog();
-        ["nickRecoveryKeywordInput","nickRecoveryPasswordInput","nickRecoveryPasswordConfirmInput"].forEach(id => { const el=document.getElementById(id); if(el) el.value=""; });
-        const signedIn = await auth.signInWithEmailAndPassword(nickAuthEmail(recoveryNick), password);
-        firebaseUser = signedIn.user; firebaseUid = signedIn.user.uid;
-        const reservation = await reserveNickForCurrentUser(recoveryNick);
-        nick = reservation.nick || recoveryNick;
-        localStorage.setItem("chat_nick", nick); localStorage.setItem("chat_uid", firebaseUid);
-        document.getElementById("nickArea").style.display="none"; document.getElementById("chatArea").style.display="block";
-        refreshNickCredentialUI(); listenChat();
-        await appAlert("Senha redefinida. Você entrou novamente no aplicativo.");
-      } catch (error) {
-        console.error("Erro ao recuperar senha:", error);
-        await appAlert("Não foi possível recuperar o acesso. Confira o nick e a palavra-chave.");
-      } finally { if (button) { button.disabled = false; button.textContent = "Redefinir senha"; } }
-    }
-
     async function createNickPassword() {
       const passwordField = document.getElementById("nickPasswordManageInput");
       const button = document.getElementById("nickPasswordManageBtn");
@@ -1681,6 +1656,7 @@ gtag('config', 'G-FJT3X93608');
         localStorage.setItem("chat_nick", nick);
         localStorage.setItem("chat_uid", firebaseUid);
         if (passwordField) passwordField.value = "";
+        if (emailField) emailField.value = "";
         refreshNickCredentialUI();
         appAlert("Senha criada. Agora você poderá entrar com este nick e esta senha em outro dispositivo.");
       } catch (error) {
@@ -1711,63 +1687,48 @@ gtag('config', 'G-FJT3X93608');
       error.code = code;
       return error;
     }
-    async function loginOrCreateNick(input, password){
+    async function loginOrCreateNick(input, password, recoveryEmail){
       await waitForFirebaseReady();
-      const current = auth.currentUser;
-      const email = nickAuthEmail(input);
+      const recovery = normalizeRecoveryEmail(recoveryEmail);
+      const email = recovery || nickAuthEmail(input);
       let authenticatedUser = null;
-
-      // A sessão anônima é convertida diretamente em uma conta com senha.
-      // Não fazemos leitura do Firestore antes disso, pois as regras podem
-      // permitir gravação apenas depois que o usuário estiver autenticado.
-      if (current && current.isAnonymous) {
-        try {
-          const credential = firebase.auth.EmailAuthProvider.credential(email, password);
-          const linked = await current.linkWithCredential(credential);
-          authenticatedUser = linked.user;
-        } catch (error) {
-          if (!authErrorIsEmailInUse(error)) throw error;
-          await auth.signOut();
-          try {
-            const signedIn = await auth.signInWithEmailAndPassword(email, password);
-            authenticatedUser = signedIn.user;
-          } catch (loginError) {
-            // O e-mail técnico já existe; portanto o nick já foi cadastrado,
-            // mesmo que a senha informada esteja incorreta.
-            const code = authErrorCode(loginError);
-            if (["auth/wrong-password", "auth/invalid-credential", "auth/user-not-found"].includes(code)) {
-              const anonymous = await auth.signInAnonymously();
-              firebaseUser = anonymous.user;
-              firebaseUid = anonymous.user.uid;
-              throw nickLoginError("nick-already-taken", "Esse nick já existe. Crie outro nick.");
-            }
-            throw loginError;
-          }
-        }
-      } else {
+      if (!recovery) {
         if (auth.currentUser) await auth.signOut();
         try {
-          const signedIn = await auth.signInWithEmailAndPassword(email, password);
-          authenticatedUser = signedIn.user;
+          authenticatedUser = (await auth.signInWithEmailAndPassword(email, password)).user;
         } catch (error) {
-          const code = authErrorCode(error);
-          if (code === "auth/user-not-found") {
-            const created = await auth.createUserWithEmailAndPassword(email, password);
-            authenticatedUser = created.user;
-          } else {
-            throw error;
+          if (authErrorCode(error) === "auth/user-not-found") {
+            const anonymous = await auth.signInAnonymously();
+            firebaseUser = anonymous.user; firebaseUid = anonymous.user.uid;
+            throw nickLoginError("email-required", "Para criar um novo acesso, informe um e-mail de recuperação.");
+          }
+          throw error;
+        }
+      } else {
+        const current = auth.currentUser;
+        if (current && current.isAnonymous) {
+          try {
+            const credential = firebase.auth.EmailAuthProvider.credential(email, password);
+            authenticatedUser = (await current.linkWithCredential(credential)).user;
+          } catch (error) {
+            if (!authErrorIsEmailInUse(error)) throw error;
+            await auth.signOut();
+            authenticatedUser = (await auth.signInWithEmailAndPassword(email, password)).user;
+          }
+        } else {
+          if (auth.currentUser) await auth.signOut();
+          try {
+            authenticatedUser = (await auth.signInWithEmailAndPassword(email, password)).user;
+          } catch (error) {
+            if (authErrorCode(error) === "auth/user-not-found") authenticatedUser = (await auth.createUserWithEmailAndPassword(email, password)).user;
+            else throw error;
           }
         }
       }
-
       firebaseUser = authenticatedUser;
       firebaseUid = authenticatedUser ? authenticatedUser.uid : null;
-      // A reserva é feita somente depois da autenticação. Assim, usuários
-      // comuns conseguem criar o primeiro nick e o Firestore pode rejeitar
-      // nicks duplicados com um erro específico.
-      return reserveNickForCurrentUser(input);
+      return reserveNickForCurrentUser(input, recovery);
     }
-
     async function releaseNickReservation(ownerNick, ownerUid) {
       if (!ownerNick || !ownerUid) return;
       await withFirestoreRetry(() => db.runTransaction(async transaction => {
@@ -1784,9 +1745,10 @@ gtag('config', 'G-FJT3X93608');
       }));
     }
 
-    async function reserveNickForCurrentUser(input) {
+    async function reserveNickForCurrentUser(input, recoveryEmail) {
       const displayNick = String(input || "").trim();
       const normalized = normalizeNick(displayNick);
+      const normalizedEmail = normalizeRecoveryEmail(recoveryEmail);
       if (!displayNick || !normalized) throw new Error("Digite um nick válido.");
       if (/[\/]/.test(displayNick)) {
         const error = new Error("O nick não pode conter barras.");
@@ -1843,6 +1805,7 @@ gtag('config', 'G-FJT3X93608');
           createdAt: createdAt,
           source: "Spotted Unila"
         };
+        if (normalizedEmail) reservation.email = normalizedEmail;
 
         transaction.set(legacyRef, reservation, { merge: true });
         transaction.set(canonicalRef, reservation, { merge: true });
@@ -1854,6 +1817,7 @@ gtag('config', 'G-FJT3X93608');
           createdAt: createdAt,
           updatedAt: now,
           source: "Spotted Unila"
+          ,...(normalizedEmail ? { email: normalizedEmail } : {})
         }, { merge: true });
         return reservation;
       }));
@@ -2893,7 +2857,9 @@ padding:0 2px;">↩ Responder</button>`;
       const originalText = btn ? btn.textContent : "Entrar";
       const input = document.getElementById("nickInput").value.trim();
       const passwordField = document.getElementById("nickPasswordInput");
+      const emailField = document.getElementById("nickEmailInput");
       const password = passwordField ? passwordField.value : "";
+      const recoveryEmail = normalizeRecoveryEmail(emailField ? emailField.value : "");
       if(!input) { appAlert("Digite um nick."); return; }
 
       // O acesso administrativo continua usando o fluxo separado por e-mail.
@@ -2929,7 +2895,7 @@ padding:0 2px;">↩ Responder</button>`;
 
       try {
         if (btn) { btn.disabled = true; btn.textContent = "Entrando..."; }
-        const reservation = await loginOrCreateNick(input, password);
+        const reservation = await loginOrCreateNick(input, password, recoveryEmail);
         nick = reservation.nick || input;
         localStorage.setItem("chat_nick", nick);
         localStorage.setItem("chat_uid", firebaseUid);
@@ -2946,6 +2912,7 @@ padding:0 2px;">↩ Responder</button>`;
       } catch (error) {
         if (error && error.code === "nick-already-taken") appAlert("Esse nick já existe. Crie outro nick.");
         else if (error && error.code === "nick-already-owned") appAlert("Este usuário já possui outro nick.");
+        else if (error && error.code === "email-required") appAlert("Para criar um novo acesso, informe um e-mail de recuperação.");
         else if (error && error.code === "auth-timeout") appAlert("A autenticação demorou demais. Verifique a conexão do app e tente novamente.");
         else if (authErrorIsEmailInUse(error)) appAlert("Esse nick já existe. Crie outro nick.");
         else if (["auth/wrong-password", "auth/invalid-credential", "auth/user-not-found"].includes(authErrorCode(error))) appAlert("Nick ou senha inválidos.");
@@ -4176,10 +4143,20 @@ padding:0 2px;">↩ Responder</button>`;
       error.code = "delete-password-required";
       throw error;
     }
-    const credential = firebase.auth.EmailAuthProvider.credential(nickAuthEmail(currentNick), deletePassword);
+    const credential = firebase.auth.EmailAuthProvider.credential(userToDelete.email || nickAuthEmail(currentNick), deletePassword);
     await userToDelete.reauthenticateWithCredential(credential);
     const deletedUid = firebaseUid;
-    await deleteNickAccountCallable({ nick: currentNick });
+    const refs = [];
+    const collectOwned = async (collection) => {
+      const snapshot = await db.collection(collection).where("uid", "==", deletedUid).get();
+      snapshot.forEach(doc => refs.push(doc.ref));
+    };
+    await Promise.all([collectOwned("chat"), collectOwned("desapega")]);
+    refs.push(db.collection("users").doc(currentNick), db.collection("users").doc(nickClaimDocId(currentNick)), db.collection("users").doc(userClaimDocId(deletedUid)), db.collection("notes").doc(deletedUid), db.collection("academic_goals").doc(deletedUid));
+    let batch = db.batch(); let count = 0;
+    for (const ref of refs) { batch.delete(ref); if (++count >= 450) { await batch.commit(); batch = db.batch(); count = 0; } }
+    if (count) await batch.commit();
+    await userToDelete.delete();
     await purgeDeletedUserRuntimeData();
     return { messages: 0, ads: 0, uid: deletedUid, authDeletionError: null };
   }

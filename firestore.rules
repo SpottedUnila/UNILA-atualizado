@@ -61,7 +61,7 @@ service cloud.firestore {
           && request.resource.data.uid == request.auth.uid
           && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
             'uid', 'ownerUid', 'nick', 'nickNormalized', 'nickClaimId',
-            'createdAt', 'updatedAt', 'lastActive', 'source'
+            'createdAt', 'updatedAt', 'lastActive', 'source', 'email'
           ])
           && !request.resource.data.diff(resource.data).affectedKeys().hasAny(['recoveryKeywordHash']));
 
