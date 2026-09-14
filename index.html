@@ -928,6 +928,7 @@ button:hover{
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-functions-compat.js"></script>
 <script src="https://www.youtube.com/iframe_api"></script>
 <script src="https://upload-widget.cloudinary.com/global/all.js" type="text/javascript"></script>
 
@@ -962,6 +963,10 @@ gtag('js', new Date());
 
 gtag('config', 'G-FJT3X93608');
 </script>
+
+<style id="auth-controls-style">
+.auth-field-wrap{position:relative;width:80%;margin:0 auto}.auth-field-wrap.full{width:100%}.auth-field-wrap input{padding-right:70px!important;box-sizing:border-box}.password-toggle{position:absolute;right:7px;top:6px;min-width:58px;padding:6px 7px!important;font-size:11px!important;background:rgba(124,58,237,.85)!important;border:0!important;border-radius:7px!important}.auth-link-button{display:block;margin:8px auto;background:transparent!important;border:0!important;color:#c4b5fd!important;text-decoration:underline;font-size:13px!important}
+</style>
 </head>
 
 <body>
@@ -1159,13 +1164,37 @@ gtag('config', 'G-FJT3X93608');
     <h2>💬 Chat Unila</h2>
     <div id="nickArea">
       <input id="nickInput" autocomplete="username" placeholder="Digite seu nick..." style="padding:10px; border-radius:10px; border:none; margin-bottom:10px; width:80%;" />
-      <input id="nickPasswordInput" type="password" autocomplete="current-password" minlength="6" placeholder="Digite sua senha ou crie uma senha" style="padding:10px; border-radius:10px; border:none; margin-bottom:10px; width:80%;" />
+      <div class="auth-field-wrap">
+        <input id="nickPasswordInput" type="password" autocomplete="current-password" minlength="6" placeholder="Digite sua senha ou crie uma senha" style="padding:10px; border-radius:10px; border:none; margin-bottom:10px; width:80%;" />
+        <button type="button" class="password-toggle" onclick="togglePasswordVisibility('nickPasswordInput', this)" aria-label="Mostrar senha">Mostrar</button>
+      </div>
       <button id="nickEnterBtn" onclick="saveNick(this)">Entrar / criar acesso</button>
+      <button type="button" class="auth-link-button" onclick="openNickRecoveryDialog()">Esqueci minha senha</button>
       <small style="display:block; width:80%; margin:4px auto 12px; color:#cbd5e1; line-height:1.35;">Digite o nick e a senha para entrar. No primeiro acesso, essa senha cria seu acesso; depois, use os mesmos dados em qualquer dispositivo.</small>
+      <div id="nickRecoveryDialog" role="dialog" aria-modal="true" aria-labelledby="nickRecoveryTitle" style="display:none; position:fixed; inset:0; z-index:10000; align-items:center; justify-content:center; padding:20px; background:rgba(0,0,0,.72);">
+        <div style="width:min(410px,100%); box-sizing:border-box; padding:22px; border:1px solid rgba(167,139,250,.5); border-radius:18px; background:#1b0b25; color:#fff; box-shadow:0 18px 60px rgba(0,0,0,.55);">
+          <h3 id="nickRecoveryTitle" style="margin:0 0 10px;">Recuperar senha</h3>
+          <p style="margin:0 0 14px; color:#ddd; line-height:1.45;">Informe seu nick, a palavra-chave cadastrada e crie uma nova senha.</p>
+          <input id="nickRecoveryNickInput" autocomplete="username" placeholder="Seu nick" style="display:block; width:100%; box-sizing:border-box; padding:11px; border-radius:9px; border:none; margin-bottom:9px;" />
+          <input id="nickRecoveryKeywordInput" type="password" autocomplete="off" placeholder="Palavra-chave" style="display:block; width:100%; box-sizing:border-box; padding:11px; border-radius:9px; border:none; margin-bottom:9px;" />
+          <div class="auth-field-wrap full">
+            <input id="nickRecoveryPasswordInput" type="password" autocomplete="new-password" minlength="6" placeholder="Nova senha (mínimo 6 caracteres)" style="display:block; width:100%; box-sizing:border-box; padding:11px; border-radius:9px; border:none; margin-bottom:9px;" />
+            <button type="button" class="password-toggle" onclick="togglePasswordVisibility('nickRecoveryPasswordInput', this)" aria-label="Mostrar nova senha">Mostrar</button>
+          </div>
+          <div class="auth-field-wrap full">
+            <input id="nickRecoveryPasswordConfirmInput" type="password" autocomplete="new-password" minlength="6" placeholder="Repita a nova senha" style="display:block; width:100%; box-sizing:border-box; padding:11px; border-radius:9px; border:none; margin-bottom:14px;" />
+            <button type="button" class="password-toggle" onclick="togglePasswordVisibility('nickRecoveryPasswordConfirmInput', this)" aria-label="Mostrar confirmação">Mostrar</button>
+          </div>
+          <div style="display:flex; justify-content:flex-end; gap:8px;">
+            <button type="button" onclick="closeNickRecoveryDialog()" style="background:transparent; border:1px solid rgba(255,255,255,.3);">Cancelar</button>
+            <button id="nickRecoveryConfirmBtn" type="button" onclick="recoverNickPassword()" style="background:#7c3aed;">Redefinir senha</button>
+          </div>
+        </div>
+      </div>
       <div id="adminLoginArea" style="display:none; margin-top:14px; padding:14px; border:1px solid rgba(255,255,255,.2); border-radius:12px; background:rgba(0,0,0,.2);">
         <strong style="display:block; margin-bottom:8px;">Entrada administrativa</strong>
         <input id="adminEmailInput" type="email" autocomplete="username" value="" placeholder="E-mail administrativo" style="display:block; width:100%; box-sizing:border-box; padding:10px; border-radius:8px; border:none; margin-bottom:8px;" />
-        <input id="adminPasswordInput" type="password" autocomplete="current-password" placeholder="Senha do Firebase" style="display:block; width:100%; box-sizing:border-box; padding:10px; border-radius:8px; border:none; margin-bottom:8px;" />
+        <div class="auth-field-wrap full"><input id="adminPasswordInput" type="password" autocomplete="current-password" placeholder="Senha do Firebase" style="display:block; width:100%; box-sizing:border-box; padding:10px; border-radius:8px; border:none; margin-bottom:8px;" /><button type="button" class="password-toggle" onclick="togglePasswordVisibility('adminPasswordInput', this)" aria-label="Mostrar senha administrativa">Mostrar</button></div>
         <div style="display:flex; gap:8px; flex-wrap:wrap;">
           <button id="adminLoginBtn" type="button" onclick="loginAsAdmin()">Entrar como Fernando</button>
           <button id="adminResetBtn" type="button" onclick="sendAdminResetEmail()">Esqueci a senha</button>
@@ -1202,11 +1231,19 @@ gtag('config', 'G-FJT3X93608');
         <label for="chatAnonymous" style="font-size:13px; color:#ffffff; cursor:pointer; font-weight:600; text-shadow:0 1px 2px rgba(0,0,0,0.5);">👤 Enviar Anonimamente</label>
       </div>
       <button id="deleteNickAccountBtn" type="button" onclick="openNickDeleteDialog()" aria-label="Excluir conta" title="Excluir conta" style="display:none; position:fixed; left:12px; bottom:-40px; z-index:1001; width:auto; min-width:116px; height:34px; padding:0 12px 0 10px; align-items:center; justify-content:center; gap:7px; border:1px solid rgba(255,255,255,.55); border-radius:17px; background:#dc2626; color:#fff; font-size:13px; font-weight:700; line-height:1; box-shadow:0 3px 12px rgba(0,0,0,.45);">✕ <span>Excluir conta</span></button>
+      <div id="nickRecoveryManage" style="display:none; margin:12px auto; width:min(390px,90%); padding:12px; border:1px solid rgba(167,139,250,.35); border-radius:12px; background:rgba(0,0,0,.2);">
+        <strong style="display:block; margin-bottom:8px;">Palavra-chave de recuperação</strong>
+        <input id="nickRecoveryCurrentPasswordInput" type="password" autocomplete="current-password" placeholder="Senha atual" style="width:100%; box-sizing:border-box; padding:9px; border-radius:8px; border:none; margin-bottom:7px;" />
+        <input id="nickRecoveryKeywordManageInput" type="password" autocomplete="off" minlength="4" placeholder="Crie uma palavra-chave (mínimo 4 caracteres)" style="width:100%; box-sizing:border-box; padding:9px; border-radius:8px; border:none; margin-bottom:7px;" />
+        <input id="nickRecoveryKeywordConfirmInput" type="password" autocomplete="off" minlength="4" placeholder="Repita a palavra-chave" style="width:100%; box-sizing:border-box; padding:9px; border-radius:8px; border:none; margin-bottom:8px;" />
+        <button id="nickRecoveryManageBtn" type="button" onclick="saveRecoveryKeyword()">Salvar palavra-chave</button>
+        <small style="display:block; margin-top:7px; color:#cbd5e1; line-height:1.35;">A palavra-chave é armazenada somente como hash no servidor. Ela não substitui a senha durante o login.</small>
+      </div>
       <div id="nickDeleteDialog" role="dialog" aria-modal="true" aria-labelledby="nickDeleteDialogTitle" style="display:none; position:fixed; inset:0; z-index:10000; align-items:center; justify-content:center; padding:20px; background:rgba(0,0,0,.72);">
         <div style="width:min(390px,100%); box-sizing:border-box; padding:22px; border:1px solid rgba(248,113,113,.45); border-radius:18px; background:#1b0b25; color:#fff; box-shadow:0 18px 60px rgba(0,0,0,.55);">
           <h3 id="nickDeleteDialogTitle" style="margin:0 0 10px;">Excluir nick e dados</h3>
           <p style="margin:0 0 14px; color:#fecaca; line-height:1.45;">Digite sua senha para confirmar a exclusão permanente do nick e dos dados relacionados.</p>
-          <input id="nickDeletePasswordInput" type="password" autocomplete="current-password" placeholder="Sua senha" style="display:block; width:100%; box-sizing:border-box; padding:11px; border-radius:9px; border:none; margin-bottom:14px;" />
+          <div class="auth-field-wrap full"><input id="nickDeletePasswordInput" type="password" autocomplete="current-password" placeholder="Sua senha" style="display:block; width:100%; box-sizing:border-box; padding:11px; border-radius:9px; border:none; margin-bottom:14px;" /><button type="button" class="password-toggle" onclick="togglePasswordVisibility('nickDeletePasswordInput', this)" aria-label="Mostrar senha de exclusão">Mostrar</button></div>
           <div style="display:flex; justify-content:flex-end; gap:8px;">
             <button type="button" onclick="closeNickDeleteDialog()" style="background:transparent; border:1px solid rgba(255,255,255,.3);">Cancelar</button>
             <button id="nickDeleteConfirmBtn" type="button" onclick="confirmNickAccountDeletion()" style="background:#b91c1c;">Excluir dados</button>
@@ -1301,6 +1338,10 @@ gtag('config', 'G-FJT3X93608');
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
     const auth = firebase.auth();
+    const functions = firebase.functions();
+    const setRecoveryKeywordCallable = functions.httpsCallable("setRecoveryKeyword");
+    const recoverNickPasswordCallable = functions.httpsCallable("recoverNickPassword");
+    const deleteNickAccountCallable = functions.httpsCallable("deleteNickAccount");
     const ADMIN_NICK = "Fernando";
     const ADMIN_EMAIL = "fernando2018a1986@gmail.com";
 
@@ -1528,6 +1569,7 @@ gtag('config', 'G-FJT3X93608');
     function refreshNickCredentialUI() {
       const passwordPanel = document.getElementById("nickPasswordManage");
       const accountPanel = document.getElementById("nickAccountManage");
+      const recoveryPanel = document.getElementById("nickRecoveryManage");
       const deletePassword = document.getElementById("nickDeletePasswordInput");
       const activeUser = firebaseUser || (typeof auth !== "undefined" ? auth.currentUser : null);
       const activeNick = String((typeof nick !== "undefined" && nick) || localStorage.getItem("chat_nick") || "").trim();
@@ -1535,6 +1577,7 @@ gtag('config', 'G-FJT3X93608');
       const active = !!(activeNick && activeUser && activeUid);
       if (passwordPanel) passwordPanel.style.display = "none";
       if (accountPanel) accountPanel.style.display = "none";
+      if (recoveryPanel) recoveryPanel.style.display = active && firebaseUser && !firebaseUser.isAnonymous ? "block" : "none";
       const deleteButton = document.getElementById("deleteNickAccountBtn");
       if (deleteButton) {
         deleteButton.style.setProperty("display", active ? "flex" : "none", "important");
@@ -1542,6 +1585,75 @@ gtag('config', 'G-FJT3X93608');
       }
       if (deletePassword) deletePassword.style.display = "block";
     }
+    function togglePasswordVisibility(inputId, button) {
+      const input = document.getElementById(inputId);
+      if (!input) return;
+      const showing = input.type === "text";
+      input.type = showing ? "password" : "text";
+      if (button) { button.textContent = showing ? "Mostrar" : "Ocultar"; button.setAttribute("aria-label", showing ? "Mostrar senha" : "Ocultar senha"); }
+    }
+    function openNickRecoveryDialog() {
+      const dialog = document.getElementById("nickRecoveryDialog");
+      const nickInput = document.getElementById("nickRecoveryNickInput");
+      const source = document.getElementById("nickInput");
+      if (nickInput && !nickInput.value && source) nickInput.value = source.value.trim();
+      if (dialog) dialog.style.display = "flex";
+      if (nickInput) nickInput.focus();
+    }
+    function closeNickRecoveryDialog() {
+      const dialog = document.getElementById("nickRecoveryDialog");
+      if (dialog) dialog.style.display = "none";
+    }
+    async function saveRecoveryKeyword() {
+      const currentPassword = (document.getElementById("nickRecoveryCurrentPasswordInput") || {}).value || "";
+      const keyword = ((document.getElementById("nickRecoveryKeywordManageInput") || {}).value || "").trim();
+      const confirmation = ((document.getElementById("nickRecoveryKeywordConfirmInput") || {}).value || "").trim();
+      const button = document.getElementById("nickRecoveryManageBtn");
+      if (!nick || !firebaseUser || firebaseUser.isAnonymous) { await appAlert("Entre com seu nick e senha antes de cadastrar a palavra-chave."); return; }
+      if (currentPassword.length < NICK_PASSWORD_MIN_LENGTH) { await appAlert("Informe sua senha atual para confirmar."); return; }
+      if (keyword.length < 4) { await appAlert("A palavra-chave precisa ter pelo menos 4 caracteres."); return; }
+      if (keyword !== confirmation) { await appAlert("As palavras-chave não coincidem."); return; }
+      try {
+        if (button) { button.disabled = true; button.textContent = "Salvando..."; }
+        const credential = firebase.auth.EmailAuthProvider.credential(nickAuthEmail(nick), currentPassword);
+        await firebaseUser.reauthenticateWithCredential(credential);
+        await setRecoveryKeywordCallable({ nick: nick, keyword: keyword });
+        ["nickRecoveryCurrentPasswordInput","nickRecoveryKeywordManageInput","nickRecoveryKeywordConfirmInput"].forEach(id => { const el=document.getElementById(id); if(el) el.value=""; });
+        await appAlert("Palavra-chave cadastrada. Use-a em ‘Esqueci minha senha’ se precisar recuperar o acesso.");
+      } catch (error) {
+        console.error("Erro ao salvar palavra-chave:", error);
+        const code = authErrorCode(error);
+        await appAlert(code === "auth/wrong-password" || code === "auth/invalid-credential" ? "A senha atual não confere." : "Não foi possível cadastrar a palavra-chave agora.");
+      } finally { if (button) { button.disabled = false; button.textContent = "Salvar palavra-chave"; } }
+    }
+    async function recoverNickPassword() {
+      const recoveryNick = ((document.getElementById("nickRecoveryNickInput") || {}).value || "").trim();
+      const keyword = ((document.getElementById("nickRecoveryKeywordInput") || {}).value || "").trim();
+      const password = (document.getElementById("nickRecoveryPasswordInput") || {}).value || "";
+      const confirmation = (document.getElementById("nickRecoveryPasswordConfirmInput") || {}).value || "";
+      const button = document.getElementById("nickRecoveryConfirmBtn");
+      if (!recoveryNick || !keyword) { await appAlert("Informe o nick e a palavra-chave."); return; }
+      if (password.length < NICK_PASSWORD_MIN_LENGTH) { await appAlert("A nova senha precisa ter pelo menos 6 caracteres."); return; }
+      if (password !== confirmation) { await appAlert("As novas senhas não coincidem."); return; }
+      try {
+        if (button) { button.disabled = true; button.textContent = "Redefinindo..."; }
+        await recoverNickPasswordCallable({ nick: recoveryNick, keyword: keyword, newPassword: password });
+        closeNickRecoveryDialog();
+        ["nickRecoveryKeywordInput","nickRecoveryPasswordInput","nickRecoveryPasswordConfirmInput"].forEach(id => { const el=document.getElementById(id); if(el) el.value=""; });
+        const signedIn = await auth.signInWithEmailAndPassword(nickAuthEmail(recoveryNick), password);
+        firebaseUser = signedIn.user; firebaseUid = signedIn.user.uid;
+        const reservation = await reserveNickForCurrentUser(recoveryNick);
+        nick = reservation.nick || recoveryNick;
+        localStorage.setItem("chat_nick", nick); localStorage.setItem("chat_uid", firebaseUid);
+        document.getElementById("nickArea").style.display="none"; document.getElementById("chatArea").style.display="block";
+        refreshNickCredentialUI(); listenChat();
+        await appAlert("Senha redefinida. Você entrou novamente no aplicativo.");
+      } catch (error) {
+        console.error("Erro ao recuperar senha:", error);
+        await appAlert("Não foi possível recuperar o acesso. Confira o nick e a palavra-chave.");
+      } finally { if (button) { button.disabled = false; button.textContent = "Redefinir senha"; } }
+    }
+
     async function createNickPassword() {
       const passwordField = document.getElementById("nickPasswordManageInput");
       const button = document.getElementById("nickPasswordManageBtn");
@@ -4054,100 +4166,23 @@ padding:0 2px;">↩ Responder</button>`;
   }
 
   async function deleteCurrentAccountData() {
-    if (typeof db === "undefined" || typeof firebaseUid === "undefined" || !firebaseUid) {
-      throw new Error("A sessão ainda não está pronta.");
+    if (typeof db === "undefined" || !firebaseUid) throw new Error("A sessão ainda não está pronta.");
+    const currentNick = getNick();
+    const userToDelete = (typeof auth !== "undefined" && auth.currentUser) || firebaseUser;
+    const deletePassword = (document.getElementById("nickDeletePasswordInput") || {}).value || "";
+    if (!currentNick || !userToDelete || userToDelete.isAnonymous) throw new Error("Entre com uma conta com senha para excluir o nick.");
+    if (deletePassword.length < NICK_PASSWORD_MIN_LENGTH) {
+      const error = new Error("Digite sua senha para confirmar a exclusão.");
+      error.code = "delete-password-required";
+      throw error;
     }
-    var currentNick = getNick();
-    var uidToDelete = firebaseUid;
-    var userToDelete = (typeof auth !== "undefined" && auth.currentUser) || firebaseUser;
-    var deletePassword = (document.getElementById("nickDeletePasswordInput") || {}).value || "";
-
-    // A exclusão da credencial é preparada antes de apagar os dados. Para
-    // contas com senha, o Firebase pode exigir uma reautenticação recente.
-    if (userToDelete && !userToDelete.isAnonymous) {
-      if (!deletePassword || deletePassword.length < NICK_PASSWORD_MIN_LENGTH) {
-        var passwordError = new Error("Digite sua senha para confirmar a exclusão.");
-        passwordError.code = "delete-password-required";
-        throw passwordError;
-      }
-      // Contas de nick usam um e-mail técnico determinístico. Preferimos
-      // esse identificador ao e-mail exposto pelo objeto Firebase, que pode
-      // estar ausente ou diferente em contas migradas/antigas.
-      var nickEmail = currentNick ? nickAuthEmail(currentNick) : "";
-      var credentialEmail = nickEmail || userToDelete.email || "";
-      var credential = firebase.auth.EmailAuthProvider.credential(credentialEmail, deletePassword);
-      try {
-        await userToDelete.reauthenticateWithCredential(credential);
-      } catch (reauthError) {
-        // Compatibilidade com contas antigas que usavam outro e-mail técnico.
-        if (userToDelete.email && userToDelete.email !== credentialEmail && ["auth/invalid-credential", "auth/user-mismatch"].includes(authErrorCode(reauthError))) {
-          var legacyCredential = firebase.auth.EmailAuthProvider.credential(userToDelete.email, deletePassword);
-          await userToDelete.reauthenticateWithCredential(legacyCredential);
-        } else {
-          throw reauthError;
-        }
-      }
-    }
-
-    var deletedChat = new Set();
-    var deletedAds = new Set();
-    var batches = [];
-    var batch = db.batch();
-    var operationCount = 0;
-    function enqueue(operation){
-      operation(batch);
-      operationCount += 1;
-      if (operationCount >= 450) {
-        batches.push(batch.commit());
-        batch = db.batch();
-        operationCount = 0;
-      }
-    }
-    async function collectQuery(collectionName, field, value, idSet){
-      if (!value) return;
-      var snapshot = await db.collection(collectionName).where(field, "==", value).get();
-      snapshot.forEach(function(doc){ idSet.add(doc.id); });
-    }
-
-    await Promise.all([
-      collectQuery("chat", "uid", uidToDelete, deletedChat),
-      collectQuery("chat", "realNick", currentNick, deletedChat),
-      collectQuery("chat", "nick", currentNick, deletedChat),
-      collectQuery("chat", "userId", uidToDelete, deletedChat),
-      collectQuery("chat", "authorUid", uidToDelete, deletedChat),
-      collectQuery("desapega", "uid", uidToDelete, deletedAds),
-      collectQuery("desapega", "userId", uidToDelete, deletedAds),
-      collectQuery("desapega", "ownerUid", uidToDelete, deletedAds),
-      collectQuery("desapega", "realNick", currentNick, deletedAds),
-      collectQuery("desapega", "nick", currentNick, deletedAds)
-    ]);
-
-    deletedChat.forEach(function(id){ enqueue(function(currentBatch){ currentBatch.delete(db.collection("chat").doc(id)); }); });
-    deletedAds.forEach(function(id){ enqueue(function(currentBatch){ currentBatch.delete(db.collection("desapega").doc(id)); }); });
-
-    if (currentNick) {
-      enqueue(function(currentBatch){ currentBatch.delete(db.collection("users").doc(currentNick)); });
-      enqueue(function(currentBatch){ currentBatch.delete(db.collection("users").doc(nickClaimDocId(currentNick))); });
-    }
-    enqueue(function(currentBatch){ currentBatch.delete(db.collection("users").doc(userClaimDocId(uidToDelete))); });
-    enqueue(function(currentBatch){ currentBatch.delete(db.collection("notes").doc(uidToDelete)); });
-    enqueue(function(currentBatch){ currentBatch.delete(db.collection("academic_goals").doc(uidToDelete)); });
-    if (operationCount > 0) batches.push(batch.commit());
-    await Promise.all(batches);
-
-    ["chat_nick", "chat_uid", "notes", "spotted_blocked_users", TERMS_KEY, "spotted_academic_draft_v1_" + uidToDelete, "spotted_notes_backup_v1_" + uidToDelete].forEach(function(key){ localStorage.removeItem(key); });
-    nick = "";
-    var authDeletionError = null;
-    try {
-      if (userToDelete && typeof userToDelete.delete === "function") await userToDelete.delete();
-    } catch (error) {
-      authDeletionError = error;
-      console.warn("Os dados foram removidos, mas a credencial precisa de uma etapa adicional:", error);
-    }
+    const credential = firebase.auth.EmailAuthProvider.credential(nickAuthEmail(currentNick), deletePassword);
+    await userToDelete.reauthenticateWithCredential(credential);
+    const deletedUid = firebaseUid;
+    await deleteNickAccountCallable({ nick: currentNick });
     await purgeDeletedUserRuntimeData();
-    return { messages: deletedChat.size, ads: deletedAds.size, uid: uidToDelete, authDeletionError: authDeletionError };
+    return { messages: 0, ads: 0, uid: deletedUid, authDeletionError: null };
   }
-
   window.openNickDeleteDialog = function(){
     if (!getNick()) { appAlert("Nenhum nick ativo para excluir."); return; }
     const dialog = document.getElementById("nickDeleteDialog");

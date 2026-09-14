@@ -1,0 +1,198 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Administrador atual do aplicativo.
+    // Recomendação futura: substituir a verificação por e-mail por custom claims.
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return isSignedIn()
+        && request.auth.token.email == 'fernando2018a1986@gmail.com'
+        && request.auth.token.email_verified == true;
+    }
+
+    function isOwnerUid(uid) {
+      return isSignedIn() && uid == request.auth.uid;
+    }
+
+    function hasOnly(fields) {
+      return request.resource.data.diff(resource.data).affectedKeys().hasOnly(fields);
+    }
+
+    function validUserIdentity() {
+      return isSignedIn()
+        && request.resource.data.uid == request.auth.uid;
+    }
+
+    // Conteúdo público administrado pelo painel.
+    match /admin_content/{document} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /news/{document} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /conhecaUnila/{document} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Reservas e vínculos de nick.
+    // O cliente pode ler somente seus próprios documentos; o administrador pode ler tudo.
+    // A palavra-chave de recuperação só deve ser escrita pelas Cloud Functions,
+    // pois o cliente não tem acesso ao hash.
+    match /users/{document} {
+      allow read: if isAdmin()
+        || (isSignedIn() && resource.data.uid == request.auth.uid);
+
+      allow create: if validUserIdentity()
+        && !request.resource.data.keys().hasAny(['recoveryKeywordHash']);
+
+      allow update: if isAdmin()
+        || (validUserIdentity()
+          && resource.data.uid == request.auth.uid
+          && request.resource.data.uid == request.auth.uid
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+            'uid', 'ownerUid', 'nick', 'nickNormalized', 'nickClaimId',
+            'createdAt', 'updatedAt', 'lastActive', 'source'
+          ])
+          && !request.resource.data.diff(resource.data).affectedKeys().hasAny(['recoveryKeywordHash']));
+
+      allow delete: if isAdmin()
+        || (isSignedIn() && resource.data.uid == request.auth.uid);
+    }
+
+    // Notas privadas do usuário.
+    match /notes/{document} {
+      allow read: if isOwnerUid(document);
+      allow create: if isOwnerUid(document)
+        && request.resource.data.uid == request.auth.uid;
+      allow update: if isOwnerUid(document)
+        && resource.data.uid == request.auth.uid
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.keys().hasOnly([
+          'uid', 'nick', 'notes', 'updatedAt', 'source', 'createdAt'
+        ]);
+      allow delete: if isOwnerUid(document)
+        && resource.data.uid == request.auth.uid;
+    }
+
+    // Metas acadêmicas privadas do usuário.
+    match /academic_goals/{document} {
+      allow read: if isOwnerUid(document);
+      allow create: if isOwnerUid(document)
+        && request.resource.data.uid == request.auth.uid;
+      allow update: if isOwnerUid(document)
+        && resource.data.uid == request.auth.uid
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.keys().hasOnly([
+          'uid', 'nick', 'goals', 'updatedAt', 'source', 'createdAt'
+        ]);
+      allow delete: if isOwnerUid(document)
+        && resource.data.uid == request.auth.uid;
+    }
+
+    // Banimento: o aplicativo pode consultar apenas seu próprio documento.
+    // Somente o administrador pode criar, alterar ou remover banimentos.
+    match /bannedUsers/{document} {
+      allow read: if isAdmin() || (isSignedIn() && document == request.auth.uid);
+      allow write: if isAdmin();
+    }
+
+    // Denúncias: usuários autenticados podem registrar denúncias,
+    // mas somente o administrador pode lê-las ou alterá-las.
+    match /ugc_reports/{document} {
+      allow create: if isSignedIn()
+        && request.resource.data.reporterUid == request.auth.uid
+        && request.resource.data.keys().hasOnly([
+          'type', 'targetId', 'targetLabel', 'targetUser', 'reason',
+          'reporterNick', 'reporterUid', 'createdAt', 'status', 'source'
+        ]);
+      allow read, update, delete: if isAdmin();
+    }
+
+    // Anúncios públicos.
+    match /desapega/{document} {
+      allow read: if true;
+
+      allow create: if isSignedIn()
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.keys().hasOnly([
+          'title', 'price', 'desc', 'whatsapp', 'photos', 'postedBy',
+          'realNick', 'uid', 'anonymous', 'updatedAt', 'createdAt', 'replies'
+        ]);
+
+      // O dono pode editar seus campos sem trocar a identidade do anúncio.
+      allow update: if isAdmin()
+        || (
+          isSignedIn()
+          && resource.data.uid == request.auth.uid
+          && request.resource.data.uid == request.auth.uid
+          && request.resource.data.keys().hasOnly([
+            'title', 'price', 'desc', 'whatsapp', 'photos', 'postedBy',
+            'realNick', 'uid', 'anonymous', 'updatedAt', 'createdAt', 'replies'
+          ])
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+            'title', 'price', 'desc', 'whatsapp', 'photos', 'postedBy',
+            'realNick', 'uid', 'anonymous', 'updatedAt'
+          ])
+        )
+        // O aplicativo atual armazena respostas dentro do próprio anúncio.
+        // Exige que uma resposta nova seja acrescentada pelo próprio autor.
+        || (
+          isSignedIn()
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['replies'])
+          && request.resource.data.replies.size() == resource.data.replies.size() + 1
+          && request.resource.data.replies[resource.data.replies.size()].uid == request.auth.uid
+        );
+
+      allow delete: if isAdmin()
+        || (isSignedIn() && resource.data.uid == request.auth.uid);
+    }
+
+    // Chat público para usuários autenticados.
+    match /chat/{document} {
+      allow read: if isSignedIn();
+
+      allow create: if isSignedIn()
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.keys().hasOnly([
+          'nick', 'realNick', 'uid', 'time', 'anonymous', 'text',
+          'imageUrl', 'reply', 'reactions', 'userReactions'
+        ]);
+
+      // O autor pode editar apenas campos de conteúdo; reações podem ser alteradas
+      // por qualquer usuário autenticado através da transação do aplicativo.
+      allow update: if isAdmin()
+        || (
+          isSignedIn()
+          && resource.data.uid == request.auth.uid
+          && request.resource.data.uid == request.auth.uid
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+            'nick', 'realNick', 'time', 'anonymous', 'text', 'imageUrl', 'reply', 'uid'
+          ])
+        )
+        || (
+          isSignedIn()
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+            'reactions', 'userReactions'
+          ])
+        );
+
+      allow delete: if isAdmin()
+        || (isSignedIn() && resource.data.uid == request.auth.uid);
+    }
+
+    // Negar tudo que não foi explicitamente definido acima.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

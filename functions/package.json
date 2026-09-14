@@ -1,0 +1,11 @@
+{
+  "name": "unila-auth-functions",
+  "private": true,
+  "engines": { "node": "20" },
+  "main": "index.js",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "firebase-admin": "^13.0.2",
+    "firebase-functions": "^6.1.0"
+  }
+}
