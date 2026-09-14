@@ -549,7 +549,7 @@ button:hover{
 
 #dateBar{
   position:fixed;
-  bottom:0;
+  bottom:calc(24px + env(safe-area-inset-bottom, 0px));
   left:50%;
   transform:translateX(-50%);
   background:transparent !important;
@@ -635,7 +635,7 @@ button:hover{
 
 #inputArea{
   position:fixed;
-  bottom:calc(87px + env(safe-area-inset-bottom, 0px));
+  bottom:calc(150px + env(safe-area-inset-bottom, 0px));
   left:8px;
   right:8px;
   display:flex;
@@ -651,7 +651,7 @@ button:hover{
   position:fixed !important;
   left:8px !important;
   right:8px !important;
-  bottom:34px !important;
+  bottom:calc(58px + env(safe-area-inset-bottom, 0px)) !important;
   width:auto !important;
   max-width:calc(100% - 16px) !important;
   padding:4px 8px !important;
@@ -662,7 +662,7 @@ button:hover{
 #chatAnonymousArea label{font-size:12px !important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 /* A exclusão fica 30 px acima da opção de anonimato e não sai da viewport. */
 #deleteNickAccountBtn{
-  bottom:74px !important;
+  bottom:calc(98px + env(safe-area-inset-bottom, 0px)) !important;
   left:8px !important;
   height:34px !important;
   max-width:calc(100% - 16px);
