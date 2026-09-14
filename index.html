@@ -2454,7 +2454,7 @@ gtag('config', 'G-FJT3X93608');
       return data.toLocaleDateString('pt-BR') + ` às ${hora}`;
     }
 
-    function renderMessages(append = false) {
+    function renderMessages(append = false, messagesToRender = null) {
       const box = document.getElementById("chatBox");
       if (!box) return;
 
@@ -2466,7 +2466,8 @@ gtag('config', 'G-FJT3X93608');
       }
 
       const fragment = document.createDocumentFragment();
-      chatMessages.forEach(m => {
+      const messages = Array.isArray(messagesToRender) ? messagesToRender : chatMessages;
+      messages.forEach(m => {
         const messageUidCandidates = [m.uid, m.userId, m.authorUid].map(value => String(value || ""));
         const messageBelongsToCurrentUser = !!firebaseUid && messageUidCandidates.includes(String(firebaseUid));
         const messageAuthorUid = messageUidCandidates.find(value => value === String(firebaseUid)) || messageUidCandidates.find(Boolean) || "";
@@ -2571,11 +2572,15 @@ padding:0 2px;">↩ Responder</button>`;
       try {
         const snapshot = await db.collection("chat").orderBy("time", "desc").startAfter(lastDoc).limit(LIMIT).get();
         if (snapshot.docs.length > 0) {
-          const olderMessages = [];
-          snapshot.docs.forEach(doc => { olderMessages.push({ id: doc.id, ...doc.data() }); });
-          chatMessages = [...olderMessages, ...chatMessages].sort((a, b) => a.time - b.time);
+          const existingIds = new Set(chatMessages.map(message => message.id));
+          const olderMessages = snapshot.docs
+            .map(doc => ({ id: doc.id, ...doc.data() }))
+            .filter(message => !existingIds.has(message.id));
+          if (olderMessages.length > 0) {
+            chatMessages = [...olderMessages, ...chatMessages].sort((a, b) => a.time - b.time);
+            renderMessages(true, olderMessages);
+          }
           lastDoc = snapshot.docs[snapshot.docs.length - 1];
-          renderMessages(true);
         }
       } catch (error) {
         console.error("Erro ao carregar mensagens antigas:", error);
