@@ -4059,8 +4059,23 @@ padding:0 2px;">↩ Responder</button>`;
         passwordError.code = "delete-password-required";
         throw passwordError;
       }
-      var credential = firebase.auth.EmailAuthProvider.credential(userToDelete.email, deletePassword);
-      await userToDelete.reauthenticateWithCredential(credential);
+      // Contas de nick usam um e-mail técnico determinístico. Preferimos
+      // esse identificador ao e-mail exposto pelo objeto Firebase, que pode
+      // estar ausente ou diferente em contas migradas/antigas.
+      var nickEmail = currentNick ? nickAuthEmail(currentNick) : "";
+      var credentialEmail = nickEmail || userToDelete.email || "";
+      var credential = firebase.auth.EmailAuthProvider.credential(credentialEmail, deletePassword);
+      try {
+        await userToDelete.reauthenticateWithCredential(credential);
+      } catch (reauthError) {
+        // Compatibilidade com contas antigas que usavam outro e-mail técnico.
+        if (userToDelete.email && userToDelete.email !== credentialEmail && ["auth/invalid-credential", "auth/user-mismatch"].includes(authErrorCode(reauthError))) {
+          var legacyCredential = firebase.auth.EmailAuthProvider.credential(userToDelete.email, deletePassword);
+          await userToDelete.reauthenticateWithCredential(legacyCredential);
+        } else {
+          throw reauthError;
+        }
+      }
     }
 
     var deletedChat = new Set();
