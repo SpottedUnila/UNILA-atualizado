@@ -4161,6 +4161,27 @@ padding:0 2px;">↩ Responder</button>`;
         if (!["auth/wrong-password", "auth/invalid-credential", "auth/user-mismatch"].includes(code)) throw error;
       }
     }
+    if (!reauthenticated) {
+      // Compatibilidade com sessões antigas: renova a sessão pelo Auth e
+      // confirma que o UID continua sendo o mesmo antes de apagar dados.
+      for (const accountEmail of candidateEmails) {
+        try {
+          await auth.signOut();
+          const signedIn = await auth.signInWithEmailAndPassword(accountEmail, deletePassword);
+          if (signedIn.user.uid !== firebaseUid) {
+            await auth.signOut();
+            continue;
+          }
+          userToDelete = signedIn.user;
+          firebaseUser = signedIn.user;
+          reauthenticated = true;
+          break;
+        } catch (error) {
+          lastReauthError = error;
+          if (!["auth/wrong-password", "auth/invalid-credential", "auth/user-mismatch", "auth/user-not-found"].includes(authErrorCode(error))) throw error;
+        }
+      }
+    }
     if (!reauthenticated) throw lastReauthError || new Error("A senha não confere.");
     const deletedUid = firebaseUid;
     const refs = [];
