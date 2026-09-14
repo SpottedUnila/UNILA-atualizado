@@ -1747,6 +1747,7 @@ gtag('config', 'G-FJT3X93608');
     const LIMIT = 10;
     let lastDoc = null;
     let loadingMore = false;
+    let hasMoreMessages = true;
     let chatMessages = [];
     let unsubscribeChat = null;
     let replyTo = null;
@@ -2523,6 +2524,8 @@ padding:0 2px;">↩ Responder</button>`;
       if (unsubscribeChat) unsubscribeChat();
       unsubscribeChat = db.collection("chat")
         .orderBy("time", "desc")
+      lastDoc = null;
+      hasMoreMessages = true;
         .limit(LIMIT)
         .onSnapshot(snapshot => {
           let changed = false;
@@ -2555,13 +2558,16 @@ padding:0 2px;">↩ Responder</button>`;
             lastDoc = snapshot.docs[snapshot.docs.length - 1];
           }
         }, error => {
+            hasMoreMessages = snapshot.docs.length === LIMIT;
+          } else {
+            hasMoreMessages = false;
           console.error("Erro ao carregar o chat:", error);
           appAlert("Não foi possível carregar o chat." + (error && error.code ? " (" + error.code + ")" : ""));
         });
 
       const box = document.getElementById("chatBox");
       box.onscroll = () => {
-        if (box.scrollTop === 0 && !loadingMore && lastDoc) {
+        if (box.scrollTop === 0 && !loadingMore && hasMoreMessages && lastDoc) {
           loadMoreMessages();
         }
       };
@@ -2570,6 +2576,7 @@ padding:0 2px;">↩ Responder</button>`;
     async function loadMoreMessages() {
       loadingMore = true;
       try {
+      if (!hasMoreMessages || !lastDoc) return;
         const snapshot = await db.collection("chat").orderBy("time", "desc").startAfter(lastDoc).limit(LIMIT).get();
         if (snapshot.docs.length > 0) {
           const existingIds = new Set(chatMessages.map(message => message.id));
@@ -2583,6 +2590,9 @@ padding:0 2px;">↩ Responder</button>`;
           lastDoc = snapshot.docs[snapshot.docs.length - 1];
         }
       } catch (error) {
+          hasMoreMessages = snapshot.docs.length === LIMIT;
+        } else {
+          hasMoreMessages = false;
         console.error("Erro ao carregar mensagens antigas:", error);
         appAlert("Não foi possível carregar mensagens antigas." + (error && error.code ? " (" + error.code + ")" : ""));
       } finally {
