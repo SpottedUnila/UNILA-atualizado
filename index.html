@@ -4135,7 +4135,7 @@ padding:0 2px;">↩ Responder</button>`;
   async function deleteCurrentAccountData() {
     if (typeof db === "undefined" || !firebaseUid) throw new Error("A sessão ainda não está pronta.");
     const currentNick = getNick();
-    const userToDelete = (typeof auth !== "undefined" && auth.currentUser) || firebaseUser;
+    let userToDelete = (typeof auth !== "undefined" && auth.currentUser) || firebaseUser;
     const deletePassword = (document.getElementById("nickDeletePasswordInput") || {}).value || "";
     if (!currentNick || !userToDelete || userToDelete.isAnonymous) throw new Error("Entre com uma conta com senha para excluir o nick.");
     if (deletePassword.length < NICK_PASSWORD_MIN_LENGTH) {
@@ -4227,9 +4227,11 @@ padding:0 2px;">↩ Responder</button>`;
       window.location.reload();
     } catch (error) {
       console.error("Erro ao excluir a conta do nick:", error);
-      if (error && ["auth/wrong-password", "auth/invalid-credential", "auth/user-mismatch"].includes(error.code)) appAlert("A senha informada não confere.");
+      if (error && ["auth/wrong-password", "auth/invalid-credential", "auth/user-mismatch"].includes(error.code)) appAlert("A senha informada não confere para o e-mail associado a esta conta.");
       else if (error && error.code === "auth/requires-recent-login") appAlert("Entre novamente com o nick e a senha e tente a exclusão outra vez.");
-      else appAlert("Não foi possível excluir a conta agora. Verifique a conexão e tente novamente.");
+      else if (error && error.code === "permission-denied") appAlert("A senha foi aceita, mas as regras do Firestore bloquearam a exclusão (permission-denied).");
+      else appAlert("Erro ao excluir: " + (error && error.code ? error.code : (error && error.message ? error.message : "desconhecido")));
+
     } finally {
       if (button) { button.disabled = false; button.textContent = "Excluir dados"; }
     }
