@@ -1632,7 +1632,7 @@ gtag('config', 'G-FJT3X93608');
           authenticatedUser = signedIn.user;
         } catch (error) {
           const code = authErrorCode(error);
-          if (["auth/user-not-found", "auth/invalid-credential"].includes(code)) {
+          if (code === "auth/user-not-found") {
             const created = await auth.createUserWithEmailAndPassword(email, password);
             authenticatedUser = created.user;
           } else {
@@ -2738,6 +2738,7 @@ padding:0 2px;">↩ Responder</button>`;
       if (!email || !password) { appAlert("Informe o e-mail e a senha administrativa."); return; }
       if (btn) { btn.disabled = true; btn.textContent = "Entrando..."; }
       try {
+        await authReady;
         const credential = await auth.signInWithEmailAndPassword(email, password);
         const signedInEmail = (credential.user.email || "").toLowerCase();
         if (signedInEmail !== ADMIN_EMAIL) {
@@ -2751,7 +2752,16 @@ padding:0 2px;">↩ Responder</button>`;
         await saveNick(document.getElementById("nickEnterBtn"));
       } catch (e) {
         console.error("Erro no login administrativo:", e);
-        appAlert("Não foi possível entrar como Fernando. Verifique se o login por e-mail/senha está habilitado no Firebase e se a conta está correta.");
+        const code = authErrorCode(e);
+        if (["auth/wrong-password", "auth/invalid-credential", "auth/user-not-found"].includes(code)) {
+          appAlert("E-mail ou senha administrativa incorretos. Use ‘Esqueci a senha’ para redefinir.");
+        } else if (code === "auth/operation-not-allowed") {
+          appAlert("O login por e-mail e senha está desativado no Firebase Authentication. Ative o provedor E-mail/senha no console do Firebase.");
+        } else if (code === "auth/too-many-requests") {
+          appAlert("Muitas tentativas de login. Aguarde alguns minutos ou redefina a senha por e-mail.");
+        } else {
+          appAlert("Não foi possível entrar como Fernando. Verifique a conexão e a configuração do Firebase.");
+        }
       } finally {
         if (btn) { btn.disabled = false; btn.textContent = "Entrar como Fernando"; }
       }
