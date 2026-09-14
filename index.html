@@ -227,6 +227,7 @@ button:hover{
 .page{
   display:none;
   padding:20px;
+  box-sizing:border-box;
   line-height:1.7;
   background: rgba(0, 0, 0, 0.5); /* Fundo escuro 50% translúcido para facilitar leitura */
   border-radius: 15px;
@@ -234,6 +235,26 @@ button:hover{
   backdrop-filter: blur(5px); /* Leve desfoque para destacar ainda mais o texto */
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
+/* No celular, Chat e Desapega usam toda a largura útil do WebView. */
+#chatPage,
+#desapegaPage{
+  width:100%;
+  max-width:100%;
+  min-height:100dvh;
+  margin:0;
+  border-radius:0;
+  box-sizing:border-box;
+  padding:calc(16px + env(safe-area-inset-top, 0px)) 12px calc(90px + env(safe-area-inset-bottom, 0px));
+  overflow-x:hidden;
+}
+#chatPage h2,
+#desapegaPage h2{margin-top:0;}
+#chatPage > *,
+#desapegaPage > *{max-width:100%;box-sizing:border-box;}
+#chatArea,
+#chatBox,
+#adList,
+#desapegaForm{width:100%;max-width:100%;box-sizing:border-box;}
 
 .meta-academica{background:linear-gradient(135deg,rgba(34,197,94,.34),rgba(59,130,246,.34)) !important;border-color:rgba(187,247,208,.48);}
 .meta-academica:hover{background:linear-gradient(135deg,rgba(34,197,94,.48),rgba(59,130,246,.48)) !important;}
@@ -599,7 +620,7 @@ button:hover{
 #chatArea{
   display:flex;
   flex-direction:column;
-  height:100vh;
+  min-height:calc(100dvh - 110px);
 }
 
 #chatBox{
@@ -607,7 +628,9 @@ button:hover{
   overflow-y:scroll;
   padding:10px;
   padding-bottom:180px;
-  height: calc(100vh - 100px);
+  height:calc(100dvh - 110px);
+  min-width:0;
+  overflow-x:hidden;
 }
 
 #inputArea{
