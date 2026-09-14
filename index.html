@@ -1692,16 +1692,19 @@ gtag('config', 'G-FJT3X93608');
     async function loginOrCreateNick(input, password, recoveryEmail){
       await waitForFirebaseReady();
       const recovery = normalizeRecoveryEmail(recoveryEmail);
-      const email = recovery || nickAuthEmail(input);
+      const legacyEmail = nickAuthEmail(input);
       let authenticatedUser = null;
+
       if (!recovery) {
+        // Contas antigas entram pelo e-mail técnico calculado a partir do nick.
         if (auth.currentUser) await auth.signOut();
         try {
-          authenticatedUser = (await auth.signInWithEmailAndPassword(email, password)).user;
+          authenticatedUser = (await auth.signInWithEmailAndPassword(legacyEmail, password)).user;
         } catch (error) {
           if (authErrorCode(error) === "auth/user-not-found") {
             const anonymous = await auth.signInAnonymously();
-            firebaseUser = anonymous.user; firebaseUid = anonymous.user.uid;
+            firebaseUser = anonymous.user;
+            firebaseUid = anonymous.user.uid;
             throw nickLoginError("email-required", "Para criar um novo acesso, informe um e-mail de recuperação.");
           }
           throw error;
@@ -1710,26 +1713,38 @@ gtag('config', 'G-FJT3X93608');
         const current = auth.currentUser;
         if (current && current.isAnonymous) {
           try {
-            const credential = firebase.auth.EmailAuthProvider.credential(email, password);
+            const credential = firebase.auth.EmailAuthProvider.credential(recovery, password);
             authenticatedUser = (await current.linkWithCredential(credential)).user;
           } catch (error) {
             if (!authErrorIsEmailInUse(error)) throw error;
             await auth.signOut();
-            authenticatedUser = (await auth.signInWithEmailAndPassword(email, password)).user;
+            authenticatedUser = (await auth.signInWithEmailAndPassword(recovery, password)).user;
           }
         } else {
           if (auth.currentUser) await auth.signOut();
           try {
-            authenticatedUser = (await auth.signInWithEmailAndPassword(email, password)).user;
+            authenticatedUser = (await auth.signInWithEmailAndPassword(recovery, password)).user;
           } catch (error) {
-            if (authErrorCode(error) === "auth/user-not-found") authenticatedUser = (await auth.createUserWithEmailAndPassword(email, password)).user;
-            else throw error;
+            if (authErrorCode(error) !== "auth/user-not-found") throw error;
+            // Migração: contas antigas ainda podem estar no e-mail técnico do nick.
+            try {
+              authenticatedUser = (await auth.signInWithEmailAndPassword(legacyEmail, password)).user;
+              try {
+                await authenticatedUser.updateEmail(recovery);
+              } catch (migrationError) {
+                if (authErrorCode(migrationError) !== "auth/email-already-in-use") throw migrationError;
+              }
+            } catch (legacyError) {
+              if (authErrorCode(legacyError) !== "auth/user-not-found") throw legacyError;
+              authenticatedUser = (await auth.createUserWithEmailAndPassword(recovery, password)).user;
+            }
           }
         }
       }
+
       firebaseUser = authenticatedUser;
       firebaseUid = authenticatedUser ? authenticatedUser.uid : null;
-      return reserveNickForCurrentUser(input, recovery);
+      return reserveNickForCurrentUser(input, recovery || null);
     }
     async function releaseNickReservation(ownerNick, ownerUid) {
       if (!ownerNick || !ownerUid) return;
