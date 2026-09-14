@@ -38,4 +38,7 @@ jobs:
           credentials_json: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_APP_UNILA }}'
 
       - name: Publicar regras e Cloud Functions
-        run: npx --yes firebase-tools deploy --project app-unila --non-interactive --only firestore:rules,functions
+        # As regras já foram publicadas pelo Firebase Console.
+        # Publicar apenas Functions evita exigir firebaserules.projects:test
+        # da conta de serviço do GitHub Actions.
+        run: npx --yes firebase-tools deploy --project app-unila --non-interactive --only functions
