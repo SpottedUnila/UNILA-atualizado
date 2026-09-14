@@ -647,11 +647,11 @@ button:hover{
 #inputArea label{width:40px !important;height:40px !important;flex:0 0 40px;}
 #inputArea #sendBtn{width:40px;height:40px;flex:0 0 40px;font-size:20px;}
 /* Caixa de anonimato sempre permanece dentro da largura da página. */
-#chatArea > div:last-child{
+#chatAnonymousArea{
   position:fixed !important;
   left:8px !important;
   right:8px !important;
-  bottom:4px !important;
+  bottom:34px !important;
   width:auto !important;
   max-width:calc(100% - 16px) !important;
   padding:4px 8px !important;
@@ -659,7 +659,14 @@ button:hover{
   box-sizing:border-box;
   overflow:hidden;
 }
-#chatArea > div:last-child label{font-size:12px !important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+#chatAnonymousArea label{font-size:12px !important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+/* A exclusão fica 30 px acima da opção de anonimato e não sai da viewport. */
+#deleteNickAccountBtn{
+  bottom:74px !important;
+  left:8px !important;
+  height:34px !important;
+  max-width:calc(100% - 16px);
+}
 
 /* CONTAINER PARA OS BOTÕES DO TOPO */
 .top-controls {
@@ -1183,7 +1190,7 @@ gtag('config', 'G-FJT3X93608');
         </label>
         <button id="sendBtn" onclick="sendMessage()">➤</button>
       </div>
-      <div style="position:fixed; bottom:20px; left:15px; display:flex; align-items:center; gap:8px; padding:6px 15px; background:rgba(0,0,0,0.6); width:fit-content; border-radius:20px; border:1px solid rgba(255,255,255,0.2); backdrop-filter:blur(10px); z-index:999; box-shadow:0 4px 15px rgba(0,0,0,0.4);">
+      <div id="chatAnonymousArea" style="position:fixed; bottom:20px; left:15px; display:flex; align-items:center; gap:8px; padding:6px 15px; background:rgba(0,0,0,0.6); width:fit-content; border-radius:20px; border:1px solid rgba(255,255,255,0.2); backdrop-filter:blur(10px); z-index:999; box-shadow:0 4px 15px rgba(0,0,0,0.4);">
         <input type="checkbox" id="chatAnonymous" style="width:18px; height:18px; cursor:pointer;" />
         <label for="chatAnonymous" style="font-size:13px; color:#ffffff; cursor:pointer; font-weight:600; text-shadow:0 1px 2px rgba(0,0,0,0.5);">👤 Enviar Anonimamente</label>
       </div>
