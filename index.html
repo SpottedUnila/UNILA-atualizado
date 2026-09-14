@@ -635,12 +635,13 @@ button:hover{
   display:flex;
   align-items:center;
   gap:10px;
-  background: rgba(255,255,255,0.03);
-  backdrop-filter:blur(15px);
+  background: transparent;
+  backdrop-filter:none;
+  -webkit-backdrop-filter:none;
   padding:5px 5px 5px 15px;
   border-radius:30px;
-  border:1px solid rgba(255,255,255,0.1);
-  box-shadow:0 8px 32px rgba(0,0,0,0.3);
+  border:0;
+  box-shadow:none;
 }
 .podcast-container{
   margin-right: 0px;
@@ -1743,7 +1744,7 @@ gtag('config', 'G-FJT3X93608');
     // PWA UPDATE LOGIC
     function setupPWAUpdate() {
       if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./service-worker37.js?v=180', { updateViaCache: 'none' }).then(reg => {
+        navigator.serviceWorker.register('./service-worker37.js?v=181', { updateViaCache: 'none' }).then(reg => {
           reg.update();
           reg.addEventListener('updatefound', () => {
             const newWorker = reg.installing;
