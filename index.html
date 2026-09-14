@@ -1947,7 +1947,7 @@ gtag('config', 'G-FJT3X93608');
               <div class="news-card" style="background: rgba(30, 41, 59, 0.6); border-radius: 12px; padding: 10px; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.1);">
                 <h3 style="color:#22c55e; margin:0 0 5px;">${escapeHtml(news.title || 'Notícia')}</h3>
                 ${imageUrl ? `<div class="news-media"><img src="${optimizedImg}" style="width:100%;height:auto;max-height:650px;object-fit:contain;display:block;border-radius:8px;background:#000;cursor:pointer;" onclick="window.open(this.src, '_blank')"></div>` : ''}
-                ${videoUrl ? `<div class="news-media" style="width:100%;border-radius:8px;overflow:hidden;background:#000;"><video src="${optimizedVid}" poster="${optimizedPoster}" controls style="width:100%;height:auto;max-height:650px;display:block;object-fit:contain;background:#000;border-radius:8px;" preload="none" playsinline></video></div>` : ''}
+                ${videoUrl ? `<div class="news-media" style="width:100%;border-radius:8px;overflow:hidden;background:#000;"><video src="${optimizedVid}" poster="${optimizedPoster}" controls style="width:100%;height:auto;max-height:650px;display:block;object-fit:contain;background:#000;border-radius:8px;" preload="none" playsinline></video></div>${news.videoName ? `<p style="margin:6px 0;color:#cbd5e1;font-size:13px;">${escapeHtml(news.videoName)}</p>` : ''}` : ''}
                 <p class="news-content" style="color:#e0e0e0;">${escapeHtml(news.content || '')}</p>
                 <p class="news-date" style="font-size:12px; color:#94a3b8; text-align:right;">${date}</p>
               </div>
@@ -2064,12 +2064,14 @@ gtag('config', 'G-FJT3X93608');
     function renderConhecaMedia(item) {
       const media = getConhecaMedia(item);
       const dateOverlay = `<span class="conheca-date-overlay">📅 ${escapeHtml(formatConhecaPublishedDate(item))}</span>`;
+      const title = String(item && item.title || "").trim();
+      const videoName = String(item && item.videoName || "").trim();
       let html = "";
       if (media.imageUrl) {
         html += `<div class="conheca-media-block"><div class="news-media conheca-media-frame"><img src="${escapeHtml(optimizeCloudinary(media.imageUrl, "image"))}" alt="Imagem de Conheça a Unila" style="width:100%;height:auto;max-height:650px;object-fit:contain;display:block;border-radius:8px;background:#000;cursor:pointer;" onclick="window.open(this.src, '_blank')">${dateOverlay}</div>${renderConhecaCaptionAndMeta(item, "image")}</div>`;
       }
       if (media.videoUrl) {
-        html += `<div class="conheca-media-block"><div class="news-media conheca-media-frame" style="width:100%;"><video src="${escapeHtml(optimizeCloudinary(media.videoUrl, "video"))}" poster="${escapeHtml(optimizeCloudinary(media.videoThumbUrl, "image"))}" controls style="width:100%;height:auto;max-height:650px;display:block;object-fit:contain;background:#000;border-radius:8px;" preload="none" playsinline></video>${dateOverlay}</div>${renderConhecaCaptionAndMeta(item, "video")}</div>`;
+        html += `<div class="conheca-media-block">${title ? `<h3 style="color:#22c55e;margin:0 0 6px;">${escapeHtml(title)}</h3>` : ""}<div class="news-media conheca-media-frame" style="width:100%;"><video src="${escapeHtml(optimizeCloudinary(media.videoUrl, "video"))}" poster="${escapeHtml(optimizeCloudinary(media.videoThumbUrl, "image"))}" controls style="width:100%;height:auto;max-height:650px;display:block;object-fit:contain;background:#000;border-radius:8px;" preload="none" playsinline></video>${dateOverlay}</div>${videoName ? `<p class="conheca-caption">${escapeHtml(videoName)}</p>` : ""}${renderConhecaCaptionAndMeta(item, "video")}</div>`;
       }
       return html;
     }
@@ -2522,10 +2524,10 @@ padding:0 2px;">↩ Responder</button>`;
 
     function listenChat() {
       if (unsubscribeChat) unsubscribeChat();
-      unsubscribeChat = db.collection("chat")
-        .orderBy("time", "desc")
       lastDoc = null;
       hasMoreMessages = true;
+      unsubscribeChat = db.collection("chat")
+        .orderBy("time", "desc")
         .limit(LIMIT)
         .onSnapshot(snapshot => {
           let changed = false;
@@ -2556,11 +2558,11 @@ padding:0 2px;">↩ Responder</button>`;
           }
           if (snapshot.docs.length > 0) {
             lastDoc = snapshot.docs[snapshot.docs.length - 1];
-          }
-        }, error => {
             hasMoreMessages = snapshot.docs.length === LIMIT;
           } else {
             hasMoreMessages = false;
+          }
+        }, error => {
           console.error("Erro ao carregar o chat:", error);
           appAlert("Não foi possível carregar o chat." + (error && error.code ? " (" + error.code + ")" : ""));
         });
@@ -2574,9 +2576,9 @@ padding:0 2px;">↩ Responder</button>`;
     }
 
     async function loadMoreMessages() {
+      if (!hasMoreMessages || !lastDoc) return;
       loadingMore = true;
       try {
-      if (!hasMoreMessages || !lastDoc) return;
         const snapshot = await db.collection("chat").orderBy("time", "desc").startAfter(lastDoc).limit(LIMIT).get();
         if (snapshot.docs.length > 0) {
           const existingIds = new Set(chatMessages.map(message => message.id));
@@ -2588,11 +2590,11 @@ padding:0 2px;">↩ Responder</button>`;
             renderMessages(true, olderMessages);
           }
           lastDoc = snapshot.docs[snapshot.docs.length - 1];
-        }
-      } catch (error) {
           hasMoreMessages = snapshot.docs.length === LIMIT;
         } else {
           hasMoreMessages = false;
+        }
+      } catch (error) {
         console.error("Erro ao carregar mensagens antigas:", error);
         appAlert("Não foi possível carregar mensagens antigas." + (error && error.code ? " (" + error.code + ")" : ""));
       } finally {
