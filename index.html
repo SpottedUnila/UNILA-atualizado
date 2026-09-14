@@ -970,7 +970,7 @@ gtag('config', 'G-FJT3X93608');
 #nickArea > .auth-field-wrap,
 #nickArea > #nickEnterBtn,
 #nickArea > .auth-link-button,
-#nickArea > small { transform:translateY(200px); }
+#nickArea > small { transform:translateY(250px); }
 .auth-field-wrap{position:relative;width:80%;margin:0 auto}.auth-field-wrap.full{width:100%}.auth-field-wrap input{padding-right:70px!important;box-sizing:border-box}.password-toggle{position:absolute;right:7px;top:6px;min-width:58px;padding:6px 7px!important;font-size:11px!important;background:rgba(124,58,237,.85)!important;border:0!important;border-radius:7px!important}.auth-link-button{display:block;margin:8px auto;background:transparent!important;border:0!important;color:#c4b5fd!important;text-decoration:underline;font-size:13px!important}
 </style>
 </head>
@@ -3725,7 +3725,11 @@ padding:0 2px;">↩ Responder</button>`;
     setPlaceholder("#nickInput", tr("nickPlaceholder"));
     setPlaceholder("#nickPasswordInput", "Digite sua senha ou crie uma senha");
     setPlaceholder("#nickDeletePasswordInput", "Digite sua senha para confirmar a exclusão");
-    setText("#nickArea button", tr("enter"));
+    setText("#nickEnterBtn", tr("enter"));
+    document.querySelectorAll("#nickArea .password-toggle").forEach(function(button) {
+      if (button && button.textContent !== "Ocultar") button.textContent = "Mostrar";
+      if (button) button.setAttribute("aria-label", "Mostrar senha");
+    });
     setText("#imagePreview div[style*='font-size:12px']", tr("imageSelected"));
     setPlaceholder("#chatInput", tr("chatPlaceholder"));
     setText("label[for='chatAnonymous']", tr("anonymous"));
