@@ -663,10 +663,25 @@ button:hover{
 
 #radioBtn,
 #podcastBtn {
-  background: rgba(255,255,255,0.10) !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
   border: 1px solid rgba(255,255,255,0.14);
   box-shadow: 0 4px 14px rgba(0,0,0,0.28);
 
+}
+
+#radioBtn:hover,
+#radioBtn:focus,
+#radioBtn:active,
+#podcastBtn:hover,
+#podcastBtn:focus,
+#podcastBtn:active {
+  background: transparent !important;
+  background-color: transparent !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
 }
 
 #radioBtn:active, #podcastBtn:active{
@@ -1744,7 +1759,7 @@ gtag('config', 'G-FJT3X93608');
     // PWA UPDATE LOGIC
     function setupPWAUpdate() {
       if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./service-worker37.js?v=181', { updateViaCache: 'none' }).then(reg => {
+        navigator.serviceWorker.register('./service-worker37.js?v=182', { updateViaCache: 'none' }).then(reg => {
           reg.update();
           reg.addEventListener('updatefound', () => {
             const newWorker = reg.installing;
