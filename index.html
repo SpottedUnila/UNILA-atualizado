@@ -549,16 +549,22 @@ button:hover{
 
 #dateBar{
   position:fixed;
-  bottom:calc(14px + env(safe-area-inset-bottom, 0px));
-  left:50%;
-  transform:translateX(-50%);
+  top:50%;
+  bottom:auto;
+  left:4px;
+  right:auto;
+  transform:translateY(-50%) rotate(-90deg);
+  transform-origin:left center;
   background:transparent !important;
   backdrop-filter:none;
   border:1px solid rgba(255,255,255,0.14);
   box-shadow:0 4px 14px rgba(0,0,0,0.28);
-  padding:4px 12px;
+  padding:4px 10px;
   border-radius:18px;
   font-size:11px;
+  line-height:1;
+  white-space:nowrap;
+  width:max-content;
   z-index:1001;
   color: white;
   font-weight: 500;
