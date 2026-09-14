@@ -4198,7 +4198,17 @@ padding:0 2px;">↩ Responder</button>`;
       snapshot.forEach(doc => refs.push(doc.ref));
     };
     await Promise.all([collectOwned("chat"), collectOwned("desapega")]);
-    refs.push(db.collection("users").doc(currentNick), db.collection("users").doc(nickClaimDocId(currentNick)), db.collection("users").doc(userClaimDocId(deletedUid)), db.collection("notes").doc(deletedUid), db.collection("academic_goals").doc(deletedUid));
+    const optionalRefs = [
+      db.collection("users").doc(currentNick),
+      db.collection("users").doc(nickClaimDocId(currentNick)),
+      db.collection("users").doc(userClaimDocId(deletedUid)),
+      db.collection("notes").doc(deletedUid),
+      db.collection("academic_goals").doc(deletedUid)
+    ];
+    const optionalSnapshots = await Promise.all(optionalRefs.map(ref => ref.get()));
+    optionalSnapshots.forEach((snapshot, index) => {
+      if (snapshot.exists) refs.push(optionalRefs[index]);
+    });
     let batch = db.batch(); let count = 0;
     for (const ref of refs) { batch.delete(ref); if (++count >= 450) { await batch.commit(); batch = db.batch(); count = 0; } }
     if (count) await batch.commit();
