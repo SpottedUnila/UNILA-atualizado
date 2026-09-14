@@ -48,8 +48,10 @@ service cloud.firestore {
     // O cliente pode ler somente seus próprios documentos; o administrador pode ler tudo.
     // O e-mail de recuperação pode ser atualizado pelo próprio usuário após reautenticação.
     match /users/{document} {
-      allow read: if isAdmin()
-        || (isSignedIn() && resource.data.uid == request.auth.uid);
+      // O cliente precisa consultar as reservas antes da transação de criação
+      // do nick. A escrita continua protegida por UID e pelos campos permitidos.
+      // Não coloque dados sensíveis além do necessário nesses documentos.
+      allow read: if isSignedIn();
 
       allow create: if validUserIdentity()
         && !request.resource.data.keys().hasAny(['recoveryKeywordHash']);
