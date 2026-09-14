@@ -4143,8 +4143,25 @@ padding:0 2px;">↩ Responder</button>`;
       error.code = "delete-password-required";
       throw error;
     }
-    const credential = firebase.auth.EmailAuthProvider.credential(userToDelete.email || nickAuthEmail(currentNick), deletePassword);
-    await userToDelete.reauthenticateWithCredential(credential);
+    const candidateEmails = Array.from(new Set([
+      userToDelete.email,
+      nickAuthEmail(currentNick)
+    ].filter(Boolean)));
+    let reauthenticated = false;
+    let lastReauthError = null;
+    for (const accountEmail of candidateEmails) {
+      try {
+        const credential = firebase.auth.EmailAuthProvider.credential(accountEmail, deletePassword);
+        await userToDelete.reauthenticateWithCredential(credential);
+        reauthenticated = true;
+        break;
+      } catch (error) {
+        lastReauthError = error;
+        const code = authErrorCode(error);
+        if (!["auth/wrong-password", "auth/invalid-credential", "auth/user-mismatch"].includes(code)) throw error;
+      }
+    }
+    if (!reauthenticated) throw lastReauthError || new Error("A senha não confere.");
     const deletedUid = firebaseUid;
     const refs = [];
     const collectOwned = async (collection) => {
