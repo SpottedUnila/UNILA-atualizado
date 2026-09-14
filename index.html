@@ -1409,7 +1409,14 @@ gtag('config', 'G-FJT3X93608');
     }
 
     async function waitForFirebaseReady() {
-      await authReady;
+      await Promise.race([
+        authReady,
+        new Promise((_, reject) => setTimeout(() => {
+          const error = new Error("Tempo limite ao conectar ao Firebase Authentication.");
+          error.code = "auth-timeout";
+          reject(error);
+        }, 12000))
+      ]);
       await firestorePersistenceReady;
       if (!firebaseUid) throw new Error("Sessão Firebase ainda não está pronta.");
     }
@@ -2759,6 +2766,8 @@ padding:0 2px;">↩ Responder</button>`;
           appAlert("O login por e-mail e senha está desativado no Firebase Authentication. Ative o provedor E-mail/senha no console do Firebase.");
         } else if (code === "auth/too-many-requests") {
           appAlert("Muitas tentativas de login. Aguarde alguns minutos ou redefina a senha por e-mail.");
+        } else if (code === "auth-timeout") {
+          appAlert("A autenticação demorou demais. Verifique a conexão do app e tente novamente.");
         } else {
           appAlert("Não foi possível entrar como Fernando. Verifique a conexão e a configuração do Firebase.");
         }
@@ -2825,10 +2834,12 @@ padding:0 2px;">↩ Responder</button>`;
       } catch (error) {
         if (error && error.code === "nick-already-taken") appAlert("Esse nick já existe. Crie outro nick.");
         else if (error && error.code === "nick-already-owned") appAlert("Este usuário já possui outro nick.");
+        else if (error && error.code === "auth-timeout") appAlert("A autenticação demorou demais. Verifique a conexão do app e tente novamente.");
         else if (authErrorIsEmailInUse(error)) appAlert("Esse nick já existe. Crie outro nick.");
         else if (["auth/wrong-password", "auth/invalid-credential", "auth/user-not-found"].includes(authErrorCode(error))) appAlert("Nick ou senha inválidos.");
         else if (authErrorCode(error) === "auth/weak-password") appAlert("A senha precisa ter pelo menos 6 caracteres.");
-        else appAlert("Não foi possível entrar agora. Verifique o nick e a senha.");
+        else if (error && ["permission-denied", "failed-precondition"].includes(error.code)) appAlert("O Firebase recusou a reserva do nick. Verifique as regras do Firestore para usuários autenticados.");
+        else appAlert("Não foi possível entrar agora. Verifique o nick, a senha e a conexão.");
       } finally {
         if (btn) { btn.disabled = false; btn.textContent = originalText; }
       }
