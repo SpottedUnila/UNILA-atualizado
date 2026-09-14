@@ -244,11 +244,11 @@ button:hover{
   margin:0;
   border-radius:0;
   box-sizing:border-box;
-  padding:calc(16px + env(safe-area-inset-top, 0px)) 12px calc(90px + env(safe-area-inset-bottom, 0px));
+  padding:calc(8px + env(safe-area-inset-top, 0px)) 8px calc(72px + env(safe-area-inset-bottom, 0px));
   overflow-x:hidden;
 }
 #chatPage h2,
-#desapegaPage h2{margin-top:0;}
+#desapegaPage h2{margin:0 0 8px;font-size:20px;line-height:1.25;}
 #chatPage > *,
 #desapegaPage > *{max-width:100%;box-sizing:border-box;}
 #chatArea,
@@ -620,29 +620,46 @@ button:hover{
 #chatArea{
   display:flex;
   flex-direction:column;
-  min-height:calc(100dvh - 110px);
+  min-height:calc(100dvh - 150px);
 }
 
 #chatBox{
   flex:1;
   overflow-y:scroll;
-  padding:10px;
-  padding-bottom:180px;
-  height:calc(100dvh - 110px);
+  padding:6px;
+  padding-bottom:142px;
+  height:calc(100dvh - 150px);
   min-width:0;
   overflow-x:hidden;
 }
 
 #inputArea{
   position:fixed;
-  bottom:63px;
-  left:5px;
-  right:5px;
+  bottom:calc(47px + env(safe-area-inset-bottom, 0px));
+  left:8px;
+  right:8px;
   display:flex;
   align-items:center;
   gap:8px;
   z-index:999;
 }
+#inputArea #chatInput{min-width:0;height:40px;box-sizing:border-box;}
+#inputArea label{width:40px !important;height:40px !important;flex:0 0 40px;}
+#inputArea #sendBtn{width:40px;height:40px;flex:0 0 40px;font-size:20px;}
+/* Caixa de anonimato sempre permanece dentro da largura da página. */
+#chatArea > div:last-child{
+  position:fixed !important;
+  left:8px !important;
+  right:8px !important;
+  bottom:4px !important;
+  width:auto !important;
+  max-width:calc(100% - 16px) !important;
+  padding:4px 8px !important;
+  min-height:28px;
+  box-sizing:border-box;
+  overflow:hidden;
+}
+#chatArea > div:last-child label{font-size:12px !important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 
 /* CONTAINER PARA OS BOTÕES DO TOPO */
 .top-controls {
