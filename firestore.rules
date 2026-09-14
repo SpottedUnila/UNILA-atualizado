@@ -81,8 +81,7 @@ service cloud.firestore {
         && request.resource.data.keys().hasOnly([
           'uid', 'nick', 'notes', 'updatedAt', 'source', 'createdAt'
         ]);
-      allow delete: if isOwnerUid(document)
-        && resource.data.uid == request.auth.uid;
+      allow delete: if isOwnerUid(document);
     }
 
     // Metas acadêmicas privadas do usuário.
@@ -96,8 +95,7 @@ service cloud.firestore {
         && request.resource.data.keys().hasOnly([
           'uid', 'nick', 'goals', 'updatedAt', 'source', 'createdAt'
         ]);
-      allow delete: if isOwnerUid(document)
-        && resource.data.uid == request.auth.uid;
+      allow delete: if isOwnerUid(document);
     }
 
     // Banimento: o aplicativo pode consultar apenas seu próprio documento.
