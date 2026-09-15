@@ -377,9 +377,10 @@ button:hover{
 .conheca-image-button img{pointer-events:none;}
 #conhecaImageModal{position:fixed;inset:0;z-index:3000;display:none;align-items:center;justify-content:center;padding:22px;background:rgba(0,0,0,.88);}
 #conhecaImageModal.is-open{display:flex;}
-#conhecaImageModal img{display:block;max-width:calc(100vw - 44px);max-height:calc(100vh - 44px);width:auto;height:auto;object-fit:contain;border-radius:8px;box-shadow:0 12px 50px rgba(0,0,0,.65);touch-action:none;cursor:zoom-in;transform:scale(1);transform-origin:center center;transition:transform .12s ease;}
+#conhecaImageModal img{display:block;max-width:calc(100vw - 44px);max-height:calc(100vh - 44px);width:auto;height:auto;object-fit:contain;border-radius:8px;box-shadow:0 12px 50px rgba(0,0,0,.65);touch-action:none;cursor:grab;transform:translate(0px,0px) scale(1) rotate(0deg);transform-origin:center center;transition:transform .12s ease;}
+#conhecaImageModal img.is-dragging{cursor:grabbing;transition:none;}
 .conheca-image-zoom-controls{position:absolute;bottom:18px;left:50%;display:flex;gap:8px;transform:translateX(-50%);}
-.conheca-image-zoom-controls button{width:44px;height:40px;border:0;border-radius:8px;background:rgba(255,255,255,.18);color:#fff;font-size:24px;cursor:pointer;}
+.conheca-image-zoom-controls button{min-width:44px;height:40px;border:0;border-radius:8px;background:rgba(255,255,255,.18);color:#fff;font-size:24px;cursor:pointer;}
 .conheca-image-zoom-controls button:focus-visible{outline:3px solid #86efac;outline-offset:3px;}
 .conheca-image-modal-close{position:absolute;top:14px;right:16px;width:44px;height:44px;border:0;border-radius:50%;background:rgba(255,255,255,.16);color:#fff;font-size:30px;line-height:1;cursor:pointer;}
 .conheca-image-modal-close:focus-visible{outline:3px solid #86efac;outline-offset:3px;}
@@ -4492,57 +4493,64 @@ padding:0 2px;">↩ Responder</button>`;
   }, 0);
 
   var conhecaImageZoom = 1;
+  var conhecaImageRotation = 0;
+  var conhecaImageOffsetX = 0;
+  var conhecaImageOffsetY = 0;
   var conhecaImageLastTap = 0;
   var conhecaImagePointers = new Map();
   var conhecaImagePinchStart = 0;
-  function applyConhecaImageZoom(){
+  var conhecaImageDragStart = null;
+  function applyConhecaImageTransform(){
     var image = document.getElementById("conhecaImageModalImage");
     if (image) {
-      image.style.transform = "scale(" + conhecaImageZoom + ")";
-      image.style.cursor = conhecaImageZoom > 1 ? "zoom-out" : "zoom-in";
+      image.style.transform = "translate(" + conhecaImageOffsetX + "px," + conhecaImageOffsetY + "px) scale(" + conhecaImageZoom + ") rotate(" + conhecaImageRotation + "deg)";
+      image.style.cursor = conhecaImageDragStart ? "grabbing" : (conhecaImageZoom > 1 ? "grab" : "zoom-in");
     }
   }
   function setConhecaImageZoom(value){
     conhecaImageZoom = Math.min(4, Math.max(1, Number(value) || 1));
-    applyConhecaImageZoom();
+    applyConhecaImageTransform();
   }
   window.changeConhecaImageZoom = function(delta){ setConhecaImageZoom(conhecaImageZoom + delta); };
   window.resetConhecaImageZoom = function(){ setConhecaImageZoom(1); };
+  window.rotateConhecaImage = function(delta){
+    conhecaImageRotation = (conhecaImageRotation + delta + 360) % 360;
+    applyConhecaImageTransform();
+  };
+  window.resetConhecaImageTransform = function(){
+    conhecaImageZoom = 1; conhecaImageRotation = 0; conhecaImageOffsetX = 0; conhecaImageOffsetY = 0;
+    applyConhecaImageTransform();
+  };
   window.openConhecaImage = function(src, alt){
     var modal = document.getElementById("conhecaImageModal");
     var image = document.getElementById("conhecaImageModalImage");
     if (!modal || !image) return;
-    image.src = src;
-    image.alt = alt || "Imagem ampliada de Conheça a UNILA";
-    setConhecaImageZoom(1);
-    modal.classList.add("is-open");
-    modal.setAttribute("aria-hidden", "false");
-    document.body.style.overflow = "hidden";
-    document.getElementById("conhecaImageModalClose").focus();
+    image.src = src; image.alt = alt || "Imagem ampliada de Conheça a UNILA";
+    resetConhecaImageTransform(); modal.classList.add("is-open"); modal.setAttribute("aria-hidden", "false");
+    document.body.style.overflow = "hidden"; document.getElementById("conhecaImageModalClose").focus();
   };
   window.closeConhecaImage = function(){
     var modal = document.getElementById("conhecaImageModal");
     var image = document.getElementById("conhecaImageModalImage");
     if (!modal) return;
-    modal.classList.remove("is-open");
-    modal.setAttribute("aria-hidden", "true");
-    if (image) image.removeAttribute("src");
-    setConhecaImageZoom(1);
-    conhecaImagePointers.clear();
-    conhecaImagePinchStart = 0;
-    document.body.style.overflow = "";
+    modal.classList.remove("is-open"); modal.setAttribute("aria-hidden", "true");
+    if (image) image.removeAttribute("src"); resetConhecaImageTransform();
+    conhecaImagePointers.clear(); conhecaImagePinchStart = 0; conhecaImageDragStart = null; document.body.style.overflow = "";
   };
   document.addEventListener("wheel", function(event){
     var modal = document.getElementById("conhecaImageModal");
     if (!modal || !modal.classList.contains("is-open")) return;
-    event.preventDefault();
-    changeConhecaImageZoom(event.deltaY < 0 ? .25 : -.25);
+    event.preventDefault(); changeConhecaImageZoom(event.deltaY < 0 ? .25 : -.25);
   }, { passive:false });
   document.addEventListener("pointerdown", function(event){
     var image = document.getElementById("conhecaImageModalImage");
     var modal = document.getElementById("conhecaImageModal");
     if (!image || !modal || !modal.classList.contains("is-open") || event.target !== image) return;
     conhecaImagePointers.set(event.pointerId, {x:event.clientX, y:event.clientY});
+    if (conhecaImagePointers.size === 1 && conhecaImageZoom > 1) {
+      conhecaImageDragStart = {x:event.clientX, y:event.clientY, offsetX:conhecaImageOffsetX, offsetY:conhecaImageOffsetY};
+      image.classList.add("is-dragging"); if (image.setPointerCapture) image.setPointerCapture(event.pointerId);
+    }
     if (conhecaImagePointers.size === 2) {
       var points = Array.from(conhecaImagePointers.values());
       conhecaImagePinchStart = Math.hypot(points[0].x - points[1].x, points[0].y - points[1].y);
@@ -4551,24 +4559,26 @@ padding:0 2px;">↩ Responder</button>`;
   document.addEventListener("pointermove", function(event){
     if (!conhecaImagePointers.has(event.pointerId)) return;
     conhecaImagePointers.set(event.pointerId, {x:event.clientX, y:event.clientY});
+    if (conhecaImagePointers.size === 1 && conhecaImageDragStart) {
+      conhecaImageOffsetX = conhecaImageDragStart.offsetX + event.clientX - conhecaImageDragStart.x;
+      conhecaImageOffsetY = conhecaImageDragStart.offsetY + event.clientY - conhecaImageDragStart.y;
+      applyConhecaImageTransform(); return;
+    }
     if (conhecaImagePointers.size !== 2 || !conhecaImagePinchStart) return;
     var points = Array.from(conhecaImagePointers.values());
     var distance = Math.hypot(points[0].x - points[1].x, points[0].y - points[1].y);
-    setConhecaImageZoom(conhecaImageZoom * distance / conhecaImagePinchStart);
-    conhecaImagePinchStart = distance;
+    setConhecaImageZoom(conhecaImageZoom * distance / conhecaImagePinchStart); conhecaImagePinchStart = distance;
   });
   ["pointerup", "pointercancel"].forEach(function(type){
     document.addEventListener(type, function(event){
-      conhecaImagePointers.delete(event.pointerId);
+      conhecaImagePointers.delete(event.pointerId); var image = document.getElementById("conhecaImageModalImage");
+      if (image) image.classList.remove("is-dragging"); conhecaImageDragStart = null;
       if (conhecaImagePointers.size < 2) conhecaImagePinchStart = 0;
     });
   });
   document.addEventListener("click", function(event){
-    var image = document.getElementById("conhecaImageModalImage");
-    if (!image || event.target !== image) return;
-    var now = Date.now();
-    if (now - conhecaImageLastTap < 350) setConhecaImageZoom(conhecaImageZoom > 1 ? 1 : 2);
-    conhecaImageLastTap = now;
+    var image = document.getElementById("conhecaImageModalImage"); if (!image || event.target !== image) return;
+    var now = Date.now(); if (now - conhecaImageLastTap < 350) setConhecaImageZoom(conhecaImageZoom > 1 ? 1 : 2); conhecaImageLastTap = now;
   });
   document.addEventListener("keydown", function(event){
     if (event.key === "Escape") window.closeConhecaImage();
@@ -4582,6 +4592,9 @@ padding:0 2px;">↩ Responder</button>`;
       <button type="button" aria-label="Diminuir zoom" onclick="changeConhecaImageZoom(-.5)">−</button>
       <button type="button" aria-label="Redefinir zoom" onclick="resetConhecaImageZoom()">1:1</button>
       <button type="button" aria-label="Aumentar zoom" onclick="changeConhecaImageZoom(.5)">+</button>
+      <button type="button" aria-label="Girar para a esquerda" onclick="rotateConhecaImage(-90)">↶</button>
+      <button type="button" aria-label="Girar para a direita" onclick="rotateConhecaImage(90)">↷</button>
+      <button type="button" aria-label="Redefinir imagem" onclick="resetConhecaImageTransform()">⟳</button>
     </div>
   </div>
 </body>
