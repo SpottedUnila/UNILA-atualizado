@@ -372,6 +372,14 @@ button:hover{
 .dev{background:#6366f1;}
 .notes{background:#14b8a6;}
 .share{background:#10b981;}
+.conheca-image-button{display:block;width:100%;padding:0;border:0;background:#000;border-radius:8px;cursor:zoom-in;line-height:0;}
+.conheca-image-button:focus-visible{outline:3px solid #86efac;outline-offset:3px;}
+.conheca-image-button img{pointer-events:none;}
+#conhecaImageModal{position:fixed;inset:0;z-index:3000;display:none;align-items:center;justify-content:center;padding:22px;background:rgba(0,0,0,.88);}
+#conhecaImageModal.is-open{display:flex;}
+#conhecaImageModal img{display:block;max-width:calc(100vw - 44px);max-height:calc(100vh - 44px);width:auto;height:auto;object-fit:contain;border-radius:8px;box-shadow:0 12px 50px rgba(0,0,0,.65);}
+.conheca-image-modal-close{position:absolute;top:14px;right:16px;width:44px;height:44px;border:0;border-radius:50%;background:rgba(255,255,255,.16);color:#fff;font-size:30px;line-height:1;cursor:pointer;}
+.conheca-image-modal-close:focus-visible{outline:3px solid #86efac;outline-offset:3px;}
 .internet{background:#3b82f6;}
 .estuded{background:#22c55e;}
 .noticias { background: #000; color: white; }
@@ -2216,7 +2224,8 @@ gtag('config', 'G-FJT3X93608');
       const videoName = String(item && item.videoName || "").trim();
       let html = "";
       if (media.imageUrl) {
-        html += `<div class="conheca-media-block"><div class="news-media conheca-media-frame"><img src="${escapeHtml(optimizeCloudinary(media.imageUrl, "image"))}" alt="Imagem de Conheça a Unila" style="width:100%;height:auto;max-height:650px;object-fit:contain;display:block;border-radius:8px;background:#000;cursor:pointer;" onclick="window.open(this.src, '_blank')">${dateOverlay}</div>${renderConhecaCaptionAndMeta(item, "image")}</div>`;
+        const imageSrc = escapeHtml(optimizeCloudinary(media.imageUrl, "image"));
+        html += `<div class="conheca-media-block"><div class="news-media conheca-media-frame"><button type="button" class="conheca-image-button" aria-label="Ampliar imagem de Conheça a UNILA" onclick="openConhecaImage(this.querySelector('img').src, this.querySelector('img').alt)"><img src="${imageSrc}" alt="Imagem de Conheça a UNILA" style="width:100%;height:auto;max-height:650px;object-fit:contain;display:block;border-radius:8px;background:#000;"></button>${dateOverlay}</div>${renderConhecaCaptionAndMeta(item, "image")}</div>`;
       }
       if (media.videoUrl) {
         html += `<div class="conheca-media-block">${title ? `<h3 style="color:#22c55e;margin:0 0 6px;">${escapeHtml(title)}</h3>` : ""}<div class="news-media conheca-media-frame" style="width:100%;"><video src="${escapeHtml(optimizeCloudinary(media.videoUrl, "video"))}" poster="${escapeHtml(optimizeCloudinary(media.videoThumbUrl, "image"))}" controls style="width:100%;height:auto;max-height:650px;display:block;object-fit:contain;background:#000;border-radius:8px;" preload="none" playsinline></video>${dateOverlay}</div>${videoName ? `<p class="conheca-caption">${escapeHtml(videoName)}</p>` : ""}${renderConhecaCaptionAndMeta(item, "video")}</div>`;
@@ -4477,7 +4486,36 @@ padding:0 2px;">↩ Responder</button>`;
     wrapUGCFunction("sendMessage");
     wrapUGCFunction("saveAd");
     wrapUGCFunction("sendAdReply");
-  }, 0);})();
+  }, 0);
+
+  window.openConhecaImage = function(src, alt){
+    var modal = document.getElementById("conhecaImageModal");
+    var image = document.getElementById("conhecaImageModalImage");
+    if (!modal || !image) return;
+    image.src = src;
+    image.alt = alt || "Imagem ampliada de Conheça a UNILA";
+    modal.classList.add("is-open");
+    modal.setAttribute("aria-hidden", "false");
+    document.body.style.overflow = "hidden";
+    document.getElementById("conhecaImageModalClose").focus();
+  };
+  window.closeConhecaImage = function(){
+    var modal = document.getElementById("conhecaImageModal");
+    var image = document.getElementById("conhecaImageModalImage");
+    if (!modal) return;
+    modal.classList.remove("is-open");
+    modal.setAttribute("aria-hidden", "true");
+    if (image) image.removeAttribute("src");
+    document.body.style.overflow = "";
+  };
+  document.addEventListener("keydown", function(event){
+    if (event.key === "Escape") window.closeConhecaImage();
+  });
+  })();
   </script>
+  <div id="conhecaImageModal" role="dialog" aria-modal="true" aria-hidden="true" aria-label="Imagem ampliada de Conheça a UNILA" onclick="if(event.target === this) closeConhecaImage()">
+    <button id="conhecaImageModalClose" class="conheca-image-modal-close" type="button" aria-label="Fechar imagem ampliada" onclick="closeConhecaImage()">&times;</button>
+    <img id="conhecaImageModalImage" alt="Imagem ampliada de Conheça a UNILA">
+  </div>
 </body>
 </html>
