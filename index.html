@@ -377,7 +377,10 @@ button:hover{
 .conheca-image-button img{pointer-events:none;}
 #conhecaImageModal{position:fixed;inset:0;z-index:3000;display:none;align-items:center;justify-content:center;padding:22px;background:rgba(0,0,0,.88);}
 #conhecaImageModal.is-open{display:flex;}
-#conhecaImageModal img{display:block;max-width:calc(100vw - 44px);max-height:calc(100vh - 44px);width:auto;height:auto;object-fit:contain;border-radius:8px;box-shadow:0 12px 50px rgba(0,0,0,.65);}
+#conhecaImageModal img{display:block;max-width:calc(100vw - 44px);max-height:calc(100vh - 44px);width:auto;height:auto;object-fit:contain;border-radius:8px;box-shadow:0 12px 50px rgba(0,0,0,.65);touch-action:none;cursor:zoom-in;transform:scale(1);transform-origin:center center;transition:transform .12s ease;}
+.conheca-image-zoom-controls{position:absolute;bottom:18px;left:50%;display:flex;gap:8px;transform:translateX(-50%);}
+.conheca-image-zoom-controls button{width:44px;height:40px;border:0;border-radius:8px;background:rgba(255,255,255,.18);color:#fff;font-size:24px;cursor:pointer;}
+.conheca-image-zoom-controls button:focus-visible{outline:3px solid #86efac;outline-offset:3px;}
 .conheca-image-modal-close{position:absolute;top:14px;right:16px;width:44px;height:44px;border:0;border-radius:50%;background:rgba(255,255,255,.16);color:#fff;font-size:30px;line-height:1;cursor:pointer;}
 .conheca-image-modal-close:focus-visible{outline:3px solid #86efac;outline-offset:3px;}
 .internet{background:#3b82f6;}
@@ -4488,12 +4491,30 @@ padding:0 2px;">↩ Responder</button>`;
     wrapUGCFunction("sendAdReply");
   }, 0);
 
+  var conhecaImageZoom = 1;
+  var conhecaImageLastTap = 0;
+  var conhecaImagePointers = new Map();
+  var conhecaImagePinchStart = 0;
+  function applyConhecaImageZoom(){
+    var image = document.getElementById("conhecaImageModalImage");
+    if (image) {
+      image.style.transform = "scale(" + conhecaImageZoom + ")";
+      image.style.cursor = conhecaImageZoom > 1 ? "zoom-out" : "zoom-in";
+    }
+  }
+  function setConhecaImageZoom(value){
+    conhecaImageZoom = Math.min(4, Math.max(1, Number(value) || 1));
+    applyConhecaImageZoom();
+  }
+  window.changeConhecaImageZoom = function(delta){ setConhecaImageZoom(conhecaImageZoom + delta); };
+  window.resetConhecaImageZoom = function(){ setConhecaImageZoom(1); };
   window.openConhecaImage = function(src, alt){
     var modal = document.getElementById("conhecaImageModal");
     var image = document.getElementById("conhecaImageModalImage");
     if (!modal || !image) return;
     image.src = src;
     image.alt = alt || "Imagem ampliada de Conheça a UNILA";
+    setConhecaImageZoom(1);
     modal.classList.add("is-open");
     modal.setAttribute("aria-hidden", "false");
     document.body.style.overflow = "hidden";
@@ -4506,8 +4527,49 @@ padding:0 2px;">↩ Responder</button>`;
     modal.classList.remove("is-open");
     modal.setAttribute("aria-hidden", "true");
     if (image) image.removeAttribute("src");
+    setConhecaImageZoom(1);
+    conhecaImagePointers.clear();
+    conhecaImagePinchStart = 0;
     document.body.style.overflow = "";
   };
+  document.addEventListener("wheel", function(event){
+    var modal = document.getElementById("conhecaImageModal");
+    if (!modal || !modal.classList.contains("is-open")) return;
+    event.preventDefault();
+    changeConhecaImageZoom(event.deltaY < 0 ? .25 : -.25);
+  }, { passive:false });
+  document.addEventListener("pointerdown", function(event){
+    var image = document.getElementById("conhecaImageModalImage");
+    var modal = document.getElementById("conhecaImageModal");
+    if (!image || !modal || !modal.classList.contains("is-open") || event.target !== image) return;
+    conhecaImagePointers.set(event.pointerId, {x:event.clientX, y:event.clientY});
+    if (conhecaImagePointers.size === 2) {
+      var points = Array.from(conhecaImagePointers.values());
+      conhecaImagePinchStart = Math.hypot(points[0].x - points[1].x, points[0].y - points[1].y);
+    }
+  });
+  document.addEventListener("pointermove", function(event){
+    if (!conhecaImagePointers.has(event.pointerId)) return;
+    conhecaImagePointers.set(event.pointerId, {x:event.clientX, y:event.clientY});
+    if (conhecaImagePointers.size !== 2 || !conhecaImagePinchStart) return;
+    var points = Array.from(conhecaImagePointers.values());
+    var distance = Math.hypot(points[0].x - points[1].x, points[0].y - points[1].y);
+    setConhecaImageZoom(conhecaImageZoom * distance / conhecaImagePinchStart);
+    conhecaImagePinchStart = distance;
+  });
+  ["pointerup", "pointercancel"].forEach(function(type){
+    document.addEventListener(type, function(event){
+      conhecaImagePointers.delete(event.pointerId);
+      if (conhecaImagePointers.size < 2) conhecaImagePinchStart = 0;
+    });
+  });
+  document.addEventListener("click", function(event){
+    var image = document.getElementById("conhecaImageModalImage");
+    if (!image || event.target !== image) return;
+    var now = Date.now();
+    if (now - conhecaImageLastTap < 350) setConhecaImageZoom(conhecaImageZoom > 1 ? 1 : 2);
+    conhecaImageLastTap = now;
+  });
   document.addEventListener("keydown", function(event){
     if (event.key === "Escape") window.closeConhecaImage();
   });
@@ -4516,6 +4578,11 @@ padding:0 2px;">↩ Responder</button>`;
   <div id="conhecaImageModal" role="dialog" aria-modal="true" aria-hidden="true" aria-label="Imagem ampliada de Conheça a UNILA" onclick="if(event.target === this) closeConhecaImage()">
     <button id="conhecaImageModalClose" class="conheca-image-modal-close" type="button" aria-label="Fechar imagem ampliada" onclick="closeConhecaImage()">&times;</button>
     <img id="conhecaImageModalImage" alt="Imagem ampliada de Conheça a UNILA">
+    <div class="conheca-image-zoom-controls" aria-label="Controles de zoom">
+      <button type="button" aria-label="Diminuir zoom" onclick="changeConhecaImageZoom(-.5)">−</button>
+      <button type="button" aria-label="Redefinir zoom" onclick="resetConhecaImageZoom()">1:1</button>
+      <button type="button" aria-label="Aumentar zoom" onclick="changeConhecaImageZoom(.5)">+</button>
+    </div>
   </div>
 </body>
 </html>
