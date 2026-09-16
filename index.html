@@ -842,6 +842,34 @@ button:hover{
 #home {
   transform:none;
 }
+.swipe-up-hint{
+  position:fixed;
+  left:50%;
+  bottom:78px;
+  z-index:4;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:3px;
+  transform:translateX(-50%);
+  color:#fff;
+  font-size:12px;
+  font-weight:700;
+  letter-spacing:.3px;
+  text-shadow:0 2px 7px rgba(0,0,0,.9);
+  pointer-events:none;
+  animation:swipeHintFloat 1.5s ease-in-out infinite;
+}
+.swipe-up-hint-arrow{
+  font-size:34px;
+  line-height:.7;
+  color:#d8b4fe;
+  filter:drop-shadow(0 2px 6px rgba(0,0,0,.85));
+}
+@keyframes swipeHintFloat{
+  0%,100%{opacity:.72;transform:translate(-50%,0);}
+  50%{opacity:1;transform:translate(-50%,-8px);}
+}
 
 /* CONTROLE DE IDIOMAS - MESMA APARÊNCIA DOS CONTROLES DE PODCAST E MÚSICA */
 .language-control{
@@ -1133,6 +1161,10 @@ gtag('config', 'G-FJT3X93608');
     <div id="globalSearchResults" class="global-search-results" role="listbox" aria-live="polite"></div>
   </div>
 
+  <div id="swipeUpHint" class="swipe-up-hint" aria-hidden="true">
+    <span class="swipe-up-hint-arrow" aria-hidden="true">⌃</span>
+    <span>Deslize para cima</span>
+  </div>
   <div id="home" class="menu">
     <button class="dev" data-search-key="chat" onclick="openPage('chatPage')"> Spotted💜 Chat💬</button>
     <button class="unila" data-search-key="portal_unila" onclick="openDynamic('portal_unila','link')">🌐 Portal Oficial da Unila</button>
@@ -2307,6 +2339,8 @@ gtag('config', 'G-FJT3X93608');
     function scrollToTop() { window.scrollTo({ top: 0, behavior: 'smooth' }); }
     function openPage(id) {
       document.getElementById("home").style.display = "none";
+      const swipeHint = document.getElementById("swipeUpHint");
+      if (swipeHint) swipeHint.style.display = "none";
       document.querySelectorAll(".page").forEach(p => p.style.display = "none");
       document.getElementById(id).style.display = "block";
       scrollToTop();
@@ -2522,6 +2556,8 @@ gtag('config', 'G-FJT3X93608');
 
     function goHome() {
       document.getElementById("home").style.display = "grid";
+      const swipeHint = document.getElementById("swipeUpHint");
+      if (swipeHint) swipeHint.style.display = "flex";
       document.querySelectorAll(".page").forEach(p => p.style.display = "none");
       scrollToTop();
     }
