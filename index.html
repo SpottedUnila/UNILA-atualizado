@@ -845,7 +845,7 @@ button:hover{
 .swipe-up-hint{
   position:fixed;
   left:50%;
-  bottom:78px;
+  bottom:378px;
   z-index:4;
   display:flex;
   flex-direction:column;
@@ -858,7 +858,7 @@ button:hover{
   letter-spacing:.3px;
   text-shadow:0 2px 7px rgba(0,0,0,.9);
   pointer-events:none;
-  animation:swipeHintFloat 1.5s ease-in-out infinite;
+  animation:swipeHintIntro 5s ease forwards;
 }
 .swipe-up-hint-arrow{
   font-size:34px;
@@ -866,9 +866,11 @@ button:hover{
   color:#d8b4fe;
   filter:drop-shadow(0 2px 6px rgba(0,0,0,.85));
 }
-@keyframes swipeHintFloat{
-  0%,100%{opacity:.72;transform:translate(-50%,0);}
-  50%{opacity:1;transform:translate(-50%,-8px);}
+@keyframes swipeHintIntro{
+  0%{opacity:0;transform:translate(-50%,8px);}
+  12%{opacity:1;transform:translate(-50%,0);}
+  78%{opacity:1;transform:translate(-50%,0);}
+  100%{opacity:0;transform:translate(-50%,-8px);visibility:hidden;}
 }
 
 /* CONTROLE DE IDIOMAS - MESMA APARÊNCIA DOS CONTROLES DE PODCAST E MÚSICA */
@@ -2557,7 +2559,12 @@ gtag('config', 'G-FJT3X93608');
     function goHome() {
       document.getElementById("home").style.display = "grid";
       const swipeHint = document.getElementById("swipeUpHint");
-      if (swipeHint) swipeHint.style.display = "flex";
+      if (swipeHint) {
+        swipeHint.style.display = "flex";
+        swipeHint.style.animation = "none";
+        void swipeHint.offsetWidth;
+        swipeHint.style.animation = "swipeHintIntro 5s ease forwards";
+      }
       document.querySelectorAll(".page").forEach(p => p.style.display = "none");
       scrollToTop();
     }
