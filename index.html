@@ -1278,7 +1278,7 @@ gtag('config', 'G-FJT3X93608');
     <button class="instagram" onclick="openDynamic('instagram','link')">📸 Instagram Unila</button>
     <button class="facebook" onclick="openDynamic('facebook','link')">📘 Facebook Unila</button>
     <button class="biblioteca" onclick="openDynamic('biblioteca','link')">📖 Biblioteca Unila</button>
-    <button class="intercampi" onclick="openDynamic('intercampi','link')">🚌 Transporte Intercampi</button>
+    <button class="intercampi" onclick="openDynamic('intercampi','page')">🚌 Transporte Intercampi</button>
     <button class="editais" onclick="openDynamic('editais','link')">📄 Editais Oficiais</button>
     <button class="emergencia" onclick="openDynamic('emergencia','page')">🚨 Telefones de Emergência</button>
     <button class="enderecos" onclick="openDynamic('enderecos','page')">🏫 Endereços dos Campus</button>
@@ -2094,7 +2094,7 @@ gtag('config', 'G-FJT3X93608');
     // PWA UPDATE LOGIC
     function setupPWAUpdate() {
       if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./service-worker37.js?v=199', { updateViaCache: 'none' }).then(reg => {
+        navigator.serviceWorker.register('./service-worker37.js?v=200', { updateViaCache: 'none' }).then(reg => {
           reg.update();
           reg.addEventListener('updatefound', () => {
             const newWorker = reg.installing;
@@ -2214,7 +2214,13 @@ gtag('config', 'G-FJT3X93608');
         const content = document.getElementById("dynamicContent");
         if (title) title.textContent = typeof window.unilaTranslate === "function" ? window.unilaTranslate(titleKey) : titleKey.toUpperCase();
         if (content) {
-          if (id === "upa" || id === "emergencia") {
+          if (id === "intercampi") {
+            const officialPdf = "https://portal.unila.edu.br/proagi/delog/arquivos/horario-intercampi/quadro-de-horario-intercampi.pdf";
+            content.innerHTML = '<p>Consulte o quadro oficial de horários do Transporte Intercampi diretamente no portal da UNILA.</p>' +
+              '<p><a class="resource-open-link" href="' + officialPdf + '" target="_blank" rel="noopener noreferrer">📄 Abrir quadro oficial de horários (PDF)</a></p>' +
+              '<p><a class="resource-open-link" href="https://portal.unila.edu.br/" target="_blank" rel="noopener noreferrer">🌐 Abrir Portal Oficial da UNILA</a></p>';
+            content.style.whiteSpace = "normal";
+          } else if (id === "upa" || id === "emergencia") {
             content.textContent = String(val);
             content.style.whiteSpace = "pre-wrap";
           } else {
