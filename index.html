@@ -2094,7 +2094,7 @@ gtag('config', 'G-FJT3X93608');
     // PWA UPDATE LOGIC
     function setupPWAUpdate() {
       if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./service-worker37.js?v=201', { updateViaCache: 'none' }).then(reg => {
+        navigator.serviceWorker.register('./service-worker37.js?v=202', { updateViaCache: 'none' }).then(reg => {
           reg.update();
           reg.addEventListener('updatefound', () => {
             const newWorker = reg.installing;
@@ -2206,7 +2206,28 @@ gtag('config', 'G-FJT3X93608');
       const getContent = window.unilaLocalizedContent;
       const val = (typeof getContent === "function" ? getContent(id) : "") || contentMap[id] || "";
       if (type === 'link') {
-        if (val) window.location.href = val;
+        const officialLinks = {
+          portal_unila: "https://portal.unila.edu.br/",
+          inscreva: "https://inscreva.unila.edu.br/",
+          sigaa: "https://sig.unila.edu.br/sigaa/verTelaLogin.do",
+          email: "https://mail.google.com/",
+          google: "https://www.google.com/",
+          instagram: "https://www.instagram.com/instaunila/",
+          facebook: "https://www.facebook.com/unila.oficial",
+          biblioteca: "https://portal.unila.edu.br/biblioteca",
+          intercampi: "https://portal.unila.edu.br/proagi/delog/arquivos/horario-intercampi/quadro-de-horario-intercampi.pdf",
+          editais: "https://documentos.unila.edu.br/",
+          grupo_facebook: "https://www.facebook.com/groups/unila/",
+          enem: "https://enem.inep.gov.br/participante/"
+        };
+        let targetUrl = String(val || "").trim();
+        try {
+          const parsedUrl = new URL(targetUrl);
+          if (!/^https?:$/.test(parsedUrl.protocol)) throw new Error("URL externa inválida");
+        } catch (error) {
+          targetUrl = officialLinks[id] || "";
+        }
+        if (targetUrl) window.location.assign(targetUrl);
       }
       else {
         const titleKey = id === "emergencia" ? "emergency" : id === "upa" ? "upa" : id;
