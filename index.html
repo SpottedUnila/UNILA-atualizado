@@ -878,7 +878,7 @@ button:hover{
 #radioPlayer{position:relative;}
 .music-player-title{
   position:absolute;
-  top:25px;
+  top:-15px;
   left:25px;
   z-index:2;
   display:flex;
@@ -886,7 +886,7 @@ button:hover{
   justify-content:center;
   gap:9px;
   margin:0;
-  transform:scale(.35);
+  transform:scale(.4725);
   transform-origin:top left;
   padding:6px 12px;
   width:max-content;
@@ -2011,7 +2011,7 @@ gtag('config', 'G-FJT3X93608');
     // PWA UPDATE LOGIC
     function setupPWAUpdate() {
       if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./service-worker37.js?v=192', { updateViaCache: 'none' }).then(reg => {
+        navigator.serviceWorker.register('./service-worker37.js?v=193', { updateViaCache: 'none' }).then(reg => {
           reg.update();
           reg.addEventListener('updatefound', () => {
             const newWorker = reg.installing;
