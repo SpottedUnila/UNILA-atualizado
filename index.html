@@ -434,9 +434,13 @@ button:hover{
 
 /* Aparência única para todos os botões do menu principal */
 #home > button,
+#home > a.menu-link,
 #home > button:hover,
+#home > a.menu-link:hover,
 #home > button:focus,
-#home > button:active {
+#home > a.menu-link:focus,
+#home > button:active,
+#home > a.menu-link:active {
   color: #ffffff !important;
   background: rgba(255, 255, 255, 0.12) !important;
   border: 1px solid rgba(255, 255, 255, 0.14) !important;
@@ -444,12 +448,15 @@ button:hover{
 }
 
 #home > button:hover,
-#home > button:focus {
+#home > a.menu-link:hover,
+#home > button:focus,
+#home > a.menu-link:focus {
   background: rgba(255, 255, 255, 0.18) !important;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.15) !important;
 }
 
-#home > button:active {
+#home > button:active,
+#home > a.menu-link:active {
   background: rgba(0, 0, 0, 0.32) !important;
 }
 
@@ -875,6 +882,25 @@ button:hover{
   line-height:1.3;
   text-align:center;
 }
+#home > a.menu-link {
+  width:100%;
+  min-height:58px;
+  height:auto;
+  box-sizing:border-box;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:16px;
+  border-radius:18px;
+  color:#fff;
+  font-weight:800;
+  font-size:16px;
+  line-height:1.3;
+  text-align:center;
+  text-decoration:none;
+  text-shadow:0 2px 8px rgba(0,0,0,1);
+  overflow-wrap:anywhere;
+}
 #home {
   transform:none;
 }
@@ -1270,20 +1296,20 @@ gtag('config', 'G-FJT3X93608');
   </div>
   <div id="home" class="menu">
     <button class="dev" data-search-key="chat" onclick="openPage('chatPage')"> Spotted💜 Chat💬</button>
-    <button class="unila" data-search-key="portal_unila" onclick="openDynamic('portal_unila','link')">🌐 Portal Oficial da Unila</button>
-    <button class="unila" onclick="openDynamic('inscreva','link')">🎓 Portal Inscreva</button>
-    <button class="sigaa" onclick="openDynamic('sigaa','link')">📚 Sistema Acadêmico SIGAA</button>
-    <button class="gmail" onclick="openDynamic('email','link')">📧 E-mail Institucional</button>
-    <button class="google" onclick="openDynamic('google','link')">🔎 Pesquisa Google</button>
-    <button class="instagram" onclick="openDynamic('instagram','link')">📸 Instagram Unila</button>
-    <button class="facebook" onclick="openDynamic('facebook','link')">📘 Facebook Unila</button>
-    <button class="biblioteca" onclick="openDynamic('biblioteca','link')">📖 Biblioteca Unila</button>
-    <button class="intercampi" onclick="openDynamic('intercampi','link')">🚌 Transporte Intercampi</button>
-    <button class="editais" onclick="openDynamic('editais','link')">📄 Editais Oficiais</button>
+    <a class="unila menu-link" data-search-key="portal_unila" href="https://portal.unila.edu.br/">🌐 Portal Oficial da Unila</a>
+    <a class="unila menu-link" href="https://inscreva.unila.edu.br/">🎓 Portal Inscreva</a>
+    <a class="sigaa menu-link" href="https://sig.unila.edu.br/sigaa/verTelaLogin.do">📚 Sistema Acadêmico SIGAA</a>
+    <a class="gmail menu-link" href="https://mail.google.com/">📧 E-mail Institucional</a>
+    <a class="google menu-link" href="https://www.google.com/">🔎 Pesquisa Google</a>
+    <a class="instagram menu-link" href="https://www.instagram.com/instaunila/">📸 Instagram Unila</a>
+    <a class="facebook menu-link" href="https://www.facebook.com/unila.oficial">📘 Facebook Unila</a>
+    <a class="biblioteca menu-link" href="https://portal.unila.edu.br/biblioteca">📖 Biblioteca Unila</a>
+    <a class="intercampi menu-link" href="https://portal.unila.edu.br/proagi/delog/arquivos/horario-intercampi/quadro-de-horario-intercampi.pdf">🚌 Transporte Intercampi</a>
+    <a class="editais menu-link" href="https://documentos.unila.edu.br/">📄 Editais Oficiais</a>
     <button class="emergencia" onclick="openDynamic('emergencia','page')">🚨 Telefones de Emergência</button>
     <button class="enderecos" onclick="openDynamic('enderecos','page')">🏫 Endereços dos Campus</button>
     <button class="ru" data-search-key="ru" onclick="openDynamic('ru','page')">🍽️ Restaurantes Universitários</button>
-    <button class="facebook" onclick="openDynamic('grupo_facebook','link')">👥 Grupo no Facebook</button>
+    <a class="facebook menu-link" href="https://www.facebook.com/groups/unila/">👥 Grupo no Facebook</a>
     <button class="dev" onclick="openDynamic('dev','page')">👨‍💻 Desenvolvedor</button>
     <button class="dev" onclick="window.location.href='privacy.html'">🔒 Privacidade e exclusão</button>
     <button class="notes" onclick="openPage('notesPage')">📝 Anotações</button>
@@ -1293,7 +1319,7 @@ gtag('config', 'G-FJT3X93608');
     <button class="meta-academica" onclick="openAcademicGoalsPage()">📈 Meta Acadêmica</button>
     <button class="auxilio-estudantil" onclick="openLocalizedResource('studentAid')">🎓 Auxílio Estudantil</button>
     <button class="unila" onclick="openLocalizedResource('mentalHealth')">🧠 Saúde Mental</button>
-    <button class="google" onclick="openDynamic('enem','link')">📝 ENEM – Página do Participante</button>
+    <a class="google menu-link" href="https://enem.inep.gov.br/participante/">📝 ENEM – Página do Participante</a>
     <button class="noticias" onclick="openNewsPage()">📰 Notícias</button>
     <button class="conheca-unila-btn" onclick="openConhecaUnilaPage()">🏫 Conheça a Unila</button>
     <button class="desapega" onclick="openPage('desapegaPage')">🔎 Achados e Perdidos e Desapega</button>
@@ -2094,7 +2120,7 @@ gtag('config', 'G-FJT3X93608');
     // PWA UPDATE LOGIC
     function setupPWAUpdate() {
       if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./service-worker37.js?v=202', { updateViaCache: 'none' }).then(reg => {
+        navigator.serviceWorker.register('./service-worker37.js?v=203', { updateViaCache: 'none' }).then(reg => {
           reg.update();
           reg.addEventListener('updatefound', () => {
             const newWorker = reg.installing;
@@ -3882,7 +3908,7 @@ padding:0 2px;">↩ Responder</button>`;
   function normalizeSearchText(value){ return String(value || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase(); }
   function globalSearchItems(){
     var items = [];
-    document.querySelectorAll("#home > button").forEach(function(button){
+    document.querySelectorAll("#home > button, #home > a.menu-link").forEach(function(button){
       var label = (button.textContent || "").trim();
       if (label) items.push({label: label, detail: tr("home"), action: function(){ button.click(); }});
     });
@@ -3935,7 +3961,7 @@ padding:0 2px;">↩ Responder</button>`;
     var radioButton = document.getElementById("radioBtn");
     if (radioButton) radioButton.title = tr("music");
 
-    var menu = document.querySelectorAll("#home > button");
+    var menu = document.querySelectorAll("#home > button, #home > a.menu-link");
     for (var i=0; i<menu.length && i<menuKeys.length; i++) menu[i].textContent = normalizeMenuLabel(menuKeys[i], tr(menuKeys[i]));
     setOwnText(document.querySelector(".podcast-badge"), tr("podcast"));
     setOwnText(document.querySelector(".radio-badge"), tr("music"));
