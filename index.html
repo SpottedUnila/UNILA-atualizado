@@ -285,6 +285,10 @@ button:hover{
 #chatPage{
   padding-top:140px;
 }
+#notesPage,
+#desapegaPage{
+  padding-top:140px;
+}
 #chatArea,
 #chatBox,
 #adList,
@@ -2089,7 +2093,7 @@ gtag('config', 'G-FJT3X93608');
     // PWA UPDATE LOGIC
     function setupPWAUpdate() {
       if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./service-worker37.js?v=197', { updateViaCache: 'none' }).then(reg => {
+        navigator.serviceWorker.register('./service-worker37.js?v=198', { updateViaCache: 'none' }).then(reg => {
           reg.update();
           reg.addEventListener('updatefound', () => {
             const newWorker = reg.installing;
