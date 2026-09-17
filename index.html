@@ -886,7 +886,7 @@ button:hover{
   justify-content:center;
   gap:9px;
   margin:0;
-  transform:scale(.4725);
+  transform:scale(.61425);
   transform-origin:top left;
   padding:6px 12px;
   width:max-content;
@@ -903,10 +903,10 @@ button:hover{
   text-shadow:0 0 4px rgba(255,0,0,.95),0 0 10px rgba(255,30,30,.85),0 2px 8px rgba(0,0,0,.8);
   box-shadow:0 4px 14px rgba(76,29,149,.3),inset 0 1px 0 rgba(255,255,255,.2);
 }
-.music-player-title::before{content:"♫";font-size:15px;color:#ff3030;animation:musicTitleLight 1.2s ease-in-out infinite;}
+.music-player-title::before{content:"♫";font-size:15px;color:#22ff88;animation:musicTitleLight 1.2s ease-in-out infinite;}
 @keyframes musicTitleLight{
-  0%,100%{opacity:.35;text-shadow:0 0 2px rgba(255,0,0,.4);}
-  50%{opacity:1;text-shadow:0 0 8px rgba(255,0,0,1),0 0 18px rgba(255,55,55,.9);}
+  0%,100%{opacity:.35;text-shadow:0 0 2px rgba(34,255,136,.4);}
+  50%{opacity:1;text-shadow:0 0 8px rgba(34,255,136,1),0 0 18px rgba(74,255,166,.9);}
 }
 
 /* CONTROLE DE IDIOMAS - MESMA APARÊNCIA DOS CONTROLES DE PODCAST E MÚSICA */
@@ -2011,7 +2011,7 @@ gtag('config', 'G-FJT3X93608');
     // PWA UPDATE LOGIC
     function setupPWAUpdate() {
       if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./service-worker37.js?v=193', { updateViaCache: 'none' }).then(reg => {
+        navigator.serviceWorker.register('./service-worker37.js?v=194', { updateViaCache: 'none' }).then(reg => {
           reg.update();
           reg.addEventListener('updatefound', () => {
             const newWorker = reg.installing;
