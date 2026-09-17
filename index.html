@@ -881,22 +881,27 @@ button:hover{
   justify-content:center;
   gap:9px;
   margin:0 auto 12px;
-  padding:9px 18px;
+  transform:translateX(40px);
+  padding:6px 12px;
   width:max-content;
   max-width:100%;
   box-sizing:border-box;
-  border:1px solid rgba(196,181,253,.5);
+  border:1px solid rgba(196,181,253,.42);
   border-radius:999px;
-  background:linear-gradient(135deg,rgba(124,58,237,.78),rgba(14,165,233,.68));
+  background:rgba(124,58,237,.34);
   color:#fff;
-  font-size:18px;
+  font-size:14px;
   font-weight:900;
-  letter-spacing:2px;
+  letter-spacing:1.5px;
   text-transform:uppercase;
   text-shadow:0 2px 8px rgba(0,0,0,.7);
-  box-shadow:0 6px 20px rgba(76,29,149,.38),inset 0 1px 0 rgba(255,255,255,.28);
+  box-shadow:0 4px 14px rgba(76,29,149,.3),inset 0 1px 0 rgba(255,255,255,.2);
 }
-.music-player-title::before{content:"♫";font-size:20px;color:#fef08a;}
+.music-player-title::before{content:"♫";font-size:15px;color:#fef08a;animation:musicTitleLight 1.2s ease-in-out infinite;}
+@keyframes musicTitleLight{
+  0%,100%{opacity:.35;text-shadow:0 0 2px rgba(254,240,138,.3);}
+  50%{opacity:1;text-shadow:0 0 10px rgba(254,240,138,.95),0 0 18px rgba(196,181,253,.8);}
+}
 
 /* CONTROLE DE IDIOMAS - MESMA APARÊNCIA DOS CONTROLES DE PODCAST E MÚSICA */
 .language-control{
@@ -2000,7 +2005,7 @@ gtag('config', 'G-FJT3X93608');
     // PWA UPDATE LOGIC
     function setupPWAUpdate() {
       if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./service-worker37.js?v=189', { updateViaCache: 'none' }).then(reg => {
+        navigator.serviceWorker.register('./service-worker37.js?v=190', { updateViaCache: 'none' }).then(reg => {
           reg.update();
           reg.addEventListener('updatefound', () => {
             const newWorker = reg.installing;
