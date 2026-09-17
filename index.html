@@ -875,6 +875,28 @@ button:hover{
   76%{opacity:1;transform:translate(-50%,0);}
   100%{opacity:0;transform:translate(-50%,-8px);visibility:hidden;}
 }
+.music-player-title{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:9px;
+  margin:0 auto 12px;
+  padding:9px 18px;
+  width:max-content;
+  max-width:100%;
+  box-sizing:border-box;
+  border:1px solid rgba(196,181,253,.5);
+  border-radius:999px;
+  background:linear-gradient(135deg,rgba(124,58,237,.78),rgba(14,165,233,.68));
+  color:#fff;
+  font-size:18px;
+  font-weight:900;
+  letter-spacing:2px;
+  text-transform:uppercase;
+  text-shadow:0 2px 8px rgba(0,0,0,.7);
+  box-shadow:0 6px 20px rgba(76,29,149,.38),inset 0 1px 0 rgba(255,255,255,.28);
+}
+.music-player-title::before{content:"♫";font-size:20px;color:#fef08a;}
 
 /* CONTROLE DE IDIOMAS - MESMA APARÊNCIA DOS CONTROLES DE PODCAST E MÚSICA */
 .language-control{
@@ -1364,6 +1386,7 @@ gtag('config', 'G-FJT3X93608');
   </div>
 
   <div id="radioPlayer" style="display:none; margin-bottom:80px; padding:20px;">
+    <div class="music-player-title" aria-label="Music">Music</div>
     <iframe id="ytRadio" width="100%" height="200" src="https://www.youtube.com/embed/videoseries?list=PLyTsVCtgNA7Uzq69sB_NhyJJEpNr1ePPM&enablejsapi=1" frameborder="0" allow="autoplay" allowfullscreen></iframe>
   </div>
 
@@ -1977,7 +2000,7 @@ gtag('config', 'G-FJT3X93608');
     // PWA UPDATE LOGIC
     function setupPWAUpdate() {
       if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./service-worker37.js?v=188', { updateViaCache: 'none' }).then(reg => {
+        navigator.serviceWorker.register('./service-worker37.js?v=189', { updateViaCache: 'none' }).then(reg => {
           reg.update();
           reg.addEventListener('updatefound', () => {
             const newWorker = reg.installing;
