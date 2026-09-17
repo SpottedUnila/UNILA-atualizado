@@ -1278,7 +1278,7 @@ gtag('config', 'G-FJT3X93608');
     <button class="instagram" onclick="openDynamic('instagram','link')">📸 Instagram Unila</button>
     <button class="facebook" onclick="openDynamic('facebook','link')">📘 Facebook Unila</button>
     <button class="biblioteca" onclick="openDynamic('biblioteca','link')">📖 Biblioteca Unila</button>
-    <button class="intercampi" onclick="openDynamic('intercampi','page')">🚌 Transporte Intercampi</button>
+    <button class="intercampi" onclick="openDynamic('intercampi','link')">🚌 Transporte Intercampi</button>
     <button class="editais" onclick="openDynamic('editais','link')">📄 Editais Oficiais</button>
     <button class="emergencia" onclick="openDynamic('emergencia','page')">🚨 Telefones de Emergência</button>
     <button class="enderecos" onclick="openDynamic('enderecos','page')">🏫 Endereços dos Campus</button>
@@ -2094,7 +2094,7 @@ gtag('config', 'G-FJT3X93608');
     // PWA UPDATE LOGIC
     function setupPWAUpdate() {
       if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./service-worker37.js?v=200', { updateViaCache: 'none' }).then(reg => {
+        navigator.serviceWorker.register('./service-worker37.js?v=201', { updateViaCache: 'none' }).then(reg => {
           reg.update();
           reg.addEventListener('updatefound', () => {
             const newWorker = reg.installing;
