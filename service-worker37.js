@@ -1,8 +1,8 @@
-const CACHE_NAME = 'spotted-unila-cache-v234';
+const CACHE_NAME = 'spotted-unila-cache-v235';
 const APP_SHELL = [
   './',
   './index.html',
-  './background.mp4',
+  './file_00000000ff7c820e99efc0caf176d4c1.png',
   './slogan.png',
   './icon-192.png',
   './icon-512.png',
@@ -45,8 +45,8 @@ self.addEventListener('fetch', event => {
   if (request.method !== 'GET') return;
 
   const url = new URL(request.url);
-  const isVideo = url.pathname.endsWith('/background.mp4');
-  const isBackground = isVideo || url.pathname.endsWith('/slogan.png');
+  const isImage = url.pathname.endsWith('/file_00000000ff7c820e99efc0caf176d4c1.png');
+  const isBackground = isImage || url.pathname.endsWith('/slogan.png');
   const isAppNavigation = request.mode === 'navigate';
 
   if (!isBackground && !isAppNavigation && url.origin !== self.location.origin) return;

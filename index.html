@@ -143,7 +143,7 @@ body::after{
   pointer-events:none;
 }
 
-.bg-fixa video{
+.bg-fixa img{
   position:absolute;
   inset:0;
   width:100%;
@@ -1213,95 +1213,9 @@ gtag('config', 'G-FJT3X93608');
 
 <body>
   <div class="bg-fixa">
-    <video id="appBackgroundVideo" autoplay muted loop playsinline preload="auto" aria-hidden="true">
-      <source src="background.mp4" type="video/mp4">
-    </video>
+    <img id="appBackgroundImage" src="file_00000000ff7c820e99efc0caf176d4c1.png" alt="" aria-hidden="true">
   </div>
   <img class="slogan-overlay" src="slogan.png" alt="" aria-hidden="true">
-  <script>    (async () => {
-      const backgroundVideo = document.getElementById('appBackgroundVideo');
-      if (!backgroundVideo) return;
-
-      const videoUrl = new URL('background.mp4', window.location.href).href;
-      let objectUrl = null;
-      let cacheRequested = false;
-
-      const requestOfflineCache = () => {
-        if (cacheRequested || !('serviceWorker' in navigator)) return;
-        cacheRequested = true;
-        navigator.serviceWorker.ready.then(registration => {
-          const worker = registration.active || registration.waiting || registration.installing;
-          if (worker) worker.postMessage({ action: 'cache-app-assets' });
-        }).catch(() => {});
-      };
-
-      const usePersistedVideo = async () => {
-        try {
-          if (typeof caches === 'undefined') return false;
-          const response = await caches.match(videoUrl);
-          if (!response || !response.ok) return false;
-          const blob = await response.blob();
-          if (!blob || !blob.size) return false;
-          if (objectUrl) URL.revokeObjectURL(objectUrl);
-          objectUrl = URL.createObjectURL(blob);
-          backgroundVideo.src = objectUrl;
-          backgroundVideo.load();
-          return true;
-        } catch (_) {
-          return false;
-        }
-      };
-
-      backgroundVideo.muted = true;
-      backgroundVideo.defaultMuted = true;
-      backgroundVideo.volume = 0;
-      backgroundVideo.loop = true;
-      backgroundVideo.autoplay = true;
-      backgroundVideo.playsInline = true;
-      backgroundVideo.setAttribute('muted', '');
-      backgroundVideo.setAttribute('autoplay', '');
-      backgroundVideo.setAttribute('loop', '');
-      backgroundVideo.setAttribute('playsinline', '');
-
-      const startBackgroundVideo = (restart = false) => {
-        backgroundVideo.muted = true;
-        backgroundVideo.defaultMuted = true;
-        backgroundVideo.volume = 0;
-        backgroundVideo.loop = true;
-        backgroundVideo.playsInline = true;
-        requestOfflineCache();
-        if (restart || backgroundVideo.ended) {
-          try { backgroundVideo.currentTime = 0; } catch (_) {}
-        }
-        const attempt = backgroundVideo.play();
-        if (attempt && typeof attempt.catch === 'function') {
-          attempt.catch(() => setTimeout(() => {
-            backgroundVideo.muted = true;
-            backgroundVideo.play().catch(() => {});
-          }, 150));
-        }
-      };
-
-      window.startBackgroundVideo = startBackgroundVideo;
-      backgroundVideo.addEventListener('ended', () => startBackgroundVideo(true));
-      backgroundVideo.addEventListener('loadeddata', () => startBackgroundVideo(false));
-      backgroundVideo.addEventListener('canplay', () => startBackgroundVideo(false));
-      window.addEventListener('pageshow', () => startBackgroundVideo(true));
-      window.addEventListener('focus', () => startBackgroundVideo(true));
-      document.addEventListener('visibilitychange', () => {
-        if (document.visibilityState === 'visible') startBackgroundVideo(true);
-      });
-      document.addEventListener('resume', () => startBackgroundVideo(true));
-
-      requestOfflineCache();
-      const persisted = await usePersistedVideo();
-      if (!persisted) {
-        backgroundVideo.src = videoUrl;
-        backgroundVideo.load();
-      }
-      startBackgroundVideo(false);
-    })();;
-  </script>
   <div id="aranduTag" style="position:fixed; top:10px; left:10px; font-size:24px; z-index:1000;">💜</div>
 
   <button class="home-btn" onclick="goHome()">🏠</button>
