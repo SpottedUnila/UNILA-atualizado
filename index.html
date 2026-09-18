@@ -937,7 +937,16 @@ button:hover{
   76%{opacity:1;transform:translate(-50%,0);}
   100%{opacity:0;transform:translate(-50%,-8px);visibility:hidden;}
 }
-#aranduTag{position:fixed;top:28px;left:10px;font-size:24px;line-height:40px;height:40px;display:flex;align-items:center;z-index:1001;pointer-events:none;filter:drop-shadow(0 0 7px rgba(236,72,153,.75));}
+#aranduTag{position:fixed;top:28px;left:10px;font-size:24px;line-height:40px;height:40px;display:flex;align-items:center;z-index:1001;pointer-events:none;filter:drop-shadow(0 0 7px rgba(236,72,153,.75));transform-origin:center;animation:humanHeartBeat 1.15s ease-in-out infinite;will-change:transform;}
+@keyframes humanHeartBeat{
+  0%,100%{transform:scale(1);}
+  10%{transform:scale(1.08);}
+  18%{transform:scale(1.22);}
+  30%{transform:scale(1.03);}
+  42%{transform:scale(1.13);}
+  56%{transform:scale(1);}
+}
+@media (prefers-reduced-motion:reduce){#aranduTag{animation:none;}}
 #radioPlayer{position:relative;}
 #podcastPlayer{position:relative;}
 .music-player-title{
@@ -2083,7 +2092,7 @@ gtag('config', 'G-FJT3X93608');
     // PWA UPDATE LOGIC
     function setupPWAUpdate() {
       if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./service-worker37.js?v=230', { updateViaCache: 'none' }).then(reg => {
+        navigator.serviceWorker.register('./service-worker37.js?v=231', { updateViaCache: 'none' }).then(reg => {
           reg.update();
           reg.addEventListener('updatefound', () => {
             const newWorker = reg.installing;
