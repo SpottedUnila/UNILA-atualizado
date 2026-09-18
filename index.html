@@ -2092,7 +2092,7 @@ gtag('config', 'G-FJT3X93608');
     // PWA UPDATE LOGIC
     function setupPWAUpdate() {
       if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./service-worker37.js?v=243', { updateViaCache: 'none' }).then(reg => {
+        navigator.serviceWorker.register('./service-worker37.js?v=244', { updateViaCache: 'none' }).then(reg => {
           reg.update();
           reg.addEventListener('updatefound', () => {
             const newWorker = reg.installing;
@@ -2722,46 +2722,33 @@ gtag('config', 'G-FJT3X93608');
         "Download para Android (Drive):\n" + driveUrl + "\n\n" +
         "Site para iOS e qualquer dispositivo:\n" + siteUrl;
       const encodedText = encodeURIComponent(shareText);
-      const encodedUrl = encodeURIComponent(siteUrl);
       const modal = document.createElement("div");
       modal.className = "share-options-modal";
       modal.innerHTML = '<div class="share-options-card" role="dialog" aria-modal="true" aria-label="Compartilhar Spotted">' +
         '<h3>Compartilhar Spotted</h3>' +
-        '<p>Escolha um aplicativo. O botão do Android também mostra WhatsApp, WhatsApp Business, Facebook e Instagram quando estiverem instalados.</p>' +
+        '<p>Escolha somente um aplicativo instalado no Android. Nenhuma opção abre o navegador.</p>' +
         '<div class="share-options-grid">' +
-        '<button class="share-native" data-share="native">📲 Compartilhar pelo Android</button>' +
         '<button data-share="whatsapp">💬 WhatsApp</button>' +
         '<button data-share="business">💼 WhatsApp Business</button>' +
         '<button data-share="facebook">📘 Facebook</button>' +
+        '<button data-share="facebookLite">📘 Facebook Lite</button>' +
         '<button data-share="instagram">📸 Instagram</button>' +
+        '<button data-share="instagramLite">📸 Instagram Lite</button>' +
         '</div><button class="share-options-close" data-share="close">Cancelar</button></div>';
       document.body.appendChild(modal);
       const close = function(){ modal.remove(); };
+      const launch = function(packageName, scheme, path){
+        close();
+        window.location.href = "intent://" + path + "#Intent;scheme=" + scheme + ";package=" + packageName + ";end";
+      };
       modal.querySelector('[data-share="close"]').onclick = close;
       modal.addEventListener("click", function(event){ if (event.target === modal) close(); });
-      modal.querySelector('[data-share="native"]').onclick = async function(){
-        if (navigator.share) {
-          try { await navigator.share({ title:"Spotted", text:shareText, url:siteUrl }); close(); return; } catch(e) {}
-        }
-        if (navigator.clipboard) await navigator.clipboard.writeText(shareText).catch(function(){});
-        window.open("https://www.facebook.com/sharer/sharer.php?u=" + encodedUrl + "&quote=" + encodedText, "_blank"); close();
-      };
-      modal.querySelector('[data-share="whatsapp"]').onclick = function(){
-        window.open("https://api.whatsapp.com/send?text=" + encodedText, "_blank"); close();
-      };
-      modal.querySelector('[data-share="business"]').onclick = function(){
-        const fallback = setTimeout(function(){ window.open("https://api.whatsapp.com/send?text=" + encodedText, "_blank"); }, 900);
-        window.location.href = "intent://send?text=" + encodedText + "#Intent;scheme=whatsapp;package=com.whatsapp.w4b;end";
-        setTimeout(function(){ clearTimeout(fallback); }, 1200); close();
-      };
-      modal.querySelector('[data-share="facebook"]').onclick = function(){
-        window.open("https://www.facebook.com/sharer/sharer.php?u=" + encodedUrl + "&quote=" + encodedText, "_blank"); close();
-      };
-      modal.querySelector('[data-share="instagram"]').onclick = async function(){
-        if (navigator.share) { try { await navigator.share({ title:"Spotted", text:shareText, url:siteUrl }); close(); return; } catch(e) {} }
-        if (navigator.clipboard) await navigator.clipboard.writeText(shareText).catch(function(){});
-        window.open("https://www.instagram.com/", "_blank"); close();
-      };
+      modal.querySelector('[data-share="whatsapp"]').onclick = function(){ launch("com.whatsapp", "whatsapp", "send?text=" + encodedText); };
+      modal.querySelector('[data-share="business"]').onclick = function(){ launch("com.whatsapp.w4b", "whatsapp", "send?text=" + encodedText); };
+      modal.querySelector('[data-share="facebook"]').onclick = function(){ launch("com.facebook.katana", "fb", "share?text=" + encodedText); };
+      modal.querySelector('[data-share="facebookLite"]').onclick = function(){ launch("com.facebook.lite", "fb", "share?text=" + encodedText); };
+      modal.querySelector('[data-share="instagram"]').onclick = function(){ launch("com.instagram.android", "instagram", "app"); };
+      modal.querySelector('[data-share="instagramLite"]').onclick = function(){ launch("com.instagram.lite", "instagram", "app"); };
     }
     function shareApp() { openShareOptions(); }
 
