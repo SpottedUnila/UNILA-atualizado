@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Spotted Unila</title>
+<title>Spotted</title>
 
 <link rel="manifest" href="manifest.json">
 <link rel="icon" type="image/png" sizes="64x64" href="favicon.png">
@@ -1249,7 +1249,7 @@ gtag('config', 'G-FJT3X93608');
 
   <button id="installBtn" class="install-btn">📲 Instalar App</button>
   <div id="globalSearch" class="global-search" role="search">
-    <div class="global-search-wrap"><span aria-hidden="true">🔎</span><input id="globalSearchInput" type="search" autocomplete="off" placeholder="Buscar no Spotted Unila..." aria-label="Busca global"><button id="globalSearchClear" class="global-search-clear" type="button" aria-label="Limpar busca">×</button></div>
+    <div class="global-search-wrap"><span aria-hidden="true">🔎</span><input id="globalSearchInput" type="search" autocomplete="off" placeholder="Buscar no Spotted..." aria-label="Busca global"><button id="globalSearchClear" class="global-search-clear" type="button" aria-label="Limpar busca">×</button></div>
     <div id="globalSearchResults" class="global-search-results" role="listbox" aria-live="polite"></div>
   </div>
 
@@ -1304,7 +1304,7 @@ gtag('config', 'G-FJT3X93608');
   <div id="officialSourcesPage" class="page official-sources-page">
     <h2>🔗 Fontes oficiais e transparência</h2>
     <div class="official-disclaimer">
-      <strong>Importante:</strong> o Spotted Unila é um aplicativo independente. Não é oficial, não é administrado e não representa a UNILA, o Governo Federal, o Governo do Paraná ou a Prefeitura de Foz do Iguaçu. Os links abaixo levam diretamente às fontes institucionais originais para conferência das informações.
+      <strong>Importante:</strong> o Spotted é um aplicativo independente. Não é oficial, não é administrado e não representa a UNILA, o Governo Federal, o Governo do Paraná ou a Prefeitura de Foz do Iguaçu. Os links abaixo levam diretamente às fontes institucionais originais para conferência das informações.
     </div>
     <p>Consulte sempre os canais oficiais para confirmar horários, telefones, editais, serviços, notícias e orientações públicas.</p>
     <div class="official-sources-list">
@@ -1410,7 +1410,7 @@ gtag('config', 'G-FJT3X93608');
   <div id="devPage" class="page">
     <h2>👨‍💻 Desenvolvedor</h2>
     <p>Para trabalhos e parcerias entre em contato:</p>
-    <p>Equipe Spotted Unila<br>Contato: <a href="mailto:universecreativepixel@gmail.com">universecreativepixel@gmail.com</a></p>
+    <p>Equipe Spotted<br>Contato: <a href="mailto:universecreativepixel@gmail.com">universecreativepixel@gmail.com</a></p>
     <button type="button" onclick="requestDataDeletion()">Solicitar exclusão dos meus dados</button>
   </div>
 
@@ -1553,7 +1553,7 @@ gtag('config', 'G-FJT3X93608');
       overlay.id = "appDialogOverlay";
       overlay.setAttribute("role", "dialog");
       overlay.setAttribute("aria-modal", "true");
-      overlay.innerHTML = `<div id="appDialogCard"><h3 id="appDialogTitle">Spotted Unila</h3><p id="appDialogMessage"></p><div id="appDialogActions"><button id="appDialogCancel" type="button">Cancelar</button><button id="appDialogOk" type="button">OK</button></div></div>`;
+      overlay.innerHTML = `<div id="appDialogCard"><h3 id="appDialogTitle">Spotted</h3><p id="appDialogMessage"></p><div id="appDialogActions"><button id="appDialogCancel" type="button">Cancelar</button><button id="appDialogOk" type="button">OK</button></div></div>`;
       document.body.appendChild(overlay);
       return overlay;
     }
@@ -1989,7 +1989,7 @@ gtag('config', 'G-FJT3X93608');
           lastActive: now,
           updatedAt: now,
           createdAt: createdAt,
-          source: "Spotted Unila"
+          source: "Spotted"
         };
         if (normalizedEmail) reservation.email = normalizedEmail;
 
@@ -2002,7 +2002,7 @@ gtag('config', 'G-FJT3X93608');
           nickClaimId: nickClaimDocId(displayNick),
           createdAt: createdAt,
           updatedAt: now,
-          source: "Spotted Unila"
+          source: "Spotted"
           ,...(normalizedEmail ? { email: normalizedEmail } : {})
         }, { merge: true });
         return reservation;
@@ -2083,7 +2083,7 @@ gtag('config', 'G-FJT3X93608');
     // PWA UPDATE LOGIC
     function setupPWAUpdate() {
       if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./service-worker37.js?v=227', { updateViaCache: 'none' }).then(reg => {
+        navigator.serviceWorker.register('./service-worker37.js?v=228', { updateViaCache: 'none' }).then(reg => {
           reg.update();
           reg.addEventListener('updatefound', () => {
             const newWorker = reg.installing;
@@ -2126,7 +2126,7 @@ gtag('config', 'G-FJT3X93608');
       emergencia: "Polícia Militar: 190\nSAMU (Ambulância): 192\nBombeiros: 193\n\nHospital Municipal: (45) 2105-4100\nGuarda Municipal: (45) 2105-5100\nDelegacia da Mulher: (45) 3521-9200\nDefesa Civil: 199\n\nPolícia Federal: (45) 3522-1174\nPolícia Rodoviária Federal: (45) 3576-1400\n\nPrae-Unila: +55 45 3522-9983\nPrograd-Unila: +55 (45) 3522-9766\n\nDisque Denúncia: 181\nConselho Tutelar: (45) 3521-1112\nCentro de Intoxicações: 0800 722 6001\n\n⚠ Em situações graves, ligue imediatamente.",
       enderecos: "Unila - Campus PTI\nAv. Tancredo Neves, 6731 - PTI, Foz do Iguaçu - PR\n\nUnila - Campus Juarez Távora\nAv. Silvio Américo Sasdelli, 1000 - Vila A, Foz do Iguaçu - PR\n\nUnila - Campus Jardim Universitário (JU)\nAv. Tarquínio Joslin dos Santos, 1000 - Lot. Universitário das Américas, Foz do Iguaçu - PR\n\nUnila - Campus Integração\nAv. Tancredo Neves, 3147 - Foz do Iguaçu - PR",
       ru: "RU PTI: Segunda a Sexta (11:00 - 14:00 e 17:30 - 20:00)\nRU JU: Segunda a Sexta (11:00 - 14:00 e 17:30 - 20:00)\n\nPreço para Estudantes: R$ 3,50\nPreço para Servidores: R$ 12,00\n\n⚠ Verifique feriados e horários especiais no portal oficial.",
-      dev: "Equipe Spotted Unila<br>Contato: <a href=\"mailto:universecreativepixel@gmail.com\">universecreativepixel@gmail.com</a>",
+      dev: "Equipe Spotted<br>Contato: <a href=\"mailto:universecreativepixel@gmail.com\">universecreativepixel@gmail.com</a>",
       internet: "Rede: Unila-WIFI\nLogin: Seu CPF ou E-mail Institucional\nSenha: A mesma senha do SIGAA\n\n⚠ Se tiver problemas, procure a TIC do seu campus.",
       estude: "Ingresso para Brasileiros: Via ENEM/SISU\nIngresso para Estrangeiros: Seleção Internacional Própria\n\nCursos: Mais de 29 opções de graduação.\n\nPara mais informações acesse: portal.unila.edu.br/ingresso",
       auxilio_estudantil: "https://portal.unila.edu.br/prae/assistencia-estudantil/auxilios",
@@ -2650,7 +2650,7 @@ gtag('config', 'G-FJT3X93608');
           goals: goals,
           createdAt: previous && previous.exists && previous.data().createdAt ? previous.data().createdAt : now,
           updatedAt: now,
-          source: "Spotted Unila"
+          source: "Spotted"
         }, { merge: true });
         clearAcademicDraft();
         updateAcademicProgress();
@@ -2709,7 +2709,7 @@ gtag('config', 'G-FJT3X93608');
       const driveUrl = "https://drive.google.com/file/d/103mylmu6SsIXUJJyBBFPNrw0IeCuVxHN/view?usp=drivesdk";
       const siteUrl = "https://spottedunila.github.io/UNILA-atualizado/?v=159";
       const mensagem = encodeURIComponent(
-        "Confira o Spotted Unila!\n\n" +
+        "Confira o Spotted!\n\n" +
         "Para Android, baixe pelo Drive ou entre pelo link no site.\n\n" +
         "Download para Android (Drive):\n" + driveUrl + "\n\n" +
         "Site para iOS e QUALQUER dispositivos:\n" + siteUrl
@@ -3252,7 +3252,7 @@ padding:0 2px;">↩ Responder</button>`;
               nick: nick,
               notes: notes,
               updatedAt: Date.now(),
-              source: "Spotted Unila"
+              source: "Spotted"
             }, { merge: true });
           } catch (syncError) {
             console.warn("Não foi possível sincronizar a cópia local das anotações:", syncError);
@@ -3308,7 +3308,7 @@ padding:0 2px;">↩ Responder</button>`;
           nick: nick,
           notes: notes,
           updatedAt: now,
-          source: "Spotted Unila"
+          source: "Spotted"
         }, { merge: true });
         if (noteField) noteField.value = "";
         await loadNotes();
@@ -3616,7 +3616,7 @@ padding:0 2px;">↩ Responder</button>`;
       locale: "pt-BR",
       weekdays: ["Domingo", "Segunda-feira", "Terça-feira", "Quarta-feira", "Quinta-feira", "Sexta-feira", "Sábado"],
       t: {
-        appTitle: "Spotted Unila", language: "Idioma", home: "Início", podcast: "Podcast", music: "Música", install: "📲 Instalar App",
+        appTitle: "Spotted", language: "Idioma", home: "Início", podcast: "Podcast", music: "Música", install: "📲 Instalar App",
         chatMenu: " Spotted💜 Chat💬", portal: "🌐 Portal Oficial da Unila", inscreva: "🎓 Portal Inscreva", sigaa: "📚 Sistema Acadêmico SIGAA", email: "📧 E-mail Institucional",
         google: "🔎 Pesquisa Google", instagram: "📸 Instagram Unila", facebook: "📘 Facebook Unila", library: "📖 Biblioteca Unila",
         intercampus: "🚌 Transporte Intercampi", notices: "📄 Editais Oficiais", emergency: "🚨 Telefones de Emergência",
@@ -3625,7 +3625,7 @@ padding:0 2px;">↩ Responder</button>`;
         enem: "📝 ENEM – Página do Participante", news: "📰 Notícias da Unila", conheca: "🏫 Conheça a Unila", desapega: "🔎 Achados e Perdidos e Desapega", upa: "🏥 Hospitais de Emergência 24h (UPA)", officialSources: "🔗 Fontes oficiais e transparência",
         chatHeading: "💬 Chat Unila", nickPlaceholder: "Digite seu nick...", enter: "Entrar", imageSelected: "Imagem selecionada",
         chatPlaceholder: "Digite sua mensagem...", anonymous: "👤 Enviar Anonimamente", changeNick: "🔄 Mudar Nick",
-        developerHeading: "👨‍💻 Desenvolvedor", developerIntro: "Para trabalhos e parcerias entre em contato:", developerService: "Equipe Spotted Unila", contact: "Contato",
+        developerHeading: "👨‍💻 Desenvolvedor", developerIntro: "Para trabalhos e parcerias entre em contato:", developerService: "Equipe Spotted", contact: "Contato",
         notesHeading: "📝 Anotações", notePlaceholder: "Escreva sua anotação aqui...", save: "Salvar", desapegaHeading: "🛒 Desapega Unileiro",
         postAd: "➕ Postar Anúncio", newAd: "Novo Anúncio", editAdTitle: "Editar Anúncio", selling: "O que você está vendendo?",
         price: "Preço (Ex: R$ 50,00 ou Grátis)", description: "Descrição do item...", whatsappPlaceholder: "Seu WhatsApp (Ex: 45999999999)",
@@ -3641,7 +3641,7 @@ padding:0 2px;">↩ Responder</button>`;
         emergencia: "Polícia Militar: 190\nSAMU (Ambulância): 192\nBombeiros: 193\n\nHospital Municipal: (45) 2105-4100\nGuarda Municipal: (45) 2105-5100\nDelegacia da Mulher: (45) 3521-9200\nDefesa Civil: 199\n\nPolícia Federal: (45) 3522-1174\nPolícia Rodoviária Federal: (45) 3576-1400\n\nPrae-Unila: +55 45 3522-9983\nPrograd-Unila: +55 (45) 3522-9766\n\nDisque Denúncia: 181\nConselho Tutelar: (45) 3521-1112\nCentro de Intoxicações: 0800 722 6001\n\n⚠ Em situações graves, ligue imediatamente.",
         enderecos: "Unila - Campus PTI\nAv. Tancredo Neves, 6731 - PTI, Foz do Iguaçu - PR\n\nUnila - Campus Juarez Távora\nAv. Silvio Américo Sasdelli, 1000 - Vila A, Foz do Iguaçu - PR\n\nUnila - Campus Jardim Universitário (JU)\nAv. Tarquínio Joslin dos Santos, 1000 - Lot. Universitário das Américas, Foz do Iguaçu - PR\n\nUnila - Campus Integração\nAv. Tancredo Neves, 3147 - Foz do Iguaçu - PR",
         ru: "RU PTI: Segunda a Sexta (11:00 - 14:00 e 17:30 - 20:00)\nRU JU: Segunda a Sexta (11:00 - 14:00 e 17:30 - 20:00)\n\nPreço para Estudantes: R$ 3,50\nPreço para Servidores: R$ 12,00\n\n⚠ Verifique feriados e horários especiais no portal oficial.",
-        dev: "Equipe Spotted Unila<br>Contato: <a href=\"mailto:universecreativepixel@gmail.com\">universecreativepixel@gmail.com</a>",
+        dev: "Equipe Spotted<br>Contato: <a href=\"mailto:universecreativepixel@gmail.com\">universecreativepixel@gmail.com</a>",
         internet: "Rede: Unila-WIFI\nLogin: Seu CPF ou E-mail Institucional\nSenha: A mesma senha do SIGAA\n\n⚠ Se tiver problemas, procure a TIC do seu campus.",
         estude: "Ingresso para Brasileiros: Via ENEM/SISU\nIngresso para Estrangeiros: Seleção Internacional Própria\n\nCursos: Mais de 29 opções de graduação.\n\nPara mais informações acesse: portal.unila.edu.br/ingresso",
         upa: "UPA João Samek (Vila A): (45) 3524-8800\nUPA Morumbi: (45) 3521-1350\n\n⚠ Em casos de emergência com risco de vida, ligue 192 (SAMU)."
@@ -3651,7 +3651,7 @@ padding:0 2px;">↩ Responder</button>`;
       locale: "fr-FR",
       weekdays: ["Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"],
       t: {
-        appTitle: "Spotted Unila", language: "Langue", home: "Accueil", podcast: "Podcast", music: "Musique", install: "📲 Installer l’application",
+        appTitle: "Spotted", language: "Langue", home: "Accueil", podcast: "Podcast", music: "Musique", install: "📲 Installer l’application",
         chatMenu: " Spotted💜 Chat💬", portal: "🌐 Portail officiel de l’Unila", inscreva: "🎓 Portal Inscreva", sigaa: "📚 Système académique SIGAA", email: "📧 E-mail institutionnel",
         google: "🔎 Recherche Google", instagram: "📸 Instagram Unila", facebook: "📘 Facebook Unila", library: "📖 Bibliothèque Unila",
         intercampus: "🚌 Transport intercampus", notices: "📄 Avis officiels", emergency: "🚨 Numéros d’urgence",
@@ -3660,7 +3660,7 @@ padding:0 2px;">↩ Responder</button>`;
         enem: "📝 ENEM – Page du participant", news: "📰 Actualités de l’Unila", conheca: "🏫 Découvrez l’Unila", desapega: "🔎 Objets trouvés et perdus · Desapega", upa: "🏥 Hôpitaux d’urgence 24 h (UPA)", officialSources: "🔗 Sources officielles et transparence",
         chatHeading: "💬 Chat Unila", nickPlaceholder: "Saisissez votre pseudo...", enter: "Entrer", imageSelected: "Image sélectionnée",
         chatPlaceholder: "Écrivez votre message...", anonymous: "👤 Envoyer anonymement", changeNick: "🔄 Changer de pseudo",
-        developerHeading: "👨‍💻 Développeur", developerIntro: "Pour les travaux et les partenariats, contactez-nous :", developerService: "Équipe Spotted Unila", contact: "Contact",
+        developerHeading: "👨‍💻 Développeur", developerIntro: "Pour les travaux et les partenariats, contactez-nous :", developerService: "Équipe Spotted", contact: "Contact",
         notesHeading: "📝 Notes", notePlaceholder: "Écrivez votre note ici...", save: "Enregistrer", desapegaHeading: "🛒 Desapega Unileiro",
         postAd: "➕ Publier une annonce", newAd: "Nouvelle annonce", editAdTitle: "Modifier l’annonce", selling: "Que vendez-vous ?",
         price: "Prix (Ex. : 50,00 R$ ou gratuit)", description: "Description de l’article...", whatsappPlaceholder: "Votre WhatsApp (Ex. : 45999999999)",
@@ -3676,7 +3676,7 @@ padding:0 2px;">↩ Responder</button>`;
         emergencia: "Police militaire : 190\nSAMU (Ambulance) : 192\nPompiers : 193\n\nHôpital municipal : (45) 2105-4100\nPolice municipale : (45) 2105-5100\nDélégation des femmes : (45) 3521-9200\nProtection civile : 199\n\nPolice fédérale : (45) 3522-1174\nPolice routière fédérale : (45) 3576-1400\n\nPrae-Unila : +55 45 3522-9983\nPrograd-Unila : +55 (45) 3522-9766\n\nLigne de dénonciation : 181\nConseil tutélaire : (45) 3521-1112\nCentre antipoison : 0800 722 6001\n\n⚠ En cas de situation grave, appelez immédiatement.",
         enderecos: "Unila - Campus PTI\nAv. Tancredo Neves, 6731 - PTI, Foz do Iguaçu - PR\n\nUnila - Campus Juarez Távora\nAv. Silvio Américo Sasdelli, 1000 - Vila A, Foz do Iguaçu - PR\n\nUnila - Campus Jardim Universitário (JU)\nAv. Tarquínio Joslin dos Santos, 1000 - Lot. Universitário das Américas, Foz do Iguaçu - PR\n\nUnila - Campus Integração\nAv. Tancredo Neves, 3147 - Foz do Iguaçu - PR",
         ru: "RU PTI : Du lundi au vendredi (11:00 - 14:00 et 17:30 - 20:00)\nRU JU : Du lundi au vendredi (11:00 - 14:00 et 17:30 - 20:00)\n\nPrix étudiant : 3,50 R$\nPrix pour les personnels : 12,00 R$\n\n⚠ Vérifiez les jours fériés et les horaires spéciaux sur le portail officiel.",
-        dev: "Équipe Spotted Unila<br>Contact : <a href=\"mailto:universecreativepixel@gmail.com\">universecreativepixel@gmail.com</a>",      internet: "Réseau : Unila-WIFI\nIdentifiant : Votre CPF ou e-mail institutionnel\nMot de passe : Le même mot de passe que SIGAA\n\n⚠ En cas de problème, contactez la TIC de votre campus.",
+        dev: "Équipe Spotted<br>Contact : <a href=\"mailto:universecreativepixel@gmail.com\">universecreativepixel@gmail.com</a>",      internet: "Réseau : Unila-WIFI\nIdentifiant : Votre CPF ou e-mail institutionnel\nMot de passe : Le même mot de passe que SIGAA\n\n⚠ En cas de problème, contactez la TIC de votre campus.",
       saude_mental: "https://portal.unila.edu.br/saude-mental",
       estude: "Admission des Brésiliens : via ENEM/SISU\nAdmission des étrangers : sélection internationale propre\n\nFormations : plus de 29 options de licence.\n\nPour plus d’informations, consultez : portal.unila.edu.br/ingresso",
         upa: "UPA João Samek (Vila A) : (45) 3524-8800\nUPA Morumbi : (45) 3521-1350\n\n⚠ En cas d’urgence vitale, appelez le 192 (SAMU)."
@@ -3686,7 +3686,7 @@ padding:0 2px;">↩ Responder</button>`;
       locale: "es-ES",
       weekdays: ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"],
       t: {
-        appTitle: "Spotted Unila", language: "Idioma", home: "Inicio", podcast: "Podcast", music: "Música", install: "📲 Instalar aplicación",
+        appTitle: "Spotted", language: "Idioma", home: "Inicio", podcast: "Podcast", music: "Música", install: "📲 Instalar aplicación",
         chatMenu: " Spotted💜 Chat💬", portal: "🌐 Portal oficial de la Unila", inscreva: "🎓 Portal Inscreva", sigaa: "📚 Sistema Académico SIGAA", email: "📧 Correo institucional",
         google: "🔎 Búsqueda Google", instagram: "📸 Instagram Unila", facebook: "📘 Facebook Unila", library: "📖 Biblioteca Unila",
         intercampus: "🚌 Transporte intercampus", notices: "📄 Convocatorias oficiales", emergency: "🚨 Teléfonos de emergencia",
@@ -3695,7 +3695,7 @@ padding:0 2px;">↩ Responder</button>`;
         enem: "📝 ENEM – Página del participante", news: "📰 Noticias de la Unila", conheca: "🏫 Conoce la Unila", desapega: "🔎 Objetos perdidos y encontrados · Desapega", upa: "🏥 Hospitales de emergencia 24 h (UPA)", officialSources: "🔗 Fuentes oficiales y transparencia",
         chatHeading: "💬 Chat Unila", nickPlaceholder: "Escribe tu nick...", enter: "Entrar", imageSelected: "Imagen seleccionada",
         chatPlaceholder: "Escribe tu mensaje...", anonymous: "👤 Enviar anónimamente", changeNick: "🔄 Cambiar nick",
-        developerHeading: "👨‍💻 Desarrollador", developerIntro: "Para trabajos y alianzas, ponte en contacto:", developerService: "Equipo Spotted Unila", contact: "Contacto",
+        developerHeading: "👨‍💻 Desarrollador", developerIntro: "Para trabajos y alianzas, ponte en contacto:", developerService: "Equipo Spotted", contact: "Contacto",
         notesHeading: "📝 Anotaciones", notePlaceholder: "Escribe tu anotación aquí...", save: "Guardar", desapegaHeading: "🛒 Desapega Unileiro",
         postAd: "➕ Publicar anuncio", newAd: "Nuevo anuncio", editAdTitle: "Editar anuncio", selling: "¿Qué estás vendiendo?",
         price: "Precio (Ej.: R$ 50,00 o gratis)", description: "Descripción del artículo...", whatsappPlaceholder: "Tu WhatsApp (Ej.: 45999999999)",
@@ -3711,7 +3711,7 @@ padding:0 2px;">↩ Responder</button>`;
         emergencia: "Policía Militar: 190\nSAMU (Ambulancia): 192\nBomberos: 193\n\nHospital Municipal: (45) 2105-4100\nGuardia Municipal: (45) 2105-5100\nComisaría de la Mujer: (45) 3521-9200\nDefensa Civil: 199\n\nPolicía Federal: (45) 3522-1174\nPolicía Federal de Carreteras: (45) 3576-1400\n\nPrae-Unila: +55 45 3522-9983\nPrograd-Unila: +55 (45) 3522-9766\n\nLínea de denuncias: 181\nConsejo Tutelar: (45) 3521-1112\nCentro de Intoxicaciones: 0800 722 6001\n\n⚠ En situaciones graves, llama inmediatamente.",
         enderecos: "Unila - Campus PTI\nAv. Tancredo Neves, 6731 - PTI, Foz do Iguaçu - PR\n\nUnila - Campus Juarez Távora\nAv. Silvio Américo Sasdelli, 1000 - Vila A, Foz do Iguaçu - PR\n\nUnila - Campus Jardim Universitário (JU)\nAv. Tarquínio Joslin dos Santos, 1000 - Lot. Universitário das Américas, Foz do Iguaçu - PR\n\nUnila - Campus Integração\nAv. Tancredo Neves, 3147 - Foz do Iguaçu - PR",
         ru: "RU PTI: De lunes a viernes (11:00 - 14:00 y 17:30 - 20:00)\nRU JU: De lunes a viernes (11:00 - 14:00 y 17:30 - 20:00)\n\nPrecio para estudiantes: R$ 3,50\nPrecio para servidores: R$ 12,00\n\n⚠ Consulta los feriados y horarios especiales en el portal oficial.",
-        dev: "Equipo Spotted Unila<br>Contacto: <a href=\"mailto:universecreativepixel@gmail.com\">universecreativepixel@gmail.com</a>",      internet: "Red: Unila-WIFI\nInicio de sesión: Tu CPF o correo institucional\nContraseña: La misma contraseña de SIGAA\n\n⚠ Si tienes problemas, busca la TIC de tu campus.",
+        dev: "Equipo Spotted<br>Contacto: <a href=\"mailto:universecreativepixel@gmail.com\">universecreativepixel@gmail.com</a>",      internet: "Red: Unila-WIFI\nInicio de sesión: Tu CPF o correo institucional\nContraseña: La misma contraseña de SIGAA\n\n⚠ Si tienes problemas, busca la TIC de tu campus.",
       saude_mental: "https://portal.unila.edu.br/saude-mental",
       estude: "Ingreso para brasileños: por ENEM/SISU\nIngreso para extranjeros: selección internacional propia\n\nCarreras: más de 29 opciones de grado.\n\nPara más información, accede a: portal.unila.edu.br/ingresso",
         upa: "UPA João Samek (Vila A): (45) 3524-8800\nUPA Morumbi: (45) 3521-1350\n\n⚠ En casos de emergencia con riesgo de vida, llama al 192 (SAMU)."
@@ -3933,7 +3933,7 @@ padding:0 2px;">↩ Responder</button>`;
     setText("#installBtn", tr("install"));
     setupGlobalSearch();
     var globalSearchInput = document.getElementById("globalSearchInput");
-    if (globalSearchInput) globalSearchInput.placeholder = state.lang === "fr" ? "Rechercher dans Spotted Unila..." : (state.lang === "es" ? "Buscar en Spotted Unila..." : "Buscar no Spotted Unila...");
+    if (globalSearchInput) globalSearchInput.placeholder = state.lang === "fr" ? "Rechercher dans Spotted..." : (state.lang === "es" ? "Buscar en Spotted..." : "Buscar no Spotted...");
 
     setText("#chatPage h2", tr("chatHeading"));
     setPlaceholder("#nickInput", tr("nickPlaceholder"));
@@ -4202,7 +4202,7 @@ padding:0 2px;">↩ Responder</button>`;
         var driveUrl = "https://drive.google.com/file/d/103mylmu6SsIXUJJyBBFPNrw0IeCuVxHN/view?usp=drivesdk";
         var siteUrl = "https://spottedunila.github.io/UNILA-atualizado/?v=159";
         var mensagem = encodeURIComponent(
-          "Confira o Spotted Unila!" + NL + NL +
+          "Confira o Spotted!" + NL + NL +
           "Para Android, baixe pelo Drive ou entre pelo link no site." + NL + NL +
           "Download para Android (Drive):" + NL + driveUrl + NL + NL +
           "Site para iOS e QUALQUER dispositivos:" + NL + siteUrl
@@ -4297,14 +4297,14 @@ padding:0 2px;">↩ Responder</button>`;
     es: { termsTitle:"Términos de uso y seguridad", termsText:"Antes de publicar mensajes, respuestas, anuncios o imágenes, confirma que aceptas los Términos de uso. No publiques contenido ilegal, ofensivo, discriminatorio, sexual, amenazante o que viole los derechos de terceros. La aplicación puede recibir denuncias y eliminar contenido inadecuado.", termsAccept:"He leído y acepto los Términos de uso y la política de comportamiento.", cancel:"Cancelar", accept:"Aceptar y continuar", reportTitle:"Denunciar contenido o usuario", reasonPlaceholder:"Describe el motivo de la denuncia...", sendReport:"Enviar denuncia", confirmAction:"¿Confirmar acción?", ok:"OK", deleteTitle:"Eliminar nick y datos", deleteText:"Escribe tu contraseña para confirmar la eliminación permanente del nick y los datos relacionados.", password:"Tu contraseña", show:"Mostrar", hide:"Ocultar", deleteData:"Eliminar datos", accountDelete:"Solicitar la eliminación de mis datos", developer:"Desarrollador", deleteAccount:"Eliminar cuenta", changeNick:"🔄 Cambiar nick", anonymous:"👤 Enviar anónimamente", rulesLink:"Leer los Términos de uso y las reglas de la comunidad" }
   };
   var OFFICIAL_SOURCES_I18N = {
-    pt: { title:"🔗 Fontes oficiais e transparência", important:"Importante:", disclaimer:"o Spotted Unila é um aplicativo independente. Não é oficial, não é administrado e não representa a UNILA, o Governo Federal, o Governo do Paraná ou a Prefeitura de Foz do Iguaçu. Os links abaixo levam diretamente às fontes institucionais originais para conferência das informações.", intro:"Consulte sempre os canais oficiais para confirmar horários, telefones, editais, serviços, notícias e orientações públicas.", cards:[["UNILA — Portal institucional","Portal oficial da Universidade Federal da Integração Latino-Americana."],["UNILA — Formas de ingresso","Informações institucionais sobre ingresso e seleção."],["Ministério da Saúde — SAMU 192","Fonte oficial do Governo Federal sobre o serviço SAMU 192."],["Prefeitura de Foz do Iguaçu","Portal oficial municipal com serviços, notícias e informações públicas."],["Portal da Transparência de Foz do Iguaçu","Fonte oficial para informações de transparência municipal."],["Governo Federal — gov.br","Portal oficial de serviços e informações do Governo Federal."]] },
-    fr: { title:"🔗 Sources officielles et transparence", important:"Important :", disclaimer:"Spotted Unila est une application indépendante. Elle n’est pas officielle, n’est pas administrée par et ne représente pas l’UNILA, le gouvernement fédéral, le gouvernement du Paraná ou la mairie de Foz do Iguaçu. Les liens ci-dessous renvoient directement aux sources institutionnelles originales pour vérification.", intro:"Consultez toujours les canaux officiels pour confirmer les horaires, numéros de téléphone, avis, services, actualités et orientations publiques.", cards:[["UNILA — Portail institutionnel","Portail officiel de l’Université fédérale de l’intégration latino-américaine."],["UNILA — Modalités d’admission","Informations institutionnelles sur l’admission et la sélection."],["Ministère de la Santé — SAMU 192","Source officielle du gouvernement fédéral concernant le service SAMU 192."],["Mairie de Foz do Iguaçu","Portail municipal officiel avec services, actualités et informations publiques."],["Portail de transparence de Foz do Iguaçu","Source officielle sur la transparence municipale."],["Gouvernement fédéral — gov.br","Portail officiel des services et informations du gouvernement fédéral."]] },
-    es: { title:"🔗 Fuentes oficiales y transparencia", important:"Importante:", disclaimer:"Spotted Unila es una aplicación independiente. No es oficial, no está administrada por ni representa a la UNILA, al Gobierno Federal, al Gobierno de Paraná ni a la Municipalidad de Foz do Iguaçu. Los enlaces siguientes llevan directamente a las fuentes institucionales originales para comprobar la información.", intro:"Consulta siempre los canales oficiales para confirmar horarios, teléfonos, convocatorias, servicios, noticias y orientaciones públicas.", cards:[["UNILA — Portal institucional","Portal oficial de la Universidad Federal de la Integración Latinoamericana."],["UNILA — Formas de ingreso","Información institucional sobre ingreso y selección."],["Ministerio de Salud — SAMU 192","Fuente oficial del Gobierno Federal sobre el servicio SAMU 192."],["Municipalidad de Foz do Iguaçu","Portal municipal oficial con servicios, noticias e información pública."],["Portal de Transparencia de Foz do Iguaçu","Fuente oficial para información de transparencia municipal."],["Gobierno Federal — gov.br","Portal oficial de servicios e información del Gobierno Federal."]] }
+    pt: { title:"🔗 Fontes oficiais e transparência", important:"Importante:", disclaimer:"o Spotted é um aplicativo independente. Não é oficial, não é administrado e não representa a UNILA, o Governo Federal, o Governo do Paraná ou a Prefeitura de Foz do Iguaçu. Os links abaixo levam diretamente às fontes institucionais originais para conferência das informações.", intro:"Consulte sempre os canais oficiais para confirmar horários, telefones, editais, serviços, notícias e orientações públicas.", cards:[["UNILA — Portal institucional","Portal oficial da Universidade Federal da Integração Latino-Americana."],["UNILA — Formas de ingresso","Informações institucionais sobre ingresso e seleção."],["Ministério da Saúde — SAMU 192","Fonte oficial do Governo Federal sobre o serviço SAMU 192."],["Prefeitura de Foz do Iguaçu","Portal oficial municipal com serviços, notícias e informações públicas."],["Portal da Transparência de Foz do Iguaçu","Fonte oficial para informações de transparência municipal."],["Governo Federal — gov.br","Portal oficial de serviços e informações do Governo Federal."]] },
+    fr: { title:"🔗 Sources officielles et transparence", important:"Important :", disclaimer:"Spotted est une application indépendante. Elle n’est pas officielle, n’est pas administrée par et ne représente pas l’UNILA, le gouvernement fédéral, le gouvernement du Paraná ou la mairie de Foz do Iguaçu. Les liens ci-dessous renvoient directement aux sources institutionnelles originales pour vérification.", intro:"Consultez toujours les canaux officiels pour confirmer les horaires, numéros de téléphone, avis, services, actualités et orientations publiques.", cards:[["UNILA — Portail institutionnel","Portail officiel de l’Université fédérale de l’intégration latino-américaine."],["UNILA — Modalités d’admission","Informations institutionnelles sur l’admission et la sélection."],["Ministère de la Santé — SAMU 192","Source officielle du gouvernement fédéral concernant le service SAMU 192."],["Mairie de Foz do Iguaçu","Portail municipal officiel avec services, actualités et informations publiques."],["Portail de transparence de Foz do Iguaçu","Source officielle sur la transparence municipale."],["Gouvernement fédéral — gov.br","Portail officiel des services et informations du gouvernement fédéral."]] },
+    es: { title:"🔗 Fuentes oficiales y transparencia", important:"Importante:", disclaimer:"Spotted es una aplicación independiente. No es oficial, no está administrada por ni representa a la UNILA, al Gobierno Federal, al Gobierno de Paraná ni a la Municipalidad de Foz do Iguaçu. Los enlaces siguientes llevan directamente a las fuentes institucionales originales para comprobar la información.", intro:"Consulta siempre los canales oficiales para confirmar horarios, teléfonos, convocatorias, servicios, noticias y orientaciones públicas.", cards:[["UNILA — Portal institucional","Portal oficial de la Universidad Federal de la Integración Latinoamericana."],["UNILA — Formas de ingreso","Información institucional sobre ingreso y selección."],["Ministerio de Salud — SAMU 192","Fuente oficial del Gobierno Federal sobre el servicio SAMU 192."],["Municipalidad de Foz do Iguaçu","Portal municipal oficial con servicios, noticias e información pública."],["Portal de Transparencia de Foz do Iguaçu","Fuente oficial para información de transparencia municipal."],["Gobierno Federal — gov.br","Portal oficial de servicios e información del Gobierno Federal."]] }
   };
   var EXTRA_I18N = {
-    pt: { swipe:"Deslize para cima", search:"Buscar no Spotted Unila...", searchLabel:"Busca global", clearSearch:"Limpar busca", noResults:"Nenhum conteúdo encontrado.", reportDescription:"Descreva o motivo da denúncia. A solicitação será registrada para análise e moderação.", closeImage:"Fechar imagem ampliada", loading:"Carregando...", noMedia:"Nenhuma imagem ou vídeo publicado ainda.", mediaError:"Erro ao carregar as mídias." },
-    fr: { swipe:"Faites glisser vers le haut", search:"Rechercher dans Spotted Unila...", searchLabel:"Recherche globale", clearSearch:"Effacer la recherche", noResults:"Aucun contenu trouvé.", reportDescription:"Décrivez le motif du signalement. La demande sera enregistrée pour analyse et modération.", closeImage:"Fermer l’image agrandie", loading:"Chargement...", noMedia:"Aucune image ou vidéo publiée pour le moment.", mediaError:"Erreur lors du chargement des médias." },
-    es: { swipe:"Desliza hacia arriba", search:"Buscar en Spotted Unila...", searchLabel:"Búsqueda global", clearSearch:"Borrar búsqueda", noResults:"No se encontró contenido.", reportDescription:"Describe el motivo de la denuncia. La solicitud se registrará para análisis y moderación.", closeImage:"Cerrar imagen ampliada", loading:"Cargando...", noMedia:"Aún no hay imágenes ni vídeos publicados.", mediaError:"Error al cargar los medios." }
+    pt: { swipe:"Deslize para cima", search:"Buscar no Spotted...", searchLabel:"Busca global", clearSearch:"Limpar busca", noResults:"Nenhum conteúdo encontrado.", reportDescription:"Descreva o motivo da denúncia. A solicitação será registrada para análise e moderação.", closeImage:"Fechar imagem ampliada", loading:"Carregando...", noMedia:"Nenhuma imagem ou vídeo publicado ainda.", mediaError:"Erro ao carregar as mídias." },
+    fr: { swipe:"Faites glisser vers le haut", search:"Rechercher dans Spotted...", searchLabel:"Recherche globale", clearSearch:"Effacer la recherche", noResults:"Aucun contenu trouvé.", reportDescription:"Décrivez le motif du signalement. La demande sera enregistrée pour analyse et modération.", closeImage:"Fermer l’image agrandie", loading:"Chargement...", noMedia:"Aucune image ou vidéo publiée pour le moment.", mediaError:"Erreur lors du chargement des médias." },
+    es: { swipe:"Desliza hacia arriba", search:"Buscar en Spotted...", searchLabel:"Búsqueda global", clearSearch:"Borrar búsqueda", noResults:"No se encontró contenido.", reportDescription:"Describe el motivo de la denuncia. La solicitud se registrará para análisis y moderación.", closeImage:"Cerrar imagen ampliada", loading:"Cargando...", noMedia:"Aún no hay imágenes ni vídeos publicados.", mediaError:"Error al cargar los medios." }
   };
   function extraText(key){ var lang = localStorage.getItem("unila_language") || "pt"; return (EXTRA_I18N[lang] || EXTRA_I18N.pt)[key] || EXTRA_I18N.pt[key] || key; }
   function currentCompliance(){
@@ -4535,7 +4535,7 @@ padding:0 2px;">↩ Responder</button>`;
       appAlert("Nenhum nick ativo para excluir.");
       return;
     }
-    if (!await appConfirm("Excluir seus dados do Spotted Unila? Esta ação remove seu nick, mensagens, anúncios, respostas, anotações e metas.")) return;
+    if (!await appConfirm("Excluir seus dados do Spotted? Esta ação remove seu nick, mensagens, anúncios, respostas, anotações e metas.")) return;
     try {
       const deletionResult = await deleteCurrentAccountData();
       await appAlert(deletionResult.authDeletionError ? "Os dados foram excluídos. A credencial será encerrada na próxima entrada." : "Nick e dados relacionados excluídos.");
@@ -4623,7 +4623,7 @@ padding:0 2px;">↩ Responder</button>`;
         reporterUid: firebaseUid,
         createdAt: Date.now(),
         status: "open",
-        source: "Spotted Unila"
+        source: "Spotted"
       });
       appAlert(currentLabels().reportSent);
       window.closeUGCReport();
