@@ -2092,7 +2092,7 @@ gtag('config', 'G-FJT3X93608');
     // PWA UPDATE LOGIC
     function setupPWAUpdate() {
       if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./service-worker37.js?v=244', { updateViaCache: 'none' }).then(reg => {
+        navigator.serviceWorker.register('./service-worker37.js?v=245', { updateViaCache: 'none' }).then(reg => {
           reg.update();
           reg.addEventListener('updatefound', () => {
             const newWorker = reg.installing;
@@ -2737,18 +2737,19 @@ gtag('config', 'G-FJT3X93608');
         '</div><button class="share-options-close" data-share="close">Cancelar</button></div>';
       document.body.appendChild(modal);
       const close = function(){ modal.remove(); };
-      const launch = function(packageName, scheme, path){
+      const launch = function(packageName, text){
         close();
-        window.location.href = "intent://" + path + "#Intent;scheme=" + scheme + ";package=" + packageName + ";end";
+        const intent = "intent:#Intent;action=android.intent.action.SEND;type=text/plain;package=" + packageName + ";S.android.intent.extra.TEXT=" + encodeURIComponent(text) + ";end";
+        window.location.href = intent;
       };
       modal.querySelector('[data-share="close"]').onclick = close;
       modal.addEventListener("click", function(event){ if (event.target === modal) close(); });
-      modal.querySelector('[data-share="whatsapp"]').onclick = function(){ launch("com.whatsapp", "whatsapp", "send?text=" + encodedText); };
-      modal.querySelector('[data-share="business"]').onclick = function(){ launch("com.whatsapp.w4b", "whatsapp", "send?text=" + encodedText); };
-      modal.querySelector('[data-share="facebook"]').onclick = function(){ launch("com.facebook.katana", "fb", "share?text=" + encodedText); };
-      modal.querySelector('[data-share="facebookLite"]').onclick = function(){ launch("com.facebook.lite", "fb", "share?text=" + encodedText); };
-      modal.querySelector('[data-share="instagram"]').onclick = function(){ launch("com.instagram.android", "instagram", "app"); };
-      modal.querySelector('[data-share="instagramLite"]').onclick = function(){ launch("com.instagram.lite", "instagram", "app"); };
+      modal.querySelector('[data-share="whatsapp"]').onclick = function(){ launch("com.whatsapp", shareText); };
+      modal.querySelector('[data-share="business"]').onclick = function(){ launch("com.whatsapp.w4b", shareText); };
+      modal.querySelector('[data-share="facebook"]').onclick = function(){ launch("com.facebook.katana", shareText); };
+      modal.querySelector('[data-share="facebookLite"]').onclick = function(){ launch("com.facebook.lite", shareText); };
+      modal.querySelector('[data-share="instagram"]').onclick = function(){ launch("com.instagram.android", shareText); };
+      modal.querySelector('[data-share="instagramLite"]').onclick = function(){ launch("com.instagram.lite", shareText); };
     }
     function shareApp() { openShareOptions(); }
 
