@@ -1,9 +1,13 @@
-const CACHE_NAME = 'spotted-unila-cache-v255';
+const CACHE_NAME = 'spotted-unila-cache-v256';
 const APP_SHELL = [
   './',
   './index.html',
   './file_00000000ff7c820e99efc0caf176d4c1-clean.png',
   './capybara-walker.png',
+  './capybara-walk-4.png',
+  './capybara-walk-3.png',
+  './capybara-walk-2.png',
+  './capybara-walk-1.png',
   './icon-192.png',
   './icon-512.png',
   './favicon.png',

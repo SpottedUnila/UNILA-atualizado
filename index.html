@@ -151,30 +151,49 @@ body::after{
   bottom:32%;
   width:min(116px, 30vw);
   height:auto;
-  object-fit:contain;
-  object-position:center;
-  background:transparent;
   filter:drop-shadow(0 4px 2px rgba(30,75,35,.28));
-  animation:capybaraWalk 18s linear infinite;
+  animation:capybaraWalkAcross 18s linear infinite;
   will-change:transform;
 }
-@keyframes capybaraWalk{
-  0%{transform:translateX(0) translateY(0) scaleX(1);}
-  8%{transform:translateX(8vw) translateY(-2px) scaleX(1);}
-  16%{transform:translateX(16vw) translateY(0) scaleX(1);}
-  24%{transform:translateX(24vw) translateY(-2px) scaleX(1);}
-  32%{transform:translateX(32vw) translateY(0) scaleX(1);}
-  40%{transform:translateX(40vw) translateY(-2px) scaleX(1);}
-  48%{transform:translateX(48vw) translateY(0) scaleX(1);}
-  56%{transform:translateX(56vw) translateY(-2px) scaleX(1);}
-  64%{transform:translateX(64vw) translateY(0) scaleX(1);}
-  72%{transform:translateX(72vw) translateY(-2px) scaleX(1);}
-  80%{transform:translateX(80vw) translateY(0) scaleX(1);}
-  88%{transform:translateX(92vw) translateY(-2px) scaleX(1);}
-  89%{transform:translateX(92vw) translateY(-2px) scaleX(-1);}
+#walkingCapybara img{
+  position:absolute;
+  inset:0;
+  display:block;
+  width:100%;
+  height:auto;
+  object-fit:contain;
+  background:transparent;
+  opacity:0;
+}
+#walkingCapybara img:nth-child(1){animation:capybaraStep1 .72s steps(1,end) infinite;}
+#walkingCapybara img:nth-child(2){animation:capybaraStep2 .72s steps(1,end) infinite;}
+#walkingCapybara img:nth-child(3){animation:capybaraStep3 .72s steps(1,end) infinite;}
+#walkingCapybara img:nth-child(4){animation:capybaraStep4 .72s steps(1,end) infinite;}
+@keyframes capybaraWalkAcross{
+  0%{transform:translateX(0) translateY(0);}
+  8%{transform:translateX(8vw) translateY(-1px);}
+  16%{transform:translateX(16vw) translateY(0);}
+  24%{transform:translateX(24vw) translateY(-1px);}
+  32%{transform:translateX(32vw) translateY(0);}
+  40%{transform:translateX(40vw) translateY(-1px);}
+  48%{transform:translateX(48vw) translateY(0);}
+  56%{transform:translateX(56vw) translateY(-1px);}
+  64%{transform:translateX(64vw) translateY(0);}
+  72%{transform:translateX(72vw) translateY(-1px);}
+  80%{transform:translateX(80vw) translateY(0);}
+  88%{transform:translateX(92vw) translateY(-1px);}
+  89%{transform:translateX(92vw) translateY(-1px) scaleX(-1);}
   100%{transform:translateX(0) translateY(0) scaleX(-1);}
 }
-@media (prefers-reduced-motion:reduce){.bg-fixa #walkingCapybara{animation:none;left:6vw;}}
+@keyframes capybaraStep1{0%,24.99%{opacity:1;}25%,100%{opacity:0;}}
+@keyframes capybaraStep2{0%,24.99%{opacity:0;}25%,49.99%{opacity:1;}50%,100%{opacity:0;}}
+@keyframes capybaraStep3{0%,49.99%{opacity:0;}50%,74.99%{opacity:1;}75%,100%{opacity:0;}}
+@keyframes capybaraStep4{0%,74.99%{opacity:0;}75%,100%{opacity:1;}}
+@media (prefers-reduced-motion:reduce){
+  .bg-fixa #walkingCapybara{animation:none;left:6vw;}
+  #walkingCapybara img{animation:none!important;opacity:0;}
+  #walkingCapybara img:first-child{opacity:1;}
+}
 .bg-fixa img{
   position:absolute;
   inset:0;
@@ -1258,7 +1277,12 @@ gtag('config', 'G-FJT3X93608');
 <body>
   <div class="bg-fixa">
     <img id="appBackgroundImage" src="file_00000000ff7c820e99efc0caf176d4c1-clean.png" alt="" aria-hidden="true">
-    <img id="walkingCapybara" src="capybara-walker.png" alt="" aria-hidden="true">
+    <div id="walkingCapybara" aria-hidden="true">
+      <img src="capybara-walk-1.png" alt="">
+      <img src="capybara-walk-2.png" alt="">
+      <img src="capybara-walk-3.png" alt="">
+      <img src="capybara-walk-4.png" alt="">
+    </div>
   </div>
   <div id="aranduTag" aria-hidden="true">💜</div>
 
@@ -2125,7 +2149,7 @@ gtag('config', 'G-FJT3X93608');
     // PWA UPDATE LOGIC
     function setupPWAUpdate() {
       if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./service-worker37.js?v=233', { updateViaCache: 'none' }).then(reg => {
+        navigator.serviceWorker.register('./service-worker37.js?v=234', { updateViaCache: 'none' }).then(reg => {
           reg.update();
           reg.addEventListener('updatefound', () => {
             const newWorker = reg.installing;
