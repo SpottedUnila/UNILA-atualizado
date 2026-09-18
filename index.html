@@ -2747,17 +2747,46 @@ gtag('config', 'G-FJT3X93608');
         const opened = window.open(url, "_blank", "noopener,noreferrer");
         if (!opened) window.location.href = url;
       };
+      const copyShareText = async function(){
+        try {
+          if (navigator.clipboard && window.isSecureContext) {
+            await navigator.clipboard.writeText(shareText);
+          } else {
+            const helper = document.createElement("textarea");
+            helper.value = shareText;
+            helper.setAttribute("readonly", "");
+            helper.style.position = "fixed";
+            helper.style.opacity = "0";
+            document.body.appendChild(helper);
+            helper.select();
+            document.execCommand("copy");
+            helper.remove();
+          }
+          if (typeof appAlert === "function") appAlert("Link copiado. Cole em qualquer aplicativo para compartilhar.");
+        } catch (error) {
+          console.warn("Não foi possível copiar o link de compartilhamento.", error);
+          if (typeof appAlert === "function") appAlert("Copie o link do aplicativo: " + siteUrl);
+        }
+      };
       const shareNative = async function(){
-        if (navigator.share) {
+        if (navigator.share && typeof navigator.share === "function") {
           try {
             await navigator.share({ title: "Spotted", text: shareText, url: siteUrl });
           } catch (error) {
             if (!error || error.name !== "AbortError") console.warn("Compartilhamento cancelado ou indisponível.", error);
           }
-        } else {
-          openShareUrl("mailto:?subject=" + encodeURIComponent("Confira o Spotted") + "&body=" + encodedText);
+          close();
+          return;
+        }
+        // Em Android, este seletor pode incluir Bluetooth, Quick Share e outros apps.
+        // A página não controla o Bluetooth diretamente; apenas entrega o texto ao sistema.
+        if (/Android/i.test(navigator.userAgent)) {
+          close();
+          window.location.href = "intent:#Intent;action=android.intent.action.SEND;type=text/plain;S.android.intent.extra.TEXT=" + encodedText + ";end";
+          return;
         }
         close();
+        await copyShareText();
       };
       modal.querySelector('[data-share="close"]').onclick = close;
       modal.addEventListener("click", function(event){ if (event.target === modal) close(); });
