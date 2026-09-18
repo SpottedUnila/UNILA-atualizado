@@ -2732,37 +2732,12 @@ gtag('config', 'G-FJT3X93608');
       modal.className = "share-options-modal";
       modal.innerHTML = '<div class="share-options-card" role="dialog" aria-modal="true" aria-label="Compartilhar Spotted">' +
         '<h3>Compartilhar Spotted</h3>' +
-        '<p>Escolha onde deseja compartilhar o aplicativo. Os botões abrem o aplicativo instalado ou a página oficial do serviço.</p>' +
+        '<p>O Android abrirá o menu de compartilhamento para você escolher WhatsApp, Facebook, Instagram ou outro aplicativo.</p>' +
         '<div class="share-options-grid">' +
-        '<button class="share-whatsapp" data-share="whatsapp">💬 WhatsApp</button>' +
-        '<button class="share-whatsapp" data-share="business">💼 WhatsApp Business</button>' +
-        '<button class="share-facebook" data-share="facebook">📘 Facebook</button>' +
-        '<button class="share-facebook" data-share="facebookLite">📘 Facebook Lite</button>' +
-        '<button data-share="instagram">📸 Instagram</button>' +
-        '<button data-share="instagramLite">📸 Instagram Lite</button>' +
-        '<button class="share-native" data-share="native">📤 Compartilhar pelo sistema</button>' +
+        '<button class="share-native" data-share="native">📤 Compartilhar aplicativo</button>' +
         '</div><button class="share-options-close" data-share="close">Cancelar</button></div>';
       document.body.appendChild(modal);
       const close = function(){ modal.remove(); };
-      const openShareUrl = function(url){
-        close();
-        const opened = window.open(url, "_blank", "noopener,noreferrer");
-        if (!opened) window.location.href = url;
-      };
-      const openAppOnly = function(appIntent, iosUrl){
-        close();
-        const isAndroid = /Android/i.test(navigator.userAgent);
-        const target = isAndroid ? appIntent : iosUrl;
-        // Um clique real em um link é mais compatível com Chrome Android,
-        // PWA e WebView do que atribuir window.location durante um handler.
-        const launcher = document.createElement("a");
-        launcher.href = target;
-        launcher.rel = "noopener";
-        launcher.style.display = "none";
-        document.body.appendChild(launcher);
-        launcher.click();
-        window.setTimeout(function(){ launcher.remove(); }, 1200);
-      };
       const copyShareText = async function(){
         try {
           if (navigator.clipboard && window.isSecureContext) {
@@ -2784,76 +2759,14 @@ gtag('config', 'G-FJT3X93608');
           if (typeof appAlert === "function") appAlert("Copie o link do aplicativo: " + siteUrl);
         }
       };
-      const createShareCard = function(){
-        return new Promise(function(resolve){
-          const canvas = document.createElement("canvas");
-          canvas.width = 1200;
-          canvas.height = 1500;
-          const context = canvas.getContext("2d");
-          const gradient = context.createLinearGradient(0, 0, 1200, 1500);
-          gradient.addColorStop(0, "#160d25");
-          gradient.addColorStop(0.55, "#4c1d95");
-          gradient.addColorStop(1, "#0f172a");
-          context.fillStyle = gradient;
-          context.fillRect(0, 0, canvas.width, canvas.height);
-          context.fillStyle = "#e9d5ff";
-          context.textAlign = "center";
-          context.font = "900 104px Arial";
-          context.fillText("SPOTTED", 600, 270);
-          context.fillStyle = "#ffffff";
-          context.font = "700 52px Arial";
-          context.fillText("Confira o aplicativo", 600, 410);
-          context.fillStyle = "#d8b4fe";
-          context.font = "500 34px Arial";
-          context.fillText("Baixe para Android pelo Drive", 600, 510);
-          context.font = "500 26px Arial";
-          context.fillStyle = "#f8fafc";
-          context.fillText("Link no texto da publicação", 600, 590);
-          context.fillStyle = "rgba(255,255,255,.12)";
-          context.roundRect(100, 760, 1000, 360, 32);
-          context.fill();
-          context.fillStyle = "#ffffff";
-          context.font = "700 36px Arial";
-          context.fillText("Spotted App", 600, 900);
-          context.fillStyle = "#c4b5fd";
-          context.font = "500 26px Arial";
-          context.fillText("Compartilhe com seus amigos", 600, 980);
-          canvas.toBlob(function(blob){
-            resolve(blob ? new File([blob], "spotted-app.png", {type:"image/png"}) : null);
-          }, "image/png");
-        });
-      };
-      const shareAsPost = async function(){
-        const card = await createShareCard();
-        const shareData = { title: "Spotted", text: shareText, url: siteUrl };
-        if (card) shareData.files = [card];
-        if (navigator.share && (!card || !navigator.canShare || navigator.canShare({files:[card]}))) {
-          try {
-            await navigator.share(shareData);
-          } catch (error) {
-            if (!error || error.name !== "AbortError") console.warn("Compartilhamento cancelado ou indisponível.", error);
-          }
-          close();
-          return;
-        }
-        close();
-        if (typeof appAlert === "function") appAlert("Seu navegador não permite enviar uma imagem como post. Use o botão Compartilhar pelo sistema do Android.");
-      };
       const shareNative = async function(){
         if (navigator.share && typeof navigator.share === "function") {
           try {
-            await navigator.share({ title: "Spotted", text: shareText, url: siteUrl });
+            await navigator.share({ title: "Confira o Spotted", text: shareText });
           } catch (error) {
             if (!error || error.name !== "AbortError") console.warn("Compartilhamento cancelado ou indisponível.", error);
           }
           close();
-          return;
-        }
-        // Em Android, este seletor pode incluir Bluetooth, Quick Share e outros apps.
-        // A página não controla o Bluetooth diretamente; apenas entrega o texto ao sistema.
-        if (/Android/i.test(navigator.userAgent)) {
-          close();
-          window.location.href = "intent:#Intent;action=android.intent.action.SEND;type=text/plain;S.android.intent.extra.TEXT=" + encodedText + ";end";
           return;
         }
         close();
@@ -2861,14 +2774,6 @@ gtag('config', 'G-FJT3X93608');
       };
       modal.querySelector('[data-share="close"]').onclick = close;
       modal.addEventListener("click", function(event){ if (event.target === modal) close(); });
-      // URLs oficiais funcionam em Android, iOS e desktop; quando o app estiver instalado,
-      // o sistema operacional pode encaminhá-las diretamente para o aplicativo.
-      modal.querySelector('[data-share="whatsapp"]').onclick = function(){ openAppOnly("whatsapp://send?text=" + encodedText, "whatsapp://send?text=" + encodedText); };
-      modal.querySelector('[data-share="business"]').onclick = function(){ openAppOnly("whatsapp://send?text=" + encodedText, "whatsapp://send?text=" + encodedText); };
-      modal.querySelector('[data-share="facebook"]').onclick = shareAsPost;
-      modal.querySelector('[data-share="facebookLite"]').onclick = shareAsPost;
-      modal.querySelector('[data-share="instagram"]').onclick = shareAsPost;
-      modal.querySelector('[data-share="instagramLite"]').onclick = shareAsPost;
       modal.querySelector('[data-share="native"]').onclick = shareNative;
     }
     function shareApp() { openShareOptions(); }
