@@ -188,8 +188,8 @@ body::after{
   width:min(116px, 30vw);
   height:auto;
   filter:drop-shadow(0 4px 2px rgba(30,75,35,.28));
-  animation:capybaraWalkAcross 18s linear infinite;
-  will-change:transform;
+  animation:capybaraWalkAcross 18s linear infinite, capybaraWalkVisibility 18s linear infinite;
+  will-change:transform,opacity;
 }
 #walkingCapybara img{
   position:absolute;
@@ -205,6 +205,10 @@ body::after{
 #walkingCapybara img:nth-child(2){animation:capybaraStep2 .72s steps(1,end) infinite;}
 #walkingCapybara img:nth-child(3){animation:capybaraStep3 .72s steps(1,end) infinite;}
 #walkingCapybara img:nth-child(4){animation:capybaraStep4 .72s steps(1,end) infinite;}
+@keyframes capybaraWalkVisibility{
+  0%,34%{opacity:0;}
+  36%,100%{opacity:1;}
+}
 @keyframes capybaraWalkAcross{
   0%{transform:translateX(0) translateY(0);}
   8%{transform:translateX(8vw) translateY(-1px);}
@@ -2187,7 +2191,7 @@ gtag('config', 'G-FJT3X93608');
     // PWA UPDATE LOGIC
     function setupPWAUpdate() {
       if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./service-worker37.js?v=235', { updateViaCache: 'none' }).then(reg => {
+        navigator.serviceWorker.register('./service-worker37.js?v=236', { updateViaCache: 'none' }).then(reg => {
           reg.update();
           reg.addEventListener('updatefound', () => {
             const newWorker = reg.installing;
