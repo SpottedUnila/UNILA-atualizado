@@ -143,55 +143,17 @@ body::after{
   pointer-events:none;
 }
 
-.bg-fixa #campusPond{
-  position:absolute;
-  inset:auto;
-  z-index:0;
-  left:5vw;
-  bottom:29%;
-  width:min(245px, 64vw);
-  height:auto;
-  object-fit:contain;
-  background:transparent;
-  opacity:.95;
-}
-.bg-fixa #swimmingCapybara{
-  position:absolute;
-  inset:auto;
-  z-index:2;
-  left:17vw;
-  bottom:33%;
-  width:min(98px, 26vw);
-  height:auto;
-  object-fit:contain;
-  background:transparent;
-  filter:drop-shadow(0 4px 2px rgba(20,70,80,.25));
-  animation:capybaraSwimSequence 18s linear infinite;
-  will-change:transform,opacity;
-}
-@keyframes capybaraSwimSequence{
-  0%,34%{opacity:1;transform:translateX(0) translateY(0);}
-  8%{transform:translateX(12px) translateY(-3px);}
-  16%{transform:translateX(24px) translateY(1px);}
-  24%{transform:translateX(12px) translateY(-2px);}
-  33%{opacity:1;transform:translateX(0) translateY(0);}
-  36%{opacity:0;transform:translateX(0) translateY(12px);}
-  100%{opacity:0;transform:translateX(0) translateY(12px);}
-}
-@media (prefers-reduced-motion:reduce){.bg-fixa #swimmingCapybara{animation:none;opacity:1;}}
-.bg-fixa #walkingCapybara{
+.bg-fixa #stationaryCapybara{
   position:absolute;
   inset:auto;
   z-index:1;
-  left:-18vw;
+  left:6vw;
   bottom:32%;
   width:min(116px, 30vw);
   height:auto;
   filter:drop-shadow(0 4px 2px rgba(30,75,35,.28));
-  animation:capybaraWalkAcross 18s linear infinite, capybaraWalkVisibility 18s linear infinite;
-  will-change:transform,opacity;
 }
-#walkingCapybara img{
+#stationaryCapybara img{
   position:absolute;
   inset:0;
   display:block;
@@ -199,40 +161,23 @@ body::after{
   height:auto;
   object-fit:contain;
   background:transparent;
-  opacity:0;
 }
-#walkingCapybara img:nth-child(1){animation:capybaraStep1 .72s steps(1,end) infinite;}
-#walkingCapybara img:nth-child(2){animation:capybaraStep2 .72s steps(1,end) infinite;}
-#walkingCapybara img:nth-child(3){animation:capybaraStep3 .72s steps(1,end) infinite;}
-#walkingCapybara img:nth-child(4){animation:capybaraStep4 .72s steps(1,end) infinite;}
-@keyframes capybaraWalkVisibility{
-  0%,34%{opacity:0;}
-  36%,100%{opacity:1;}
+#stationaryCapybara img:first-child{animation:capybaraLookUniversity 15s ease-in-out infinite;}
+#stationaryCapybara img:last-child{animation:capybaraLookUser 15s ease-in-out infinite;}
+@keyframes capybaraLookUniversity{
+  0%,30%{opacity:1;}
+  33%,96%{opacity:0;}
+  100%{opacity:1;}
 }
-@keyframes capybaraWalkAcross{
-  0%{transform:translateX(0) translateY(0);}
-  8%{transform:translateX(8vw) translateY(-1px);}
-  16%{transform:translateX(16vw) translateY(0);}
-  24%{transform:translateX(24vw) translateY(-1px);}
-  32%{transform:translateX(32vw) translateY(0);}
-  40%{transform:translateX(40vw) translateY(-1px);}
-  48%{transform:translateX(48vw) translateY(0);}
-  56%{transform:translateX(56vw) translateY(-1px);}
-  64%{transform:translateX(64vw) translateY(0);}
-  72%{transform:translateX(72vw) translateY(-1px);}
-  80%{transform:translateX(80vw) translateY(0);}
-  88%{transform:translateX(92vw) translateY(-1px);}
-  89%{transform:translateX(92vw) translateY(-1px) scaleX(-1);}
-  100%{transform:translateX(0) translateY(0) scaleX(-1);}
+@keyframes capybaraLookUser{
+  0%,27%{opacity:0;}
+  30%,96%{opacity:1;}
+  100%{opacity:0;}
 }
-@keyframes capybaraStep1{0%,24.99%{opacity:1;}25%,100%{opacity:0;}}
-@keyframes capybaraStep2{0%,24.99%{opacity:0;}25%,49.99%{opacity:1;}50%,100%{opacity:0;}}
-@keyframes capybaraStep3{0%,49.99%{opacity:0;}50%,74.99%{opacity:1;}75%,100%{opacity:0;}}
-@keyframes capybaraStep4{0%,74.99%{opacity:0;}75%,100%{opacity:1;}}
 @media (prefers-reduced-motion:reduce){
-  .bg-fixa #walkingCapybara{animation:none;left:6vw;}
-  #walkingCapybara img{animation:none!important;opacity:0;}
-  #walkingCapybara img:first-child{opacity:1;}
+  #stationaryCapybara img{animation:none!important;}
+  #stationaryCapybara img:first-child{opacity:1;}
+  #stationaryCapybara img:last-child{opacity:0;}
 }
 .bg-fixa img{
   position:absolute;
@@ -1317,13 +1262,9 @@ gtag('config', 'G-FJT3X93608');
 <body>
   <div class="bg-fixa">
     <img id="appBackgroundImage" src="file_00000000ff7c820e99efc0caf176d4c1-clean.png" alt="" aria-hidden="true">
-    <img id="campusPond" src="campus-pond.png" alt="" aria-hidden="true">
-    <img id="swimmingCapybara" src="capybara-swimming.png" alt="" aria-hidden="true">
-    <div id="walkingCapybara" aria-hidden="true">
-      <img src="capybara-walk-1.png" alt="">
-      <img src="capybara-walk-2.png" alt="">
-      <img src="capybara-walk-3.png" alt="">
-      <img src="capybara-walk-4.png" alt="">
+    <div id="stationaryCapybara" aria-hidden="true">
+      <img src="capybara-walker.png" alt="">
+      <img src="capybara-looking-user.png" alt="">
     </div>
   </div>
   <div id="aranduTag" aria-hidden="true">💜</div>
@@ -2191,7 +2132,7 @@ gtag('config', 'G-FJT3X93608');
     // PWA UPDATE LOGIC
     function setupPWAUpdate() {
       if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./service-worker37.js?v=236', { updateViaCache: 'none' }).then(reg => {
+        navigator.serviceWorker.register('./service-worker37.js?v=237', { updateViaCache: 'none' }).then(reg => {
           reg.update();
           reg.addEventListener('updatefound', () => {
             const newWorker = reg.installing;
