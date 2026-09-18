@@ -143,6 +143,42 @@ body::after{
   pointer-events:none;
 }
 
+.bg-fixa #campusPond{
+  position:absolute;
+  inset:auto;
+  z-index:0;
+  left:5vw;
+  bottom:29%;
+  width:min(245px, 64vw);
+  height:auto;
+  object-fit:contain;
+  background:transparent;
+  opacity:.95;
+}
+.bg-fixa #swimmingCapybara{
+  position:absolute;
+  inset:auto;
+  z-index:2;
+  left:17vw;
+  bottom:33%;
+  width:min(98px, 26vw);
+  height:auto;
+  object-fit:contain;
+  background:transparent;
+  filter:drop-shadow(0 4px 2px rgba(20,70,80,.25));
+  animation:capybaraSwimSequence 18s linear infinite;
+  will-change:transform,opacity;
+}
+@keyframes capybaraSwimSequence{
+  0%,34%{opacity:1;transform:translateX(0) translateY(0);}
+  8%{transform:translateX(12px) translateY(-3px);}
+  16%{transform:translateX(24px) translateY(1px);}
+  24%{transform:translateX(12px) translateY(-2px);}
+  33%{opacity:1;transform:translateX(0) translateY(0);}
+  36%{opacity:0;transform:translateX(0) translateY(12px);}
+  100%{opacity:0;transform:translateX(0) translateY(12px);}
+}
+@media (prefers-reduced-motion:reduce){.bg-fixa #swimmingCapybara{animation:none;opacity:1;}}
 .bg-fixa #walkingCapybara{
   position:absolute;
   inset:auto;
@@ -1277,6 +1313,8 @@ gtag('config', 'G-FJT3X93608');
 <body>
   <div class="bg-fixa">
     <img id="appBackgroundImage" src="file_00000000ff7c820e99efc0caf176d4c1-clean.png" alt="" aria-hidden="true">
+    <img id="campusPond" src="campus-pond.png" alt="" aria-hidden="true">
+    <img id="swimmingCapybara" src="capybara-swimming.png" alt="" aria-hidden="true">
     <div id="walkingCapybara" aria-hidden="true">
       <img src="capybara-walk-1.png" alt="">
       <img src="capybara-walk-2.png" alt="">
@@ -2149,7 +2187,7 @@ gtag('config', 'G-FJT3X93608');
     // PWA UPDATE LOGIC
     function setupPWAUpdate() {
       if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./service-worker37.js?v=234', { updateViaCache: 'none' }).then(reg => {
+        navigator.serviceWorker.register('./service-worker37.js?v=235', { updateViaCache: 'none' }).then(reg => {
           reg.update();
           reg.addEventListener('updatefound', () => {
             const newWorker = reg.installing;
