@@ -143,6 +143,37 @@ body::after{
   pointer-events:none;
 }
 
+.bg-fixa #walkingCapybara{
+  position:absolute;
+  z-index:1;
+  left:-18vw;
+  bottom:32%;
+  width:min(116px, 30vw);
+  height:auto;
+  object-fit:contain;
+  object-position:center;
+  background:transparent;
+  filter:drop-shadow(0 4px 2px rgba(30,75,35,.28));
+  animation:capybaraWalk 18s linear infinite;
+  will-change:transform;
+}
+@keyframes capybaraWalk{
+  0%{transform:translateX(0) translateY(0) scaleX(1);}
+  8%{transform:translateX(8vw) translateY(-2px) scaleX(1);}
+  16%{transform:translateX(16vw) translateY(0) scaleX(1);}
+  24%{transform:translateX(24vw) translateY(-2px) scaleX(1);}
+  32%{transform:translateX(32vw) translateY(0) scaleX(1);}
+  40%{transform:translateX(40vw) translateY(-2px) scaleX(1);}
+  48%{transform:translateX(48vw) translateY(0) scaleX(1);}
+  56%{transform:translateX(56vw) translateY(-2px) scaleX(1);}
+  64%{transform:translateX(64vw) translateY(0) scaleX(1);}
+  72%{transform:translateX(72vw) translateY(-2px) scaleX(1);}
+  80%{transform:translateX(80vw) translateY(0) scaleX(1);}
+  88%{transform:translateX(92vw) translateY(-2px) scaleX(1);}
+  89%{transform:translateX(92vw) translateY(-2px) scaleX(-1);}
+  100%{transform:translateX(0) translateY(0) scaleX(-1);}
+}
+@media (prefers-reduced-motion:reduce){.bg-fixa #walkingCapybara{animation:none;left:6vw;}}
 .bg-fixa img{
   position:absolute;
   inset:0;
@@ -1225,7 +1256,8 @@ gtag('config', 'G-FJT3X93608');
 
 <body>
   <div class="bg-fixa">
-    <img id="appBackgroundImage" src="file_00000000ff7c820e99efc0caf176d4c1.png" alt="" aria-hidden="true">
+    <img id="appBackgroundImage" src="file_00000000ff7c820e99efc0caf176d4c1-clean.png" alt="" aria-hidden="true">
+    <img id="walkingCapybara" src="capybara-walker.png" alt="" aria-hidden="true">
   </div>
   <div id="aranduTag" aria-hidden="true">💜</div>
 
@@ -2092,7 +2124,7 @@ gtag('config', 'G-FJT3X93608');
     // PWA UPDATE LOGIC
     function setupPWAUpdate() {
       if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./service-worker37.js?v=231', { updateViaCache: 'none' }).then(reg => {
+        navigator.serviceWorker.register('./service-worker37.js?v=232', { updateViaCache: 'none' }).then(reg => {
           reg.update();
           reg.addEventListener('updatefound', () => {
             const newWorker = reg.installing;
