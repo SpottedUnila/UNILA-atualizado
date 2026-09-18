@@ -607,7 +607,7 @@ button:hover{
 
 #dateBar{
   position:fixed;
-  top:calc(50% - 95px);
+  top:calc(50% + 105px);
   bottom:auto;
   left:11px;
   right:auto;
@@ -2081,7 +2081,7 @@ gtag('config', 'G-FJT3X93608');
     // PWA UPDATE LOGIC
     function setupPWAUpdate() {
       if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./service-worker37.js?v=215', { updateViaCache: 'none' }).then(reg => {
+        navigator.serviceWorker.register('./service-worker37.js?v=216', { updateViaCache: 'none' }).then(reg => {
           reg.update();
           reg.addEventListener('updatefound', () => {
             const newWorker = reg.installing;
