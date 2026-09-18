@@ -252,7 +252,7 @@ button:hover{
 .official-source-card small{display:block;color:#e5e7eb;line-height:1.45}
 .official-source-card:hover,.official-source-card:focus{background:rgba(34,197,94,.2);outline:2px solid #22c55e}
 #dynamicPage{
-  padding-top:105px;
+  padding-top:140px;
 }
 /* No celular, Chat e Desapega usam toda a largura útil do WebView. */
 #chatPage,
@@ -2080,7 +2080,7 @@ gtag('config', 'G-FJT3X93608');
     // PWA UPDATE LOGIC
     function setupPWAUpdate() {
       if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./service-worker37.js?v=241', { updateViaCache: 'none' }).then(reg => {
+        navigator.serviceWorker.register('./service-worker37.js?v=242', { updateViaCache: 'none' }).then(reg => {
           reg.update();
           reg.addEventListener('updatefound', () => {
             const newWorker = reg.installing;
