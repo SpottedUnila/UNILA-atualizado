@@ -2713,18 +2713,18 @@ gtag('config', 'G-FJT3X93608');
         "Para Android, baixe pelo Drive ou entre pelo link no site.\n\n" +
         "Download para Android (Drive):\n" + driveUrl + "\n\n" +
         "Site para iOS e qualquer dispositivo:\n" + siteUrl;
-      const whatsappUrl = "https://api.whatsapp.com/send?text=" + encodeURIComponent(shareText);
-      // A API Web Share é a opção mais confiável dentro do TWA; se não existir,
-      // abre diretamente o WhatsApp (app instalado ou WhatsApp Web).
-      if (navigator.share) {
-        navigator.share({ title: "Spotted", text: shareText, url: siteUrl })
-          .catch(function(error) {
-            if (error && error.name === "AbortError") return;
-            window.location.assign(whatsappUrl);
-          });
-        return;
-      }
-      window.location.assign(whatsappUrl);
+      const encodedText = encodeURIComponent(shareText);
+      const whatsappAppUrl = "whatsapp://send?text=" + encodedText;
+      const whatsappWebUrl = "https://wa.me/?text=" + encodedText;
+      let fallbackTimer = setTimeout(function() {
+        window.location.assign(whatsappWebUrl);
+      }, 1800);
+      const cancelFallback = function() {
+        clearTimeout(fallbackTimer);
+        document.removeEventListener("visibilitychange", cancelFallback);
+      };
+      document.addEventListener("visibilitychange", cancelFallback, { once: true });
+      window.location.href = whatsappAppUrl;
     }
 
     // CHAT LOGIC
@@ -4216,16 +4216,18 @@ padding:0 2px;">↩ Responder</button>`;
           "Para Android, baixe pelo Drive ou entre pelo link no site." + NL + NL +
           "Download para Android (Drive):" + NL + driveUrl + NL + NL +
           "Site para iOS e qualquer dispositivo:" + NL + siteUrl;
-        var whatsappUrl = "https://api.whatsapp.com/send?text=" + encodeURIComponent(shareText);
-        if (navigator.share) {
-          navigator.share({ title: "Spotted", text: shareText, url: siteUrl })
-            .catch(function(error) {
-              if (error && error.name === "AbortError") return;
-              window.location.assign(whatsappUrl);
-            });
-          return;
-        }
-        window.location.assign(whatsappUrl);
+        var encodedText = encodeURIComponent(shareText);
+        var whatsappAppUrl = "whatsapp://send?text=" + encodedText;
+        var whatsappWebUrl = "https://wa.me/?text=" + encodedText;
+        var fallbackTimer = setTimeout(function() {
+          window.location.assign(whatsappWebUrl);
+        }, 1800);
+        var cancelFallback = function() {
+          clearTimeout(fallbackTimer);
+          document.removeEventListener("visibilitychange", cancelFallback);
+        };
+        document.addEventListener("visibilitychange", cancelFallback, { once: true });
+        window.location.href = whatsappAppUrl;
       };
     }
 
