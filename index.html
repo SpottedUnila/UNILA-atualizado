@@ -2120,7 +2120,7 @@ gtag('config', 'G-FJT3X93608');
     // PWA UPDATE LOGIC
     function setupPWAUpdate() {
       if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./service-worker37.js?v=204', { updateViaCache: 'none' }).then(reg => {
+        navigator.serviceWorker.register('./service-worker37.js?v=205', { updateViaCache: 'none' }).then(reg => {
           reg.update();
           reg.addEventListener('updatefound', () => {
             const newWorker = reg.installing;
@@ -4036,6 +4036,7 @@ padding:0 2px;">↩ Responder</button>`;
     updateDynamicPage();
     translateDynamicUI();
     normalizeVisibleUnila(document.body);
+    applyComplianceTranslations();
   }
 
   function normalizeVisibleUnila(root){
@@ -4322,6 +4323,31 @@ padding:0 2px;">↩ Responder</button>`;
   function currentLabels(){
     var lang = localStorage.getItem("unila_language") || "pt";
     return labels[lang] || labels.pt;
+  }
+  // Traduções adicionais para fluxos de conta, moderação e formulários que são
+  // renderizados fora do conteúdo dinâmico. Mantém todas as funções existentes.
+  var COMPLIANCE_I18N = {
+    pt: { termsTitle:"Termos de Uso e Segurança", termsText:"Antes de publicar mensagens, respostas, anúncios ou imagens, confirme que você aceita os Termos de Uso. Não publique conteúdo ilegal, ofensivo, discriminatório, sexual, ameaçador ou que viole direitos de terceiros. O aplicativo pode receber denúncias e remover conteúdo inadequado.", termsAccept:"Li e aceito os Termos de Uso e a política de comportamento.", cancel:"Cancelar", accept:"Aceitar e continuar", reportTitle:"Denunciar conteúdo ou usuário", reasonPlaceholder:"Descreva o motivo da denúncia...", sendReport:"Enviar denúncia", confirmAction:"Confirmar ação?", ok:"OK", deleteTitle:"Excluir nick e dados", deleteText:"Digite sua senha para confirmar a exclusão permanente do nick e dos dados relacionados.", password:"Sua senha", show:"Mostrar", hide:"Ocultar", deleteData:"Excluir dados", accountDelete:"Solicitar exclusão dos meus dados", developer:"Desenvolvedor", deleteAccount:"Excluir conta", changeNick:"🔄 Mudar Nick", anonymous:"👤 Enviar Anonimamente", rulesLink:"Ler os Termos de Uso e as regras da comunidade" },
+    fr: { termsTitle:"Conditions d’utilisation et sécurité", termsText:"Avant de publier des messages, réponses, annonces ou images, confirmez que vous acceptez les conditions d’utilisation. Ne publiez pas de contenu illégal, offensant, discriminatoire, sexuel, menaçant ou portant atteinte aux droits d’autrui. L’application peut recevoir des signalements et supprimer les contenus inappropriés.", termsAccept:"J’ai lu et j’accepte les conditions d’utilisation et la politique de comportement.", cancel:"Annuler", accept:"Accepter et continuer", reportTitle:"Signaler un contenu ou un utilisateur", reasonPlaceholder:"Décrivez le motif du signalement...", sendReport:"Envoyer le signalement", confirmAction:"Confirmer l’action ?", ok:"OK", deleteTitle:"Supprimer le pseudo et les données", deleteText:"Saisissez votre mot de passe pour confirmer la suppression définitive du pseudo et des données associées.", password:"Votre mot de passe", show:"Afficher", hide:"Masquer", deleteData:"Supprimer les données", accountDelete:"Demander la suppression de mes données", developer:"Développeur", deleteAccount:"Supprimer le compte", changeNick:"🔄 Changer de pseudo", anonymous:"👤 Envoyer anonymement", rulesLink:"Lire les conditions d’utilisation et les règles de la communauté" },
+    es: { termsTitle:"Términos de uso y seguridad", termsText:"Antes de publicar mensajes, respuestas, anuncios o imágenes, confirma que aceptas los Términos de uso. No publiques contenido ilegal, ofensivo, discriminatorio, sexual, amenazante o que viole los derechos de terceros. La aplicación puede recibir denuncias y eliminar contenido inadecuado.", termsAccept:"He leído y acepto los Términos de uso y la política de comportamiento.", cancel:"Cancelar", accept:"Aceptar y continuar", reportTitle:"Denunciar contenido o usuario", reasonPlaceholder:"Describe el motivo de la denuncia...", sendReport:"Enviar denuncia", confirmAction:"¿Confirmar acción?", ok:"OK", deleteTitle:"Eliminar nick y datos", deleteText:"Escribe tu contraseña para confirmar la eliminación permanente del nick y los datos relacionados.", password:"Tu contraseña", show:"Mostrar", hide:"Ocultar", deleteData:"Eliminar datos", accountDelete:"Solicitar la eliminación de mis datos", developer:"Desarrollador", deleteAccount:"Eliminar cuenta", changeNick:"🔄 Cambiar nick", anonymous:"👤 Enviar anónimamente", rulesLink:"Leer los Términos de uso y las reglas de la comunidad" }
+  };
+  function currentCompliance(){
+    var lang = localStorage.getItem("unila_language") || "pt";
+    return COMPLIANCE_I18N[lang] || COMPLIANCE_I18N.pt;
+  }
+  function applyComplianceTranslations(){
+    var c = currentCompliance();
+    var set = function(sel, value){ var el = document.querySelector(sel); if (el && value) el.textContent = value; };
+    var attr = function(sel, name, value){ var el = document.querySelector(sel); if (el && value) el.setAttribute(name, value); };
+    set("#ugcPolicyTitle", c.termsTitle); set("#ugcPolicyText", c.termsText); set("#ugcPolicyAcceptText", c.termsAccept);
+    set("#ugcPolicyModal .ugc-secondary", c.cancel); set("#ugcPolicyModal button:not(.ugc-secondary)", c.accept);
+    set("#ugcReportTitle", c.reportTitle); set("#ugcReportModal .ugc-secondary", c.cancel); set("#ugcReportModal .ugc-danger", c.sendReport); attr("#ugcReportReason", "placeholder", c.reasonPlaceholder);
+    set("#simpleConfirmMessage", c.confirmAction); set("#simpleConfirmModal .simple-confirm-cancel", c.cancel); set("#simpleConfirmModal .simple-confirm-ok", c.ok);
+    set("#nickDeleteDialogTitle", c.deleteTitle); set("#nickDeleteDialog > div > p", c.deleteText); attr("#nickDeletePasswordInput", "placeholder", c.password);
+    set("#nickDeleteDialog .password-toggle", c.show); set("#nickDeleteDialog button[onclick='closeNickDeleteDialog()']", c.cancel); set("#nickDeleteConfirmBtn", c.deleteData);
+    set("#devPage button[onclick='requestDataDeletion()']", c.accountDelete); set("#deleteNickAccountBtn span", c.deleteAccount); set("#changeNickBtn", c.changeNick); set("label[for='chatAnonymous']", c.anonymous);
+    set("#ugcPolicyModal a", c.rulesLink);
+    document.querySelectorAll(".password-toggle").forEach(function(button){ button.setAttribute("aria-label", c.show); });
   }
   function getNick(){
     try { return typeof nick !== "undefined" ? nick : (localStorage.getItem("chat_nick") || ""); } catch(e) { return localStorage.getItem("chat_nick") || ""; }
