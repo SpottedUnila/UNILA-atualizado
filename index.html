@@ -145,6 +145,7 @@ body::after{
 
 .bg-fixa #walkingCapybara{
   position:absolute;
+  inset:auto;
   z-index:1;
   left:-18vw;
   bottom:32%;
@@ -2124,7 +2125,7 @@ gtag('config', 'G-FJT3X93608');
     // PWA UPDATE LOGIC
     function setupPWAUpdate() {
       if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./service-worker37.js?v=232', { updateViaCache: 'none' }).then(reg => {
+        navigator.serviceWorker.register('./service-worker37.js?v=233', { updateViaCache: 'none' }).then(reg => {
           reg.update();
           reg.addEventListener('updatefound', () => {
             const newWorker = reg.installing;
