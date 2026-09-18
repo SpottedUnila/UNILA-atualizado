@@ -143,31 +143,6 @@ body::after{
   pointer-events:none;
 }
 
-.bg-fixa #stationaryCapybara{
-  position:absolute;
-  inset:auto;
-  z-index:1;
-  left:6vw;
-  bottom:42%;
-  width:min(93px, 24vw);
-  height:auto;
-  filter:drop-shadow(0 4px 2px rgba(30,75,35,.28));
-}
-#stationaryCapybara img{
-  position:absolute;
-  inset:0;
-  display:block;
-  width:100%;
-  height:auto;
-  object-fit:contain;
-  background:transparent;
-}
-#stationaryCapybara img:first-child{opacity:1;}
-#stationaryCapybara img:last-child{display:none;}
-  50%,85%{opacity:1;}
-  100%{opacity:0;}
-}
-
 .bg-fixa img{
   position:absolute;
   inset:0;
@@ -1250,10 +1225,7 @@ gtag('config', 'G-FJT3X93608');
 
 <body>
   <div class="bg-fixa">
-    <img id="appBackgroundImage" src="file_00000000ff7c820e99efc0caf176d4c1-clean.png" alt="" aria-hidden="true">
-    <div id="stationaryCapybara" aria-hidden="true">
-      <img src="capybara-walker.png" alt="">
-    </div>
+    <img id="appBackgroundImage" src="file_00000000ff7c820e99efc0caf176d4c1.png" alt="" aria-hidden="true">
   </div>
   <div id="aranduTag" aria-hidden="true">💜</div>
 
@@ -2120,7 +2092,7 @@ gtag('config', 'G-FJT3X93608');
     // PWA UPDATE LOGIC
     function setupPWAUpdate() {
       if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./service-worker37.js?v=239', { updateViaCache: 'none' }).then(reg => {
+        navigator.serviceWorker.register('./service-worker37.js?v=240', { updateViaCache: 'none' }).then(reg => {
           reg.update();
           reg.addEventListener('updatefound', () => {
             const newWorker = reg.installing;
