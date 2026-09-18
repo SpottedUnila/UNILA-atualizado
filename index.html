@@ -149,7 +149,7 @@ body::after{
   z-index:1;
   left:6vw;
   bottom:42%;
-  width:min(116px, 30vw);
+  width:min(93px, 24vw);
   height:auto;
   filter:drop-shadow(0 4px 2px rgba(30,75,35,.28));
 }
@@ -162,23 +162,12 @@ body::after{
   object-fit:contain;
   background:transparent;
 }
-#stationaryCapybara img:first-child{animation:capybaraLookUniversity 10s ease-in-out infinite;}
-#stationaryCapybara img:last-child{animation:capybaraLookUser 10s ease-in-out infinite;}
-@keyframes capybaraLookUniversity{
-  0%,34%{opacity:1;}
-  50%,85%{opacity:0;}
-  100%{opacity:1;}
-}
-@keyframes capybaraLookUser{
-  0%,35%{opacity:0;}
+#stationaryCapybara img:first-child{opacity:1;}
+#stationaryCapybara img:last-child{display:none;}
   50%,85%{opacity:1;}
   100%{opacity:0;}
 }
-@media (prefers-reduced-motion:reduce){
-  #stationaryCapybara img{animation:none!important;}
-  #stationaryCapybara img:first-child{opacity:1;}
-  #stationaryCapybara img:last-child{opacity:0;}
-}
+
 .bg-fixa img{
   position:absolute;
   inset:0;
@@ -1264,7 +1253,6 @@ gtag('config', 'G-FJT3X93608');
     <img id="appBackgroundImage" src="file_00000000ff7c820e99efc0caf176d4c1-clean.png" alt="" aria-hidden="true">
     <div id="stationaryCapybara" aria-hidden="true">
       <img src="capybara-walker.png" alt="">
-      <img src="capybara-looking-user.png" alt="">
     </div>
   </div>
   <div id="aranduTag" aria-hidden="true">💜</div>
@@ -2132,7 +2120,7 @@ gtag('config', 'G-FJT3X93608');
     // PWA UPDATE LOGIC
     function setupPWAUpdate() {
       if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./service-worker37.js?v=238', { updateViaCache: 'none' }).then(reg => {
+        navigator.serviceWorker.register('./service-worker37.js?v=239', { updateViaCache: 'none' }).then(reg => {
           reg.update();
           reg.addEventListener('updatefound', () => {
             const newWorker = reg.installing;
@@ -2757,23 +2745,18 @@ gtag('config', 'G-FJT3X93608');
     function shareApp() {
       const driveUrl = "https://drive.google.com/file/d/103mylmu6SsIXUJJyBBFPNrw0IeCuVxHN/view?usp=drivesdk";
       const siteUrl = "https://spottedunila.github.io/UNILA-atualizado/?v=159";
-      const shareText =
-        "Confira o Spotted!\n\n" +
+      const shareText = "Confira o Spotted!\n\n" +
         "Para Android, baixe pelo Drive ou entre pelo link no site.\n\n" +
         "Download para Android (Drive):\n" + driveUrl + "\n\n" +
         "Site para iOS e qualquer dispositivo:\n" + siteUrl;
       const encodedText = encodeURIComponent(shareText);
-      const whatsappAppUrl = "whatsapp://send?text=" + encodedText;
-      const whatsappWebUrl = "https://wa.me/?text=" + encodedText;
-      let fallbackTimer = setTimeout(function() {
-        window.location.assign(whatsappWebUrl);
-      }, 1800);
-      const cancelFallback = function() {
-        clearTimeout(fallbackTimer);
-        document.removeEventListener("visibilitychange", cancelFallback);
-      };
-      document.addEventListener("visibilitychange", cancelFallback, { once: true });
-      window.location.href = whatsappAppUrl;
+      const intentUrl = "intent://send?text=" + encodedText + "#Intent;scheme=whatsapp;package=com.whatsapp;end";
+      const webUrl = "https://api.whatsapp.com/send?text=" + encodedText;
+      let opened = false;
+      const onHidden = function() { opened = true; clearTimeout(fallback); document.removeEventListener("visibilitychange", onHidden); };
+      const fallback = setTimeout(function() { if (!opened) window.location.href = webUrl; }, 1600);
+      document.addEventListener("visibilitychange", onHidden, { once:true });
+      window.location.href = intentUrl;
     }
 
     // CHAT LOGIC
@@ -4260,23 +4243,18 @@ padding:0 2px;">↩ Responder</button>`;
       window.shareApp = function(){
         var driveUrl = "https://drive.google.com/file/d/103mylmu6SsIXUJJyBBFPNrw0IeCuVxHN/view?usp=drivesdk";
         var siteUrl = "https://spottedunila.github.io/UNILA-atualizado/?v=159";
-        var shareText =
-          "Confira o Spotted!" + NL + NL +
+        var shareText = "Confira o Spotted!" + NL + NL +
           "Para Android, baixe pelo Drive ou entre pelo link no site." + NL + NL +
           "Download para Android (Drive):" + NL + driveUrl + NL + NL +
           "Site para iOS e qualquer dispositivo:" + NL + siteUrl;
         var encodedText = encodeURIComponent(shareText);
-        var whatsappAppUrl = "whatsapp://send?text=" + encodedText;
-        var whatsappWebUrl = "https://wa.me/?text=" + encodedText;
-        var fallbackTimer = setTimeout(function() {
-          window.location.assign(whatsappWebUrl);
-        }, 1800);
-        var cancelFallback = function() {
-          clearTimeout(fallbackTimer);
-          document.removeEventListener("visibilitychange", cancelFallback);
-        };
-        document.addEventListener("visibilitychange", cancelFallback, { once: true });
-        window.location.href = whatsappAppUrl;
+        var intentUrl = "intent://send?text=" + encodedText + "#Intent;scheme=whatsapp;package=com.whatsapp;end";
+        var webUrl = "https://api.whatsapp.com/send?text=" + encodedText;
+        var opened = false;
+        var fallback = setTimeout(function(){ if (!opened) window.location.href = webUrl; }, 1600);
+        var onHidden = function(){ opened = true; clearTimeout(fallback); document.removeEventListener("visibilitychange", onHidden); };
+        document.addEventListener("visibilitychange", onHidden, { once:true });
+        window.location.href = intentUrl;
       };
     }
 
