@@ -1,4 +1,4 @@
-const CACHE_NAME = 'spotted-unila-cache-v236';
+const CACHE_NAME = 'spotted-unila-cache-v237';
 const APP_SHELL = [
   './',
   './index.html',
@@ -45,7 +45,7 @@ self.addEventListener('fetch', event => {
 
   const url = new URL(request.url);
   const isImage = url.pathname.endsWith('/file_00000000ff7c820e99efc0caf176d4c1.png');
-  const isBackground = isImage || url.pathname.endsWith('/slogan.png');
+  const isBackground = isImage;
   const isAppNavigation = request.mode === 'navigate';
 
   if (!isBackground && !isAppNavigation && url.origin !== self.location.origin) return;
