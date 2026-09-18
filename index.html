@@ -1219,6 +1219,8 @@ gtag('config', 'G-FJT3X93608');
 .share-options-grid button{width:100%;padding:12px 9px;border:1px solid rgba(255,255,255,.18);border-radius:12px;background:rgba(255,255,255,.1);color:#fff;font-weight:700;cursor:pointer}
 .share-options-grid button:hover{background:rgba(168,85,247,.3)}
 .share-options-grid .share-native{grid-column:1/-1;background:linear-gradient(135deg,#7c3aed,#2563eb)}
+.share-options-grid .share-whatsapp{background:#128c7e}
+.share-options-grid .share-facebook{background:#1877f2}
 .share-options-close{width:100%;margin-top:12px;padding:10px;border:0;border-radius:10px;background:transparent;color:#c4b5fd;font-weight:700;cursor:pointer}
 </style>
 </head>
@@ -2716,40 +2718,56 @@ gtag('config', 'G-FJT3X93608');
 
     function openShareOptions() {
       const driveUrl = "https://drive.google.com/file/d/103mylmu6SsIXUJJyBBFPNrw0IeCuVxHN/view?usp=drivesdk";
-      const siteUrl = "https://spottedunila.github.io/UNILA-atualizado/?v=159";
+      const fallbackSiteUrl = "https://spottedunila.github.io/UNILA-atualizado/";
+      const siteUrl = window.location.protocol === "http:" || window.location.protocol === "https:"
+        ? window.location.href.split("#")[0]
+        : fallbackSiteUrl;
       const shareText = "Confira o Spotted!\n\n" +
         "Para Android, baixe pelo Drive ou entre pelo link no site.\n\n" +
         "Download para Android (Drive):\n" + driveUrl + "\n\n" +
         "Site para iOS e qualquer dispositivo:\n" + siteUrl;
       const encodedText = encodeURIComponent(shareText);
+      const encodedSiteUrl = encodeURIComponent(siteUrl);
       const modal = document.createElement("div");
       modal.className = "share-options-modal";
       modal.innerHTML = '<div class="share-options-card" role="dialog" aria-modal="true" aria-label="Compartilhar Spotted">' +
         '<h3>Compartilhar Spotted</h3>' +
-        '<p>Escolha somente um aplicativo instalado no Android. Nenhuma opção abre o navegador.</p>' +
+        '<p>Escolha onde deseja compartilhar o aplicativo. Os botões abrem o aplicativo instalado ou a página oficial do serviço.</p>' +
         '<div class="share-options-grid">' +
-        '<button data-share="whatsapp">💬 WhatsApp</button>' +
-        '<button data-share="business">💼 WhatsApp Business</button>' +
-        '<button data-share="facebook">📘 Facebook</button>' +
-        '<button data-share="facebookLite">📘 Facebook Lite</button>' +
-        '<button data-share="instagram">📸 Instagram</button>' +
-        '<button data-share="instagramLite">📸 Instagram Lite</button>' +
+        '<button class="share-whatsapp" data-share="whatsapp">💬 WhatsApp</button>' +
+        '<button class="share-whatsapp" data-share="business">💼 WhatsApp Business</button>' +
+        '<button class="share-facebook" data-share="facebook">📘 Facebook</button>' +
+        '<button class="share-facebook" data-share="facebookLite">📘 Facebook Lite</button>' +
+        '<button class="share-native" data-share="native">📤 Compartilhar pelo sistema</button>' +
         '</div><button class="share-options-close" data-share="close">Cancelar</button></div>';
       document.body.appendChild(modal);
       const close = function(){ modal.remove(); };
-      const launch = function(packageName, text){
+      const openShareUrl = function(url){
         close();
-        const intent = "intent:#Intent;action=android.intent.action.SEND;type=text/plain;package=" + packageName + ";S.android.intent.extra.TEXT=" + encodeURIComponent(text) + ";end";
-        window.location.href = intent;
+        const opened = window.open(url, "_blank", "noopener,noreferrer");
+        if (!opened) window.location.href = url;
+      };
+      const shareNative = async function(){
+        if (navigator.share) {
+          try {
+            await navigator.share({ title: "Spotted", text: shareText, url: siteUrl });
+          } catch (error) {
+            if (!error || error.name !== "AbortError") console.warn("Compartilhamento cancelado ou indisponível.", error);
+          }
+        } else {
+          openShareUrl("mailto:?subject=" + encodeURIComponent("Confira o Spotted") + "&body=" + encodedText);
+        }
+        close();
       };
       modal.querySelector('[data-share="close"]').onclick = close;
       modal.addEventListener("click", function(event){ if (event.target === modal) close(); });
-      modal.querySelector('[data-share="whatsapp"]').onclick = function(){ launch("com.whatsapp", shareText); };
-      modal.querySelector('[data-share="business"]').onclick = function(){ launch("com.whatsapp.w4b", shareText); };
-      modal.querySelector('[data-share="facebook"]').onclick = function(){ launch("com.facebook.katana", shareText); };
-      modal.querySelector('[data-share="facebookLite"]').onclick = function(){ launch("com.facebook.lite", shareText); };
-      modal.querySelector('[data-share="instagram"]').onclick = function(){ launch("com.instagram.android", shareText); };
-      modal.querySelector('[data-share="instagramLite"]').onclick = function(){ launch("com.instagram.lite", shareText); };
+      // URLs oficiais funcionam em Android, iOS e desktop; quando o app estiver instalado,
+      // o sistema operacional pode encaminhá-las diretamente para o aplicativo.
+      modal.querySelector('[data-share="whatsapp"]').onclick = function(){ openShareUrl("https://wa.me/?text=" + encodedText); };
+      modal.querySelector('[data-share="business"]').onclick = function(){ openShareUrl("https://api.whatsapp.com/send?text=" + encodedText); };
+      modal.querySelector('[data-share="facebook"]').onclick = function(){ openShareUrl("https://www.facebook.com/sharer/sharer.php?u=" + encodedSiteUrl + "&quote=" + encodedText); };
+      modal.querySelector('[data-share="facebookLite"]').onclick = function(){ openShareUrl("https://www.facebook.com/sharer/sharer.php?u=" + encodedSiteUrl + "&quote=" + encodedText); };
+      modal.querySelector('[data-share="native"]').onclick = shareNative;
     }
     function shareApp() { openShareOptions(); }
 
