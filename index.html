@@ -937,6 +937,7 @@ button:hover{
   76%{opacity:1;transform:translate(-50%,0);}
   100%{opacity:0;transform:translate(-50%,-8px);visibility:hidden;}
 }
+#aranduTag{position:fixed;top:28px;left:10px;font-size:24px;line-height:40px;height:40px;display:flex;align-items:center;z-index:1001;pointer-events:none;filter:drop-shadow(0 0 7px rgba(236,72,153,.75));}
 #radioPlayer{position:relative;}
 #podcastPlayer{position:relative;}
 .music-player-title{
@@ -1215,8 +1216,7 @@ gtag('config', 'G-FJT3X93608');
   <div class="bg-fixa">
     <img id="appBackgroundImage" src="file_00000000ff7c820e99efc0caf176d4c1.png" alt="" aria-hidden="true">
   </div>
-  <img class="slogan-overlay" src="slogan.png" alt="" aria-hidden="true">
-  <div id="aranduTag" style="position:fixed; top:10px; left:10px; font-size:24px; z-index:1000;">💜</div>
+  <div id="aranduTag" aria-hidden="true">💜</div>
 
   <button class="home-btn" onclick="goHome()">🏠</button>
   
@@ -2081,7 +2081,7 @@ gtag('config', 'G-FJT3X93608');
     // PWA UPDATE LOGIC
     function setupPWAUpdate() {
       if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./service-worker37.js?v=213', { updateViaCache: 'none' }).then(reg => {
+        navigator.serviceWorker.register('./service-worker37.js?v=214', { updateViaCache: 'none' }).then(reg => {
           reg.update();
           reg.addEventListener('updatefound', () => {
             const newWorker = reg.installing;
