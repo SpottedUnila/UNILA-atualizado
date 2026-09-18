@@ -849,17 +849,6 @@ button:hover{
     animation: piscaPonto 1.5s infinite;
 }
 
-/* Indicador Music moderno: espectro cromático e nota musical pulsante. */
-.radio-badge{position:relative;gap:8px;color:#fff;text-shadow:0 0 10px rgba(255,255,255,.32)}
-.radio-dot{position:relative;display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;flex:0 0 22px;border-radius:8px;color:#fff;background:linear-gradient(135deg,#00f5a0 0%,#00d9ff 42%,#a855f7 72%,#ff3d81 100%);box-shadow:0 0 8px rgba(0,245,160,.75),0 0 18px rgba(0,217,255,.42),inset 0 0 7px rgba(255,255,255,.55);animation:musicSpectrum 2.4s ease-in-out infinite}
-.radio-dot::before{content:"♫";position:relative;top:-1px;font-size:14px;line-height:1;font-weight:900;color:#07111f;text-shadow:0 0 7px rgba(255,255,255,.9)}
-.radio-dot::after{content:"";position:absolute;inset:-4px;border:1px solid rgba(0,245,160,.65);border-radius:11px;opacity:.65;animation:musicHalo 2.4s ease-out infinite}
-@keyframes musicSpectrum{0%,100%{transform:translateY(0) rotate(-4deg) scale(.94);filter:hue-rotate(0deg) brightness(.95)}35%{transform:translateY(-1px) rotate(3deg) scale(1.08);filter:hue-rotate(55deg) brightness(1.3)}68%{transform:translateY(1px) rotate(-2deg) scale(1);filter:hue-rotate(125deg) brightness(1.15)}}
-@keyframes musicHalo{0%{transform:scale(.72);opacity:.8}70%,100%{transform:scale(1.45);opacity:0}}
-#radioBtn{border-color:rgba(0,245,160,.48);box-shadow:0 0 10px rgba(0,245,160,.22),0 0 22px rgba(168,85,247,.18),inset 0 0 12px rgba(255,255,255,.05)}
-#radioBtn:hover,#radioBtn:focus-visible{border-color:rgba(0,217,255,.9);box-shadow:0 0 14px rgba(0,217,255,.48),0 0 28px rgba(168,85,247,.28),inset 0 0 14px rgba(255,255,255,.08)}
-#radioBtn:focus-visible{outline:2px solid rgba(0,245,160,.85);outline-offset:3px}
-@media (prefers-reduced-motion:reduce){.radio-dot,.radio-dot::after{animation:none}}
 @keyframes blink{
   0%,100%{opacity:1;}
   50%{opacity:0.3;}
@@ -1010,6 +999,53 @@ button:hover{
   0%,100%{opacity:.35;text-shadow:0 0 2px rgba(34,255,136,.4);}
   50%{opacity:1;text-shadow:0 0 8px rgba(34,255,136,1),0 0 18px rgba(74,255,166,.9);}
 }
+/* Etiquetas sobre os vídeos: visual contemporâneo, separado dos controles superiores. */
+.music-player-title,.podcast-player-title{
+  top:-13px;
+  left:18px;
+  transform:none;
+  min-height:30px;
+  padding:6px 12px 6px 10px;
+  gap:8px;
+  border:1px solid rgba(130,245,255,.58);
+  border-radius:12px 18px 18px 5px;
+  background:linear-gradient(110deg,rgba(7,18,35,.88),rgba(46,16,92,.72) 55%,rgba(8,85,93,.5));
+  color:#ff4058;
+  letter-spacing:1.8px;
+  text-shadow:0 0 5px rgba(255,34,66,.95),0 0 14px rgba(255,34,66,.62);
+  box-shadow:0 5px 18px rgba(0,0,0,.42),0 0 16px rgba(0,217,255,.2),inset 0 1px 0 rgba(255,255,255,.25);
+  overflow:visible;
+  animation:videoLabelFloat 3.2s ease-in-out infinite;
+}
+.music-player-title::before,.podcast-player-title::before{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:20px;
+  height:20px;
+  border-radius:7px;
+  color:#07111f;
+  background:linear-gradient(135deg,#00f5a0,#00d9ff 48%,#b967ff);
+  box-shadow:0 0 9px rgba(0,245,160,.7),0 0 17px rgba(0,217,255,.38);
+  animation:videoLabelIcon 2.2s ease-in-out infinite;
+}
+.music-player-title::before{content:"♫";font-size:14px;text-shadow:0 0 5px rgba(255,255,255,.9)}
+.podcast-player-title::before{content:"◉";font-size:12px;text-shadow:0 0 5px rgba(255,255,255,.9)}
+.music-player-title::after,.podcast-player-title::after{
+  content:"";
+  position:absolute;
+  left:10px;
+  right:10px;
+  bottom:-4px;
+  height:1px;
+  background:linear-gradient(90deg,#00f5a0,#00d9ff,#ff3d81,transparent);
+  opacity:.85;
+  animation:videoLabelScan 2.8s linear infinite;
+}
+@keyframes videoLabelFloat{0%,100%{translate:0 0}50%{translate:0 -1px}}
+@keyframes videoLabelIcon{0%,100%{filter:hue-rotate(0deg) brightness(.95);transform:rotate(-3deg) scale(.95)}50%{filter:hue-rotate(100deg) brightness(1.3);transform:rotate(4deg) scale(1.08)}}
+@keyframes videoLabelScan{0%{transform:scaleX(.35);transform-origin:left;opacity:.25}50%{transform:scaleX(1);opacity:1}100%{transform:scaleX(.35);transform-origin:right;opacity:.25}}
+@media (prefers-reduced-motion:reduce){.music-player-title,.podcast-player-title,.music-player-title::before,.podcast-player-title::before,.music-player-title::after,.podcast-player-title::after{animation:none}}
 
 /* CONTROLE DE IDIOMAS - MESMA APARÊNCIA DOS CONTROLES DE PODCAST E MÚSICA */
 .language-control{
@@ -2131,7 +2167,7 @@ gtag('config', 'G-FJT3X93608');
     // PWA UPDATE LOGIC
     function setupPWAUpdate() {
       if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./service-worker37.js?v=211', { updateViaCache: 'none' }).then(reg => {
+        navigator.serviceWorker.register('./service-worker37.js?v=212', { updateViaCache: 'none' }).then(reg => {
           reg.update();
           reg.addEventListener('updatefound', () => {
             const newWorker = reg.installing;
