@@ -2120,7 +2120,7 @@ gtag('config', 'G-FJT3X93608');
     // PWA UPDATE LOGIC
     function setupPWAUpdate() {
       if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./service-worker37.js?v=206', { updateViaCache: 'none' }).then(reg => {
+        navigator.serviceWorker.register('./service-worker37.js?v=207', { updateViaCache: 'none' }).then(reg => {
           reg.update();
           reg.addEventListener('updatefound', () => {
             const newWorker = reg.installing;
@@ -4036,7 +4036,7 @@ padding:0 2px;">↩ Responder</button>`;
     updateDynamicPage();
     translateDynamicUI();
     normalizeVisibleUnila(document.body);
-    applyComplianceTranslations();
+    if (typeof window.unilaApplyComplianceTranslations === "function") window.unilaApplyComplianceTranslations();
   }
 
   function normalizeVisibleUnila(root){
@@ -4360,6 +4360,10 @@ padding:0 2px;">↩ Responder</button>`;
     attr("#conhecaImageModalClose", "aria-label", extraText("closeImage"));
     document.querySelectorAll(".password-toggle").forEach(function(button){ button.setAttribute("aria-label", c.show); });
   }
+  window.unilaApplyComplianceTranslations = applyComplianceTranslations;
+  // O bloco de conformidade é carregado depois do tradutor principal.
+  // Aplicar imediatamente garante que o aviso inicial já respeite o idioma salvo.
+  applyComplianceTranslations();
   function getNick(){
     try { return typeof nick !== "undefined" ? nick : (localStorage.getItem("chat_nick") || ""); } catch(e) { return localStorage.getItem("chat_nick") || ""; }
   }
