@@ -2749,20 +2749,20 @@ gtag('config', 'G-FJT3X93608');
         const opened = window.open(url, "_blank", "noopener,noreferrer");
         if (!opened) window.location.href = url;
       };
-      const openAndroidApp = function(packageName, appIntent, webUrl){
+      const openAppOnly = function(appIntent, iosUrl, appName){
         close();
-        if (!/Android/i.test(navigator.userAgent)) {
-          window.location.href = webUrl;
-          return;
-        }
-        let leftPage = false;
-        const markOpened = function(){ leftPage = true; };
+        const isAndroid = /Android/i.test(navigator.userAgent);
+        const target = isAndroid ? appIntent : iosUrl;
+        let appOpened = false;
+        const markOpened = function(){ appOpened = true; };
         window.addEventListener("pagehide", markOpened, { once: true });
-        document.addEventListener("visibilitychange", function(){ if (document.hidden) leftPage = true; }, { once: true });
-        window.location.href = appIntent;
-        // Se o aplicativo não existir, abre o endereço web depois de um curto fallback.
+        document.addEventListener("visibilitychange", function(){ if (document.hidden) appOpened = true; }, { once: true });
+        window.location.href = target;
+        // Não abre página web: apenas informa se nenhum aplicativo aceitou o deep link.
         window.setTimeout(function(){
-          if (!leftPage && !document.hidden) window.location.href = webUrl;
+          if (!appOpened && !document.hidden && typeof appAlert === "function") {
+            appAlert("O aplicativo " + appName + " não está instalado neste dispositivo.");
+          }
         }, 900);
       };
       const copyShareText = async function(){
@@ -2810,12 +2810,12 @@ gtag('config', 'G-FJT3X93608');
       modal.addEventListener("click", function(event){ if (event.target === modal) close(); });
       // URLs oficiais funcionam em Android, iOS e desktop; quando o app estiver instalado,
       // o sistema operacional pode encaminhá-las diretamente para o aplicativo.
-      modal.querySelector('[data-share="whatsapp"]').onclick = function(){ openAndroidApp("com.whatsapp", "intent://send?text=" + encodedText + "#Intent;scheme=whatsapp;package=com.whatsapp;action=android.intent.action.SEND;type=text/plain;end", "https://wa.me/?text=" + encodedText); };
-      modal.querySelector('[data-share="business"]').onclick = function(){ openAndroidApp("com.whatsapp.w4b", "intent://send?text=" + encodedText + "#Intent;scheme=whatsapp;package=com.whatsapp.w4b;action=android.intent.action.SEND;type=text/plain;end", "https://api.whatsapp.com/send?text=" + encodedText); };
-      modal.querySelector('[data-share="facebook"]').onclick = function(){ openAndroidApp("com.facebook.katana", "intent:#Intent;action=android.intent.action.SEND;type=text/plain;package=com.facebook.katana;S.android.intent.extra.TEXT=" + encodedText + ";end", "https://www.facebook.com/sharer/sharer.php?u=" + encodedSiteUrl + "&quote=" + encodedText); };
-      modal.querySelector('[data-share="facebookLite"]').onclick = function(){ openAndroidApp("com.facebook.lite", "intent:#Intent;action=android.intent.action.SEND;type=text/plain;package=com.facebook.lite;S.android.intent.extra.TEXT=" + encodedText + ";end", "https://www.facebook.com/sharer/sharer.php?u=" + encodedSiteUrl + "&quote=" + encodedText); };
-      modal.querySelector('[data-share="instagram"]').onclick = function(){ openAndroidApp("com.instagram.android", "intent://app#Intent;scheme=instagram;package=com.instagram.android;end", "https://www.instagram.com/"); };
-      modal.querySelector('[data-share="instagramLite"]').onclick = function(){ openAndroidApp("com.instagram.lite", "intent://app#Intent;scheme=instagram;package=com.instagram.lite;end", "https://www.instagram.com/"); };
+      modal.querySelector('[data-share="whatsapp"]').onclick = function(){ openAppOnly("intent://send?text=" + encodedText + "#Intent;scheme=whatsapp;package=com.whatsapp;action=android.intent.action.SEND;type=text/plain;end", "whatsapp://send?text=" + encodedText, "WhatsApp"); };
+      modal.querySelector('[data-share="business"]').onclick = function(){ openAppOnly("intent://send?text=" + encodedText + "#Intent;scheme=whatsapp;package=com.whatsapp.w4b;action=android.intent.action.SEND;type=text/plain;end", "whatsapp://send?text=" + encodedText, "WhatsApp Business"); };
+      modal.querySelector('[data-share="facebook"]').onclick = function(){ openAppOnly("intent:#Intent;action=android.intent.action.SEND;type=text/plain;package=com.facebook.katana;S.android.intent.extra.TEXT=" + encodedText + ";end", "fb://facewebmodal/f?href=" + encodedSiteUrl, "Facebook"); };
+      modal.querySelector('[data-share="facebookLite"]').onclick = function(){ openAppOnly("intent:#Intent;action=android.intent.action.SEND;type=text/plain;package=com.facebook.lite;S.android.intent.extra.TEXT=" + encodedText + ";end", "fb://facewebmodal/f?href=" + encodedSiteUrl, "Facebook Lite"); };
+      modal.querySelector('[data-share="instagram"]').onclick = function(){ openAppOnly("intent://app#Intent;scheme=instagram;package=com.instagram.android;end", "instagram://app", "Instagram"); };
+      modal.querySelector('[data-share="instagramLite"]').onclick = function(){ openAppOnly("intent://app#Intent;scheme=instagram;package=com.instagram.lite;end", "instagram://app", "Instagram Lite"); };
       modal.querySelector('[data-share="native"]').onclick = shareNative;
     }
     function shareApp() { openShareOptions(); }
