@@ -1209,6 +1209,18 @@ gtag('config', 'G-FJT3X93608');
 #nickArea > small { transform:translateY(250px); }
 .auth-field-wrap{position:relative;width:80%;margin:0 auto}.auth-field-wrap.full{width:100%}.auth-field-wrap input{padding-right:70px!important;box-sizing:border-box}.password-toggle{position:absolute;right:7px;top:6px;min-width:58px;padding:6px 7px!important;font-size:11px!important;background:rgba(124,58,237,.85)!important;border:0!important;border-radius:7px!important}.auth-link-button{display:block;margin:8px auto;background:transparent!important;border:0!important;color:#c4b5fd!important;text-decoration:underline;font-size:13px!important}
 </style>
+
+<style id="share-options-style">
+.share-options-modal{position:fixed;inset:0;z-index:30000;display:flex;align-items:flex-end;justify-content:center;padding:18px;background:rgba(0,0,0,.72)}
+.share-options-card{width:min(420px,100%);padding:20px;border:1px solid rgba(196,181,253,.45);border-radius:20px;background:#160d25;color:#fff;box-shadow:0 18px 60px rgba(0,0,0,.58)}
+.share-options-card h3{margin:0 0 7px;color:#e9d5ff;font-size:20px}
+.share-options-card p{margin:0 0 14px;color:#cbd5e1;line-height:1.4;font-size:13px}
+.share-options-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.share-options-grid button{width:100%;padding:12px 9px;border:1px solid rgba(255,255,255,.18);border-radius:12px;background:rgba(255,255,255,.1);color:#fff;font-weight:700;cursor:pointer}
+.share-options-grid button:hover{background:rgba(168,85,247,.3)}
+.share-options-grid .share-native{grid-column:1/-1;background:linear-gradient(135deg,#7c3aed,#2563eb)}
+.share-options-close{width:100%;margin-top:12px;padding:10px;border:0;border-radius:10px;background:transparent;color:#c4b5fd;font-weight:700;cursor:pointer}
+</style>
 </head>
 
 <body>
@@ -2080,7 +2092,7 @@ gtag('config', 'G-FJT3X93608');
     // PWA UPDATE LOGIC
     function setupPWAUpdate() {
       if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./service-worker37.js?v=242', { updateViaCache: 'none' }).then(reg => {
+        navigator.serviceWorker.register('./service-worker37.js?v=243', { updateViaCache: 'none' }).then(reg => {
           reg.update();
           reg.addEventListener('updatefound', () => {
             const newWorker = reg.installing;
@@ -2702,7 +2714,7 @@ gtag('config', 'G-FJT3X93608');
       scrollToTop();
     }
 
-    function shareApp() {
+    function openShareOptions() {
       const driveUrl = "https://drive.google.com/file/d/103mylmu6SsIXUJJyBBFPNrw0IeCuVxHN/view?usp=drivesdk";
       const siteUrl = "https://spottedunila.github.io/UNILA-atualizado/?v=159";
       const shareText = "Confira o Spotted!\n\n" +
@@ -2710,14 +2722,48 @@ gtag('config', 'G-FJT3X93608');
         "Download para Android (Drive):\n" + driveUrl + "\n\n" +
         "Site para iOS e qualquer dispositivo:\n" + siteUrl;
       const encodedText = encodeURIComponent(shareText);
-      const intentUrl = "intent://send?text=" + encodedText + "#Intent;scheme=whatsapp;package=com.whatsapp;end";
-      const webUrl = "https://api.whatsapp.com/send?text=" + encodedText;
-      let opened = false;
-      const onHidden = function() { opened = true; clearTimeout(fallback); document.removeEventListener("visibilitychange", onHidden); };
-      const fallback = setTimeout(function() { if (!opened) window.location.href = webUrl; }, 1600);
-      document.addEventListener("visibilitychange", onHidden, { once:true });
-      window.location.href = intentUrl;
+      const encodedUrl = encodeURIComponent(siteUrl);
+      const modal = document.createElement("div");
+      modal.className = "share-options-modal";
+      modal.innerHTML = '<div class="share-options-card" role="dialog" aria-modal="true" aria-label="Compartilhar Spotted">' +
+        '<h3>Compartilhar Spotted</h3>' +
+        '<p>Escolha um aplicativo. O botão do Android também mostra WhatsApp, WhatsApp Business, Facebook e Instagram quando estiverem instalados.</p>' +
+        '<div class="share-options-grid">' +
+        '<button class="share-native" data-share="native">📲 Compartilhar pelo Android</button>' +
+        '<button data-share="whatsapp">💬 WhatsApp</button>' +
+        '<button data-share="business">💼 WhatsApp Business</button>' +
+        '<button data-share="facebook">📘 Facebook</button>' +
+        '<button data-share="instagram">📸 Instagram</button>' +
+        '</div><button class="share-options-close" data-share="close">Cancelar</button></div>';
+      document.body.appendChild(modal);
+      const close = function(){ modal.remove(); };
+      modal.querySelector('[data-share="close"]').onclick = close;
+      modal.addEventListener("click", function(event){ if (event.target === modal) close(); });
+      modal.querySelector('[data-share="native"]').onclick = async function(){
+        if (navigator.share) {
+          try { await navigator.share({ title:"Spotted", text:shareText, url:siteUrl }); close(); return; } catch(e) {}
+        }
+        if (navigator.clipboard) await navigator.clipboard.writeText(shareText).catch(function(){});
+        window.open("https://www.facebook.com/sharer/sharer.php?u=" + encodedUrl + "&quote=" + encodedText, "_blank"); close();
+      };
+      modal.querySelector('[data-share="whatsapp"]').onclick = function(){
+        window.open("https://api.whatsapp.com/send?text=" + encodedText, "_blank"); close();
+      };
+      modal.querySelector('[data-share="business"]').onclick = function(){
+        const fallback = setTimeout(function(){ window.open("https://api.whatsapp.com/send?text=" + encodedText, "_blank"); }, 900);
+        window.location.href = "intent://send?text=" + encodedText + "#Intent;scheme=whatsapp;package=com.whatsapp.w4b;end";
+        setTimeout(function(){ clearTimeout(fallback); }, 1200); close();
+      };
+      modal.querySelector('[data-share="facebook"]').onclick = function(){
+        window.open("https://www.facebook.com/sharer/sharer.php?u=" + encodedUrl + "&quote=" + encodedText, "_blank"); close();
+      };
+      modal.querySelector('[data-share="instagram"]').onclick = async function(){
+        if (navigator.share) { try { await navigator.share({ title:"Spotted", text:shareText, url:siteUrl }); close(); return; } catch(e) {} }
+        if (navigator.clipboard) await navigator.clipboard.writeText(shareText).catch(function(){});
+        window.open("https://www.instagram.com/", "_blank"); close();
+      };
     }
+    function shareApp() { openShareOptions(); }
 
     // CHAT LOGIC
     const MAX_IMAGE_UPLOAD_BYTES = 5 * 1024 * 1024;
@@ -4200,22 +4246,7 @@ padding:0 2px;">↩ Responder</button>`;
     }
 
     if (typeof window.shareApp === "function") {
-      window.shareApp = function(){
-        var driveUrl = "https://drive.google.com/file/d/103mylmu6SsIXUJJyBBFPNrw0IeCuVxHN/view?usp=drivesdk";
-        var siteUrl = "https://spottedunila.github.io/UNILA-atualizado/?v=159";
-        var shareText = "Confira o Spotted!" + NL + NL +
-          "Para Android, baixe pelo Drive ou entre pelo link no site." + NL + NL +
-          "Download para Android (Drive):" + NL + driveUrl + NL + NL +
-          "Site para iOS e qualquer dispositivo:" + NL + siteUrl;
-        var encodedText = encodeURIComponent(shareText);
-        var intentUrl = "intent://send?text=" + encodedText + "#Intent;scheme=whatsapp;package=com.whatsapp;end";
-        var webUrl = "https://api.whatsapp.com/send?text=" + encodedText;
-        var opened = false;
-        var fallback = setTimeout(function(){ if (!opened) window.location.href = webUrl; }, 1600);
-        var onHidden = function(){ opened = true; clearTimeout(fallback); document.removeEventListener("visibilitychange", onHidden); };
-        document.addEventListener("visibilitychange", onHidden, { once:true });
-        window.location.href = intentUrl;
-      };
+      window.shareApp = function(){ openShareOptions(); };
     }
 
     if (typeof window.setReply === "function") {
