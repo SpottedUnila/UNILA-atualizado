@@ -2,7 +2,7 @@
   "name": "Spotted",
   "short_name": "Unila",
   "description": "Aplicativo Unila com funções úteis, links, telefones e serviços.",
-  "start_url": "index.html",
+  "start_url": "index.html?v=254",
   "scope": "./",
   "display": "standalone",
   "background_color": "#000000",
