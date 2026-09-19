@@ -420,7 +420,7 @@ button:hover{
   background: #f59e0b; /* Laranja âmbar */
   color: white;
 }
-.youtube-brand-mark,.gmail-brand-mark,.instagram-brand-mark,.facebook-brand-mark{display:inline-flex;align-items:center;justify-content:center;width:28px;height:20px;margin-right:6px;border-radius:5px;color:#fff;font-size:13px;font-weight:900;line-height:1;text-shadow:none;vertical-align:-3px;}
+.youtube-brand-mark,.gmail-brand-mark,.instagram-brand-mark,.facebook-brand-mark{display:inline-flex;align-items:center;justify-content:center;width:28px;height:20px;margin-right:2px;border-radius:5px;color:#fff;font-size:13px;font-weight:900;line-height:1;text-shadow:none;vertical-align:-3px;}
 .youtube-brand-mark{background:#ff0000;}
 .gmail-brand-mark{background:#ea4335;font-family:Arial,sans-serif;font-size:15px;}
 .instagram-brand-mark{background:linear-gradient(135deg,#feda75,#d62976 52%,#4f5bd5);font-size:15px;}
@@ -1284,7 +1284,7 @@ gtag('config', 'G-FJT3X93608');
     <a class="instagram menu-link" href="https://www.instagram.com/unila.campusarandu?stkn=MXJnMWU0M3RtaXpsOA==" aria-label="Instagram Unila Arandu"><span class="instagram-brand-mark" aria-hidden="true">◎</span>Instagram Unila Arandu</a>
     <a class="facebook menu-link" href="https://www.facebook.com/unila.oficial" aria-label="Facebook Unila"><span class="facebook-brand-mark" aria-hidden="true">f</span>Facebook Unila</a>
     <a class="biblioteca menu-link" href="https://portal.unila.edu.br/biblioteca">📖 Biblioteca Unila</a>
-    <a class="intercampi menu-link" href="https://portal.unila.edu.br/proagi/delog/catalogo-de-servicos/catalogo/horarios-intercampi">🚌 Transporte Intercampi</a>
+    <a class="intercampi menu-link" href="https://portal.unila.edu.br/proagi/delog/catalogo-de-servicos/catalogo/horarios-intercampi" aria-label="Transporte Intercampi">🚌 Transporte Intercampi</a>
     <a class="editais menu-link" href="https://documentos.unila.edu.br/">📄 Editais Oficiais</a>
     <button class="emergencia" onclick="openDynamic('emergencia','page')">🚨 Telefones de Emergência</button>
     <button class="enderecos" onclick="openDynamic('enderecos','page')">🏫 Endereços dos Campus</button>
@@ -1303,7 +1303,7 @@ gtag('config', 'G-FJT3X93608');
     <button class="noticias" onclick="openNewsPage()">📰 Notícias</button>
     <button class="conheca-unila-btn" onclick="openConhecaUnilaPage()">🏫 Conheça a Unila</button>
     <button class="desapega" onclick="openPage('desapegaPage')">🔎 Achados e Perdidos e Desapega</button>
-    <button class="emergencia" data-search-key="upa" onclick="openUPAPage()">🏥 Hospitais de Emergência 24h (UPA)</button>
+    <button class="emergencia" data-search-key="upa" onclick="openUPAPage()" aria-label="Hospitais de Emergência 24h (UPA)">🏥 Hospitais de Emergência 24h (UPA)</button>
     <button class="dev" data-search-key="officialSources" onclick="openPage('officialSourcesPage')">🔗 Portal da Transparência</button>
   </div>
 
@@ -2099,7 +2099,7 @@ gtag('config', 'G-FJT3X93608');
     // PWA UPDATE LOGIC
     function setupPWAUpdate() {
       if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./service-worker37.js?v=252', { updateViaCache: 'none' }).then(reg => {
+        navigator.serviceWorker.register('./service-worker37.js?v=253', { updateViaCache: 'none' }).then(reg => {
           reg.update();
           reg.addEventListener('updatefound', () => {
             const newWorker = reg.installing;
