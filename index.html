@@ -2760,26 +2760,22 @@ gtag('config', 'G-FJT3X93608');
         }
       };
       const shareNative = async function(){
-        if (/Android/i.test(navigator.userAgent)) {
-          close();
-          // ACTION_SEND sem pacote abre o seletor nativo do Android, listando
-          // WhatsApp, Facebook, Instagram, Bluetooth, Quick Share e demais apps.
-          const androidShareIntent = "intent:#Intent;action=android.intent.action.SEND;type=text/plain;S.android.intent.extra.TITLE=" + encodeURIComponent("Confira o Spotted") + ";S.android.intent.extra.TEXT=" + encodedText + ";end";
-          const launcher = document.createElement("a");
-          launcher.href = androidShareIntent;
-          launcher.style.display = "none";
-          document.body.appendChild(launcher);
-          launcher.click();
-          window.setTimeout(function(){ launcher.remove(); }, 1500);
-          return;
-        }
         if (navigator.share && typeof navigator.share === "function") {
           try {
-            await navigator.share({ title: "Confira o Spotted", text: shareText });
+            // É o caminho oficial para abrir a barra nativa do Android/PWA.
+            await navigator.share({ title: "Confira o Spotted", text: shareText, url: siteUrl });
           } catch (error) {
-            if (!error || error.name !== "AbortError") console.warn("Compartilhamento cancelado ou indisponível.", error);
+            if (error && error.name === "AbortError") { close(); return; }
+            console.warn("Compartilhamento nativo indisponível.", error);
           }
           close();
+          return;
+        }
+        if (/Android/i.test(navigator.userAgent)) {
+          close();
+          // Fallback para WebViews Android sem navigator.share.
+          const androidShareIntent = "intent:#Intent;action=android.intent.action.SEND;type=text/plain;S.android.intent.extra.TEXT=" + encodedText + ";end";
+          window.location.assign(androidShareIntent);
           return;
         }
         close();
