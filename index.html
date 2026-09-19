@@ -1838,7 +1838,7 @@ gtag('config', 'G-FJT3X93608');
         authenticatedUser = (await auth.signInWithEmailAndPassword(legacyEmail, password)).user;
       } catch (error) {
         lastError = error;
-        if (authErrorCode(error) !== "auth/user-not-found") throw error;
+        if (!["auth/user-not-found", "auth/invalid-credential"].includes(authErrorCode(error))) throw error;
       }
       let ownership = null;
       if (!authenticatedUser) {
@@ -1863,7 +1863,7 @@ gtag('config', 'G-FJT3X93608');
             break;
           } catch (error) {
             lastError = error;
-            if (authErrorCode(error) !== "auth/user-not-found") throw error;
+            if (!["auth/user-not-found", "auth/invalid-credential"].includes(authErrorCode(error))) throw error;
           }
         }
       }
@@ -2057,7 +2057,7 @@ gtag('config', 'G-FJT3X93608');
     // Atualização do PWA: rede primeiro; cache apenas como fallback offline.
     function setupPWAUpdate() {
       if (!('serviceWorker' in navigator)) return;
-      navigator.serviceWorker.register('./service-worker37.js?v=288', { updateViaCache: 'none' }).then(function(reg) {
+      navigator.serviceWorker.register('./service-worker37.js?v=289', { updateViaCache: 'none' }).then(function(reg) {
         reg.update();
         reg.addEventListener('updatefound', function() {
           var newWorker = reg.installing;
