@@ -1274,7 +1274,6 @@ gtag('config', 'G-FJT3X93608');
     <a class="unila menu-link" href="https://inscreva.unila.edu.br/">🎓 Portal Inscreva</a>
     <a class="sigaa menu-link" href="https://sig.unila.edu.br/sigaa/verTelaLogin.do">📚 Sistema Acadêmico SIGAA</a>
     <a class="gmail menu-link" href="https://mail.google.com/">📧 E-mail Institucional</a>
-    <a class="google menu-link" href="https://www.google.com/">🔎 Pesquisa Google</a>
     <a class="google menu-link" href="https://youtube.com/@unila?si=yOHx8TF_41FQhNbl">▶️ YouTube Unila</a>
     <a class="instagram menu-link" href="https://www.instagram.com/unila.campusarandu?stkn=MXJnMWU0M3RtaXpsOA==">📸 Instagram Unila Arandu</a>
     <a class="facebook menu-link" href="https://www.facebook.com/unila.oficial">📘 Facebook Unila</a>
@@ -2094,7 +2093,7 @@ gtag('config', 'G-FJT3X93608');
     // PWA UPDATE LOGIC
     function setupPWAUpdate() {
       if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./service-worker37.js?v=246', { updateViaCache: 'none' }).then(reg => {
+        navigator.serviceWorker.register('./service-worker37.js?v=247', { updateViaCache: 'none' }).then(reg => {
           reg.update();
           reg.addEventListener('updatefound', () => {
             const newWorker = reg.installing;
@@ -4040,7 +4039,7 @@ padding:0 2px;">↩ Responder</button>`;
   }
 
   var menuKeys = [
-    "chatMenu", "portal", "inscreva", "sigaa", "email", "google", "youtube", "instagram", "facebook", "library", "intercampus", "notices",
+    "chatMenu", "portal", "inscreva", "sigaa", "email", "youtube", "instagram", "facebook", "library", "intercampus", "notices",
     "emergency", "addresses", "ru", "group", "developer", "privacy", "notes", "share", "internet", "study", "academicGoals", "studentAid", "mentalHealth", "enem", "news", "conheca", "desapega", "upa", "officialSources"
   ];
 
