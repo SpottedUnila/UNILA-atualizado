@@ -2830,6 +2830,11 @@ gtag('config', 'G-FJT3X93608');
         "Baixe o aplicativo para Android pelo Drive:\n" + driveUrl + "\n\n" +
         "Acesse também pelo navegador:\n" + siteUrl;
 
+      if (window.AndroidShare && typeof window.AndroidShare.share === "function") {
+        window.AndroidShare.share(shareText);
+        return;
+      }
+
       // Chamada direta do clique: o Android exibirá o seletor nativo com os
       // ícones dos apps compatíveis instalados, como WhatsApp, Facebook,
       // Facebook Lite, Instagram e outros destinos disponíveis.
