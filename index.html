@@ -2821,7 +2821,36 @@ gtag('config', 'G-FJT3X93608');
         copyAndOpenApp("instagram://app");
       };
     }
-    function shareApp() { openShareOptions(); }
+    async function shareApp() {
+      const driveUrl = "https://drive.google.com/file/d/103mylmu6SsIXUJJyBBFPNrw0IeCuVxHN/view?usp=drivesdk";
+      const siteUrl = window.location.protocol === "http:" || window.location.protocol === "https:"
+        ? window.location.href.split("#")[0]
+        : "https://spottedunila.github.io/UNILA-atualizado/";
+      const shareText = "Confira o Spotted!\n\n" +
+        "Baixe o aplicativo para Android pelo Drive:\n" + driveUrl + "\n\n" +
+        "Acesse também pelo navegador:\n" + siteUrl;
+
+      // Chamada direta do clique: o Android exibirá o seletor nativo com os
+      // ícones dos apps compatíveis instalados, como WhatsApp, Facebook,
+      // Facebook Lite, Instagram e outros destinos disponíveis.
+      if (typeof navigator.share === "function") {
+        try {
+          await navigator.share({
+            title: "Confira o Spotted",
+            text: shareText,
+            url: siteUrl
+          });
+          return;
+        } catch (error) {
+          if (error && error.name === "AbortError") return;
+          console.warn("Seletor nativo indisponível.", error);
+        }
+      }
+
+      if (typeof appAlert === "function") {
+        appAlert("Este navegador não disponibiliza o seletor nativo de compartilhamento. Abra o app pelo Chrome Android ou instale-o como aplicativo.");
+      }
+    }
 
     // CHAT LOGIC
     const MAX_IMAGE_UPLOAD_BYTES = 5 * 1024 * 1024;
