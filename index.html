@@ -2732,9 +2732,11 @@ gtag('config', 'G-FJT3X93608');
       modal.className = "share-options-modal";
       modal.innerHTML = '<div class="share-options-card" role="dialog" aria-modal="true" aria-label="Compartilhar Spotted">' +
         '<h3>Compartilhar Spotted</h3>' +
-        '<p>O Android abrirá o menu de compartilhamento para você escolher WhatsApp, Facebook, Instagram ou outro aplicativo.</p>' +
+        '<p>Escolha o aplicativo. O link será copiado e o aplicativo será aberto diretamente.</p>' +
         '<div class="share-options-grid">' +
-        '<button class="share-native" data-share="native">📤 Compartilhar aplicativo</button>' +
+        '<button class="share-whatsapp" data-share="whatsapp">💬 WhatsApp</button>' +
+        '<button class="share-facebook" data-share="facebook">📘 Facebook</button>' +
+        '<button data-share="instagram">📸 Instagram</button>' +
         '</div><button class="share-options-close" data-share="close">Cancelar</button></div>';
       document.body.appendChild(modal);
       const close = function(){ modal.remove(); };
@@ -2781,47 +2783,39 @@ gtag('config', 'G-FJT3X93608');
         close();
         await copyShareText();
       };
+      const copyAndOpenApp = async function(appUrl){
+        try {
+          if (navigator.clipboard && window.isSecureContext) {
+            await navigator.clipboard.writeText(shareText);
+          } else {
+            const helper = document.createElement("textarea");
+            helper.value = shareText;
+            helper.setAttribute("readonly", "");
+            helper.style.position = "fixed";
+            helper.style.opacity = "0";
+            document.body.appendChild(helper);
+            helper.select();
+            document.execCommand("copy");
+            helper.remove();
+          }
+        } catch (error) {
+          console.warn("Não foi possível copiar o link antes de abrir o aplicativo.", error);
+        }
+        close();
+        const launcher = document.createElement("a");
+        launcher.href = appUrl;
+        launcher.style.display = "none";
+        document.body.appendChild(launcher);
+        launcher.click();
+        window.setTimeout(function(){ launcher.remove(); }, 1200);
+      };
       modal.querySelector('[data-share="close"]').onclick = close;
       modal.addEventListener("click", function(event){ if (event.target === modal) close(); });
-      modal.querySelector('[data-share="native"]').onclick = shareNative;
+      modal.querySelector('[data-share="whatsapp"]').onclick = function(){ copyAndOpenApp("whatsapp://send?text=" + encodedText); };
+      modal.querySelector('[data-share="facebook"]').onclick = function(){ copyAndOpenApp("fb://facewebmodal/f?href=" + encodedSiteUrl); };
+      modal.querySelector('[data-share="instagram"]').onclick = function(){ copyAndOpenApp("instagram://app"); };
     }
-    async function shareApp() {
-      const driveUrl = "https://drive.google.com/file/d/103mylmu6SsIXUJJyBBFPNrw0IeCuVxHN/view?usp=drivesdk";
-      const siteUrl = window.location.protocol === "http:" || window.location.protocol === "https:"
-        ? window.location.href.split("#")[0]
-        : "https://spottedunila.github.io/UNILA-atualizado/";
-      const shareText = "Confira o Spotted!\n\n" +
-        "Baixe o aplicativo para Android pelo Drive:\n" + driveUrl + "\n\n" +
-        "Acesse também pelo navegador:\n" + siteUrl;
-      // Chamado diretamente pelo onclick do botão, sem modal intermediário,
-      // para preservar o gesto exigido pelo Android para abrir a barra nativa.
-      if (navigator.share && typeof navigator.share === "function") {
-        try {
-          await navigator.share({title:"Confira o Spotted", text:shareText, url:siteUrl});
-          return;
-        } catch (error) {
-          if (error && error.name === "AbortError") return;
-          console.warn("Compartilhamento nativo indisponível.", error);
-        }
-      }
-      try {
-        if (navigator.clipboard && window.isSecureContext) {
-          await navigator.clipboard.writeText(shareText);
-        } else {
-          const helper = document.createElement("textarea");
-          helper.value = shareText;
-          helper.style.position = "fixed";
-          helper.style.opacity = "0";
-          document.body.appendChild(helper);
-          helper.select();
-          document.execCommand("copy");
-          helper.remove();
-        }
-        if (typeof appAlert === "function") appAlert("O compartilhamento nativo não está disponível. O link foi copiado; cole no WhatsApp, Facebook ou Instagram.");
-      } catch (error) {
-        if (typeof appAlert === "function") appAlert("Não foi possível abrir o compartilhamento neste navegador.");
-      }
-    }
+    function shareApp() { openShareOptions(); }
 
     // CHAT LOGIC
     const MAX_IMAGE_UPLOAD_BYTES = 5 * 1024 * 1024;
