@@ -1836,6 +1836,8 @@ gtag('config', 'G-FJT3X93608');
       const candidateEmails = Array.from(new Set([
         ownership && ownership.canonical && ownership.canonical.email,
         ownership && ownership.legacy && ownership.legacy.email,
+        ownership && ownership.canonical && ownership.canonical.recoveryEmail,
+        ownership && ownership.legacy && ownership.legacy.recoveryEmail,
         input === ADMIN_NICK ? ADMIN_EMAIL : null,
         legacyEmail
       ].filter(Boolean)));
@@ -2038,7 +2040,7 @@ gtag('config', 'G-FJT3X93608');
     // Atualização do PWA: rede primeiro; cache apenas como fallback offline.
     function setupPWAUpdate() {
       if (!('serviceWorker' in navigator)) return;
-      navigator.serviceWorker.register('./service-worker37.js?v=285', { updateViaCache: 'none' }).then(function(reg) {
+      navigator.serviceWorker.register('./service-worker37.js?v=286', { updateViaCache: 'none' }).then(function(reg) {
         reg.update();
         reg.addEventListener('updatefound', function() {
           var newWorker = reg.installing;
