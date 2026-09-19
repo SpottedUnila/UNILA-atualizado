@@ -1178,16 +1178,42 @@ let ytPlayer;
 let ytPodcastPlayer;
 function onYouTubeIframeAPIReady() {
   ytPlayer = new YT.Player("ytRadio", {
+    playerVars: { autoplay: 0, controls: 1, playsinline: 1, origin: window.location.origin },
     events: {
-      'onReady': () => {}
+      'onReady': (event) => { event.target.unMute(); event.target.setVolume(100); }
     }
   });
   ytPodcastPlayer = new YT.Player("ytPodcast", {
+    playerVars: { autoplay: 0, controls: 1, playsinline: 1, origin: window.location.origin },
     events: {
-      'onReady': () => {},
+      'onReady': (event) => { event.target.unMute(); event.target.setVolume(100); },
       'onStateChange': onPodcastStateChange
     }
   });
+}
+
+function playYouTubeWithSound(player, iframe) {
+  try {
+    if (player && typeof player.unMute === "function") {
+      player.unMute();
+      player.setVolume(100);
+      player.playVideo();
+      return;
+    }
+  } catch (error) { console.warn("Não foi possível iniciar o áudio diretamente:", error); }
+  if (iframe && iframe.contentWindow) {
+    const command = (func, args) => iframe.contentWindow.postMessage(JSON.stringify({ event: "command", func, args: args || [] }), "*");
+    command("unMute");
+    command("setVolume", [100]);
+    command("playVideo");
+  }
+}
+
+function pauseYouTube(player, iframe) {
+  try {
+    if (player && typeof player.pauseVideo === "function") { player.pauseVideo(); return; }
+  } catch (error) {}
+  if (iframe && iframe.contentWindow) iframe.contentWindow.postMessage(JSON.stringify({ event: "command", func: "pauseVideo", args: [] }), "*");
 }
 
 function onPodcastStateChange(event) {
@@ -2099,7 +2125,7 @@ gtag('config', 'G-FJT3X93608');
     // Atualização do PWA: rede primeiro; cache apenas como fallback offline.
     function setupPWAUpdate() {
       if (!('serviceWorker' in navigator)) return;
-      navigator.serviceWorker.register('./service-worker37.js?v=283', { updateViaCache: 'none' }).then(function(reg) {
+      navigator.serviceWorker.register('./service-worker37.js?v=284', { updateViaCache: 'none' }).then(function(reg) {
         reg.update();
         reg.addEventListener('updatefound', function() {
           var newWorker = reg.installing;
@@ -3307,21 +3333,21 @@ padding:0 2px;">↩ Responder</button>`;
     function toggleRadioSimples() {
       const player = document.getElementById("radioPlayer"); const iframe = document.getElementById("ytRadio");
       const podPlayer = document.getElementById("podcastPlayer"); const podIframe = document.getElementById("ytPodcast");
-      if (podPlayer.style.display === "block") { podPlayer.style.display = "none"; podIframe.contentWindow.postMessage(JSON.stringify({event: "command", func: "pauseVideo", args: []}), "*"); }
+      if (podPlayer.style.display === "block") { podPlayer.style.display = "none"; pauseYouTube(ytPodcastPlayer, podIframe); }
       if (player.style.display === "none") {
-        player.style.display = "block"; iframe.contentWindow.postMessage(JSON.stringify({event: "command", func: "playVideo", args: []}), "*");
+        player.style.display = "block"; playYouTubeWithSound(ytPlayer, iframe);
         setTimeout(() => player.scrollIntoView({ behavior: "smooth" }), 300);
-      } else { player.style.display = "none"; iframe.contentWindow.postMessage(JSON.stringify({event: "command", func: "pauseVideo", args: []}), "*"); }
+      } else { player.style.display = "none"; pauseYouTube(ytPlayer, iframe); }
     }
 
     function togglePodcastSimples() {
       const player = document.getElementById("podcastPlayer"); const iframe = document.getElementById("ytPodcast");
       const radioPlayer = document.getElementById("radioPlayer"); const radioIframe = document.getElementById("ytRadio");
-      if (radioPlayer.style.display === "block") { radioPlayer.style.display = "none"; radioIframe.contentWindow.postMessage(JSON.stringify({event: "command", func: "pauseVideo", args: []}), "*"); }
+      if (radioPlayer.style.display === "block") { radioPlayer.style.display = "none"; pauseYouTube(ytPlayer, radioIframe); }
       if (player.style.display === "none") {
-        player.style.display = "block"; iframe.contentWindow.postMessage(JSON.stringify({event: "command", func: "playVideo", args: []}), "*");
+        player.style.display = "block"; playYouTubeWithSound(ytPodcastPlayer, iframe);
         setTimeout(() => player.scrollIntoView({ behavior: "smooth" }), 300);
-      } else { player.style.display = "none"; iframe.contentWindow.postMessage(JSON.stringify({event: "command", func: "pauseVideo", args: []}), "*"); }
+      } else { player.style.display = "none"; pauseYouTube(ytPodcastPlayer, iframe); }
     }
 
     const NOTES_COLLECTION = "notes";
