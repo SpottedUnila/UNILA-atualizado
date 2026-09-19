@@ -2785,7 +2785,43 @@ gtag('config', 'G-FJT3X93608');
       modal.addEventListener("click", function(event){ if (event.target === modal) close(); });
       modal.querySelector('[data-share="native"]').onclick = shareNative;
     }
-    function shareApp() { openShareOptions(); }
+    async function shareApp() {
+      const driveUrl = "https://drive.google.com/file/d/103mylmu6SsIXUJJyBBFPNrw0IeCuVxHN/view?usp=drivesdk";
+      const siteUrl = window.location.protocol === "http:" || window.location.protocol === "https:"
+        ? window.location.href.split("#")[0]
+        : "https://spottedunila.github.io/UNILA-atualizado/";
+      const shareText = "Confira o Spotted!\n\n" +
+        "Baixe o aplicativo para Android pelo Drive:\n" + driveUrl + "\n\n" +
+        "Acesse também pelo navegador:\n" + siteUrl;
+      // Chamado diretamente pelo onclick do botão, sem modal intermediário,
+      // para preservar o gesto exigido pelo Android para abrir a barra nativa.
+      if (navigator.share && typeof navigator.share === "function") {
+        try {
+          await navigator.share({title:"Confira o Spotted", text:shareText, url:siteUrl});
+          return;
+        } catch (error) {
+          if (error && error.name === "AbortError") return;
+          console.warn("Compartilhamento nativo indisponível.", error);
+        }
+      }
+      try {
+        if (navigator.clipboard && window.isSecureContext) {
+          await navigator.clipboard.writeText(shareText);
+        } else {
+          const helper = document.createElement("textarea");
+          helper.value = shareText;
+          helper.style.position = "fixed";
+          helper.style.opacity = "0";
+          document.body.appendChild(helper);
+          helper.select();
+          document.execCommand("copy");
+          helper.remove();
+        }
+        if (typeof appAlert === "function") appAlert("O compartilhamento nativo não está disponível. O link foi copiado; cole no WhatsApp, Facebook ou Instagram.");
+      } catch (error) {
+        if (typeof appAlert === "function") appAlert("Não foi possível abrir o compartilhamento neste navegador.");
+      }
+    }
 
     // CHAT LOGIC
     const MAX_IMAGE_UPLOAD_BYTES = 5 * 1024 * 1024;
