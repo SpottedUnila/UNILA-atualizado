@@ -1283,7 +1283,7 @@ gtag('config', 'G-FJT3X93608');
     <a class="instagram menu-link" href="https://www.instagram.com/unila.campusarandu?stkn=MXJnMWU0M3RtaXpsOA==" aria-label="Instagram Unila Arandu"><span class="instagram-brand-mark" aria-hidden="true">◎</span>Instagram Unila Arandu</a>
     <a class="facebook menu-link" href="https://www.facebook.com/unila.oficial" aria-label="Facebook Unila"><span class="facebook-brand-mark" aria-hidden="true">f</span>Facebook Unila</a>
     <a class="biblioteca menu-link" href="https://portal.unila.edu.br/biblioteca">📖 Biblioteca Unila</a>
-    <a class="intercampi menu-link" href="https://portal.unila.edu.br/proagi/delog/catalogo-de-servicos/catalogo/horarios-intercampi" aria-label="Transporte Intercampi">🚌 Transporte Intercampi</a>
+    <a class="intercampi menu-link" href="https://portal.unila.edu.br/proagi/delog/catalogo-de-servicos/catalogo/horarios-intercampi" aria-label="Transporte Intercampi">Transporte Intercampi</a>
     <a class="editais menu-link" href="https://documentos.unila.edu.br/">📄 Editais Oficiais</a>
     <button class="emergencia" onclick="openDynamic('emergencia','page')">🚨 Telefones de Emergência</button>
     <button class="enderecos" onclick="openDynamic('enderecos','page')">🏫 Endereços dos Campus</button>
@@ -1302,7 +1302,7 @@ gtag('config', 'G-FJT3X93608');
     <button class="noticias" onclick="openNewsPage()">📰 Notícias</button>
     <button class="conheca-unila-btn" onclick="openConhecaUnilaPage()">🏫 Conheça a Unila</button>
     <button class="desapega" onclick="openPage('desapegaPage')">🔎 Achados e Perdidos e Desapega</button>
-    <button class="emergencia" data-search-key="upa" onclick="openUPAPage()" aria-label="Hospitais de Emergência 24h (UPA)">🏥 Hospitais de Emergência 24h (UPA)</button>
+    <button class="emergencia" data-search-key="upa" onclick="openUPAPage()" aria-label="Hospitais de Emergência 24h (UPA)">Hospitais de Emergência 24h (UPA)</button>
     <button class="dev" data-search-key="officialSources" onclick="openPage('officialSourcesPage')">🔗 Portal da Transparência</button>
   </div>
 
@@ -2098,7 +2098,6 @@ gtag('config', 'G-FJT3X93608');
     // Remove versões antigas do PWA para impedir que a interface volte por cache.
     async function setupPWAUpdate() {
       if (!('serviceWorker' in navigator)) return;
-      var cleanupKey = 'spotted-unila-cache-cleanup-v2';
       try {
         var registrations = await navigator.serviceWorker.getRegistrations();
         await Promise.all(registrations.map(function(registration) { return registration.unregister(); }));
@@ -2109,12 +2108,6 @@ gtag('config', 'G-FJT3X93608');
       } catch (error) {
         console.warn('Não foi possível limpar o cache antigo do PWA:', error);
       }
-      try {
-        if (!sessionStorage.getItem(cleanupKey)) {
-          sessionStorage.setItem(cleanupKey, 'done');
-          window.location.reload();
-        }
-      } catch (error) {}
     }
 
     // CONTENT LOGIC
@@ -3751,10 +3744,10 @@ padding:0 2px;">↩ Responder</button>`;
         appTitle: "Spotted", language: "Idioma", home: "Início", podcast: "Podcast", music: "Música", install: "📲 Instalar App",
         chatMenu: " Spotted💜 Chat💬", portal: "🌐 Portal Oficial da Unila", inscreva: "🎓 Portal Inscreva", sigaa: "📚 Sistema Acadêmico SIGAA", email: "📧 E-mail Institucional",
         google: "🔎 Pesquisa Google", youtube: "▶ YouTube Unila", instagram: "📸 Instagram Unila", facebook: "📘 Facebook Unila", library: "📖 Biblioteca Unila",
-        intercampus: "🚌 Transporte Intercampi", notices: "📄 Editais Oficiais", emergency: "🚨 Telefones de Emergência",
+        intercampus: "Transporte Intercampi", notices: "📄 Editais Oficiais", emergency: "🚨 Telefones de Emergência",
         addresses: "🏫 Endereços dos Campus", ru: "🍽️ Restaurantes Universitários", group: "👥 Grupo no Facebook", developer: "👨‍💻 Desenvolvedor", privacy: "🔒 Privacidade e exclusão",
         notes: "📝 Anotações", share: "📤 Compartilhar App", internet: "🌐 Internet Unila", study: "🎓 Estude na Unila", academicGoals: "📈 Meta Acadêmica", studentAid: "🎓 Auxílio Estudantil", mentalHealth: "🧠 Saúde Mental",
-        enem: "📝 ENEM – Página do Participante", news: "📰 Notícias da Unila", conheca: "🏫 Conheça a Unila", desapega: "🔎 Achados e Perdidos e Desapega", upa: "🏥 Hospitais de Emergência 24h (UPA)", officialSources: "🔗 Portal da Transparência",
+        enem: "📝 ENEM – Página do Participante", news: "📰 Notícias da Unila", conheca: "🏫 Conheça a Unila", desapega: "🔎 Achados e Perdidos e Desapega", upa: "Hospitais de Emergência 24h (UPA)", officialSources: "🔗 Portal da Transparência",
         chatHeading: "💬 Chat Unila", nickPlaceholder: "Digite seu nick...", enter: "🚪 Entrar", imageSelected: "Imagem selecionada",
         chatPlaceholder: "Digite sua mensagem...", anonymous: "👤 Enviar Anonimamente", changeNick: "🔄 Mudar Nick",
         developerHeading: "👨‍💻 Desenvolvedor", developerIntro: "Para trabalhos e parcerias entre em contato:", developerService: "Equipe Spotted", contact: "Contato",
@@ -3786,10 +3779,10 @@ padding:0 2px;">↩ Responder</button>`;
         appTitle: "Spotted", language: "Langue", home: "Accueil", podcast: "Podcast", music: "Musique", install: "📲 Installer l’application",
         chatMenu: " Spotted💜 Chat💬", portal: "🌐 Portail officiel de l’Unila", inscreva: "🎓 Portal Inscreva", sigaa: "📚 Système académique SIGAA", email: "📧 E-mail institutionnel",
         google: "🔎 Recherche Google", youtube: "▶ YouTube Unila", instagram: "📸 Instagram Unila", facebook: "📘 Facebook Unila", library: "📖 Bibliothèque Unila",
-        intercampus: "🚌 Transport intercampus", notices: "📄 Avis officiels", emergency: "🚨 Numéros d’urgence",
+        intercampus: "Transport intercampus", notices: "📄 Avis officiels", emergency: "🚨 Numéros d’urgence",
         addresses: "🏫 Adresses des campus", ru: "🍽️ Restaurants universitaires", group: "👥 Groupe Facebook", developer: "👨‍💻 Développeur", privacy: "🔒 Confidentialité et suppression",
         notes: "📝 Notes", share: "📤 Partager l’application", internet: "🌐 Internet Unila", study: "🎓 Étudier à l’Unila", academicGoals: "📈 Objectif académique", studentAid: "🎓 Aide aux étudiants", mentalHealth: "🧠 Santé mentale",
-        enem: "📝 ENEM – Page du participant", news: "📰 Actualités de l’Unila", conheca: "🏫 Découvrez l’Unila", desapega: "🔎 Objets trouvés et perdus · Desapega", upa: "🏥 Hôpitaux d’urgence 24 h (UPA)", officialSources: "🔗 Portail de la transparence",
+        enem: "📝 ENEM – Page du participant", news: "📰 Actualités de l’Unila", conheca: "🏫 Découvrez l’Unila", desapega: "🔎 Objets trouvés et perdus · Desapega", upa: "Hôpitaux d’urgence 24 h (UPA)", officialSources: "🔗 Portail de la transparence",
         chatHeading: "💬 Chat Unila", nickPlaceholder: "Saisissez votre pseudo...", enter: "🚪 Entrer", imageSelected: "Image sélectionnée",
         chatPlaceholder: "Écrivez votre message...", anonymous: "👤 Envoyer anonymement", changeNick: "🔄 Changer de pseudo",
         developerHeading: "👨‍💻 Développeur", developerIntro: "Pour les travaux et les partenariats, contactez-nous :", developerService: "Équipe Spotted", contact: "Contact",
@@ -3821,10 +3814,10 @@ padding:0 2px;">↩ Responder</button>`;
         appTitle: "Spotted", language: "Idioma", home: "Inicio", podcast: "Podcast", music: "Música", install: "📲 Instalar aplicación",
         chatMenu: " Spotted💜 Chat💬", portal: "🌐 Portal oficial de la Unila", inscreva: "🎓 Portal Inscreva", sigaa: "📚 Sistema Académico SIGAA", email: "📧 Correo institucional",
         google: "🔎 Búsqueda Google", youtube: "▶ YouTube Unila", instagram: "📸 Instagram Unila", facebook: "📘 Facebook Unila", library: "📖 Biblioteca Unila",
-        intercampus: "🚌 Transporte intercampus", notices: "📄 Convocatorias oficiales", emergency: "🚨 Teléfonos de emergencia",
+        intercampus: "Transporte intercampus", notices: "📄 Convocatorias oficiales", emergency: "🚨 Teléfonos de emergencia",
         addresses: "🏫 Direcciones de los campus", ru: "🍽️ Restaurantes universitarios", group: "👥 Grupo de Facebook", developer: "👨‍💻 Desarrollador", privacy: "🔒 Privacidad y eliminación",
         notes: "📝 Anotaciones", share: "📤 Compartir aplicación", internet: "🌐 Internet Unila", study: "🎓 Estudia en la Unila", academicGoals: "📈 Meta académica", studentAid: "🎓 Ayuda estudiantil", mentalHealth: "🧠 Salud mental",
-        enem: "📝 ENEM – Página del participante", news: "📰 Noticias de la Unila", conheca: "🏫 Conoce la Unila", desapega: "🔎 Objetos perdidos y encontrados · Desapega", upa: "🏥 Hospitales de emergencia 24 h (UPA)", officialSources: "🔗 Portal de la Transparencia",
+        enem: "📝 ENEM – Página del participante", news: "📰 Noticias de la Unila", conheca: "🏫 Conoce la Unila", desapega: "🔎 Objetos perdidos y encontrados · Desapega", upa: "Hospitales de emergencia 24 h (UPA)", officialSources: "🔗 Portal de la Transparencia",
         chatHeading: "💬 Chat Unila", nickPlaceholder: "Escribe tu nick...", enter: "🚪 Entrar", imageSelected: "Imagen seleccionada",
         chatPlaceholder: "Escribe tu mensaje...", anonymous: "👤 Enviar anónimamente", changeNick: "🔄 Cambiar nick",
         developerHeading: "👨‍💻 Desarrollador", developerIntro: "Para trabajos y alianzas, ponte en contacto:", developerService: "Equipo Spotted", contact: "Contacto",
