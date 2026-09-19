@@ -420,7 +420,11 @@ button:hover{
   background: #f59e0b; /* Laranja âmbar */
   color: white;
 }
-.youtube-brand-mark{display:inline-flex;align-items:center;justify-content:center;width:22px;height:15px;margin-right:5px;border-radius:4px;background:#ff0000;color:#fff;font-size:10px;line-height:1;text-shadow:none;vertical-align:-1px;}
+.youtube-brand-mark,.gmail-brand-mark,.instagram-brand-mark,.facebook-brand-mark{display:inline-flex;align-items:center;justify-content:center;width:22px;height:15px;margin-right:5px;border-radius:4px;color:#fff;font-size:10px;font-weight:900;line-height:1;text-shadow:none;vertical-align:-1px;}
+.youtube-brand-mark{background:#ff0000;}
+.gmail-brand-mark{background:#ea4335;font-family:Arial,sans-serif;font-size:12px;}
+.instagram-brand-mark{background:linear-gradient(135deg,#feda75,#d62976 52%,#4f5bd5);font-size:12px;}
+.facebook-brand-mark{background:#1877f2;font-family:Arial,sans-serif;font-size:14px;}
 
 /* Aparência única para todos os botões do menu principal */
 #home > button,
@@ -1275,10 +1279,10 @@ gtag('config', 'G-FJT3X93608');
     <a class="unila menu-link" data-search-key="portal_unila" href="https://portal.unila.edu.br/">🌐 Portal Oficial da Unila</a>
     <a class="unila menu-link" href="https://inscreva.unila.edu.br/">🎓 Portal Inscreva</a>
     <a class="sigaa menu-link" href="https://sig.unila.edu.br/sigaa/verTelaLogin.do">📚 Sistema Acadêmico SIGAA</a>
-    <a class="gmail menu-link" href="https://mail.google.com/">📧 E-mail Institucional</a>
+    <a class="gmail menu-link" href="https://mail.google.com/" aria-label="E-mail Institucional"><span class="gmail-brand-mark" aria-hidden="true">M</span>E-mail Institucional</a>
     <a class="google menu-link" href="https://youtube.com/@unila?si=yOHx8TF_41FQhNbl" aria-label="YouTube Unila"><span class="youtube-brand-mark" aria-hidden="true">▶</span>YouTube Unila</a>
-    <a class="instagram menu-link" href="https://www.instagram.com/unila.campusarandu?stkn=MXJnMWU0M3RtaXpsOA==">📸 Instagram Unila Arandu</a>
-    <a class="facebook menu-link" href="https://www.facebook.com/unila.oficial">📘 Facebook Unila</a>
+    <a class="instagram menu-link" href="https://www.instagram.com/unila.campusarandu?stkn=MXJnMWU0M3RtaXpsOA==" aria-label="Instagram Unila Arandu"><span class="instagram-brand-mark" aria-hidden="true">◎</span>Instagram Unila Arandu</a>
+    <a class="facebook menu-link" href="https://www.facebook.com/unila.oficial" aria-label="Facebook Unila"><span class="facebook-brand-mark" aria-hidden="true">f</span>Facebook Unila</a>
     <a class="biblioteca menu-link" href="https://portal.unila.edu.br/biblioteca">📖 Biblioteca Unila</a>
     <a class="intercampi menu-link" href="https://portal.unila.edu.br/proagi/delog/catalogo-de-servicos/catalogo/horarios-intercampi">🚌 Transporte Intercampi</a>
     <a class="editais menu-link" href="https://documentos.unila.edu.br/">📄 Editais Oficiais</a>
@@ -2095,7 +2099,7 @@ gtag('config', 'G-FJT3X93608');
     // PWA UPDATE LOGIC
     function setupPWAUpdate() {
       if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./service-worker37.js?v=250', { updateViaCache: 'none' }).then(reg => {
+        navigator.serviceWorker.register('./service-worker37.js?v=251', { updateViaCache: 'none' }).then(reg => {
           reg.update();
           reg.addEventListener('updatefound', () => {
             const newWorker = reg.installing;
@@ -4066,9 +4070,12 @@ padding:0 2px;">↩ Responder</button>`;
     for (var i=0; i<menu.length && i<menuKeys.length; i++) {
       var menuKey = menuKeys[i];
       var menuLabel = normalizeMenuLabel(menuKey, tr(menuKey));
-      if (menuKey === "youtube") {
-        menu[i].innerHTML = '<span class="youtube-brand-mark" aria-hidden="true">▶</span>' + escapeHtml(menuLabel.replace(/^.*?(YouTube Unila)$/, "$1"));
-        menu[i].setAttribute("aria-label", "YouTube Unila");
+      if (menuKey === "youtube" || menuKey === "email" || menuKey === "instagram" || menuKey === "facebook") {
+        var brandClass = menuKey === "youtube" ? "youtube-brand-mark" : menuKey === "email" ? "gmail-brand-mark" : menuKey === "instagram" ? "instagram-brand-mark" : "facebook-brand-mark";
+        var brandGlyph = menuKey === "youtube" ? "▶" : menuKey === "email" ? "M" : menuKey === "instagram" ? "◎" : "f";
+        var brandLabel = menuKey === "youtube" ? menuLabel.replace(/^.*?(YouTube Unila)$/, "$1") : menuLabel.replace(/^[^A-Za-zÀ-ÿ]+/, "");
+        menu[i].innerHTML = '<span class="' + brandClass + '" aria-hidden="true">' + brandGlyph + '</span>' + escapeHtml(brandLabel);
+        menu[i].setAttribute("aria-label", brandLabel);
       } else {
         menu[i].textContent = menuLabel;
       }
