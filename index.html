@@ -420,11 +420,11 @@ button:hover{
   background: #f59e0b; /* Laranja âmbar */
   color: white;
 }
-.youtube-brand-mark,.gmail-brand-mark,.instagram-brand-mark,.facebook-brand-mark{display:inline-flex;align-items:center;justify-content:center;width:22px;height:15px;margin-right:5px;border-radius:4px;color:#fff;font-size:10px;font-weight:900;line-height:1;text-shadow:none;vertical-align:-1px;}
+.youtube-brand-mark,.gmail-brand-mark,.instagram-brand-mark,.facebook-brand-mark{display:inline-flex;align-items:center;justify-content:center;width:28px;height:20px;margin-right:6px;border-radius:5px;color:#fff;font-size:13px;font-weight:900;line-height:1;text-shadow:none;vertical-align:-3px;}
 .youtube-brand-mark{background:#ff0000;}
-.gmail-brand-mark{background:#ea4335;font-family:Arial,sans-serif;font-size:12px;}
-.instagram-brand-mark{background:linear-gradient(135deg,#feda75,#d62976 52%,#4f5bd5);font-size:12px;}
-.facebook-brand-mark{background:#1877f2;font-family:Arial,sans-serif;font-size:14px;}
+.gmail-brand-mark{background:#ea4335;font-family:Arial,sans-serif;font-size:15px;}
+.instagram-brand-mark{background:linear-gradient(135deg,#feda75,#d62976 52%,#4f5bd5);font-size:15px;}
+.facebook-brand-mark{background:#1877f2;font-family:Arial,sans-serif;font-size:18px;}
 
 /* Aparência única para todos os botões do menu principal */
 #home > button,
@@ -1363,10 +1363,10 @@ gtag('config', 'G-FJT3X93608');
       <input id="nickEmailInput" type="email" autocomplete="email" placeholder="E-mail para recuperação (obrigatório no novo acesso)" style="padding:10px; border-radius:10px; border:none; margin-bottom:10px; width:80%;" />
       <div class="auth-field-wrap">
         <input id="nickPasswordInput" type="password" autocomplete="current-password" minlength="6" placeholder="Digite sua senha ou crie uma senha" style="padding:10px; border-radius:10px; border:none; margin-bottom:10px; width:80%;" />
-        <button type="button" class="password-toggle" onclick="togglePasswordVisibility('nickPasswordInput', this)" aria-label="Mostrar senha">Mostrar</button>
+        <button type="button" class="password-toggle" onclick="togglePasswordVisibility('nickPasswordInput', this)" aria-label="Mostrar senha">👁️ Mostrar</button>
       </div>
-      <button id="nickEnterBtn" onclick="saveNick(this)">Entrar / criar acesso</button>
-      <button type="button" class="auth-link-button" onclick="openNickRecoveryDialog()">Esqueci minha senha</button>
+      <button id="nickEnterBtn" onclick="saveNick(this)">🚪 Entrar / criar acesso</button>
+      <button type="button" class="auth-link-button" onclick="openNickRecoveryDialog()">🔑 Esqueci minha senha</button>
       <small style="display:block; width:80%; margin:4px auto 12px; color:#cbd5e1; line-height:1.35;">No primeiro acesso, informe um e-mail real para poder recuperar a senha. Contas antigas podem continuar entrando com o e-mail técnico do nick.</small>
       <div id="nickRecoveryDialog" role="dialog" aria-modal="true" aria-labelledby="nickRecoveryTitle" style="display:none; position:fixed; inset:0; z-index:10000; align-items:center; justify-content:center; padding:20px; background:rgba(0,0,0,.72);">
         <div style="width:min(410px,100%); box-sizing:border-box; padding:22px; border:1px solid rgba(167,139,250,.5); border-radius:18px; background:#1b0b25; color:#fff; box-shadow:0 18px 60px rgba(0,0,0,.55);">
@@ -1374,8 +1374,8 @@ gtag('config', 'G-FJT3X93608');
           <p style="margin:0 0 14px; color:#ddd; line-height:1.45;">Informe o e-mail vinculado ao seu acesso. Enviaremos um link oficial do Firebase para criar uma nova senha.</p>
           <input id="nickRecoveryEmailInput" type="email" autocomplete="email" placeholder="seu@email.com" style="display:block; width:100%; box-sizing:border-box; padding:11px; border-radius:9px; border:none; margin-bottom:14px;" />
           <div style="display:flex; justify-content:flex-end; gap:8px;">
-            <button type="button" onclick="closeNickRecoveryDialog()" style="background:transparent; border:1px solid rgba(255,255,255,.3);">Cancelar</button>
-            <button id="nickRecoveryConfirmBtn" type="button" onclick="sendNickRecoveryEmail()" style="background:#7c3aed;">Enviar link</button>
+            <button type="button" onclick="closeNickRecoveryDialog()" style="background:transparent; border:1px solid rgba(255,255,255,.3);">✖ Cancelar</button>
+            <button id="nickRecoveryConfirmBtn" type="button" onclick="sendNickRecoveryEmail()" style="background:#7c3aed;">📧 Enviar link</button>
           </div>
         </div>
       </div>
@@ -1413,10 +1413,10 @@ gtag('config', 'G-FJT3X93608');
         <div style="width:min(390px,100%); box-sizing:border-box; padding:22px; border:1px solid rgba(248,113,113,.45); border-radius:18px; background:#1b0b25; color:#fff; box-shadow:0 18px 60px rgba(0,0,0,.55);">
           <h3 id="nickDeleteDialogTitle" style="margin:0 0 10px;">Excluir nick e dados</h3>
           <p style="margin:0 0 14px; color:#fecaca; line-height:1.45;">Digite sua senha para confirmar a exclusão permanente do nick e dos dados relacionados.</p>
-          <div class="auth-field-wrap full"><input id="nickDeletePasswordInput" type="password" autocomplete="current-password" placeholder="Sua senha" style="display:block; width:100%; box-sizing:border-box; padding:11px; border-radius:9px; border:none; margin-bottom:14px;" /><button type="button" class="password-toggle" onclick="togglePasswordVisibility('nickDeletePasswordInput', this)" aria-label="Mostrar senha de exclusão">Mostrar</button></div>
+          <div class="auth-field-wrap full"><input id="nickDeletePasswordInput" type="password" autocomplete="current-password" placeholder="Sua senha" style="display:block; width:100%; box-sizing:border-box; padding:11px; border-radius:9px; border:none; margin-bottom:14px;" /><button type="button" class="password-toggle" onclick="togglePasswordVisibility('nickDeletePasswordInput', this)" aria-label="Mostrar senha de exclusão">👁️ Mostrar</button></div>
           <div style="display:flex; justify-content:flex-end; gap:8px;">
-            <button type="button" onclick="closeNickDeleteDialog()" style="background:transparent; border:1px solid rgba(255,255,255,.3);">Cancelar</button>
-            <button id="nickDeleteConfirmBtn" type="button" onclick="confirmNickAccountDeletion()" style="background:#b91c1c;">Excluir dados</button>
+            <button type="button" onclick="closeNickDeleteDialog()" style="background:transparent; border:1px solid rgba(255,255,255,.3);">✖ Cancelar</button>
+            <button id="nickDeleteConfirmBtn" type="button" onclick="confirmNickAccountDeletion()" style="background:#b91c1c;">🗑️ Excluir dados</button>
           </div>
         </div>
       </div>
@@ -1434,7 +1434,7 @@ gtag('config', 'G-FJT3X93608');
     <h2>📝 Anotações</h2>
     <p id="notesNickNotice" class="academic-nick-notice">Crie um nick no Chat para inserir suas anotações.</p>
     <textarea id="note" placeholder="Escreva sua anotação aqui..."></textarea>
-    <button onclick="saveNote()">Salvar</button>
+    <button onclick="saveNote()">💾 Salvar</button>
     <div id="list" style="margin-top:20px;"></div>
     <p id="notesStatus" role="status" style="min-height:22px; margin:12px 0 0; color:#bbf7d0; font-size:13px;"></p>
   </div>
@@ -1474,8 +1474,8 @@ gtag('config', 'G-FJT3X93608');
         <label for="adAnonymous" style="font-size:14px; color:white; cursor:pointer;">Postar anonimamente (Ocultar meu Nick)</label>
       </div>
       <div style="display:flex; gap:10px;">
-        <button onclick="saveAd()" id="btnSaveAd" style="flex:1; background:#22c55e;">Salvar</button>
-        <button onclick="cancelAdEdit()" style="flex:1; background:#dc2626;">Cancelar</button>
+        <button onclick="saveAd()" id="btnSaveAd" style="flex:1; background:#22c55e;">💾 Salvar</button>
+        <button onclick="cancelAdEdit()" style="flex:1; background:#dc2626;">✖ Cancelar</button>
       </div>
     </div>
     <div id="adList">
@@ -1569,7 +1569,7 @@ gtag('config', 'G-FJT3X93608');
       overlay.id = "appDialogOverlay";
       overlay.setAttribute("role", "dialog");
       overlay.setAttribute("aria-modal", "true");
-      overlay.innerHTML = `<div id="appDialogCard"><h3 id="appDialogTitle">Spotted</h3><p id="appDialogMessage"></p><div id="appDialogActions"><button id="appDialogCancel" type="button">Cancelar</button><button id="appDialogOk" type="button">OK</button></div></div>`;
+      overlay.innerHTML = `<div id="appDialogCard"><h3 id="appDialogTitle">Spotted</h3><p id="appDialogMessage"></p><div id="appDialogActions"><button id="appDialogCancel" type="button">✖ Cancelar</button><button id="appDialogOk" type="button">✅ OK</button></div></div>`;
       document.body.appendChild(overlay);
       return overlay;
     }
@@ -2099,7 +2099,7 @@ gtag('config', 'G-FJT3X93608');
     // PWA UPDATE LOGIC
     function setupPWAUpdate() {
       if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./service-worker37.js?v=251', { updateViaCache: 'none' }).then(reg => {
+        navigator.serviceWorker.register('./service-worker37.js?v=252', { updateViaCache: 'none' }).then(reg => {
           reg.update();
           reg.addEventListener('updatefound', () => {
             const newWorker = reg.installing;
@@ -3765,15 +3765,15 @@ padding:0 2px;">↩ Responder</button>`;
         addresses: "🏫 Endereços dos Campus", ru: "🍽️ Restaurantes Universitários", group: "👥 Grupo no Facebook", developer: "👨‍💻 Desenvolvedor", privacy: "🔒 Privacidade e exclusão",
         notes: "📝 Anotações", share: "📤 Compartilhar App", internet: "🌐 Internet Unila", study: "🎓 Estude na Unila", academicGoals: "📈 Meta Acadêmica", studentAid: "🎓 Auxílio Estudantil", mentalHealth: "🧠 Saúde Mental",
         enem: "📝 ENEM – Página do Participante", news: "📰 Notícias da Unila", conheca: "🏫 Conheça a Unila", desapega: "🔎 Achados e Perdidos e Desapega", upa: "🏥 Hospitais de Emergência 24h (UPA)", officialSources: "🔗 Portal da Transparência",
-        chatHeading: "💬 Chat Unila", nickPlaceholder: "Digite seu nick...", enter: "Entrar", imageSelected: "Imagem selecionada",
+        chatHeading: "💬 Chat Unila", nickPlaceholder: "Digite seu nick...", enter: "🚪 Entrar", imageSelected: "Imagem selecionada",
         chatPlaceholder: "Digite sua mensagem...", anonymous: "👤 Enviar Anonimamente", changeNick: "🔄 Mudar Nick",
         developerHeading: "👨‍💻 Desenvolvedor", developerIntro: "Para trabalhos e parcerias entre em contato:", developerService: "Equipe Spotted", contact: "Contato",
-        notesHeading: "📝 Anotações", notePlaceholder: "Escreva sua anotação aqui...", save: "Salvar", desapegaHeading: "🛒 Desapega Unileiro",
+        notesHeading: "📝 Anotações", notePlaceholder: "Escreva sua anotação aqui...", save: "💾 Salvar", desapegaHeading: "🛒 Desapega Unileiro",
         postAd: "➕ Postar Anúncio", newAd: "Novo Anúncio", editAdTitle: "Editar Anúncio", selling: "O que você está vendendo?",
         price: "Preço (Ex: R$ 50,00 ou Grátis)", description: "Descrição do item...", whatsappPlaceholder: "Seu WhatsApp (Ex: 45999999999)",
-        photo1: "📷 Foto 1", photo2: "📷 Foto 2", postAnonymous: "Postar anonimamente (Ocultar meu Nick)", cancel: "Cancelar",
+        photo1: "📷 Foto 1", photo2: "📷 Foto 2", postAnonymous: "Postar anonimamente (Ocultar meu Nick)", cancel: "✖ Cancelar",
         loadingAds: "Carregando anúncios...", noAds: "Nenhum anúncio.", noNews: "Nenhuma notícia publicada ainda.", newsError: "Erro ao carregar notícias.",
-        seller: "Vendedor", replyAd: "Responder anúncio...", send: "Enviar", edit: "✏️ Editar", delete: "🗑 Excluir", reply: "↩ Responder",
+        seller: "Vendedor", replyAd: "Responder anúncio...", send: "📤 Enviar", edit: "✏️ Editar", delete: "🗑 Excluir", reply: "↩ Responder",
         replying: "Respondendo a", today: "Hoje às", yesterday: "Ontem às", at: "às", verify: "Verificando...", sending: "Enviando...", saving: "Salvando...",
         reactNick: "Defina um nick para reagir.", replyNick: "Defina um nick para responder.", typeNick: "Digite um Nick!", nickUsed: "Nick em uso!",
         fillAll: "Preencha tudo!", deleteReplyConfirm: "Excluir esta resposta?", deleteAdConfirm: "Excluir este anúncio?",
@@ -3800,15 +3800,15 @@ padding:0 2px;">↩ Responder</button>`;
         addresses: "🏫 Adresses des campus", ru: "🍽️ Restaurants universitaires", group: "👥 Groupe Facebook", developer: "👨‍💻 Développeur", privacy: "🔒 Confidentialité et suppression",
         notes: "📝 Notes", share: "📤 Partager l’application", internet: "🌐 Internet Unila", study: "🎓 Étudier à l’Unila", academicGoals: "📈 Objectif académique", studentAid: "🎓 Aide aux étudiants", mentalHealth: "🧠 Santé mentale",
         enem: "📝 ENEM – Page du participant", news: "📰 Actualités de l’Unila", conheca: "🏫 Découvrez l’Unila", desapega: "🔎 Objets trouvés et perdus · Desapega", upa: "🏥 Hôpitaux d’urgence 24 h (UPA)", officialSources: "🔗 Portail de la transparence",
-        chatHeading: "💬 Chat Unila", nickPlaceholder: "Saisissez votre pseudo...", enter: "Entrer", imageSelected: "Image sélectionnée",
+        chatHeading: "💬 Chat Unila", nickPlaceholder: "Saisissez votre pseudo...", enter: "🚪 Entrer", imageSelected: "Image sélectionnée",
         chatPlaceholder: "Écrivez votre message...", anonymous: "👤 Envoyer anonymement", changeNick: "🔄 Changer de pseudo",
         developerHeading: "👨‍💻 Développeur", developerIntro: "Pour les travaux et les partenariats, contactez-nous :", developerService: "Équipe Spotted", contact: "Contact",
-        notesHeading: "📝 Notes", notePlaceholder: "Écrivez votre note ici...", save: "Enregistrer", desapegaHeading: "🛒 Desapega Unileiro",
+        notesHeading: "📝 Notes", notePlaceholder: "Écrivez votre note ici...", save: "💾 Enregistrer", desapegaHeading: "🛒 Desapega Unileiro",
         postAd: "➕ Publier une annonce", newAd: "Nouvelle annonce", editAdTitle: "Modifier l’annonce", selling: "Que vendez-vous ?",
         price: "Prix (Ex. : 50,00 R$ ou gratuit)", description: "Description de l’article...", whatsappPlaceholder: "Votre WhatsApp (Ex. : 45999999999)",
-        photo1: "📷 Photo 1", photo2: "📷 Photo 2", postAnonymous: "Publier anonymement (masquer mon pseudo)", cancel: "Annuler",
+        photo1: "📷 Photo 1", photo2: "📷 Photo 2", postAnonymous: "Publier anonymement (masquer mon pseudo)", cancel: "✖ Annuler",
         loadingAds: "Chargement des annonces...", noAds: "Aucune annonce.", noNews: "Aucune actualité publiée pour le moment.", newsError: "Erreur lors du chargement des actualités.",
-        seller: "Vendeur", replyAd: "Répondre à l’annonce...", send: "Envoyer", edit: "✏️ Modifier", delete: "🗑 Supprimer", reply: "↩ Répondre",
+        seller: "Vendeur", replyAd: "Répondre à l’annonce...", send: "📤 Envoyer", edit: "✏️ Modifier", delete: "🗑 Supprimer", reply: "↩ Répondre",
         replying: "Réponse à", today: "Aujourd’hui à", yesterday: "Hier à", at: "à", verify: "Vérification...", sending: "Envoi...", saving: "Enregistrement...",
         reactNick: "Définissez un pseudo pour réagir.", replyNick: "Définissez un pseudo pour répondre.", typeNick: "Saisissez un pseudo !", nickUsed: "Pseudo déjà utilisé !",
         fillAll: "Veuillez tout remplir !", deleteReplyConfirm: "Supprimer cette réponse ?", deleteAdConfirm: "Supprimer cette annonce ?",
@@ -3835,15 +3835,15 @@ padding:0 2px;">↩ Responder</button>`;
         addresses: "🏫 Direcciones de los campus", ru: "🍽️ Restaurantes universitarios", group: "👥 Grupo de Facebook", developer: "👨‍💻 Desarrollador", privacy: "🔒 Privacidad y eliminación",
         notes: "📝 Anotaciones", share: "📤 Compartir aplicación", internet: "🌐 Internet Unila", study: "🎓 Estudia en la Unila", academicGoals: "📈 Meta académica", studentAid: "🎓 Ayuda estudiantil", mentalHealth: "🧠 Salud mental",
         enem: "📝 ENEM – Página del participante", news: "📰 Noticias de la Unila", conheca: "🏫 Conoce la Unila", desapega: "🔎 Objetos perdidos y encontrados · Desapega", upa: "🏥 Hospitales de emergencia 24 h (UPA)", officialSources: "🔗 Portal de la Transparencia",
-        chatHeading: "💬 Chat Unila", nickPlaceholder: "Escribe tu nick...", enter: "Entrar", imageSelected: "Imagen seleccionada",
+        chatHeading: "💬 Chat Unila", nickPlaceholder: "Escribe tu nick...", enter: "🚪 Entrar", imageSelected: "Imagen seleccionada",
         chatPlaceholder: "Escribe tu mensaje...", anonymous: "👤 Enviar anónimamente", changeNick: "🔄 Cambiar nick",
         developerHeading: "👨‍💻 Desarrollador", developerIntro: "Para trabajos y alianzas, ponte en contacto:", developerService: "Equipo Spotted", contact: "Contacto",
-        notesHeading: "📝 Anotaciones", notePlaceholder: "Escribe tu anotación aquí...", save: "Guardar", desapegaHeading: "🛒 Desapega Unileiro",
+        notesHeading: "📝 Anotaciones", notePlaceholder: "Escribe tu anotación aquí...", save: "💾 Guardar", desapegaHeading: "🛒 Desapega Unileiro",
         postAd: "➕ Publicar anuncio", newAd: "Nuevo anuncio", editAdTitle: "Editar anuncio", selling: "¿Qué estás vendiendo?",
         price: "Precio (Ej.: R$ 50,00 o gratis)", description: "Descripción del artículo...", whatsappPlaceholder: "Tu WhatsApp (Ej.: 45999999999)",
-        photo1: "📷 Foto 1", photo2: "📷 Foto 2", postAnonymous: "Publicar anónimamente (ocultar mi nick)", cancel: "Cancelar",
+        photo1: "📷 Foto 1", photo2: "📷 Foto 2", postAnonymous: "Publicar anónimamente (ocultar mi nick)", cancel: "✖ Cancelar",
         loadingAds: "Cargando anuncios...", noAds: "Ningún anuncio.", noNews: "Todavía no hay noticias publicadas.", newsError: "Error al cargar las noticias.",
-        seller: "Vendedor", replyAd: "Responder anuncio...", send: "Enviar", edit: "✏️ Editar", delete: "🗑 Eliminar", reply: "↩ Responder",
+        seller: "Vendedor", replyAd: "Responder anuncio...", send: "📤 Enviar", edit: "✏️ Editar", delete: "🗑 Eliminar", reply: "↩ Responder",
         replying: "Respondiendo a", today: "Hoy a las", yesterday: "Ayer a las", at: "a las", verify: "Verificando...", sending: "Enviando...", saving: "Guardando...",
         reactNick: "Define un nick para reaccionar.", replyNick: "Define un nick para responder.", typeNick: "¡Escribe un nick!", nickUsed: "¡Nick en uso!",
         fillAll: "¡Completa todos los campos!", deleteReplyConfirm: "¿Eliminar esta respuesta?", deleteAdConfirm: "¿Eliminar este anuncio?",
@@ -4384,8 +4384,8 @@ padding:0 2px;">↩ Responder</button>`;
       <span id="ugcPolicyAcceptText">Li e aceito os Termos de Uso e a política de comportamento.</span>
     </label>
     <div class="ugc-modal-actions">
-      <button type="button" class="ugc-secondary" onclick="closeUGCPolicy()">Cancelar</button>
-      <button type="button" onclick="acceptUGCPolicy()">Aceitar e continuar</button>
+      <button type="button" class="ugc-secondary" onclick="closeUGCPolicy()">✖ Cancelar</button>
+      <button type="button" onclick="acceptUGCPolicy()">✅ Aceitar e continuar</button>
     </div>
   </div>
 </div>
@@ -4396,8 +4396,8 @@ padding:0 2px;">↩ Responder</button>`;
     <p id="ugcReportDescription">Descreva o motivo da denúncia. A solicitação será registrada para análise e moderação.</p>
     <textarea id="ugcReportReason" placeholder="Descreva o motivo da denúncia..."></textarea>
     <div class="ugc-modal-actions">
-      <button type="button" class="ugc-secondary" onclick="closeUGCReport()">Cancelar</button>
-      <button type="button" class="ugc-danger" onclick="submitUGCReport()">Enviar denúncia</button>
+      <button type="button" class="ugc-secondary" onclick="closeUGCReport()">✖ Cancelar</button>
+      <button type="button" class="ugc-danger" onclick="submitUGCReport()">🚩 Enviar denúncia</button>
     </div>
   </div>
 </div>
