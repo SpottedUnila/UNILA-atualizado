@@ -425,6 +425,12 @@ button:hover{
 .gmail-brand-mark{background:#ea4335;font-family:Arial,sans-serif;font-size:15px;}
 .instagram-brand-mark{background:linear-gradient(135deg,#feda75,#d62976 52%,#4f5bd5);font-size:15px;}
 .facebook-brand-mark{background:#1877f2;font-family:Arial,sans-serif;font-size:18px;}
+#home > a[href*="youtube.com"]::before,#home > a[href*="mail.google.com"]::before,#home > a[href*="instagram.com"]::before,#home > a[href*="facebook.com"]::before{display:inline-flex;align-items:center;justify-content:center;width:28px;height:20px;margin-right:2px;border-radius:5px;color:#fff;font-weight:900;line-height:1;text-shadow:none;vertical-align:-3px;}
+#home > a[href*="youtube.com"]::before{content:"▶";background:#ff0000;font-size:13px;}
+#home > a[href*="mail.google.com"]::before{content:"M";background:#ea4335;font:900 15px Arial,sans-serif;}
+#home > a[href*="instagram.com"]::before{content:"◎";background:linear-gradient(135deg,#feda75,#d62976 52%,#4f5bd5);font-size:15px;}
+#home > a[href*="facebook.com"]::before{content:"f";background:#1877f2;font:900 18px Arial,sans-serif;}
+.youtube-brand-mark,.gmail-brand-mark,.instagram-brand-mark,.facebook-brand-mark{display:none;}
 
 /* Aparência única para todos os botões do menu principal */
 #home > button,
@@ -2099,7 +2105,7 @@ gtag('config', 'G-FJT3X93608');
     // PWA UPDATE LOGIC
     function setupPWAUpdate() {
       if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./service-worker37.js?v=254', { updateViaCache: 'none' }).then(reg => {
+        navigator.serviceWorker.register('./service-worker37.js?v=255', { updateViaCache: 'none' }).then(reg => {
           reg.update();
           reg.addEventListener('updatefound', () => {
             const newWorker = reg.installing;
