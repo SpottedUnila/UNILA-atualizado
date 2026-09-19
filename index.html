@@ -420,6 +420,7 @@ button:hover{
   background: #f59e0b; /* Laranja âmbar */
   color: white;
 }
+.youtube-brand-mark{display:inline-flex;align-items:center;justify-content:center;width:22px;height:15px;margin-right:5px;border-radius:4px;background:#ff0000;color:#fff;font-size:10px;line-height:1;text-shadow:none;vertical-align:-1px;}
 
 /* Aparência única para todos os botões do menu principal */
 #home > button,
@@ -1275,7 +1276,7 @@ gtag('config', 'G-FJT3X93608');
     <a class="unila menu-link" href="https://inscreva.unila.edu.br/">🎓 Portal Inscreva</a>
     <a class="sigaa menu-link" href="https://sig.unila.edu.br/sigaa/verTelaLogin.do">📚 Sistema Acadêmico SIGAA</a>
     <a class="gmail menu-link" href="https://mail.google.com/">📧 E-mail Institucional</a>
-    <a class="google menu-link" href="https://youtube.com/@unila?si=yOHx8TF_41FQhNbl">▶ YouTube Unila</a>
+    <a class="google menu-link" href="https://youtube.com/@unila?si=yOHx8TF_41FQhNbl" aria-label="YouTube Unila"><span class="youtube-brand-mark" aria-hidden="true">▶</span>YouTube Unila</a>
     <a class="instagram menu-link" href="https://www.instagram.com/unila.campusarandu?stkn=MXJnMWU0M3RtaXpsOA==">📸 Instagram Unila Arandu</a>
     <a class="facebook menu-link" href="https://www.facebook.com/unila.oficial">📘 Facebook Unila</a>
     <a class="biblioteca menu-link" href="https://portal.unila.edu.br/biblioteca">📖 Biblioteca Unila</a>
@@ -2094,7 +2095,7 @@ gtag('config', 'G-FJT3X93608');
     // PWA UPDATE LOGIC
     function setupPWAUpdate() {
       if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./service-worker37.js?v=249', { updateViaCache: 'none' }).then(reg => {
+        navigator.serviceWorker.register('./service-worker37.js?v=250', { updateViaCache: 'none' }).then(reg => {
           reg.update();
           reg.addEventListener('updatefound', () => {
             const newWorker = reg.installing;
@@ -4062,7 +4063,16 @@ padding:0 2px;">↩ Responder</button>`;
     if (radioButton) radioButton.title = tr("music");
 
     var menu = document.querySelectorAll("#home > button, #home > a.menu-link");
-    for (var i=0; i<menu.length && i<menuKeys.length; i++) menu[i].textContent = normalizeMenuLabel(menuKeys[i], tr(menuKeys[i]));
+    for (var i=0; i<menu.length && i<menuKeys.length; i++) {
+      var menuKey = menuKeys[i];
+      var menuLabel = normalizeMenuLabel(menuKey, tr(menuKey));
+      if (menuKey === "youtube") {
+        menu[i].innerHTML = '<span class="youtube-brand-mark" aria-hidden="true">▶</span>' + escapeHtml(menuLabel.replace(/^.*?(YouTube Unila)$/, "$1"));
+        menu[i].setAttribute("aria-label", "YouTube Unila");
+      } else {
+        menu[i].textContent = menuLabel;
+      }
+    }
     setOwnText(document.querySelector(".podcast-badge"), tr("podcast"));
     setOwnText(document.querySelector(".radio-badge"), tr("music"));
     document.querySelectorAll("#radioPlayer .video-control-label").forEach(function(el){ el.textContent = tr("music"); });
