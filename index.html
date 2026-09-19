@@ -1234,11 +1234,8 @@ gtag('config', 'G-FJT3X93608');
 <style id="auth-controls-style">
 /* Desloca o conjunto de nick/e-mail/senha e ações 200px para baixo. */
 #nickArea > #nickInput,
-#nickArea > #nickEmailInput,
 #nickArea > .auth-field-wrap,
-#nickArea > #nickEnterBtn,
-#nickArea > .auth-link-button,
-#nickArea > small { transform:translateY(250px); }
+#nickArea > #nickEnterBtn { transform:translateY(250px); }
 .auth-field-wrap{position:relative;width:80%;margin:0 auto}.auth-field-wrap.full{width:100%}.auth-field-wrap input{padding-right:70px!important;box-sizing:border-box}.password-toggle{position:absolute;right:7px;top:6px;min-width:58px;padding:6px 7px!important;font-size:11px!important;background:rgba(124,58,237,.85)!important;border:0!important;border-radius:7px!important}.auth-link-button{display:block;margin:8px auto;background:transparent!important;border:0!important;color:#c4b5fd!important;text-decoration:underline;font-size:13px!important}
 </style>
 
@@ -1386,26 +1383,11 @@ gtag('config', 'G-FJT3X93608');
     <h2>💬 Chat Unila</h2>
     <div id="nickArea">
       <input id="nickInput" autocomplete="username" placeholder="Digite seu nick..." style="padding:10px; border-radius:10px; border:none; margin-bottom:10px; width:80%;" />
-      <input id="nickEmailInput" type="email" autocomplete="email" placeholder="E-mail para recuperação (obrigatório no novo acesso)" style="padding:10px; border-radius:10px; border:none; margin-bottom:10px; width:80%;" />
       <div class="auth-field-wrap">
         <input id="nickPasswordInput" type="password" autocomplete="current-password" minlength="6" placeholder="Digite sua senha ou crie uma senha" style="padding:10px; border-radius:10px; border:none; margin-bottom:10px; width:80%;" />
         <button type="button" class="password-toggle" onclick="togglePasswordVisibility('nickPasswordInput', this)" aria-label="Mostrar senha">👁️ Mostrar</button>
       </div>
       <button id="nickEnterBtn" onclick="saveNick(this)">🚪 Entrar / criar acesso</button>
-      <button type="button" class="auth-link-button" onclick="openNickRecoveryDialog()">🔑 Esqueci minha senha</button>
-      <small style="display:block; width:80%; margin:4px auto 12px; color:#cbd5e1; line-height:1.35;">No primeiro acesso, informe um e-mail real para poder recuperar a senha. Contas antigas podem continuar entrando com o e-mail técnico do nick.</small>
-      <div id="nickRecoveryDialog" role="dialog" aria-modal="true" aria-labelledby="nickRecoveryTitle" style="display:none; position:fixed; inset:0; z-index:10000; align-items:center; justify-content:center; padding:20px; background:rgba(0,0,0,.72);">
-        <div style="width:min(410px,100%); box-sizing:border-box; padding:22px; border:1px solid rgba(167,139,250,.5); border-radius:18px; background:#1b0b25; color:#fff; box-shadow:0 18px 60px rgba(0,0,0,.55);">
-          <h3 id="nickRecoveryTitle" style="margin:0 0 10px;">Recuperar senha por e-mail</h3>
-          <p style="margin:0 0 14px; color:#ddd; line-height:1.45;">Informe o e-mail vinculado ao seu acesso. Enviaremos um link oficial do Firebase para criar uma nova senha.</p>
-          <input id="nickRecoveryEmailInput" type="email" autocomplete="email" placeholder="seu@email.com" style="display:block; width:100%; box-sizing:border-box; padding:11px; border-radius:9px; border:none; margin-bottom:14px;" />
-          <div style="display:flex; justify-content:flex-end; gap:8px;">
-            <button type="button" onclick="closeNickRecoveryDialog()" style="background:transparent; border:1px solid rgba(255,255,255,.3);">✖ Cancelar</button>
-            <button id="nickRecoveryConfirmBtn" type="button" onclick="sendNickRecoveryEmail()" style="background:#7c3aed;">📧 Enviar link</button>
-          </div>
-        </div>
-      </div>
-
     </div>
     <div id="chatArea" style="display:none;">
       <div id="chatBox"></div>
@@ -1788,54 +1770,6 @@ gtag('config', 'G-FJT3X93608');
     function normalizeRecoveryEmail(value) {
       return String(value || "").trim().toLowerCase();
     }
-    function openNickRecoveryDialog() {
-      const dialog = document.getElementById("nickRecoveryDialog");
-      const input = document.getElementById("nickRecoveryEmailInput");
-      const active = firebaseUser && !firebaseUser.isAnonymous ? firebaseUser.email : "";
-      if (input && !input.value && active && !active.endsWith("@auth.spottedunila.app")) input.value = active;
-      if (dialog) dialog.style.display = "flex";
-      if (input) input.focus();
-    }
-    function closeNickRecoveryDialog() {
-      const dialog = document.getElementById("nickRecoveryDialog");
-      if (dialog) dialog.style.display = "none";
-    }
-    async function sendNickRecoveryEmail() {
-      const email = normalizeRecoveryEmail((document.getElementById("nickRecoveryEmailInput") || {}).value);
-      const button = document.getElementById("nickRecoveryConfirmBtn");
-      if (!email || !email.includes("@")) { await appAlert("Informe um e-mail válido."); return; }
-      try {
-        if (button) { button.disabled = true; button.textContent = "Enviando..."; }
-        await auth.sendPasswordResetEmail(email);
-        closeNickRecoveryDialog();
-        const input = document.getElementById("nickRecoveryEmailInput");
-        if (input) input.value = "";
-        await appAlert("Se existir um acesso com esse e-mail, enviaremos um link para redefinir a senha. Verifique também o spam.");
-      } catch (error) {
-        console.error("Erro ao enviar recuperação por e-mail:", error);
-        await appAlert("Não foi possível enviar o e-mail agora. Confira o endereço e tente novamente.");
-      } finally { if (button) { button.disabled = false; button.textContent = "Enviar link"; } }
-    }
-    async function saveRecoveryEmail() {
-      const currentPassword = (document.getElementById("nickRecoveryCurrentPasswordInput") || {}).value || "";
-      const email = normalizeRecoveryEmail((document.getElementById("nickRecoveryEmailManageInput") || {}).value);
-      const button = document.getElementById("nickRecoveryManageBtn");
-      if (!nick || !firebaseUser || firebaseUser.isAnonymous) { await appAlert("Entre com seu nick e senha antes de cadastrar o e-mail."); return; }
-      if (currentPassword.length < NICK_PASSWORD_MIN_LENGTH || !email.includes("@")) { await appAlert("Informe a senha atual e um e-mail válido."); return; }
-      try {
-        if (button) { button.disabled = true; button.textContent = "Salvando..."; }
-        const credential = firebase.auth.EmailAuthProvider.credential(firebaseUser.email || nickAuthEmail(nick), currentPassword);
-        await firebaseUser.reauthenticateWithCredential(credential);
-        await firebaseUser.updateEmail(email);
-        await reserveNickForCurrentUser(nick, email);
-        ["nickRecoveryCurrentPasswordInput", "nickRecoveryEmailManageInput"].forEach(id => { const el=document.getElementById(id); if(el) el.value=""; });
-        await appAlert("E-mail de recuperação salvo. A partir de agora, use esse endereço para redefinir sua senha.");
-      } catch (error) {
-        console.error("Erro ao salvar e-mail de recuperação:", error);
-        const code = authErrorCode(error);
-        await appAlert(code === "auth/email-already-in-use" ? "Esse e-mail já está vinculado a outro acesso." : "Não foi possível salvar o e-mail. Confira a senha atual e tente novamente.");
-      } finally { if (button) { button.disabled = false; button.textContent = "Salvar e-mail de recuperação"; } }
-    }
     async function createNickPassword() {
       const passwordField = document.getElementById("nickPasswordManageInput");
       const button = document.getElementById("nickPasswordManageBtn");
@@ -1896,60 +1830,39 @@ gtag('config', 'G-FJT3X93608');
     }
     async function loginOrCreateNick(input, password, recoveryEmail){
       await waitForFirebaseReady();
-      const recovery = normalizeRecoveryEmail(recoveryEmail);
       const legacyEmail = nickAuthEmail(input);
       let authenticatedUser = null;
-
-      if (!recovery) {
-        // Contas antigas entram pelo e-mail técnico calculado a partir do nick.
-        if (auth.currentUser) await auth.signOut();
+      const ownership = await readNickOwnership(input).catch(() => null);
+      const candidateEmails = Array.from(new Set([
+        ownership && ownership.canonical && ownership.canonical.email,
+        ownership && ownership.legacy && ownership.legacy.email,
+        input === ADMIN_NICK ? ADMIN_EMAIL : null,
+        legacyEmail
+      ].filter(Boolean)));
+      if (auth.currentUser) await auth.signOut();
+      let lastError = null;
+      for (const accountEmail of candidateEmails) {
         try {
-          authenticatedUser = (await auth.signInWithEmailAndPassword(legacyEmail, password)).user;
+          authenticatedUser = (await auth.signInWithEmailAndPassword(accountEmail, password)).user;
+          break;
         } catch (error) {
-          if (authErrorCode(error) === "auth/user-not-found") {
-            const anonymous = await auth.signInAnonymously();
-            firebaseUser = anonymous.user;
-            firebaseUid = anonymous.user.uid;
-            throw nickLoginError("email-required", "Para criar um novo acesso, informe um e-mail de recuperação.");
-          }
-          throw error;
+          lastError = error;
+          if (!['auth/user-not-found', 'auth/invalid-credential', 'auth/wrong-password'].includes(authErrorCode(error))) throw error;
         }
-      } else {
-        const current = auth.currentUser;
-        if (current && current.isAnonymous) {
-          try {
-            const credential = firebase.auth.EmailAuthProvider.credential(recovery, password);
-            authenticatedUser = (await current.linkWithCredential(credential)).user;
-          } catch (error) {
-            if (!authErrorIsEmailInUse(error)) throw error;
-            await auth.signOut();
-            authenticatedUser = (await auth.signInWithEmailAndPassword(recovery, password)).user;
-          }
-        } else {
-          if (auth.currentUser) await auth.signOut();
-          try {
-            authenticatedUser = (await auth.signInWithEmailAndPassword(recovery, password)).user;
-          } catch (error) {
-            if (authErrorCode(error) !== "auth/user-not-found") throw error;
-            // Migração: contas antigas ainda podem estar no e-mail técnico do nick.
-            try {
-              authenticatedUser = (await auth.signInWithEmailAndPassword(legacyEmail, password)).user;
-              try {
-                await authenticatedUser.updateEmail(recovery);
-              } catch (migrationError) {
-                if (authErrorCode(migrationError) !== "auth/email-already-in-use") throw migrationError;
-              }
-            } catch (legacyError) {
-              if (authErrorCode(legacyError) !== "auth/user-not-found") throw legacyError;
-              authenticatedUser = (await auth.createUserWithEmailAndPassword(recovery, password)).user;
-            }
-          }
-        }
+      }
+      if (!authenticatedUser && lastError && authErrorCode(lastError) !== "auth/user-not-found") throw lastError;
+      if (!authenticatedUser && ownership && ownership.found) {
+        const error = new Error("Nick ou senha inválidos.");
+        error.code = "invalid-credentials";
+        throw error;
+      }
+      if (!authenticatedUser) {
+        authenticatedUser = (await auth.createUserWithEmailAndPassword(legacyEmail, password)).user;
       }
 
       firebaseUser = authenticatedUser;
       firebaseUid = authenticatedUser ? authenticatedUser.uid : null;
-      return reserveNickForCurrentUser(input, recovery || null);
+      return reserveNickForCurrentUser(input, null);
     }
     async function releaseNickReservation(ownerNick, ownerUid) {
       if (!ownerNick || !ownerUid) return;
@@ -2125,7 +2038,7 @@ gtag('config', 'G-FJT3X93608');
     // Atualização do PWA: rede primeiro; cache apenas como fallback offline.
     function setupPWAUpdate() {
       if (!('serviceWorker' in navigator)) return;
-      navigator.serviceWorker.register('./service-worker37.js?v=284', { updateViaCache: 'none' }).then(function(reg) {
+      navigator.serviceWorker.register('./service-worker37.js?v=285', { updateViaCache: 'none' }).then(function(reg) {
         reg.update();
         reg.addEventListener('updatefound', function() {
           var newWorker = reg.installing;
@@ -3249,17 +3162,8 @@ padding:0 2px;">↩ Responder</button>`;
       const originalText = btn ? btn.textContent : "Entrar";
       const input = document.getElementById("nickInput").value.trim();
       const passwordField = document.getElementById("nickPasswordInput");
-      const emailField = document.getElementById("nickEmailInput");
       const password = passwordField ? passwordField.value : "";
-      const recoveryEmail = normalizeRecoveryEmail(emailField ? emailField.value : "");
       if(!input) { appAlert("Digite um nick."); return; }
-
-      // Fernando usa o formulário comum, mas somente o e-mail
-      // administrativo autorizado recebe poderes de Super Nick.
-      if (input === ADMIN_NICK && recoveryEmail !== ADMIN_EMAIL) {
-        appAlert("Para entrar como Fernando, informe o e-mail administrativo autorizado.");
-        return;
-      }
 
       if (password.length < NICK_PASSWORD_MIN_LENGTH) {
         appAlert("Crie uma senha com pelo menos 6 caracteres.");
@@ -3268,7 +3172,7 @@ padding:0 2px;">↩ Responder</button>`;
 
       try {
         if (btn) { btn.disabled = true; btn.textContent = "Entrando..."; }
-        const reservation = await loginOrCreateNick(input, password, recoveryEmail);
+        const reservation = await loginOrCreateNick(input, password, null);
         nick = reservation.nick || input;
         localStorage.setItem("chat_nick", nick);
         localStorage.setItem("chat_uid", firebaseUid);
@@ -3286,7 +3190,6 @@ padding:0 2px;">↩ Responder</button>`;
         if (error && error.code === "nick-already-taken") appAlert("Esse nick já existe. Crie outro nick.");
         else if (error && error.code === "nick-already-owned") appAlert("Este usuário já possui outro nick.");
         else if (error && error.code === "invalid-nick") appAlert(error.message || "Esse nick não pode ser usado.");
-        else if (error && error.code === "email-required") appAlert("Para criar um novo acesso, informe um e-mail de recuperação.");
         else if (error && error.code === "auth-timeout") appAlert("A autenticação demorou demais. Verifique a conexão do app e tente novamente.");
         else if (authErrorIsEmailInUse(error)) appAlert("Esse nick já existe. Crie outro nick.");
         else if (["auth/wrong-password", "auth/invalid-credential", "auth/user-not-found"].includes(authErrorCode(error))) appAlert("Nick ou senha inválidos.");
