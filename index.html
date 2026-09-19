@@ -2096,19 +2096,25 @@ gtag('config', 'G-FJT3X93608');
 
     const CLOUDINARY_CLOUD_NAME = 'dthnn5flq';
 
-    // Remove versões antigas do PWA para impedir que a interface volte por cache.
-    async function setupPWAUpdate() {
+    // Atualização do PWA: rede primeiro; cache apenas como fallback offline.
+    function setupPWAUpdate() {
       if (!('serviceWorker' in navigator)) return;
-      try {
-        var registrations = await navigator.serviceWorker.getRegistrations();
-        await Promise.all(registrations.map(function(registration) { return registration.unregister(); }));
-        if (typeof caches !== 'undefined') {
-          var cacheKeys = await caches.keys();
-          await Promise.all(cacheKeys.map(function(key) { return caches.delete(key); }));
-        }
-      } catch (error) {
-        console.warn('Não foi possível limpar o cache antigo do PWA:', error);
-      }
+      navigator.serviceWorker.register('./service-worker37.js?v=280', { updateViaCache: 'none' }).then(function(reg) {
+        reg.update();
+        reg.addEventListener('updatefound', function() {
+          var newWorker = reg.installing;
+          if (!newWorker) return;
+          newWorker.addEventListener('statechange', function() {
+            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+              newWorker.postMessage({ action: 'skipWaiting' });
+            }
+          });
+        });
+      }).catch(function(error) { console.warn('Atualização do PWA indisponível:', error); });
+      var refreshing = false;
+      navigator.serviceWorker.addEventListener('controllerchange', function() {
+        if (!refreshing) { refreshing = true; window.location.reload(); }
+      });
     }
 
     // CONTENT LOGIC
