@@ -2783,7 +2783,7 @@ gtag('config', 'G-FJT3X93608');
         close();
         await copyShareText();
       };
-      const copyAndOpenApp = function(primaryIntent, liteIntent, webUrl){
+      const copyAndOpenApp = function(appUrl){
         // Copia sem aguardar a Promise: assim o clique continua sendo um gesto
         // direto do usuário, como nos links oficiais da Unila.
         if (navigator.clipboard && window.isSecureContext) {
@@ -2802,15 +2802,9 @@ gtag('config', 'G-FJT3X93608');
           } catch (error) { console.warn("Não foi possível copiar o link.", error); }
         }
         close();
-        if (!/Android/i.test(navigator.userAgent)) {
-          window.location.href = webUrl;
-          return;
-        }
-        // Tenta o app normal primeiro. Se ele não existir, tenta o Lite.
-        window.location.href = primaryIntent;
-        window.setTimeout(function(){
-          if (!document.hidden) window.location.href = liteIntent;
-        }, 700);
+        // Um único lançamento preserva o clique do usuário e evita que uma
+        // segunda tentativa Lite sobrescreva o aplicativo que já abriu.
+        window.location.href = appUrl;
       };
       modal.querySelector('[data-share="close"]').onclick = close;
       modal.addEventListener("click", function(event){ if (event.target === modal) close(); });
@@ -2818,19 +2812,13 @@ gtag('config', 'G-FJT3X93608');
       // da Unila: Android pode abrir o aplicativo associado; caso contrário,
       // mantém o comportamento oficial do próprio serviço.
       modal.querySelector('[data-share="whatsapp"]').onclick = function(){
-        const normal = "intent://send?text=" + encodedText + "#Intent;scheme=whatsapp;package=com.whatsapp;action=android.intent.action.SEND;type=text/plain;end";
-        const lite = "intent://send?text=" + encodedText + "#Intent;scheme=whatsapp;package=com.whatsapp.w4b;action=android.intent.action.SEND;type=text/plain;end";
-        copyAndOpenApp(normal, lite, "https://wa.me/?text=" + encodedText);
+        copyAndOpenApp("whatsapp://send?text=" + encodedText);
       };
       modal.querySelector('[data-share="facebook"]').onclick = function(){
-        const normal = "intent:#Intent;action=android.intent.action.VIEW;package=com.facebook.katana;end";
-        const lite = "intent:#Intent;action=android.intent.action.VIEW;package=com.facebook.lite;end";
-        copyAndOpenApp(normal, lite, "https://www.facebook.com/");
+        copyAndOpenApp("fb://facewebmodal/f?href=" + encodedSiteUrl);
       };
       modal.querySelector('[data-share="instagram"]').onclick = function(){
-        const normal = "intent://app#Intent;scheme=instagram;package=com.instagram.android;end";
-        const lite = "intent://app#Intent;scheme=instagram;package=com.instagram.lite;end";
-        copyAndOpenApp(normal, lite, "https://www.instagram.com/");
+        copyAndOpenApp("instagram://app");
       };
     }
     function shareApp() { openShareOptions(); }
