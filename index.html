@@ -4303,10 +4303,6 @@ padding:0 2px;">↩ Responder</button>`;
       };
     }
 
-    if (typeof window.shareApp === "function") {
-      window.shareApp = function(){ openShareOptions(); };
-    }
-
     if (typeof window.setReply === "function") {
       var originalSetReply = window.setReply;
       window.setReply = function(id, user, text){
