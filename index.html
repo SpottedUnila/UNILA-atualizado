@@ -2102,35 +2102,26 @@ gtag('config', 'G-FJT3X93608');
 
     const CLOUDINARY_CLOUD_NAME = 'dthnn5flq';
 
-    // PWA UPDATE LOGIC
-    function setupPWAUpdate() {
-      if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./service-worker37.js?v=255', { updateViaCache: 'none' }).then(reg => {
-          reg.update();
-          reg.addEventListener('updatefound', () => {
-            const newWorker = reg.installing;
-            newWorker.addEventListener('statechange', () => {
-              if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                newWorker.postMessage({ action: 'skipWaiting' });
-              }
-            });
-          });
-        }).catch(console.error);
-
-        let refreshing = false;
-        navigator.serviceWorker.addEventListener('controllerchange', () => {
-          if (!refreshing) {
-            refreshing = true;
-            window.location.reload();
-          }
-        });
-
-        document.addEventListener('visibilitychange', () => {
-          if (document.visibilityState === 'visible') {
-            navigator.serviceWorker.ready.then(reg => reg.update());
-          }
-        });
+    // Remove versões antigas do PWA para impedir que a interface volte por cache.
+    async function setupPWAUpdate() {
+      if (!('serviceWorker' in navigator)) return;
+      var cleanupKey = 'spotted-unila-cache-cleanup-v1';
+      try {
+        var registrations = await navigator.serviceWorker.getRegistrations();
+        await Promise.all(registrations.map(function(registration) { return registration.unregister(); }));
+        if (typeof caches !== 'undefined') {
+          var cacheKeys = await caches.keys();
+          await Promise.all(cacheKeys.map(function(key) { return caches.delete(key); }));
+        }
+      } catch (error) {
+        console.warn('Não foi possível limpar o cache antigo do PWA:', error);
       }
+      try {
+        if (!sessionStorage.getItem(cleanupKey)) {
+          sessionStorage.setItem(cleanupKey, 'done');
+          window.location.reload();
+        }
+      } catch (error) {}
     }
 
     // CONTENT LOGIC
