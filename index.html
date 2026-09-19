@@ -423,10 +423,8 @@ button:hover{
 .youtube-brand-mark,.gmail-brand-mark,.instagram-brand-mark,.facebook-brand-mark{display:inline-flex;align-items:center;justify-content:center;width:28px;height:20px;margin-right:2px;border-radius:5px;color:#fff;font-size:13px;font-weight:900;line-height:1;text-shadow:none;vertical-align:-3px;}
 .youtube-brand-mark{background:#ff0000;}
 .gmail-brand-mark{background:#ea4335;font-family:Arial,sans-serif;font-size:15px;}
-.instagram-brand-mark{background:linear-gradient(135deg,#feda75,#d62976 52%,#4f5bd5);width:28px;height:20px;margin-right:0;font-size:20px;}
-#home > a.instagram .instagram-brand-mark{display:inline-flex !important;width:28px !important;height:20px !important;margin-right:0 !important;font-size:20px !important;line-height:1 !important;flex:0 0 28px !important;}
-#home > a.instagram::before{content:"◎";display:inline-flex;align-items:center;justify-content:center;width:28px;height:20px;margin-right:0;border-radius:5px;background:linear-gradient(135deg,#feda75,#d62976 52%,#4f5bd5);color:#fff;font-size:20px;font-weight:900;line-height:1;vertical-align:-3px;}
-#home > a.instagram .instagram-brand-mark{display:none !important;}
+.instagram-brand-mark{display:inline-flex !important;align-items:center;justify-content:center;width:28px !important;height:20px !important;flex:0 0 28px !important;margin:0 !important;border-radius:5px;background:linear-gradient(135deg,#feda75,#d62976 52%,#4f5bd5);color:#fff;font-size:20px !important;font-weight:900;line-height:1 !important;vertical-align:-3px;}
+.instagram-menu-label{display:inline-block !important;margin-left:0 !important;}
 .facebook-brand-mark{background:#1877f2;font-family:Arial,sans-serif;font-size:18px;}
 /* Aparência única para todos os botões do menu principal */
 #home > button,
@@ -1283,7 +1281,7 @@ gtag('config', 'G-FJT3X93608');
     <a class="sigaa menu-link" href="https://sig.unila.edu.br/sigaa/verTelaLogin.do">📚 Sistema Acadêmico SIGAA</a>
     <a class="gmail menu-link" href="https://mail.google.com/" aria-label="E-mail Institucional"><span class="gmail-brand-mark" aria-hidden="true">M</span>E-mail Institucional</a>
     <a class="google menu-link" href="https://youtube.com/@unila?si=yOHx8TF_41FQhNbl" aria-label="YouTube Unila"><span class="youtube-brand-mark" aria-hidden="true">▶</span>YouTube Unila</a>
-    <a class="instagram menu-link" href="https://www.instagram.com/unila.campusarandu?stkn=MXJnMWU0M3RtaXpsOA==" aria-label="Instagram Unila Arandu"><span class="instagram-brand-mark" aria-hidden="true">◎</span>Instagram Unila Arandu</a>
+    <a class="instagram menu-link" href="https://www.instagram.com/unila.campusarandu?stkn=MXJnMWU0M3RtaXpsOA==" aria-label="Instagram Unila Arandu"><span class="instagram-brand-mark" aria-hidden="true">◎</span><span class="instagram-menu-label">Instagram Unila Arandu</span></a>
     <a class="facebook menu-link" href="https://www.facebook.com/unila.oficial" aria-label="Facebook Unila"><span class="facebook-brand-mark" aria-hidden="true">f</span>Facebook Unila</a>
     <a class="biblioteca menu-link" href="https://portal.unila.edu.br/biblioteca">📖 Biblioteca Unila</a>
     <a class="intercampi menu-link" href="https://portal.unila.edu.br/proagi/delog/catalogo-de-servicos/catalogo/horarios-intercampi" aria-label="Transporte Intercampi">Transporte Intercampi</a>
@@ -2101,7 +2099,7 @@ gtag('config', 'G-FJT3X93608');
     // Atualização do PWA: rede primeiro; cache apenas como fallback offline.
     function setupPWAUpdate() {
       if (!('serviceWorker' in navigator)) return;
-      navigator.serviceWorker.register('./service-worker37.js?v=281', { updateViaCache: 'none' }).then(function(reg) {
+      navigator.serviceWorker.register('./service-worker37.js?v=282', { updateViaCache: 'none' }).then(function(reg) {
         reg.update();
         reg.addEventListener('updatefound', function() {
           var newWorker = reg.installing;
@@ -4068,10 +4066,10 @@ padding:0 2px;">↩ Responder</button>`;
         var brandLabel = menuKey === "youtube" ? menuLabel.replace(/^.*?(YouTube Unila)$/, "$1") : menuLabel.replace(/^[^A-Za-zÀ-ÿ]+/, "");
         var existingBrand = menu[i].querySelector("." + brandClass);
         if (!existingBrand) {
-          menu[i].innerHTML = '<span class="' + brandClass + '" aria-hidden="true">' + brandGlyph + '</span>' + escapeHtml(brandLabel);
+          menu[i].innerHTML = '<span class="' + brandClass + '" aria-hidden="true">' + brandGlyph + '</span><span class="' + (menuKey === "instagram" ? "instagram-menu-label" : "menu-brand-label") + '">' + escapeHtml(brandLabel) + '</span>';
         } else {
-          var labelNode = existingBrand.nextSibling;
-          if (labelNode && labelNode.nodeType === 3) labelNode.nodeValue = brandLabel;
+          var labelNode = existingBrand.nextElementSibling;
+          if (labelNode) labelNode.textContent = brandLabel;
         }
         menu[i].setAttribute("aria-label", brandLabel);
       } else {
