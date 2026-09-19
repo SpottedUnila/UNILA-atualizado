@@ -1,10 +1,11 @@
-const CACHE_NAME = 'spotted-unila-cache-v282';
+const CACHE_NAME = 'spotted-unila-cache-v283';
 const APP_SHELL = [
   './',
   './index.html',
   './privacy.html',
   './terms.html',
   './manifest.json',
+  './file_00000000ff7c820e99efc0caf176d4c1.png',
   './icon-192.png',
   './icon-512.png',
   './favicon.png',

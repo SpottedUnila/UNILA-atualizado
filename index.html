@@ -2099,7 +2099,7 @@ gtag('config', 'G-FJT3X93608');
     // Atualização do PWA: rede primeiro; cache apenas como fallback offline.
     function setupPWAUpdate() {
       if (!('serviceWorker' in navigator)) return;
-      navigator.serviceWorker.register('./service-worker37.js?v=282', { updateViaCache: 'none' }).then(function(reg) {
+      navigator.serviceWorker.register('./service-worker37.js?v=283', { updateViaCache: 'none' }).then(function(reg) {
         reg.update();
         reg.addEventListener('updatefound', function() {
           var newWorker = reg.installing;
