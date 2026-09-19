@@ -2783,11 +2783,13 @@ gtag('config', 'G-FJT3X93608');
         close();
         await copyShareText();
       };
-      const copyAndOpenApp = async function(appUrl){
-        try {
-          if (navigator.clipboard && window.isSecureContext) {
-            await navigator.clipboard.writeText(shareText);
-          } else {
+      const copyAndOpenApp = function(appUrl){
+        // Copia sem aguardar a Promise: assim o clique continua sendo um gesto
+        // direto do usuário, como nos links oficiais da Unila.
+        if (navigator.clipboard && window.isSecureContext) {
+          navigator.clipboard.writeText(shareText).catch(function(error){ console.warn("Não foi possível copiar o link.", error); });
+        } else {
+          try {
             const helper = document.createElement("textarea");
             helper.value = shareText;
             helper.setAttribute("readonly", "");
@@ -2797,23 +2799,19 @@ gtag('config', 'G-FJT3X93608');
             helper.select();
             document.execCommand("copy");
             helper.remove();
-          }
-        } catch (error) {
-          console.warn("Não foi possível copiar o link antes de abrir o aplicativo.", error);
+          } catch (error) { console.warn("Não foi possível copiar o link.", error); }
         }
         close();
-        const launcher = document.createElement("a");
-        launcher.href = appUrl;
-        launcher.style.display = "none";
-        document.body.appendChild(launcher);
-        launcher.click();
-        window.setTimeout(function(){ launcher.remove(); }, 1200);
+        window.location.href = appUrl;
       };
       modal.querySelector('[data-share="close"]').onclick = close;
       modal.addEventListener("click", function(event){ if (event.target === modal) close(); });
-      modal.querySelector('[data-share="whatsapp"]').onclick = function(){ copyAndOpenApp("whatsapp://send?text=" + encodedText); };
-      modal.querySelector('[data-share="facebook"]').onclick = function(){ copyAndOpenApp("fb://facewebmodal/f?href=" + encodedSiteUrl); };
-      modal.querySelector('[data-share="instagram"]').onclick = function(){ copyAndOpenApp("instagram://app"); };
+      // Links HTTPS seguem a mesma lógica dos botões Instagram/Facebook/Portal
+      // da Unila: Android pode abrir o aplicativo associado; caso contrário,
+      // mantém o comportamento oficial do próprio serviço.
+      modal.querySelector('[data-share="whatsapp"]').onclick = function(){ copyAndOpenApp("https://wa.me/?text=" + encodedText); };
+      modal.querySelector('[data-share="facebook"]').onclick = function(){ copyAndOpenApp("https://www.facebook.com/"); };
+      modal.querySelector('[data-share="instagram"]').onclick = function(){ copyAndOpenApp("https://www.instagram.com/"); };
     }
     function shareApp() { openShareOptions(); }
 
