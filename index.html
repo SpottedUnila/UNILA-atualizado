@@ -2057,7 +2057,7 @@ gtag('config', 'G-FJT3X93608');
     // Atualização do PWA: rede primeiro; cache apenas como fallback offline.
     function setupPWAUpdate() {
       if (!('serviceWorker' in navigator)) return;
-      navigator.serviceWorker.register('./service-worker37.js?v=297', { updateViaCache: 'none' }).then(function(reg) {
+      navigator.serviceWorker.register('./service-worker37.js?v=298', { updateViaCache: 'none' }).then(function(reg) {
         reg.update();
         reg.addEventListener('updatefound', function() {
           var newWorker = reg.installing;
@@ -3045,7 +3045,10 @@ padding:0 2px;">↩ Responder</button>`;
           }
         }, error => {
           console.error("Erro ao carregar o chat:", error);
-          appAlert("Não foi possível carregar o chat." + (error && error.code ? " (" + error.code + ")" : ""));
+          const chatArea = document.getElementById("chatArea");
+          if (!nick || !chatArea || chatArea.style.display !== "block") {
+            appAlert("Não foi possível carregar o chat." + (error && error.code ? " (" + error.code + ")" : ""));
+          }
         });
 
       const box = document.getElementById("chatBox");
@@ -3213,6 +3216,7 @@ padding:0 2px;">↩ Responder</button>`;
       const input = document.getElementById("nickInput").value.trim();
       const passwordField = document.getElementById("nickPasswordInput");
       const password = passwordField ? passwordField.value : "";
+      let loginCompleted = false;
       if(!input) { appAlert("Digite um nick."); return; }
 
       if (password.length < NICK_PASSWORD_MIN_LENGTH) {
@@ -3235,8 +3239,13 @@ padding:0 2px;">↩ Responder</button>`;
         refreshNickCredentialUI();
         const deleteButton = document.getElementById("deleteNickAccountBtn");
         if (deleteButton) deleteButton.style.setProperty("display", "flex", "important");
-        listenChat();
+        loginCompleted = true;
+        try { listenChat(); } catch (chatError) { console.warn("Não foi possível iniciar o listener do chat imediatamente:", chatError); }
       } catch (error) {
+        if (loginCompleted || (nick && document.getElementById("chatArea")?.style.display === "block")) {
+          console.warn("A entrada foi concluída; uma etapa posterior do chat falhou:", error);
+          return;
+        }
         if (error && error.code === "nick-already-taken") appAlert("Esse nick já existe. Crie outro nick.");
         else if (error && error.code === "nick-already-owned") appAlert("Este usuário já possui outro nick.");
         else if (error && error.code === "invalid-nick") appAlert(error.message || "Esse nick não pode ser usado.");
