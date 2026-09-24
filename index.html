@@ -2057,7 +2057,7 @@ gtag('config', 'G-FJT3X93608');
     // Atualização do PWA: rede primeiro; cache apenas como fallback offline.
     function setupPWAUpdate() {
       if (!('serviceWorker' in navigator)) return;
-      navigator.serviceWorker.register('./service-worker37.js?v=291', { updateViaCache: 'none' }).then(function(reg) {
+      navigator.serviceWorker.register('./service-worker37.js?v=292', { updateViaCache: 'none' }).then(function(reg) {
         reg.update();
         reg.addEventListener('updatefound', function() {
           var newWorker = reg.installing;
@@ -2080,16 +2080,10 @@ gtag('config', 'G-FJT3X93608');
       if (!window.AndroidShare) return true;
       if (event) event.preventDefault();
       const pdfUrl = getIntercampiUrl();
-      const legacyUrl = "https://portal.unila.edu.br/proagi/delog/catalogo-de-servicos/catalogo/horarios-intercampi";
-      const intentTarget = new URL(pdfUrl);
-      const intentUrl = "intent://" + intentTarget.host + intentTarget.pathname + intentTarget.search + "#Intent;scheme=" + intentTarget.protocol.replace(":", "") + ";action=android.intent.action.VIEW;end";
       try {
-        window.location.href = intentUrl;
-        window.setTimeout(function() {
-          if (document.visibilityState === "visible") window.location.href = legacyUrl;
-        }, 900);
+        window.location.assign(pdfUrl);
       } catch (_) {
-        window.location.href = pdfUrl;
+        window.location.href = String(pdfUrl);
       }
       return false;
     }
