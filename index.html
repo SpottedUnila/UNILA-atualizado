@@ -2057,7 +2057,7 @@ gtag('config', 'G-FJT3X93608');
     // Atualização do PWA: rede primeiro; cache apenas como fallback offline.
     function setupPWAUpdate() {
       if (!('serviceWorker' in navigator)) return;
-      navigator.serviceWorker.register('./service-worker37.js?v=290', { updateViaCache: 'none' }).then(function(reg) {
+      navigator.serviceWorker.register('./service-worker37.js?v=291', { updateViaCache: 'none' }).then(function(reg) {
         reg.update();
         reg.addEventListener('updatefound', function() {
           var newWorker = reg.installing;
@@ -2125,10 +2125,10 @@ gtag('config', 'G-FJT3X93608');
     function getIntercampiUrl() {
       var lang = typeof state !== "undefined" && state.lang ? state.lang : "pt";
       var candidates = [
-        adminPageContent["button_content_intercampi_" + lang],
         adminPageContent["button_content_intercampus_" + lang],
-        adminPageContent.button_content_intercampi_pt,
+        adminPageContent["button_content_intercampi_" + lang],
         adminPageContent.button_content_intercampus_pt,
+        adminPageContent.button_content_intercampi_pt,
         defaultContent.intercampi
       ];
       for (var i = 0; i < candidates.length; i++) {
