@@ -4182,7 +4182,7 @@ padding:0 2px;">↩ Responder</button>`;
         if (content) {
           var dynamicContent = document.getElementById("dynamicContent");
           if (dynamicContent) {
-            if (state.currentDynamicId === "upa" || state.currentDynamicId === "emergencia") {
+            if (state.currentDynamicId === "upa" || state.currentDynamicId === "emergencia" || state.currentDynamicId === "ru") {
               dynamicContent.textContent = String(content);
               dynamicContent.style.whiteSpace = "pre-wrap";
             } else {
