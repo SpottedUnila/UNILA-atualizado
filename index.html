@@ -1307,7 +1307,7 @@ gtag('config', 'G-FJT3X93608');
     <a class="instagram menu-link" href="https://www.instagram.com/unila.campusarandu?stkn=MXJnMWU0M3RtaXpsOA==" aria-label="Instagram Unila Arandu"><span class="instagram-brand-mark" aria-hidden="true">◎</span><span class="instagram-menu-label">Instagram Unila Arandu</span></a>
     <a class="facebook menu-link" href="https://www.facebook.com/unila.oficial" aria-label="Facebook Unila"><span class="facebook-brand-mark" aria-hidden="true">f</span>Facebook Unila</a>
     <a class="biblioteca menu-link" href="https://portal.unila.edu.br/biblioteca">📖 Biblioteca Unila</a>
-    <a class="intercampi menu-link" href="https://portal.unila.edu.br/proagi/delog/catalogo-de-servicos/catalogo/horarios-intercampi" aria-label="Transporte Intercampi">Transporte Intercampi</a>
+    <a class="intercampi menu-link" href="https://portal.unila.edu.br/proagi/delog/arquivos/horario-intercampi/quadro-de-horario-intercampi.pdf" aria-label="Transporte Intercampi" onclick="return openIntercampiLink(event)">Transporte Intercampi</a>
     <a class="editais menu-link" href="https://documentos.unila.edu.br/">📄 Editais Oficiais</a>
     <button class="emergencia" onclick="openDynamic('emergencia','page')">🚨 Telefones de Emergência</button>
     <button class="enderecos" onclick="openDynamic('enderecos','page')">🏫 Endereços dos Campus</button>
@@ -2076,6 +2076,23 @@ gtag('config', 'G-FJT3X93608');
     }
 
     // CONTENT LOGIC
+    function openIntercampiLink(event) {
+      if (!window.AndroidShare) return true;
+      if (event) event.preventDefault();
+      const pdfUrl = "https://portal.unila.edu.br/proagi/delog/arquivos/horario-intercampi/quadro-de-horario-intercampi.pdf";
+      const legacyUrl = "https://portal.unila.edu.br/proagi/delog/catalogo-de-servicos/catalogo/horarios-intercampi";
+      const intentUrl = "intent://portal.unila.edu.br/proagi/delog/arquivos/horario-intercampi/quadro-de-horario-intercampi.pdf#Intent;scheme=https;action=android.intent.action.VIEW;end";
+      try {
+        window.location.href = intentUrl;
+        window.setTimeout(function() {
+          if (document.visibilityState === "visible") window.location.href = legacyUrl;
+        }, 900);
+      } catch (_) {
+        window.location.href = pdfUrl;
+      }
+      return false;
+    }
+
     const defaultContent = {
       portal_unila: "https://portal.unila.edu.br/",
       inscreva: "https://inscreva.unila.edu.br/",
@@ -2085,7 +2102,7 @@ gtag('config', 'G-FJT3X93608');
       instagram: "https://www.instagram.com/unila.campusarandu?stkn=MXJnMWU0M3RtaXpsOA==",
       facebook: "https://www.facebook.com/unila.oficial",
       biblioteca: "https://portal.unila.edu.br/biblioteca",
-      intercampi: "https://portal.unila.edu.br/proagi/delog/catalogo-de-servicos/catalogo/horarios-intercampi",
+      intercampi: "https://portal.unila.edu.br/proagi/delog/arquivos/horario-intercampi/quadro-de-horario-intercampi.pdf",
       editais: "https://documentos.unila.edu.br/",
       emergencia: "Polícia Militar: 190\nSAMU (Ambulância): 192\nBombeiros: 193\n\nHospital Municipal: (45) 2105-4100\nGuarda Municipal: (45) 2105-5100\nDelegacia da Mulher: (45) 3521-9200\nDefesa Civil: 199\n\nPolícia Federal: (45) 3522-1174\nPolícia Rodoviária Federal: (45) 3576-1400\n\nPrae-Unila: +55 45 3522-9983\nPrograd-Unila: +55 (45) 3522-9766\n\nDisque Denúncia: 181\nConselho Tutelar: (45) 3521-1112\nCentro de Intoxicações: 0800 722 6001\n\n⚠ Em situações graves, ligue imediatamente.",
       enderecos: "Unila - Campus PTI\nAv. Tancredo Neves, 6731 - PTI, Foz do Iguaçu - PR\n\nUnila - Campus Juarez Távora\nAv. Silvio Américo Sasdelli, 1000 - Vila A, Foz do Iguaçu - PR\n\nUnila - Campus Jardim Universitário (JU)\nAv. Tarquínio Joslin dos Santos, 1000 - Lot. Universitário das Américas, Foz do Iguaçu - PR\n\nUnila - Campus Integração\nAv. Tancredo Neves, 3147 - Foz do Iguaçu - PR",
@@ -2168,7 +2185,7 @@ gtag('config', 'G-FJT3X93608');
           instagram: "https://www.instagram.com/unila.campusarandu?stkn=MXJnMWU0M3RtaXpsOA==",
           facebook: "https://www.facebook.com/unila.oficial",
           biblioteca: "https://portal.unila.edu.br/biblioteca",
-          intercampi: "https://portal.unila.edu.br/proagi/delog/catalogo-de-servicos/catalogo/horarios-intercampi",
+          intercampi: "https://portal.unila.edu.br/proagi/delog/arquivos/horario-intercampi/quadro-de-horario-intercampi.pdf",
           editais: "https://documentos.unila.edu.br/",
           grupo_facebook: "https://facebook.com/groups/660879523972023/",
           enem: "https://enem.inep.gov.br/participante/"
@@ -2189,7 +2206,7 @@ gtag('config', 'G-FJT3X93608');
         if (title) title.textContent = typeof window.unilaTranslate === "function" ? window.unilaTranslate(titleKey) : titleKey.toUpperCase();
         if (content) {
           if (id === "intercampi") {
-            const officialPdf = "https://portal.unila.edu.br/proagi/delog/catalogo-de-servicos/catalogo/horarios-intercampi";
+            const officialPdf = "https://portal.unila.edu.br/proagi/delog/arquivos/horario-intercampi/quadro-de-horario-intercampi.pdf";
             content.innerHTML = '<p>Consulte o quadro oficial de horários do Transporte Intercampi diretamente no portal da UNILA.</p>' +
               '<p><a class="resource-open-link" href="' + officialPdf + '" target="_blank" rel="noopener noreferrer">📄 Abrir quadro oficial de horários</a></p>' +
               '<p><a class="resource-open-link" href="https://portal.unila.edu.br/" target="_blank" rel="noopener noreferrer">🌐 Abrir Portal Oficial da UNILA</a></p>';
