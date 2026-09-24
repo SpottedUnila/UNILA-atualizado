@@ -2079,9 +2079,10 @@ gtag('config', 'G-FJT3X93608');
     function openIntercampiLink(event) {
       if (!window.AndroidShare) return true;
       if (event) event.preventDefault();
-      const pdfUrl = "https://portal.unila.edu.br/proagi/delog/arquivos/horario-intercampi/quadro-de-horario-intercampi.pdf";
+      const pdfUrl = getIntercampiUrl();
       const legacyUrl = "https://portal.unila.edu.br/proagi/delog/catalogo-de-servicos/catalogo/horarios-intercampi";
-      const intentUrl = "intent://portal.unila.edu.br/proagi/delog/arquivos/horario-intercampi/quadro-de-horario-intercampi.pdf#Intent;scheme=https;action=android.intent.action.VIEW;end";
+      const intentTarget = new URL(pdfUrl);
+      const intentUrl = "intent://" + intentTarget.host + intentTarget.pathname + intentTarget.search + "#Intent;scheme=" + intentTarget.protocol.replace(":", "") + ";action=android.intent.action.VIEW;end";
       try {
         window.location.href = intentUrl;
         window.setTimeout(function() {
@@ -2121,6 +2122,24 @@ gtag('config', 'G-FJT3X93608');
     const adminButtonLabels = {};
     const adminPageContent = {};
     const adminContentOverrides = {};
+    function getIntercampiUrl() {
+      var lang = typeof state !== "undefined" && state.lang ? state.lang : "pt";
+      var candidates = [
+        adminPageContent["button_content_intercampi_" + lang],
+        adminPageContent["button_content_intercampus_" + lang],
+        adminPageContent.button_content_intercampi_pt,
+        adminPageContent.button_content_intercampus_pt,
+        defaultContent.intercampi
+      ];
+      for (var i = 0; i < candidates.length; i++) {
+        var value = String(candidates[i] || "").trim();
+        try {
+          var parsed = new URL(value);
+          if (/^https?:$/.test(parsed.protocol)) return parsed.href;
+        } catch (_) {}
+      }
+      return defaultContent.intercampi;
+    }
 
     function applyAdminContentDoc(id, value, changeType) {
       if (changeType === "removed") {
@@ -2176,7 +2195,7 @@ gtag('config', 'G-FJT3X93608');
       const getContent = window.unilaLocalizedContent;
       const val = (typeof getContent === "function" ? getContent(id) : "") || contentMap[id] || "";
       if (type === 'link') {
-        const officialLinks = {
+      const officialLinks = {
           portal_unila: "https://portal.unila.edu.br/",
           inscreva: "https://inscreva.unila.edu.br/",
           sigaa: "https://sig.unila.edu.br/sigaa/verTelaLogin.do",
@@ -2185,7 +2204,7 @@ gtag('config', 'G-FJT3X93608');
           instagram: "https://www.instagram.com/unila.campusarandu?stkn=MXJnMWU0M3RtaXpsOA==",
           facebook: "https://www.facebook.com/unila.oficial",
           biblioteca: "https://portal.unila.edu.br/biblioteca",
-          intercampi: "https://portal.unila.edu.br/proagi/delog/arquivos/horario-intercampi/quadro-de-horario-intercampi.pdf",
+          intercampi: getIntercampiUrl(),
           editais: "https://documentos.unila.edu.br/",
           grupo_facebook: "https://facebook.com/groups/660879523972023/",
           enem: "https://enem.inep.gov.br/participante/"
@@ -2206,7 +2225,7 @@ gtag('config', 'G-FJT3X93608');
         if (title) title.textContent = typeof window.unilaTranslate === "function" ? window.unilaTranslate(titleKey) : titleKey.toUpperCase();
         if (content) {
           if (id === "intercampi") {
-            const officialPdf = "https://portal.unila.edu.br/proagi/delog/arquivos/horario-intercampi/quadro-de-horario-intercampi.pdf";
+            const officialPdf = getIntercampiUrl();
             content.innerHTML = '<p>Consulte o quadro oficial de horários do Transporte Intercampi diretamente no portal da UNILA.</p>' +
               '<p><a class="resource-open-link" href="' + officialPdf + '" target="_blank" rel="noopener noreferrer">📄 Abrir quadro oficial de horários</a></p>' +
               '<p><a class="resource-open-link" href="https://portal.unila.edu.br/" target="_blank" rel="noopener noreferrer">🌐 Abrir Portal Oficial da UNILA</a></p>';
@@ -4021,6 +4040,8 @@ padding:0 2px;">↩ Responder</button>`;
     var radioButton = document.getElementById("radioBtn");
     if (radioButton) radioButton.title = tr("music");
 
+    var intercampiLink = document.querySelector("#home > a.intercampi");
+    if (intercampiLink) intercampiLink.href = getIntercampiUrl();
     var menu = document.querySelectorAll("#home > button, #home > a.menu-link");
     for (var i=0; i<menu.length && i<menuKeys.length; i++) {
       var menuKey = menuKeys[i];
