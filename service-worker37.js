@@ -1,9 +1,11 @@
-const CACHE_NAME = 'spotted-unila-cache-v294';
+const CACHE_NAME = 'spotted-unila-cache-v295';
 const APP_SHELL = [
   './',
   './index.html',
   './privacy.html',
   './terms.html',
+  './horario-intercampi.html',
+  './horario-intercampi.jpg',
   './manifest.json',
   './file_00000000ff7c820e99efc0caf176d4c1.png',
   './icon-192.png',

@@ -2057,7 +2057,7 @@ gtag('config', 'G-FJT3X93608');
     // Atualização do PWA: rede primeiro; cache apenas como fallback offline.
     function setupPWAUpdate() {
       if (!('serviceWorker' in navigator)) return;
-      navigator.serviceWorker.register('./service-worker37.js?v=294', { updateViaCache: 'none' }).then(function(reg) {
+      navigator.serviceWorker.register('./service-worker37.js?v=295', { updateViaCache: 'none' }).then(function(reg) {
         reg.update();
         reg.addEventListener('updatefound', function() {
           var newWorker = reg.installing;
@@ -2076,6 +2076,7 @@ gtag('config', 'G-FJT3X93608');
     }
 
     // CONTENT LOGIC
+    const LOCAL_INTERCAMPI_PAGE = "./horario-intercampi.html";
     function openIntercampiLink(event) {
       if (!window.AndroidShare) return true;
       if (event) event.preventDefault();
@@ -2219,7 +2220,7 @@ gtag('config', 'G-FJT3X93608');
         if (title) title.textContent = typeof window.unilaTranslate === "function" ? window.unilaTranslate(titleKey) : titleKey.toUpperCase();
         if (content) {
           if (id === "intercampi") {
-            const officialPdf = getIntercampiUrl();
+            const officialPdf = window.AndroidShare ? LOCAL_INTERCAMPI_PAGE : getIntercampiUrl();
             content.innerHTML = '<p>Consulte o quadro oficial de horários do Transporte Intercampi diretamente no portal da UNILA.</p>' +
               '<p><a class="resource-open-link" href="' + officialPdf + '" target="_self" rel="noopener noreferrer">📄 Abrir quadro oficial de horários</a></p>' +
               '<p><a class="resource-open-link" href="https://portal.unila.edu.br/" target="_blank" rel="noopener noreferrer">🌐 Abrir Portal Oficial da UNILA</a></p>';
