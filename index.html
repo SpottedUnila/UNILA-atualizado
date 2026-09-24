@@ -2057,7 +2057,7 @@ gtag('config', 'G-FJT3X93608');
     // Atualização do PWA: rede primeiro; cache apenas como fallback offline.
     function setupPWAUpdate() {
       if (!('serviceWorker' in navigator)) return;
-      navigator.serviceWorker.register('./service-worker37.js?v=298', { updateViaCache: 'none' }).then(function(reg) {
+      navigator.serviceWorker.register('./service-worker37.js?v=299', { updateViaCache: 'none' }).then(function(reg) {
         reg.update();
         reg.addEventListener('updatefound', function() {
           var newWorker = reg.installing;
@@ -3045,10 +3045,6 @@ padding:0 2px;">↩ Responder</button>`;
           }
         }, error => {
           console.error("Erro ao carregar o chat:", error);
-          const chatArea = document.getElementById("chatArea");
-          if (!nick || !chatArea || chatArea.style.display !== "block") {
-            appAlert("Não foi possível carregar o chat." + (error && error.code ? " (" + error.code + ")" : ""));
-          }
         });
 
       const box = document.getElementById("chatBox");
