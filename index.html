@@ -2057,7 +2057,7 @@ gtag('config', 'G-FJT3X93608');
     // Atualização do PWA: rede primeiro; cache apenas como fallback offline.
     function setupPWAUpdate() {
       if (!('serviceWorker' in navigator)) return;
-      navigator.serviceWorker.register('./service-worker37.js?v=300', { updateViaCache: 'none' }).then(function(reg) {
+      navigator.serviceWorker.register('./service-worker37.js?v=301', { updateViaCache: 'none' }).then(function(reg) {
         reg.update();
         reg.addEventListener('updatefound', function() {
           var newWorker = reg.installing;
@@ -2074,6 +2074,37 @@ gtag('config', 'G-FJT3X93608');
         if (!refreshing) { refreshing = true; window.location.reload(); }
       });
     }
+
+    // Recorta os itens do menu exatamente na borda inferior da busca fixa.
+    // Assim, durante a rolagem, nenhum botão passa por trás dos controles do topo.
+    let homeMenuClipFrame = 0;
+    function updateHomeMenuScrollGuard() {
+      if (homeMenuClipFrame) return;
+      homeMenuClipFrame = requestAnimationFrame(() => {
+        homeMenuClipFrame = 0;
+        const home = document.getElementById("home");
+        const searchWrap = document.querySelector("#globalSearch .global-search-wrap");
+        if (!home || !searchWrap) return;
+        const clipBottom = searchWrap.getBoundingClientRect().bottom;
+        Array.from(home.children).forEach(item => {
+          const rect = item.getBoundingClientRect();
+          const overlap = clipBottom - rect.top;
+          if (overlap <= 0) {
+            item.style.visibility = "visible";
+            item.style.clipPath = "none";
+          } else if (rect.bottom <= clipBottom) {
+            item.style.visibility = "hidden";
+            item.style.clipPath = "none";
+          } else {
+            item.style.visibility = "visible";
+            item.style.clipPath = `inset(${overlap}px 0 0 0)`;
+          }
+        });
+      });
+    }
+    window.addEventListener("scroll", updateHomeMenuScrollGuard, { passive: true });
+    window.addEventListener("resize", updateHomeMenuScrollGuard);
+    setTimeout(updateHomeMenuScrollGuard, 0);
 
     // CONTENT LOGIC
     const LOCAL_INTERCAMPI_PAGE = "./horario-intercampi.html";
