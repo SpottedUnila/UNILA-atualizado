@@ -2057,7 +2057,7 @@ gtag('config', 'G-FJT3X93608');
     // Atualização do PWA: rede primeiro; cache apenas como fallback offline.
     function setupPWAUpdate() {
       if (!('serviceWorker' in navigator)) return;
-      navigator.serviceWorker.register('./service-worker37.js?v=301', { updateViaCache: 'none' }).then(function(reg) {
+      navigator.serviceWorker.register('./service-worker37.js?v=302', { updateViaCache: 'none' }).then(function(reg) {
         reg.update();
         reg.addEventListener('updatefound', function() {
           var newWorker = reg.installing;
@@ -2105,6 +2105,18 @@ gtag('config', 'G-FJT3X93608');
     window.addEventListener("scroll", updateHomeMenuScrollGuard, { passive: true });
     window.addEventListener("resize", updateHomeMenuScrollGuard);
     setTimeout(updateHomeMenuScrollGuard, 0);
+
+    // Ao entrar no app, posiciona o primeiro item do menu 50 px abaixo da busca.
+    function positionHomeMenuOnEntry() {
+      const home = document.getElementById("home");
+      const firstItem = home && home.firstElementChild;
+      const searchWrap = document.querySelector("#globalSearch .global-search-wrap");
+      if (!firstItem || !searchWrap) return;
+      const desiredTop = searchWrap.getBoundingClientRect().bottom + 50;
+      const targetScroll = Math.max(0, window.scrollY + firstItem.getBoundingClientRect().top - desiredTop);
+      window.scrollTo({ top: targetScroll, behavior: "smooth" });
+      updateHomeMenuScrollGuard();
+    }
 
     // CONTENT LOGIC
     const LOCAL_INTERCAMPI_PAGE = "./horario-intercampi.html";
@@ -4378,6 +4390,7 @@ padding:0 2px;">↩ Responder</button>`;
     }
 
     applyStaticTranslations();
+    setTimeout(positionHomeMenuOnEntry, 80);
     var observer = new MutationObserver(function(){ translateDynamicUI(); });
     observer.observe(document.body, {childList:true, subtree:true, attributes:true, attributeFilter:["placeholder"]});
     setInterval(updateDateBar, 60000);
