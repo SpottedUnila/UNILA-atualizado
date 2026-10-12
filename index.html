@@ -2057,7 +2057,7 @@ gtag('config', 'G-FJT3X93608');
     // Atualização do PWA: rede primeiro; cache apenas como fallback offline.
     function setupPWAUpdate() {
       if (!('serviceWorker' in navigator)) return;
-      navigator.serviceWorker.register('./service-worker37.js?v=306', { updateViaCache: 'none' }).then(function(reg) {
+      navigator.serviceWorker.register('./service-worker37.js?v=307', { updateViaCache: 'none' }).then(function(reg) {
         reg.update();
         reg.addEventListener('updatefound', function() {
           var newWorker = reg.installing;
@@ -3995,6 +3995,22 @@ padding:0 2px;">↩ Responder</button>`;
   }
   function normalizeMenuLabel(key, value){
     var text = String(value == null ? "" : value).trim();
+    // Os rótulos do admin_content podem substituir os valores do código.
+    // Mantém apenas a exceção "Conheça a Unila" solicitada para o menu.
+    if (key !== "conheca") {
+      text = text
+        .replace(/\bSpotted\b/gi, "")
+        .replace(/\b(?:Sistema Acad[eê]mico|Système académique)\b/gi, "")
+        .replace(/\b(?:Transporte|Transport)\b/gi, "")
+        .replace(/\bPRAE\b/gi, "")
+        .replace(/\b(?:Telefones de|Teléfonos de|Numéros d[’']urgence)\b/gi, "")
+        .replace(/\b(?:Página do Participante|Page du participant|Página del participante)\b/gi, "")
+        .replace(/\b(?:Unila|UNILA)\b/gi, "")
+        .replace(/\s+(?:da|do|de la|de|del|l[’']|na|no)\s*$/i, "")
+        .replace(/\s+[–—-]\s*$/u, "")
+        .replace(/\s{2,}/g, " ")
+        .trim();
+    }
     // Impede que valores administrativos repetidos exibam o mesmo rótulo duas vezes.
     // A regra é genérica para PT, FR e ES e também cobre ícones repetidos.
     for (var parts = 2; parts <= 4; parts++) {
