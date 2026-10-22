@@ -1,5 +1,5 @@
 plugins { id 'com.android.application' }
 
 android { namespace 'com.spottedunila.app'; compileSdk 35
-    defaultConfig { applicationId 'com.spottedunila.app'; minSdk 23; targetSdk 35; versionCode 1; versionName '1.0' }
+    defaultConfig { applicationId 'com.spottedunila.rebuildfulltest'; minSdk 23; targetSdk 35; versionCode 1011; versionName '1.0.1011' }
 }

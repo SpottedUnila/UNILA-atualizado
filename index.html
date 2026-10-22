@@ -2883,8 +2883,29 @@ gtag('config', 'G-FJT3X93608');
 
     // CHAT LOGIC
     const MAX_IMAGE_UPLOAD_BYTES = 5 * 1024 * 1024;
+    function inferImageMimeType(file) {
+      const name = (file && file.name ? file.name : '').toLowerCase();
+      if (name.endsWith('.jpg') || name.endsWith('.jpeg')) return 'image/jpeg';
+      if (name.endsWith('.png')) return 'image/png';
+      if (name.endsWith('.webp')) return 'image/webp';
+      if (name.endsWith('.gif')) return 'image/gif';
+      if (name.endsWith('.heic')) return 'image/heic';
+      if (name.endsWith('.heif')) return 'image/heif';
+      return '';
+    }
+    function normalizeImageFile(file) {
+      if (!file || file.type) return file;
+      const inferredType = inferImageMimeType(file);
+      if (!inferredType) return file;
+      try {
+        return new File([file], file.name || `upload_${Date.now()}`, { type: inferredType, lastModified: file.lastModified || Date.now() });
+      } catch (error) {
+        return file;
+      }
+    }
     function isValidImageFile(file) {
-      if (!file || !file.type || !file.type.startsWith('image/')) {
+      const inferredType = inferImageMimeType(file);
+      if (!file || (!(file.type || '').startsWith('image/') && !inferredType)) {
         appAlert('Selecione um arquivo de imagem válido.');
         return false;
       }
@@ -2896,6 +2917,7 @@ gtag('config', 'G-FJT3X93608');
     }
 
     async function uploadImageToCloudinary(file) {
+      file = normalizeImageFile(file);
       if (!isValidImageFile(file)) return null;
       const formData = new FormData();
       formData.append('file', file);
@@ -2909,7 +2931,7 @@ gtag('config', 'G-FJT3X93608');
     }
 
     function handleImageSelect(event) {
-      const file = event.target.files[0];
+      const file = normalizeImageFile(event.target.files[0]);
       if (file && isValidImageFile(file)) {
         selectedImage = file;
         const reader = new FileReader();
