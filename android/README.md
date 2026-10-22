@@ -8,7 +8,7 @@ A atividade usa `Intent.ACTION_SEND` com `Intent.createChooser`, portanto o Andr
 
 Abra esta pasta no Android Studio e execute **Build > Build APK(s)**. O APK gerado ficará em `app/build/outputs/apk/debug/app-debug.apk` para uma compilação de teste.
 
-Para uma versão de produção, configure assinatura Android no módulo `app` antes de gerar o APK release.
+Para uma versão de produção, configure a nova chave de upload no módulo `app` antes de gerar o AAB release. O `applicationId` deste projeto deve permanecer `com.spottedunila.rebuildfulltest` e o `versionCode` precisa ser incrementado a cada envio.
 
 O botão HTML usa a ponte nativa quando o APK carrega a página:
 
