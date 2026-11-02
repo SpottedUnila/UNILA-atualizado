@@ -106,7 +106,7 @@ public class MainActivity extends Activity {
             runOnUiThread(() -> {
                 Intent sendIntent = new Intent(Intent.ACTION_SEND);
                 sendIntent.setType("text/plain");
-                sendIntent.putExtra(Intent.EXTRA_TITLE, "Confira o Spotted");
+                sendIntent.putExtra(Intent.EXTRA_TITLE, "Confira o Vida Unileira");
                 sendIntent.putExtra(Intent.EXTRA_TEXT, text);
                 Intent chooser = Intent.createChooser(sendIntent, "Compartilhar aplicativo");
                 startActivity(chooser);

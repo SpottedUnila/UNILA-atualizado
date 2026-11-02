@@ -1,6 +1,6 @@
-# Spotted Android
+# Vida Unileira Android
 
-Este módulo é o wrapper Android nativo do Spotted. Ele carrega o app publicado no GitHub Pages e expõe `AndroidShare.share(text)` para o HTML.
+Este módulo é o wrapper Android nativo do Vida Unileira. Ele carrega o app publicado no GitHub Pages e expõe `AndroidShare.share(text)` para o HTML.
 
 A atividade usa `Intent.ACTION_SEND` com `Intent.createChooser`, portanto o Android lista os aplicativos instalados que aceitam texto, como WhatsApp, Facebook, Facebook Lite, Instagram, Bluetooth e Quick Share.
 
