@@ -871,7 +871,7 @@ button:hover{
   display:flex;
   align-items:center;
   justify-content:center;
-  white-space:normal;
+  white-space:pre-line;
   overflow:visible;
   overflow-wrap:anywhere;
   word-break:normal;
@@ -895,6 +895,7 @@ button:hover{
   text-align:center;
   text-decoration:none;
   text-shadow:0 2px 8px rgba(0,0,0,1);
+  white-space:pre-line;
   overflow-wrap:anywhere;
 }
 #home {
@@ -2275,9 +2276,12 @@ gtag('config', 'G-FJT3X93608');
           } else if (id === "upa" || id === "emergencia" || id === "ru") {
             content.textContent = String(val);
             content.style.whiteSpace = "pre-wrap";
-          } else {
+          } else if (id === "dev") {
             content.innerHTML = String(val).replace(/\n/g, "<br>");
             content.style.whiteSpace = "normal";
+          } else {
+            content.textContent = String(val);
+            content.style.whiteSpace = "pre-wrap";
           }
         }
         openPage('dynamicPage');
@@ -4034,7 +4038,10 @@ padding:0 2px;">↩ Responder</button>`;
         .replace(/\b(?:Unila|UNILA)\b/gi, "")
         .replace(/\s+(?:da|do|de la|de|del|l[’']|na|no)\s*$/i, "")
         .replace(/\s+[–—-]\s*$/u, "")
-        .replace(/\s{2,}/g, " ")
+        .replace(/\r\n?/g, "\n")
+        .replace(/[ \t]{2,}/g, " ")
+        .replace(/[ \t]+\n/g, "\n")
+        .replace(/\n[ \t]+/g, "\n")
         .trim();
     }
     // Impede que valores administrativos repetidos exibam o mesmo rótulo duas vezes.
