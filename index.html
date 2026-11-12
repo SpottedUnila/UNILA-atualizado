@@ -2075,7 +2075,7 @@ gtag('config', 'G-FJT3X93608');
     // Atualização do PWA: rede primeiro; cache apenas como fallback offline.
     function setupPWAUpdate() {
       if (!('serviceWorker' in navigator)) return;
-      navigator.serviceWorker.register('./service-worker37.js?v=315', { updateViaCache: 'none' }).then(function(reg) {
+      navigator.serviceWorker.register('./service-worker37.js?v=316', { updateViaCache: 'none' }).then(function(reg) {
         reg.update();
         reg.addEventListener('updatefound', function() {
           var newWorker = reg.installing;
@@ -4292,6 +4292,7 @@ padding:0 2px;">↩ Responder</button>`;
     translateDynamicUI();
     normalizeVisibleUnila(document.body);
     if (typeof window.unilaApplyComplianceTranslations === "function") window.unilaApplyComplianceTranslations();
+    if (typeof window.unilaRefreshAnnouncementBanner === "function") window.unilaRefreshAnnouncementBanner();
   }
 
   function normalizeVisibleUnila(root){
