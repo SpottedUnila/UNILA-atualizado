@@ -2075,7 +2075,7 @@ gtag('config', 'G-FJT3X93608');
     // Atualização do PWA: rede primeiro; cache apenas como fallback offline.
     function setupPWAUpdate() {
       if (!('serviceWorker' in navigator)) return;
-      navigator.serviceWorker.register('./service-worker37.js?v=316', { updateViaCache: 'none' }).then(function(reg) {
+      navigator.serviceWorker.register('./service-worker37.js?v=317', { updateViaCache: 'none' }).then(function(reg) {
         reg.update();
         reg.addEventListener('updatefound', function() {
           var newWorker = reg.installing;
@@ -2178,6 +2178,7 @@ gtag('config', 'G-FJT3X93608');
     const adminButtonLabels = {};
     const adminPageContent = {};
     const adminContentOverrides = {};
+    const adminBannerTexts = {};
     function getIntercampiUrl() {
       var lang = typeof state !== "undefined" && state.lang ? state.lang : "pt";
       var candidates = [
@@ -2201,6 +2202,7 @@ gtag('config', 'G-FJT3X93608');
       if (changeType === "removed") {
         if (id.indexOf("button_label_") === 0) delete adminButtonLabels[id];
         else if (id.indexOf("button_content_") === 0) delete adminPageContent[id];
+        else if (id.indexOf("banner_text_") === 0) delete adminBannerTexts[id];
         else delete adminContentOverrides[id];
         return;
       }
@@ -2211,6 +2213,10 @@ gtag('config', 'G-FJT3X93608');
       else if (id.indexOf("button_content_") === 0) {
         var contentValue = String(value == null ? "" : value);
         if (contentValue.trim()) adminPageContent[id] = contentValue; else delete adminPageContent[id];
+      }
+      else if (id.indexOf("banner_text_") === 0) {
+        var bannerValue = String(value == null ? "" : value);
+        if (bannerValue.trim()) adminBannerTexts[id] = bannerValue; else delete adminBannerTexts[id];
       }
       else {
         defaultContent[id] = value;
@@ -2225,7 +2231,7 @@ gtag('config', 'G-FJT3X93608');
 
     function announcementText() {
       var lang = typeof state !== "undefined" && state.lang ? state.lang : "pt";
-      var value = defaultContent["banner_text_" + lang] || defaultContent.banner_text_pt || "";
+      var value = adminBannerTexts["banner_text_" + lang] || adminBannerTexts.banner_text_pt || "";
       return normalizeMultilineValue(value).replace(/\s+/g, " ").trim();
     }
 
