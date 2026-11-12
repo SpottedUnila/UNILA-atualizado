@@ -1149,7 +1149,7 @@ button:hover{
 .announcement-banner.is-visible{display:block;transition:transform .28s ease,opacity .28s ease}
 .announcement-banner.scroll-hidden{transform:translateY(calc(-100% - 24px));opacity:0;pointer-events:none}
 .announcement-banner-viewport{display:flex;align-items:center;width:100%;height:100%;overflow:hidden}
-.announcement-banner-track{display:flex;align-items:center;flex:none;min-width:max-content;animation:announcementMarquee 18s linear infinite}
+.announcement-banner-track{display:flex;align-items:center;flex:none;min-width:max-content;animation:announcementMarquee 36s linear infinite}
 .announcement-banner-text{display:inline-block;padding:0 42px;color:#fef3c7;font-size:14px;font-weight:800;line-height:36px;white-space:nowrap;text-shadow:0 2px 6px rgba(0,0,0,.75)}
 @keyframes announcementMarquee{from{transform:translateX(100vw)}to{transform:translateX(-100%)}}
 @media(prefers-reduced-motion:reduce){.announcement-banner-track{animation:none;transform:none}.announcement-banner-text{margin:auto}}
@@ -2075,7 +2075,7 @@ gtag('config', 'G-FJT3X93608');
     // Atualização do PWA: rede primeiro; cache apenas como fallback offline.
     function setupPWAUpdate() {
       if (!('serviceWorker' in navigator)) return;
-      navigator.serviceWorker.register('./service-worker37.js?v=313', { updateViaCache: 'none' }).then(function(reg) {
+      navigator.serviceWorker.register('./service-worker37.js?v=314', { updateViaCache: 'none' }).then(function(reg) {
         reg.update();
         reg.addEventListener('updatefound', function() {
           var newWorker = reg.installing;
