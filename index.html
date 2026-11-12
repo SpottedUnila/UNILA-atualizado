@@ -1146,7 +1146,8 @@ button:hover{
 .global-search-result strong{display:block;color:#e9d5ff}.global-search-result small{display:block;overflow:hidden;margin-top:3px;color:#cbd5e1;text-overflow:ellipsis;white-space:nowrap}.global-search-empty{padding:13px 12px;color:#cbd5e1}
 @media(max-width:720px){.global-search{top:82px;right:7px;width:calc(70% - 32px)}}
 .announcement-banner{position:relative;top:auto;left:auto;right:auto;z-index:1003;display:none;height:36px;margin:128px 10px 0;overflow:hidden;border:1px solid rgba(196,181,253,.42);border-radius:12px;background:rgba(15,23,42,.96);box-shadow:0 5px 18px rgba(0,0,0,.35);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
-.announcement-banner.is-visible{display:block}
+.announcement-banner.is-visible{display:block;transition:transform .28s ease,opacity .28s ease}
+.announcement-banner.scroll-hidden{transform:translateY(calc(-100% - 24px));opacity:0;pointer-events:none}
 .announcement-banner-viewport{display:flex;align-items:center;width:100%;height:100%;overflow:hidden}
 .announcement-banner-track{display:flex;align-items:center;flex:none;min-width:max-content;animation:announcementMarquee 18s linear infinite}
 .announcement-banner-text{display:inline-block;padding:0 42px;color:#fef3c7;font-size:14px;font-weight:800;line-height:36px;white-space:nowrap;text-shadow:0 2px 6px rgba(0,0,0,.75)}
@@ -2074,7 +2075,7 @@ gtag('config', 'G-FJT3X93608');
     // Atualização do PWA: rede primeiro; cache apenas como fallback offline.
     function setupPWAUpdate() {
       if (!('serviceWorker' in navigator)) return;
-      navigator.serviceWorker.register('./service-worker37.js?v=312', { updateViaCache: 'none' }).then(function(reg) {
+      navigator.serviceWorker.register('./service-worker37.js?v=313', { updateViaCache: 'none' }).then(function(reg) {
         reg.update();
         reg.addEventListener('updatefound', function() {
           var newWorker = reg.installing;
@@ -2234,9 +2235,30 @@ gtag('config', 'G-FJT3X93608');
       if (!banner || !track) return;
       var text = announcementText();
       track.innerHTML = text ? '<span class="announcement-banner-text">' + escapeHtml(text) + '</span><span class="announcement-banner-text" aria-hidden="true">' + escapeHtml(text) + '</span>' : "";
+      if (!text) banner.classList.remove("scroll-hidden");
       banner.classList.toggle("is-visible", Boolean(text) && document.getElementById("home")?.style.display !== "none");
     }
     window.unilaRefreshAnnouncementBanner = renderAnnouncementBanner;
+    (function setupAnnouncementScrollBehavior() {
+      var lastScrollY = window.scrollY || 0;
+      var ticking = false;
+      function updateBannerForScroll() {
+        var banner = document.getElementById("announcementBanner");
+        var currentScrollY = window.scrollY || 0;
+        if (banner && banner.classList.contains("is-visible")) {
+          if (currentScrollY > lastScrollY + 6 && currentScrollY > 20) banner.classList.add("scroll-hidden");
+          else if (currentScrollY < lastScrollY - 6 || currentScrollY <= 20) banner.classList.remove("scroll-hidden");
+        }
+        lastScrollY = currentScrollY;
+        ticking = false;
+      }
+      window.addEventListener("scroll", function() {
+        if (!ticking) {
+          window.requestAnimationFrame(updateBannerForScroll);
+          ticking = true;
+        }
+      }, { passive: true });
+    })();
 
     async function loadAllContent() {
       // Carregar links e textos administráveis do admin_content
