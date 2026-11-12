@@ -2230,13 +2230,21 @@ gtag('config', 'G-FJT3X93608');
       window.__activeDynamicPage = "upa";
       window.openDynamic("upa", "page");
     }
+    function normalizeMultilineValue(value) {
+      return String(value == null ? "" : value)
+        .replace(/\\r\\n/g, "\n")
+        .replace(/\\n/g, "\n")
+        .replace(/\r\n?/g, "\n");
+    }
+
     function openDynamic(id, type) {
       // O estado da tradução vive em outro escopo; a página ativa é compartilhada
       // por uma propriedade global segura entre os dois scripts.
       window.__activeDynamicPage = id;
       const contentMap = window.unilaDefaultContent || {};
       const getContent = window.unilaLocalizedContent;
-      const val = (typeof getContent === "function" ? getContent(id) : "") || contentMap[id] || "";
+      const rawVal = (typeof getContent === "function" ? getContent(id) : "") || contentMap[id] || "";
+      const val = normalizeMultilineValue(rawVal);
       if (type === 'link') {
       const officialLinks = {
           portal_unila: "https://portal.unila.edu.br/",
