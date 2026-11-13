@@ -2075,7 +2075,7 @@ gtag('config', 'G-FJT3X93608');
     // Atualização do PWA: rede primeiro; cache apenas como fallback offline.
     function setupPWAUpdate() {
       if (!('serviceWorker' in navigator)) return;
-      navigator.serviceWorker.register('./service-worker37.js?v=318', { updateViaCache: 'none' }).then(function(reg) {
+      navigator.serviceWorker.register('./service-worker37.js?v=319', { updateViaCache: 'none' }).then(function(reg) {
         reg.update();
         reg.addEventListener('updatefound', function() {
           var newWorker = reg.installing;
@@ -4099,7 +4099,6 @@ padding:0 2px;">↩ Responder</button>`;
       text = text
         .replace(/\bVida Unileira\b/gi, "")
         .replace(/\b(?:Sistema Acad[eê]mico|Système académique)\b/gi, "")
-        .replace(/\b(?:Transporte|Transport)\b/gi, "")
         .replace(/\bPRAE\b/gi, "")
         .replace(/\b(?:Telefones de|Teléfonos de|Numéros d[’']urgence)\b/gi, "")
         .replace(/\b(?:Página do Participante|Page du participant|Página del participante)\b/gi, "")
