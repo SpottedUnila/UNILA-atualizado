@@ -2088,7 +2088,7 @@ gtag('config', 'G-FJT3X93608');
     // Atualização do PWA: rede primeiro; cache apenas como fallback offline.
     function setupPWAUpdate() {
       if (!('serviceWorker' in navigator)) return;
-      navigator.serviceWorker.register('./service-worker37.js?v=324', { updateViaCache: 'none' }).then(function(reg) {
+      navigator.serviceWorker.register('./service-worker37.js?v=325', { updateViaCache: 'none' }).then(function(reg) {
         reg.update();
         reg.addEventListener('updatefound', function() {
           var newWorker = reg.installing;
@@ -2570,7 +2570,7 @@ gtag('config', 'G-FJT3X93608');
       if (!box) return;
       box.innerHTML = '<p style="text-align:center;padding:20px;color:#94a3b8;">Carregando...</p>';
       try {
-        const snapshot = await db.collection("conhecaUNILA").get();
+        const snapshot = await db.collection("conhecaUnila").get();
         const items = snapshot.docs.map(doc => ({id:doc.id, ...doc.data()}))
           .filter(item => getConhecaMedia(item).imageUrl || getConhecaMedia(item).videoUrl)
           .sort((a, b) => conhecaDateValue(b) - conhecaDateValue(a));
@@ -2591,7 +2591,7 @@ gtag('config', 'G-FJT3X93608');
     let conhecaMediaUnsubscribe = null;
     function listenConhecaMediaChanges() {
       if (conhecaMediaUnsubscribe) return;
-      conhecaMediaUnsubscribe = db.collection("conhecaUNILA").onSnapshot(() => {
+      conhecaMediaUnsubscribe = db.collection("conhecaUnila").onSnapshot(() => {
         const dynamicPage = document.getElementById("dynamicPage");
         // O listener não pode sobrescrever UPA, Notícias ou qualquer outra página.
         if (window.__activeDynamicPage === "conheca" && dynamicPage && dynamicPage.style.display === "block" && typeof window.loadConhecaUNILA === "function") {
