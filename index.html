@@ -317,6 +317,11 @@ button:hover{
   overflow-wrap: anywhere;
   word-break: break-word;
 }
+#dynamicContent .unit-address-paragraph {
+  margin: 0 0 18px;
+  line-height: 1.7;
+}
+#dynamicContent .unit-address-paragraph:last-child { margin-bottom: 0; }
 
 /* Ajuste para imagens em páginas dinâmicas (Notícias, etc) */
 /* NOTÍCIAS: aproxima o texto da imagem/vídeo */
@@ -2075,7 +2080,7 @@ gtag('config', 'G-FJT3X93608');
     // Atualização do PWA: rede primeiro; cache apenas como fallback offline.
     function setupPWAUpdate() {
       if (!('serviceWorker' in navigator)) return;
-      navigator.serviceWorker.register('./service-worker37.js?v=319', { updateViaCache: 'none' }).then(function(reg) {
+      navigator.serviceWorker.register('./service-worker37.js?v=320', { updateViaCache: 'none' }).then(function(reg) {
         reg.update();
         reg.addEventListener('updatefound', function() {
           var newWorker = reg.installing;
@@ -2294,6 +2299,17 @@ gtag('config', 'G-FJT3X93608');
         .replace(/\r\n?/g, "\n");
     }
 
+    function renderAddressParagraphs(value) {
+      return normalizeMultilineValue(value)
+        .split(/\n\s*\n+/)
+        .map(function(paragraph) { return paragraph.trim(); })
+        .filter(Boolean)
+        .map(function(paragraph) {
+          return '<p class="unit-address-paragraph">' + escapeHtml(paragraph).replace(/\n/g, "<br>") + '</p>';
+        })
+        .join("");
+    }
+
     function openDynamic(id, type) {
       // O estado da tradução vive em outro escopo; a página ativa é compartilhada
       // por uma propriedade global segura entre os dois scripts.
@@ -2341,6 +2357,9 @@ gtag('config', 'G-FJT3X93608');
           } else if (id === "upa" || id === "emergencia" || id === "ru") {
             content.textContent = String(val);
             content.style.whiteSpace = "pre-wrap";
+          } else if (id === "enderecos") {
+            content.innerHTML = renderAddressParagraphs(val);
+            content.style.whiteSpace = "normal";
           } else if (id === "dev") {
             content.innerHTML = String(val).replace(/\n/g, "<br>");
             content.style.whiteSpace = "normal";
@@ -4345,6 +4364,9 @@ padding:0 2px;">↩ Responder</button>`;
             if (state.currentDynamicId === "upa" || state.currentDynamicId === "emergencia" || state.currentDynamicId === "ru") {
               dynamicContent.textContent = String(content);
               dynamicContent.style.whiteSpace = "pre-wrap";
+            } else if (state.currentDynamicId === "enderecos") {
+              dynamicContent.innerHTML = renderAddressParagraphs(content);
+              dynamicContent.style.whiteSpace = "normal";
             } else {
               dynamicContent.innerHTML = String(content);
               dynamicContent.style.whiteSpace = "normal";
