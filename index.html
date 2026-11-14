@@ -1347,7 +1347,7 @@ gtag('config', 'G-FJT3X93608');
     <button class="unila" onclick="openLocalizedResource('mentalHealth')">🧠 Saúde Mental</button>
     <a class="google menu-link" href="https://enem.inep.gov.br/participante/">📝 ENEM</a>
     <button class="noticias" onclick="openNewsPage()">📰 Notícias</button>
-    <button class="conheca-unila-btn" onclick="openConhecaUnilaPage()">🏫 Conheça a Unila</button>
+    <button class="conheca-unila-btn" onclick="openConhecaUNILAPage()">🏫 Conheça a UNILA</button>
     <button class="desapega" onclick="openPage('desapegaPage')">🔎 Achados e Perdidos e Desapega</button>
     <button class="emergencia" data-search-key="upa" onclick="openUPAPage()" aria-label="Hospitais de Emergência 24h (UPA)">Hospitais de Emergência 24h (UPA)</button>
     <button class="dev" data-search-key="officialSources" onclick="openPage('officialSourcesPage')">🔗 Portal da Transparência</button>
@@ -1403,7 +1403,7 @@ gtag('config', 'G-FJT3X93608');
   </div>
 
   <div id="chatPage" class="page">
-    <h2>💬 Chat Unila</h2>
+    <h2>💬 Chat UNILA</h2>
     <div id="nickArea">
       <input id="nickInput" autocomplete="username" placeholder="Digite seu nick..." style="padding:10px; border-radius:10px; border:none; margin-bottom:10px; width:80%;" />
       <div class="auth-field-wrap">
@@ -1711,7 +1711,7 @@ gtag('config', 'G-FJT3X93608');
           <div style="max-width:430px;background:rgba(20,10,30,.96);border:1px solid rgba(255,255,255,.15);border-radius:24px;padding:32px;box-shadow:0 15px 50px rgba(0,0,0,.5);">
             <div style="font-size:58px;margin-bottom:15px;">🚫</div>
             <h1 style="margin:0 0 12px;font-size:26px;">Acesso bloqueado</h1>
-            <p style="margin:0;color:#ddd;font-size:16px;line-height:1.5;">Este usuário foi bloqueado ou banido pelo administrador e não pode acessar o App Unila.</p>
+            <p style="margin:0;color:#ddd;font-size:16px;line-height:1.5;">Este usuário foi bloqueado ou banido pelo administrador e não pode acessar o App UNILA.</p>
             <p style="margin:18px 0 0;color:#999;font-size:12px;">ID de autenticação: ${firebaseUid}</p>
           </div>
         </div>`;
@@ -2080,7 +2080,7 @@ gtag('config', 'G-FJT3X93608');
     // Atualização do PWA: rede primeiro; cache apenas como fallback offline.
     function setupPWAUpdate() {
       if (!('serviceWorker' in navigator)) return;
-      navigator.serviceWorker.register('./service-worker37.js?v=320', { updateViaCache: 'none' }).then(function(reg) {
+      navigator.serviceWorker.register('./service-worker37.js?v=321', { updateViaCache: 'none' }).then(function(reg) {
         reg.update();
         reg.addEventListener('updatefound', function() {
           var newWorker = reg.installing;
@@ -2166,11 +2166,11 @@ gtag('config', 'G-FJT3X93608');
       biblioteca: "https://portal.unila.edu.br/biblioteca",
       intercampi: "https://portal.unila.edu.br/proagi/delog/arquivos/horario-intercampi/quadro-de-horario-intercampi.pdf",
       editais: "https://documentos.unila.edu.br/",
-      emergencia: "Polícia Militar: 190\nSAMU (Ambulância): 192\nBombeiros: 193\n\nHospital Municipal: (45) 2105-4100\nGuarda Municipal: (45) 2105-5100\nDelegacia da Mulher: (45) 3521-9200\nDefesa Civil: 199\n\nPolícia Federal: (45) 3522-1174\nPolícia Rodoviária Federal: (45) 3576-1400\n\nPrae-Unila: +55 45 3522-9983\nPrograd-Unila: +55 (45) 3522-9766\n\nDisque Denúncia: 181\nConselho Tutelar: (45) 3521-1112\nCentro de Intoxicações: 0800 722 6001\n\n⚠ Em situações graves, ligue imediatamente.",
-      enderecos: "Unila - Campus PTI\nAv. Tancredo Neves, 6731 - PTI, Foz do Iguaçu - PR\n\nUnila - Campus Juarez Távora\nAv. Silvio Américo Sasdelli, 1000 - Vila A, Foz do Iguaçu - PR\n\nUnila - Campus Jardim Universitário (JU)\nAv. Tarquínio Joslin dos Santos, 1000 - Lot. Universitário das Américas, Foz do Iguaçu - PR\n\nUnila - Campus Integração\nAv. Tancredo Neves, 3147 - Foz do Iguaçu - PR",
+      emergencia: "Polícia Militar: 190\nSAMU (Ambulância): 192\nBombeiros: 193\n\nHospital Municipal: (45) 2105-4100\nGuarda Municipal: (45) 2105-5100\nDelegacia da Mulher: (45) 3521-9200\nDefesa Civil: 199\n\nPolícia Federal: (45) 3522-1174\nPolícia Rodoviária Federal: (45) 3576-1400\n\nPrae-UNILA: +55 45 3522-9983\nPrograd-UNILA: +55 (45) 3522-9766\n\nDisque Denúncia: 181\nConselho Tutelar: (45) 3521-1112\nCentro de Intoxicações: 0800 722 6001\n\n⚠ Em situações graves, ligue imediatamente.",
+      enderecos: "UNILA - Campus PTI\nAv. Tancredo Neves, 6731 - PTI, Foz do Iguaçu - PR\n\nUNILA - Campus Juarez Távora\nAv. Silvio Américo Sasdelli, 1000 - Vila A, Foz do Iguaçu - PR\n\nUNILA - Campus Jardim Universitário (JU)\nAv. Tarquínio Joslin dos Santos, 1000 - Lot. Universitário das Américas, Foz do Iguaçu - PR\n\nUNILA - Campus Integração\nAv. Tancredo Neves, 3147 - Foz do Iguaçu - PR",
       ru: "RU PTI: Segunda a Sexta (11:00 - 14:00 e 17:30 - 20:00)\nRU JU: Segunda a Sexta (11:00 - 14:00 e 17:30 - 20:00)\n\nPreço para Estudantes: R$ 3,50\nPreço para Servidores: R$ 12,00\n\n⚠ Verifique feriados e horários especiais no portal oficial.",
       dev: "Equipe Vida Unileira<br>Contato: <a href=\"mailto:universecreativepixel@gmail.com\">universecreativepixel@gmail.com</a>",
-      internet: "Rede: Unila-WIFI\nLogin: Seu CPF ou E-mail Institucional\nSenha: A mesma senha do SIGAA\n\n⚠ Se tiver problemas, procure a TIC do seu campus.",
+      internet: "Rede: UNILA-WIFI\nLogin: Seu CPF ou E-mail Institucional\nSenha: A mesma senha do SIGAA\n\n⚠ Se tiver problemas, procure a TIC do seu campus.",
       estude: "Ingresso para Brasileiros: Via ENEM/SISU\nIngresso para Estrangeiros: Seleção Internacional Própria\n\nCursos: Mais de 29 opções de graduação.\n\nPara mais informações acesse: portal.unila.edu.br/ingresso",
       auxilio_estudantil: "https://portal.unila.edu.br/prae/assistencia-estudantil/auxilios",
       saude_mental: "https://portal.unila.edu.br/saude-mental",
@@ -2443,7 +2443,7 @@ gtag('config', 'G-FJT3X93608');
     }
 
 
-    // Conheça a Unila — conteúdo multimídia separado das notícias e administrável pelo painel.
+    // Conheça a UNILA — conteúdo multimídia separado das notícias e administrável pelo painel.
     function escapeHtml(value) {
       return String(value == null ? "" : value)
         .replace(/&/g, "&amp;")
@@ -2557,12 +2557,12 @@ gtag('config', 'G-FJT3X93608');
       return html;
     }
 
-    async function loadConhecaUnila() {
+    async function loadConhecaUNILA() {
       const box = document.getElementById("dynamicContent");
       if (!box) return;
       box.innerHTML = '<p style="text-align:center;padding:20px;color:#94a3b8;">Carregando...</p>';
       try {
-        const snapshot = await db.collection("conhecaUnila").get();
+        const snapshot = await db.collection("conhecaUNILA").get();
         const items = snapshot.docs.map(doc => ({id:doc.id, ...doc.data()}))
           .filter(item => getConhecaMedia(item).imageUrl || getConhecaMedia(item).videoUrl)
           .sort((a, b) => conhecaDateValue(b) - conhecaDateValue(a));
@@ -2575,7 +2575,7 @@ gtag('config', 'G-FJT3X93608');
         box.innerHTML = htmlConheca;
         if (typeof translateDynamicUI === "function") translateDynamicUI();
       } catch(e) {
-        console.error("Erro ao carregar Conheça a Unila:", e);
+        console.error("Erro ao carregar Conheça a UNILA:", e);
         box.innerHTML = '<p style="color:#ef4444;">Erro ao carregar as mídias.</p>';
       }
     }
@@ -2583,25 +2583,25 @@ gtag('config', 'G-FJT3X93608');
     let conhecaMediaUnsubscribe = null;
     function listenConhecaMediaChanges() {
       if (conhecaMediaUnsubscribe) return;
-      conhecaMediaUnsubscribe = db.collection("conhecaUnila").onSnapshot(() => {
+      conhecaMediaUnsubscribe = db.collection("conhecaUNILA").onSnapshot(() => {
         const dynamicPage = document.getElementById("dynamicPage");
         // O listener não pode sobrescrever UPA, Notícias ou qualquer outra página.
-        if (window.__activeDynamicPage === "conheca" && dynamicPage && dynamicPage.style.display === "block" && typeof window.loadConhecaUnila === "function") {
-          window.loadConhecaUnila();
+        if (window.__activeDynamicPage === "conheca" && dynamicPage && dynamicPage.style.display === "block" && typeof window.loadConhecaUNILA === "function") {
+          window.loadConhecaUNILA();
         }
-      }, (error) => console.error("Erro ao sincronizar mídias de Conheça a Unila:", error));
+      }, (error) => console.error("Erro ao sincronizar mídias de Conheça a UNILA:", error));
     }
     function openNewsPage() {
       window.__activeDynamicPage = "noticias";
-      document.getElementById("dynamicTitle").textContent = typeof window.unilaTranslate === "function" ? window.unilaTranslate("news") : "📰 Notícias da Unila";
+      document.getElementById("dynamicTitle").textContent = typeof window.unilaTranslate === "function" ? window.unilaTranslate("news") : "📰 Notícias da UNILA";
       openPage("dynamicPage");
       loadNews();
     }
-    function openConhecaUnilaPage() {
+    function openConhecaUNILAPage() {
       window.__activeDynamicPage = "conheca";
-      document.getElementById("dynamicTitle").textContent = typeof window.unilaTranslate === "function" ? window.unilaTranslate("conheca") : "🏫 Conheça a Unila";
+      document.getElementById("dynamicTitle").textContent = typeof window.unilaTranslate === "function" ? window.unilaTranslate("conheca") : "🏫 Conheça a UNILA";
       openPage("dynamicPage");
-      loadConhecaUnila();
+      loadConhecaUNILA();
     }
 
     function scrollToTop() { window.scrollTo({ top: 0, behavior: 'smooth' }); }
@@ -2907,7 +2907,7 @@ gtag('config', 'G-FJT3X93608');
       };
       const copyAndOpenApp = function(appUrl){
         // Copia sem aguardar a Promise: assim o clique continua sendo um gesto
-        // direto do usuário, como nos links oficiais da Unila.
+        // direto do usuário, como nos links oficiais da UNILA.
         if (navigator.clipboard && window.isSecureContext) {
           navigator.clipboard.writeText(shareText).catch(function(error){ console.warn("Não foi possível copiar o link.", error); });
         } else {
@@ -2931,7 +2931,7 @@ gtag('config', 'G-FJT3X93608');
       modal.querySelector('[data-share="close"]').onclick = close;
       modal.addEventListener("click", function(event){ if (event.target === modal) close(); });
       // Links HTTPS seguem a mesma lógica dos botões Instagram/Facebook/Portal
-      // da Unila: Android pode abrir o aplicativo associado; caso contrário,
+      // da UNILA: Android pode abrir o aplicativo associado; caso contrário,
       // mantém o comportamento oficial do próprio serviço.
       modal.querySelector('[data-share="whatsapp"]').onclick = function(){
         copyAndOpenApp("whatsapp://send?text=" + encodedText);
@@ -3898,8 +3898,8 @@ padding:0 2px;">↩ Responder</button>`;
         intercampus: "Intercampi", publicTransport: "🚌 Transporte Público", internationalPortal: "🌐 Portal Internacional", notices: "📄 Editais Oficiais", emergency: "🚨 Emergência",
         addresses: "🏫 Endereços", ru: "🍽️ Restaurantes Universitários", group: "👥 Grupo no Facebook", developer: "👨‍💻 Desenvolvedor", privacy: "🔒 Privacidade e exclusão",
         notes: "📝 Anotações", share: "📤 Compartilhar App", internet: "🌐 Internet", study: "🎓 Estude na", academicGoals: "📈 Meta Acadêmica", studentAid: "🎓 Auxílio Estudantil", mentalHealth: "🧠 Saúde Mental",
-        enem: "📝 ENEM – Página do Participante", news: "📰 Notícias", conheca: "🏫 Conheça a Unila", desapega: "🔎 Achados e Perdidos e Desapega", upa: "Hospitais de Emergência 24h (UPA)", officialSources: "🔗 Portal da Transparência",
-        chatHeading: "💬 Chat Unila", nickPlaceholder: "Digite seu nick...", enter: "🚪 Entrar", imageSelected: "Imagem selecionada",
+        enem: "📝 ENEM – Página do Participante", news: "📰 Notícias", conheca: "🏫 Conheça a UNILA", desapega: "🔎 Achados e Perdidos e Desapega", upa: "Hospitais de Emergência 24h (UPA)", officialSources: "🔗 Portal da Transparência",
+        chatHeading: "💬 Chat UNILA", nickPlaceholder: "Digite seu nick...", enter: "🚪 Entrar", imageSelected: "Imagem selecionada",
         chatPlaceholder: "Digite sua mensagem...", anonymous: "👤 Enviar Anonimamente", changeNick: "🔄 Mudar Nick",
         developerHeading: "👨‍💻 Desenvolvedor", developerIntro: "Para trabalhos e parcerias entre em contato:", developerService: "Equipe Vida Unileira", contact: "Contato",
         notesHeading: "📝 Anotações", notePlaceholder: "Escreva sua anotação aqui...", save: "💾 Salvar", desapegaHeading: "🛒 Desapega Unileiro",
@@ -3911,14 +3911,14 @@ padding:0 2px;">↩ Responder</button>`;
         replying: "Respondendo a", today: "Hoje às", yesterday: "Ontem às", at: "às", verify: "Verificando...", sending: "Enviando...", saving: "Salvando...",
         reactNick: "Defina um nick para reagir.", replyNick: "Defina um nick para responder.", typeNick: "Digite um Nick!", nickUsed: "Nick em uso!",
         fillAll: "Preencha tudo!", deleteReplyConfirm: "Excluir esta resposta?", deleteAdConfirm: "Excluir este anúncio?",
-        error: "Erro: ", errorReply: "Erro ao responder: ", errorDeleteReply: "Erro ao excluir resposta: ", shareMessage: "Confira o Unila App!"
+        error: "Erro: ", errorReply: "Erro ao responder: ", errorDeleteReply: "Erro ao excluir resposta: ", shareMessage: "Confira o UNILA App!"
       },
       content: {
-        emergencia: "Polícia Militar: 190\nSAMU (Ambulância): 192\nBombeiros: 193\n\nHospital Municipal: (45) 2105-4100\nGuarda Municipal: (45) 2105-5100\nDelegacia da Mulher: (45) 3521-9200\nDefesa Civil: 199\n\nPolícia Federal: (45) 3522-1174\nPolícia Rodoviária Federal: (45) 3576-1400\n\nPrae-Unila: +55 45 3522-9983\nPrograd-Unila: +55 (45) 3522-9766\n\nDisque Denúncia: 181\nConselho Tutelar: (45) 3521-1112\nCentro de Intoxicações: 0800 722 6001\n\n⚠ Em situações graves, ligue imediatamente.",
-        enderecos: "Unila - Campus PTI\nAv. Tancredo Neves, 6731 - PTI, Foz do Iguaçu - PR\n\nUnila - Campus Juarez Távora\nAv. Silvio Américo Sasdelli, 1000 - Vila A, Foz do Iguaçu - PR\n\nUnila - Campus Jardim Universitário (JU)\nAv. Tarquínio Joslin dos Santos, 1000 - Lot. Universitário das Américas, Foz do Iguaçu - PR\n\nUnila - Campus Integração\nAv. Tancredo Neves, 3147 - Foz do Iguaçu - PR",
+        emergencia: "Polícia Militar: 190\nSAMU (Ambulância): 192\nBombeiros: 193\n\nHospital Municipal: (45) 2105-4100\nGuarda Municipal: (45) 2105-5100\nDelegacia da Mulher: (45) 3521-9200\nDefesa Civil: 199\n\nPolícia Federal: (45) 3522-1174\nPolícia Rodoviária Federal: (45) 3576-1400\n\nPrae-UNILA: +55 45 3522-9983\nPrograd-UNILA: +55 (45) 3522-9766\n\nDisque Denúncia: 181\nConselho Tutelar: (45) 3521-1112\nCentro de Intoxicações: 0800 722 6001\n\n⚠ Em situações graves, ligue imediatamente.",
+        enderecos: "UNILA - Campus PTI\nAv. Tancredo Neves, 6731 - PTI, Foz do Iguaçu - PR\n\nUNILA - Campus Juarez Távora\nAv. Silvio Américo Sasdelli, 1000 - Vila A, Foz do Iguaçu - PR\n\nUNILA - Campus Jardim Universitário (JU)\nAv. Tarquínio Joslin dos Santos, 1000 - Lot. Universitário das Américas, Foz do Iguaçu - PR\n\nUNILA - Campus Integração\nAv. Tancredo Neves, 3147 - Foz do Iguaçu - PR",
         ru: "RU PTI: Segunda a Sexta (11:00 - 14:00 e 17:30 - 20:00)\nRU JU: Segunda a Sexta (11:00 - 14:00 e 17:30 - 20:00)\n\nPreço para Estudantes: R$ 3,50\nPreço para Servidores: R$ 12,00\n\n⚠ Verifique feriados e horários especiais no portal oficial.",
         dev: "Equipe Vida Unileira<br>Contato: <a href=\"mailto:universecreativepixel@gmail.com\">universecreativepixel@gmail.com</a>",
-        internet: "Rede: Unila-WIFI\nLogin: Seu CPF ou E-mail Institucional\nSenha: A mesma senha do SIGAA\n\n⚠ Se tiver problemas, procure a TIC do seu campus.",
+        internet: "Rede: UNILA-WIFI\nLogin: Seu CPF ou E-mail Institucional\nSenha: A mesma senha do SIGAA\n\n⚠ Se tiver problemas, procure a TIC do seu campus.",
         estude: "Ingresso para Brasileiros: Via ENEM/SISU\nIngresso para Estrangeiros: Seleção Internacional Própria\n\nCursos: Mais de 29 opções de graduação.\n\nPara mais informações acesse: portal.unila.edu.br/ingresso",
         upa: "UPA João Samek (Vila A): (45) 3524-8800\nUPA Morumbi: (45) 3521-1350\n\n⚠ Em casos de emergência com risco de vida, ligue 192 (SAMU)."
       }
@@ -3933,8 +3933,8 @@ padding:0 2px;">↩ Responder</button>`;
         intercampus: "Intercampus", publicTransport: "🚌 Transport public", internationalPortal: "🌐 Portail international", notices: "📄 Avis officiels", emergency: "🚨 Urgence",
         addresses: "🏫 Adresses", ru: "🍽️ Restaurants universitaires", group: "👥 Groupe Facebook", developer: "👨‍💻 Développeur", privacy: "🔒 Confidentialité et suppression",
         notes: "📝 Notes", share: "📤 Partager l’application", internet: "🌐 Internet", study: "🎓 Étudier", academicGoals: "📈 Objectif académique", studentAid: "🎓 Aide aux étudiants", mentalHealth: "🧠 Santé mentale",
-        enem: "📝 ENEM", news: "📰 Actualités", conheca: "🏫 Découvrez l’Unila", desapega: "🔎 Objets trouvés et perdus · Desapega", upa: "Hôpitaux d’urgence 24 h (UPA)", officialSources: "🔗 Portail de la transparence",
-        chatHeading: "💬 Chat Unila", nickPlaceholder: "Saisissez votre pseudo...", enter: "🚪 Entrer", imageSelected: "Image sélectionnée",
+        enem: "📝 ENEM", news: "📰 Actualités", conheca: "🏫 Découvrez l’UNILA", desapega: "🔎 Objets trouvés et perdus · Desapega", upa: "Hôpitaux d’urgence 24 h (UPA)", officialSources: "🔗 Portail de la transparence",
+        chatHeading: "💬 Chat UNILA", nickPlaceholder: "Saisissez votre pseudo...", enter: "🚪 Entrer", imageSelected: "Image sélectionnée",
         chatPlaceholder: "Écrivez votre message...", anonymous: "👤 Envoyer anonymement", changeNick: "🔄 Changer de pseudo",
         developerHeading: "👨‍💻 Développeur", developerIntro: "Pour les travaux et les partenariats, contactez-nous :", developerService: "Équipe Vida Unileira", contact: "Contact",
         notesHeading: "📝 Notes", notePlaceholder: "Écrivez votre note ici...", save: "💾 Enregistrer", desapegaHeading: "🛒 Desapega Unileiro",
@@ -3946,13 +3946,13 @@ padding:0 2px;">↩ Responder</button>`;
         replying: "Réponse à", today: "Aujourd’hui à", yesterday: "Hier à", at: "à", verify: "Vérification...", sending: "Envoi...", saving: "Enregistrement...",
         reactNick: "Définissez un pseudo pour réagir.", replyNick: "Définissez un pseudo pour répondre.", typeNick: "Saisissez un pseudo !", nickUsed: "Pseudo déjà utilisé !",
         fillAll: "Veuillez tout remplir !", deleteReplyConfirm: "Supprimer cette réponse ?", deleteAdConfirm: "Supprimer cette annonce ?",
-        error: "Erreur : ", errorReply: "Erreur lors de la réponse : ", errorDeleteReply: "Erreur lors de la suppression de la réponse : ", shareMessage: "Découvrez l’application Unila !"
+        error: "Erreur : ", errorReply: "Erreur lors de la réponse : ", errorDeleteReply: "Erreur lors de la suppression de la réponse : ", shareMessage: "Découvrez l’application UNILA !"
       },
       content: {
-        emergencia: "Police militaire : 190\nSAMU (Ambulance) : 192\nPompiers : 193\n\nHôpital municipal : (45) 2105-4100\nPolice municipale : (45) 2105-5100\nDélégation des femmes : (45) 3521-9200\nProtection civile : 199\n\nPolice fédérale : (45) 3522-1174\nPolice routière fédérale : (45) 3576-1400\n\nPrae-Unila : +55 45 3522-9983\nPrograd-Unila : +55 (45) 3522-9766\n\nLigne de dénonciation : 181\nConseil tutélaire : (45) 3521-1112\nCentre antipoison : 0800 722 6001\n\n⚠ En cas de situation grave, appelez immédiatement.",
-        enderecos: "Unila - Campus PTI\nAv. Tancredo Neves, 6731 - PTI, Foz do Iguaçu - PR\n\nUnila - Campus Juarez Távora\nAv. Silvio Américo Sasdelli, 1000 - Vila A, Foz do Iguaçu - PR\n\nUnila - Campus Jardim Universitário (JU)\nAv. Tarquínio Joslin dos Santos, 1000 - Lot. Universitário das Américas, Foz do Iguaçu - PR\n\nUnila - Campus Integração\nAv. Tancredo Neves, 3147 - Foz do Iguaçu - PR",
+        emergencia: "Police militaire : 190\nSAMU (Ambulance) : 192\nPompiers : 193\n\nHôpital municipal : (45) 2105-4100\nPolice municipale : (45) 2105-5100\nDélégation des femmes : (45) 3521-9200\nProtection civile : 199\n\nPolice fédérale : (45) 3522-1174\nPolice routière fédérale : (45) 3576-1400\n\nPrae-UNILA : +55 45 3522-9983\nPrograd-UNILA : +55 (45) 3522-9766\n\nLigne de dénonciation : 181\nConseil tutélaire : (45) 3521-1112\nCentre antipoison : 0800 722 6001\n\n⚠ En cas de situation grave, appelez immédiatement.",
+        enderecos: "UNILA - Campus PTI\nAv. Tancredo Neves, 6731 - PTI, Foz do Iguaçu - PR\n\nUNILA - Campus Juarez Távora\nAv. Silvio Américo Sasdelli, 1000 - Vila A, Foz do Iguaçu - PR\n\nUNILA - Campus Jardim Universitário (JU)\nAv. Tarquínio Joslin dos Santos, 1000 - Lot. Universitário das Américas, Foz do Iguaçu - PR\n\nUNILA - Campus Integração\nAv. Tancredo Neves, 3147 - Foz do Iguaçu - PR",
         ru: "RU PTI : Du lundi au vendredi (11:00 - 14:00 et 17:30 - 20:00)\nRU JU : Du lundi au vendredi (11:00 - 14:00 et 17:30 - 20:00)\n\nPrix étudiant : 3,50 R$\nPrix pour les personnels : 12,00 R$\n\n⚠ Vérifiez les jours fériés et les horaires spéciaux sur le portail officiel.",
-        dev: "Équipe Vida Unileira<br>Contact : <a href=\"mailto:universecreativepixel@gmail.com\">universecreativepixel@gmail.com</a>",      internet: "Réseau : Unila-WIFI\nIdentifiant : Votre CPF ou e-mail institutionnel\nMot de passe : Le même mot de passe que SIGAA\n\n⚠ En cas de problème, contactez la TIC de votre campus.",
+        dev: "Équipe Vida Unileira<br>Contact : <a href=\"mailto:universecreativepixel@gmail.com\">universecreativepixel@gmail.com</a>",      internet: "Réseau : UNILA-WIFI\nIdentifiant : Votre CPF ou e-mail institutionnel\nMot de passe : Le même mot de passe que SIGAA\n\n⚠ En cas de problème, contactez la TIC de votre campus.",
       saude_mental: "https://portal.unila.edu.br/saude-mental",
       estude: "Admission des Brésiliens : via ENEM/SISU\nAdmission des étrangers : sélection internationale propre\n\nFormations : plus de 29 options de licence.\n\nPour plus d’informations, consultez : portal.unila.edu.br/ingresso",
         upa: "UPA João Samek (Vila A) : (45) 3524-8800\nUPA Morumbi : (45) 3521-1350\n\n⚠ En cas d’urgence vitale, appelez le 192 (SAMU)."
@@ -3968,8 +3968,8 @@ padding:0 2px;">↩ Responder</button>`;
         intercampus: "Intercampus", publicTransport: "🚌 Transporte público", internationalPortal: "🌐 Portal Internacional", notices: "📄 Convocatorias oficiales", emergency: "🚨 Emergencia",
         addresses: "🏫 Direcciones", ru: "🍽️ Restaurantes universitarios", group: "👥 Grupo de Facebook", developer: "👨‍💻 Desarrollador", privacy: "🔒 Privacidad y eliminación",
         notes: "📝 Anotaciones", share: "📤 Compartir aplicación", internet: "🌐 Internet", study: "🎓 Estudia", academicGoals: "📈 Meta académica", studentAid: "🎓 Ayuda estudiantil", mentalHealth: "🧠 Salud mental",
-        enem: "📝 ENEM", news: "📰 Noticias", conheca: "🏫 Conoce la Unila", desapega: "🔎 Objetos perdidos y encontrados · Desapega", upa: "Hospitales de emergencia 24 h (UPA)", officialSources: "🔗 Portal de la Transparencia",
-        chatHeading: "💬 Chat Unila", nickPlaceholder: "Escribe tu nick...", enter: "🚪 Entrar", imageSelected: "Imagen seleccionada",
+        enem: "📝 ENEM", news: "📰 Noticias", conheca: "🏫 Conoce la UNILA", desapega: "🔎 Objetos perdidos y encontrados · Desapega", upa: "Hospitales de emergencia 24 h (UPA)", officialSources: "🔗 Portal de la Transparencia",
+        chatHeading: "💬 Chat UNILA", nickPlaceholder: "Escribe tu nick...", enter: "🚪 Entrar", imageSelected: "Imagen seleccionada",
         chatPlaceholder: "Escribe tu mensaje...", anonymous: "👤 Enviar anónimamente", changeNick: "🔄 Cambiar nick",
         developerHeading: "👨‍💻 Desarrollador", developerIntro: "Para trabajos y alianzas, ponte en contacto:", developerService: "Equipo Vida Unileira", contact: "Contacto",
         notesHeading: "📝 Anotaciones", notePlaceholder: "Escribe tu anotación aquí...", save: "💾 Guardar", desapegaHeading: "🛒 Desapega Unileiro",
@@ -3981,13 +3981,13 @@ padding:0 2px;">↩ Responder</button>`;
         replying: "Respondiendo a", today: "Hoy a las", yesterday: "Ayer a las", at: "a las", verify: "Verificando...", sending: "Enviando...", saving: "Guardando...",
         reactNick: "Define un nick para reaccionar.", replyNick: "Define un nick para responder.", typeNick: "¡Escribe un nick!", nickUsed: "¡Nick en uso!",
         fillAll: "¡Completa todos los campos!", deleteReplyConfirm: "¿Eliminar esta respuesta?", deleteAdConfirm: "¿Eliminar este anuncio?",
-        error: "Error: ", errorReply: "Error al responder: ", errorDeleteReply: "Error al eliminar la respuesta: ", shareMessage: "¡Mira la aplicación Unila!"
+        error: "Error: ", errorReply: "Error al responder: ", errorDeleteReply: "Error al eliminar la respuesta: ", shareMessage: "¡Mira la aplicación UNILA!"
       },
       content: {
-        emergencia: "Policía Militar: 190\nSAMU (Ambulancia): 192\nBomberos: 193\n\nHospital Municipal: (45) 2105-4100\nGuardia Municipal: (45) 2105-5100\nComisaría de la Mujer: (45) 3521-9200\nDefensa Civil: 199\n\nPolicía Federal: (45) 3522-1174\nPolicía Federal de Carreteras: (45) 3576-1400\n\nPrae-Unila: +55 45 3522-9983\nPrograd-Unila: +55 (45) 3522-9766\n\nLínea de denuncias: 181\nConsejo Tutelar: (45) 3521-1112\nCentro de Intoxicaciones: 0800 722 6001\n\n⚠ En situaciones graves, llama inmediatamente.",
-        enderecos: "Unila - Campus PTI\nAv. Tancredo Neves, 6731 - PTI, Foz do Iguaçu - PR\n\nUnila - Campus Juarez Távora\nAv. Silvio Américo Sasdelli, 1000 - Vila A, Foz do Iguaçu - PR\n\nUnila - Campus Jardim Universitário (JU)\nAv. Tarquínio Joslin dos Santos, 1000 - Lot. Universitário das Américas, Foz do Iguaçu - PR\n\nUnila - Campus Integração\nAv. Tancredo Neves, 3147 - Foz do Iguaçu - PR",
+        emergencia: "Policía Militar: 190\nSAMU (Ambulancia): 192\nBomberos: 193\n\nHospital Municipal: (45) 2105-4100\nGuardia Municipal: (45) 2105-5100\nComisaría de la Mujer: (45) 3521-9200\nDefensa Civil: 199\n\nPolicía Federal: (45) 3522-1174\nPolicía Federal de Carreteras: (45) 3576-1400\n\nPrae-UNILA: +55 45 3522-9983\nPrograd-UNILA: +55 (45) 3522-9766\n\nLínea de denuncias: 181\nConsejo Tutelar: (45) 3521-1112\nCentro de Intoxicaciones: 0800 722 6001\n\n⚠ En situaciones graves, llama inmediatamente.",
+        enderecos: "UNILA - Campus PTI\nAv. Tancredo Neves, 6731 - PTI, Foz do Iguaçu - PR\n\nUNILA - Campus Juarez Távora\nAv. Silvio Américo Sasdelli, 1000 - Vila A, Foz do Iguaçu - PR\n\nUNILA - Campus Jardim Universitário (JU)\nAv. Tarquínio Joslin dos Santos, 1000 - Lot. Universitário das Américas, Foz do Iguaçu - PR\n\nUNILA - Campus Integração\nAv. Tancredo Neves, 3147 - Foz do Iguaçu - PR",
         ru: "RU PTI: De lunes a viernes (11:00 - 14:00 y 17:30 - 20:00)\nRU JU: De lunes a viernes (11:00 - 14:00 y 17:30 - 20:00)\n\nPrecio para estudiantes: R$ 3,50\nPrecio para servidores: R$ 12,00\n\n⚠ Consulta los feriados y horarios especiales en el portal oficial.",
-        dev: "Equipo Vida Unileira<br>Contacto: <a href=\"mailto:universecreativepixel@gmail.com\">universecreativepixel@gmail.com</a>",      internet: "Red: Unila-WIFI\nInicio de sesión: Tu CPF o correo institucional\nContraseña: La misma contraseña de SIGAA\n\n⚠ Si tienes problemas, busca la TIC de tu campus.",
+        dev: "Equipo Vida Unileira<br>Contacto: <a href=\"mailto:universecreativepixel@gmail.com\">universecreativepixel@gmail.com</a>",      internet: "Red: UNILA-WIFI\nInicio de sesión: Tu CPF o correo institucional\nContraseña: La misma contraseña de SIGAA\n\n⚠ Si tienes problemas, busca la TIC de tu campus.",
       saude_mental: "https://portal.unila.edu.br/saude-mental",
       estude: "Ingreso para brasileños: por ENEM/SISU\nIngreso para extranjeros: selección internacional propia\n\nCarreras: más de 29 opciones de grado.\n\nPara más información, accede a: portal.unila.edu.br/ingresso",
         upa: "UPA João Samek (Vila A): (45) 3524-8800\nUPA Morumbi: (45) 3521-1350\n\n⚠ En casos de emergencia con riesgo de vida, llama al 192 (SAMU)."
@@ -4043,16 +4043,16 @@ padding:0 2px;">↩ Responder</button>`;
 
   var RESOURCE_I18N = {
     pt: {
-      mentalHealth: { title: "🧠 Saúde Mental", description: "Acesse o portal oficial da Unila para consultar informações, orientações e serviços relacionados à saúde mental.", linkText: "Abrir portal de Saúde Mental" },
-      studentAid: { title: "🎓 Auxílio Estudantil", description: "Consulte o portal oficial da Unila para conhecer auxílios, critérios, inscrições e orientações de assistência estudantil.", linkText: "Abrir portal de Auxílio Estudantil" }
+      mentalHealth: { title: "🧠 Saúde Mental", description: "Acesse o portal oficial da UNILA para consultar informações, orientações e serviços relacionados à saúde mental.", linkText: "Abrir portal de Saúde Mental" },
+      studentAid: { title: "🎓 Auxílio Estudantil", description: "Consulte o portal oficial da UNILA para conhecer auxílios, critérios, inscrições e orientações de assistência estudantil.", linkText: "Abrir portal de Auxílio Estudantil" }
     },
     fr: {
-      mentalHealth: { title: "🧠 Santé mentale", description: "Accédez au portail officiel de l’Unila pour consulter des informations, des conseils et des services liés à la santé mentale.", linkText: "Ouvrir le portail de santé mentale" },
-      studentAid: { title: "🎓 Aide aux étudiants", description: "Consultez le portail officiel de l’Unila pour connaître les aides, les critères, les inscriptions et les orientations d’assistance étudiante.", linkText: "Ouvrir le portail d’aide aux étudiants" }
+      mentalHealth: { title: "🧠 Santé mentale", description: "Accédez au portail officiel de l’UNILA pour consulter des informations, des conseils et des services liés à la santé mentale.", linkText: "Ouvrir le portail de santé mentale" },
+      studentAid: { title: "🎓 Aide aux étudiants", description: "Consultez le portail officiel de l’UNILA pour connaître les aides, les critères, les inscriptions et les orientations d’assistance étudiante.", linkText: "Ouvrir le portail d’aide aux étudiants" }
     },
     es: {
-      mentalHealth: { title: "🧠 Salud mental", description: "Accede al portal oficial de la Unila para consultar información, orientaciones y servicios relacionados con la salud mental.", linkText: "Abrir portal de Salud Mental" },
-      studentAid: { title: "🎓 Ayuda estudiantil", description: "Consulta el portal oficial de la Unila para conocer ayudas, criterios, inscripciones y orientaciones de asistencia estudiantil.", linkText: "Abrir portal de Ayuda Estudiantil" }
+      mentalHealth: { title: "🧠 Salud mental", description: "Accede al portal oficial de la UNILA para consultar información, orientaciones y servicios relacionados con la salud mental.", linkText: "Abrir portal de Salud Mental" },
+      studentAid: { title: "🎓 Ayuda estudiantil", description: "Consulta el portal oficial de la UNILA para conocer ayudas, criterios, inscripciones y orientaciones de asistencia estudiantil.", linkText: "Abrir portal de Ayuda Estudiantil" }
     }
   };
   function resourceCopy(key){ return (RESOURCE_I18N[state.lang] || RESOURCE_I18N.pt)[key]; }
@@ -4113,7 +4113,7 @@ padding:0 2px;">↩ Responder</button>`;
   function normalizeMenuLabel(key, value){
     var text = String(value == null ? "" : value).trim();
     // Os rótulos do admin_content podem substituir os valores do código.
-    // Mantém apenas a exceção "Conheça a Unila" solicitada para o menu.
+    // Mantém apenas a exceção "Conheça a UNILA" solicitada para o menu.
     if (key !== "conheca") {
       text = text
         .replace(/\bVida Unileira\b/gi, "")
@@ -4121,7 +4121,7 @@ padding:0 2px;">↩ Responder</button>`;
         .replace(/\bPRAE\b/gi, "")
         .replace(/\b(?:Telefones de|Teléfonos de|Numéros d[’']urgence)\b/gi, "")
         .replace(/\b(?:Página do Participante|Page du participant|Página del participante)\b/gi, "")
-        .replace(/\b(?:Unila|UNILA)\b/gi, "")
+        .replace(/\b(?:UNILA|UNILA)\b/gi, "")
         .replace(/\s+(?:da|do|de la|de|del|l[’']|na|no)\s*$/i, "")
         .replace(/\s+[–—-]\s*$/u, "")
         .replace(/\r\n?/g, "\n")
@@ -4227,7 +4227,7 @@ padding:0 2px;">↩ Responder</button>`;
       if (menuKey === "youtube" || menuKey === "email" || menuKey === "instagram" || menuKey === "facebook") {
         var brandClass = menuKey === "youtube" ? "youtube-brand-mark" : menuKey === "email" ? "gmail-brand-mark" : menuKey === "instagram" ? "instagram-brand-mark" : "facebook-brand-mark";
         var brandGlyph = menuKey === "youtube" ? "▶" : menuKey === "email" ? "M" : menuKey === "instagram" ? "◎" : "f";
-        var brandLabel = menuKey === "youtube" ? menuLabel.replace(/^.*?(YouTube(?:\s+Unila)?)$/, "$1") : menuLabel.replace(/^[^A-Za-zÀ-ÿ]+/, "");
+        var brandLabel = menuKey === "youtube" ? menuLabel.replace(/^.*?(YouTube(?:\s+UNILA)?)$/, "$1") : menuLabel.replace(/^[^A-Za-zÀ-ÿ]+/, "");
         var existingBrand = menu[i].querySelector("." + brandClass);
         if (!existingBrand) {
           menu[i].innerHTML = '<span class="' + brandClass + '" aria-hidden="true">' + brandGlyph + '</span><span class="' + (menuKey === "instagram" ? "instagram-menu-label" : "menu-brand-label") + '">' + escapeHtml(brandLabel) + '</span>';
@@ -4314,12 +4314,12 @@ padding:0 2px;">↩ Responder</button>`;
     updateLocalizedResource();
     updateDynamicPage();
     translateDynamicUI();
-    normalizeVisibleUnila(document.body);
+    normalizeVisibleUNILA(document.body);
     if (typeof window.unilaApplyComplianceTranslations === "function") window.unilaApplyComplianceTranslations();
     if (typeof window.unilaRefreshAnnouncementBanner === "function") window.unilaRefreshAnnouncementBanner();
   }
 
-  function normalizeVisibleUnila(root){
+  function normalizeVisibleUNILA(root){
     if (!root || !document.createTreeWalker) return;
     var walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
     var nodes = [];
@@ -4328,7 +4328,7 @@ padding:0 2px;">↩ Responder</button>`;
     nodes.forEach(function(textNode){
       var parent = textNode.parentElement;
       if (!parent || parent.closest("script,style,noscript,template")) return;
-      var normalized = textNode.nodeValue.replace(/\bUNILA\b/g, "Unila");
+      var normalized = textNode.nodeValue.replace(/\bUNILA\b/g, "UNILA");
       if (normalized !== textNode.nodeValue) textNode.nodeValue = normalized;
     });
   }
@@ -4425,7 +4425,7 @@ padding:0 2px;">↩ Responder</button>`;
   }
 
   if (window.MutationObserver && document.body) {
-    new MutationObserver(function(){ normalizeVisibleUnila(document.body); }).observe(document.body, {subtree:true, childList:true, characterData:true});
+    new MutationObserver(function(){ normalizeVisibleUNILA(document.body); }).observe(document.body, {subtree:true, childList:true, characterData:true});
   }
 
   function translatedRuntimeText(message){
@@ -4499,12 +4499,12 @@ padding:0 2px;">↩ Responder</button>`;
       };
     }
 
-    if (typeof window.loadConhecaUnila === "function") {
-      var originalLoadConhecaUnila = window.loadConhecaUnila;
-      window.loadConhecaUnila = function(){
+    if (typeof window.loadConhecaUNILA === "function") {
+      var originalLoadConhecaUNILA = window.loadConhecaUNILA;
+      window.loadConhecaUNILA = function(){
         state.currentDynamicId = "conheca";
         window.__activeDynamicPage = "conheca";
-        var result = originalLoadConhecaUnila.apply(this, arguments);
+        var result = originalLoadConhecaUNILA.apply(this, arguments);
         setTimeout(function(){
           var title = document.getElementById("dynamicTitle");
           if (title) title.textContent = dynamicTitle("conheca");
