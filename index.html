@@ -1354,7 +1354,7 @@ gtag('config', 'G-FJT3X93608');
     <button class="auxilio-estudantil" onclick="openLocalizedResource('studentAid')">🎓 Auxílio Estudantil</button>
     <button class="unila" onclick="openLocalizedResource('mentalHealth')">🧠 Saúde Mental</button>
     <a class="google menu-link" href="https://enem.inep.gov.br/participante/">📝 ENEM</a>
-    <button class="noticias" onclick="openNewsPage()">📰 Notícias</button>
+    <button class="noticias" onclick="openNewsPage()">📰 Notícias Alternativas</button>
     <button class="conheca-unila-btn" onclick="openConhecaUNILAPage()">🏫 Conheça a UNILA</button>
     <button class="desapega" onclick="openPage('desapegaPage')">🔎 Achados e Perdidos e Desapega</button>
     <button class="emergencia" data-search-key="upa" onclick="openUPAPage()" aria-label="Hospitais de Emergência 24h (UPA)">Hospitais de Emergência 24h (UPA)</button>
@@ -2088,7 +2088,7 @@ gtag('config', 'G-FJT3X93608');
     // Atualização do PWA: rede primeiro; cache apenas como fallback offline.
     function setupPWAUpdate() {
       if (!('serviceWorker' in navigator)) return;
-      navigator.serviceWorker.register('./service-worker37.js?v=323', { updateViaCache: 'none' }).then(function(reg) {
+      navigator.serviceWorker.register('./service-worker37.js?v=324', { updateViaCache: 'none' }).then(function(reg) {
         reg.update();
         reg.addEventListener('updatefound', function() {
           var newWorker = reg.installing;
@@ -2601,7 +2601,7 @@ gtag('config', 'G-FJT3X93608');
     }
     function openNewsPage() {
       window.__activeDynamicPage = "noticias";
-      document.getElementById("dynamicTitle").textContent = typeof window.unilaTranslate === "function" ? window.unilaTranslate("news") : "📰 Notícias da UNILA";
+      document.getElementById("dynamicTitle").textContent = typeof window.unilaTranslate === "function" ? window.unilaTranslate("news") : "📰 Notícias Alternativas da UNILA";
       openPage("dynamicPage");
       loadNews();
     }
@@ -3910,7 +3910,7 @@ padding:0 2px;">↩ Responder</button>`;
         intercampus: "Intercampi", publicTransport: "🚌 Transporte Público", internationalPortal: "🌐 Portal Internacional", notices: "📄 Editais Oficiais", emergency: "🚨 Emergência",
         addresses: "🏫 Endereços", ru: "🍽️ Restaurantes Universitários", group: "👥 Grupo no Facebook", developer: "👨‍💻 Desenvolvedor", privacy: "🔒 Privacidade e exclusão",
         notes: "📝 Anotações", share: "📤 Compartilhar App", internet: "🌐 Internet", study: "🎓 Estude na", academicGoals: "📈 Meta Acadêmica", studentAid: "🎓 Auxílio Estudantil", mentalHealth: "🧠 Saúde Mental",
-        enem: "📝 ENEM – Página do Participante", news: "📰 Notícias", conheca: "🏫 Conheça a UNILA", desapega: "🔎 Achados e Perdidos e Desapega", upa: "Hospitais de Emergência 24h (UPA)", officialSources: "🔗 Portal da Transparência",
+        enem: "📝 ENEM – Página do Participante", news: "📰 Notícias Alternativas", conheca: "🏫 Conheça a UNILA", desapega: "🔎 Achados e Perdidos e Desapega", upa: "Hospitais de Emergência 24h (UPA)", officialSources: "🔗 Portal da Transparência",
         chatHeading: "💬 Chat UNILA", nickPlaceholder: "Digite seu nick...", enter: "🚪 Entrar", imageSelected: "Imagem selecionada",
         chatPlaceholder: "Digite sua mensagem...", anonymous: "👤 Enviar Anonimamente", changeNick: "🔄 Mudar Nick",
         developerHeading: "👨‍💻 Desenvolvedor", developerIntro: "Para trabalhos e parcerias entre em contato:", developerService: "Equipe Vida Unileira", contact: "Contato",
@@ -3945,7 +3945,7 @@ padding:0 2px;">↩ Responder</button>`;
         intercampus: "Intercampus", publicTransport: "🚌 Transport public", internationalPortal: "🌐 Portail international", notices: "📄 Avis officiels", emergency: "🚨 Urgence",
         addresses: "🏫 Adresses", ru: "🍽️ Restaurants universitaires", group: "👥 Groupe Facebook", developer: "👨‍💻 Développeur", privacy: "🔒 Confidentialité et suppression",
         notes: "📝 Notes", share: "📤 Partager l’application", internet: "🌐 Internet", study: "🎓 Étudier", academicGoals: "📈 Objectif académique", studentAid: "🎓 Aide aux étudiants", mentalHealth: "🧠 Santé mentale",
-        enem: "📝 ENEM", news: "📰 Actualités", conheca: "🏫 Découvrez l’UNILA", desapega: "🔎 Objets trouvés et perdus · Desapega", upa: "Hôpitaux d’urgence 24 h (UPA)", officialSources: "🔗 Portail de la transparence",
+        enem: "📝 ENEM", news: "📰 Actualités alternatives", conheca: "🏫 Découvrez l’UNILA", desapega: "🔎 Objets trouvés et perdus · Desapega", upa: "Hôpitaux d’urgence 24 h (UPA)", officialSources: "🔗 Portail de la transparence",
         chatHeading: "💬 Chat UNILA", nickPlaceholder: "Saisissez votre pseudo...", enter: "🚪 Entrer", imageSelected: "Image sélectionnée",
         chatPlaceholder: "Écrivez votre message...", anonymous: "👤 Envoyer anonymement", changeNick: "🔄 Changer de pseudo",
         developerHeading: "👨‍💻 Développeur", developerIntro: "Pour les travaux et les partenariats, contactez-nous :", developerService: "Équipe Vida Unileira", contact: "Contact",
@@ -3980,7 +3980,7 @@ padding:0 2px;">↩ Responder</button>`;
         intercampus: "Intercampus", publicTransport: "🚌 Transporte público", internationalPortal: "🌐 Portal Internacional", notices: "📄 Convocatorias oficiales", emergency: "🚨 Emergencia",
         addresses: "🏫 Direcciones", ru: "🍽️ Restaurantes universitarios", group: "👥 Grupo de Facebook", developer: "👨‍💻 Desarrollador", privacy: "🔒 Privacidad y eliminación",
         notes: "📝 Anotaciones", share: "📤 Compartir aplicación", internet: "🌐 Internet", study: "🎓 Estudia", academicGoals: "📈 Meta académica", studentAid: "🎓 Ayuda estudiantil", mentalHealth: "🧠 Salud mental",
-        enem: "📝 ENEM", news: "📰 Noticias", conheca: "🏫 Conoce la UNILA", desapega: "🔎 Objetos perdidos y encontrados · Desapega", upa: "Hospitales de emergencia 24 h (UPA)", officialSources: "🔗 Portal de la Transparencia",
+        enem: "📝 ENEM", news: "📰 Noticias alternativas", conheca: "🏫 Conoce la UNILA", desapega: "🔎 Objetos perdidos y encontrados · Desapega", upa: "Hospitales de emergencia 24 h (UPA)", officialSources: "🔗 Portal de la Transparencia",
         chatHeading: "💬 Chat UNILA", nickPlaceholder: "Escribe tu nick...", enter: "🚪 Entrar", imageSelected: "Imagen seleccionada",
         chatPlaceholder: "Escribe tu mensaje...", anonymous: "👤 Enviar anónimamente", changeNick: "🔄 Cambiar nick",
         developerHeading: "👨‍💻 Desarrollador", developerIntro: "Para trabajos y alianzas, ponte en contacto:", developerService: "Equipo Vida Unileira", contact: "Contacto",
