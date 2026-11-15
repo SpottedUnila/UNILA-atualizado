@@ -961,7 +961,6 @@ button:hover{
 #radioPlayer{position:relative;}
 #radioPlayer .music-share-button,#podcastPlayer .music-share-button{display:block;width:50%;min-height:44px;box-sizing:border-box;margin:12px auto 0;padding:8px 10px;border:1px solid rgba(34,197,94,.42);border-radius:12px;background:rgba(34,197,94,.16);color:#fff;font-size:14px;line-height:1.2;font-weight:800;cursor:pointer;}
 #radioPlayer .music-share-button:hover,#podcastPlayer .music-share-button:hover{background:rgba(34,197,94,.27);}
-#radioPlayer .music-share-hint{margin:8px 0 0;color:#cbd5e1;font-size:12px;line-height:1.4;text-align:center;}
 #podcastPlayer{position:relative;}
 .current-video-title{margin:12px 0 0;padding:12px 14px;border-radius:10px;background:rgba(15,23,42,.58);color:#e2e8f0;font-size:14px;line-height:1.45;overflow-wrap:anywhere;}
 .current-video-label{display:block;margin-bottom:4px;color:#bfdbfe;font-weight:800;}
@@ -1632,7 +1631,6 @@ gtag('config', 'G-FJT3X93608');
     <iframe id="ytRadio" width="100%" height="200" src="https://www.youtube.com/embed/videoseries?list=PLyTsVCtgNA7Uzq69sB_NhyJJEpNr1ePPM&enablejsapi=1" frameborder="0" allow="autoplay" allowfullscreen></iframe>
     <p class="current-video-title" aria-live="polite"><span id="musicNowPlayingLabel" class="current-video-label">🎵 Tocando agora</span><span id="musicNowPlayingTitle" class="current-video-name">Carregando título...</span></p>
     <button id="shareMusicPlaylistButton" type="button" class="music-share-button" onclick="shareMusicPlaylist()">📤 Compartilhar playlist</button>
-    <p id="musicShareHint" class="music-share-hint">O link abre pelo primeiro vídeo e tenta iniciar a reprodução. Se o navegador bloquear, toque em Reproduzir no player.</p>
   </div>
 
   <div id="podcastPlayer" style="display:none; margin-bottom:80px; padding:20px;">
@@ -2198,7 +2196,7 @@ gtag('config', 'G-FJT3X93608');
     // Atualização do PWA: rede primeiro; cache apenas como fallback offline.
     function setupPWAUpdate() {
       if (!('serviceWorker' in navigator)) return;
-      navigator.serviceWorker.register('./service-worker37.js?v=332', { updateViaCache: 'none' }).then(function(reg) {
+      navigator.serviceWorker.register('./service-worker37.js?v=333', { updateViaCache: 'none' }).then(function(reg) {
         reg.update();
         reg.addEventListener('updatefound', function() {
           var newWorker = reg.installing;
@@ -4662,7 +4660,6 @@ padding:0 2px;">↩ Responder</button>`;
     setOwnText(document.querySelector(".podcast-badge"), tr("podcast"));
     setOwnText(document.querySelector(".radio-badge"), tr("music"));
     setText("#shareMusicPlaylistButton", tr("sharePlaylist"));
-    setText("#musicShareHint", tr("playlistAutoplayHint"));
     setText("#sharePodcastPlaylistButton", tr("sharePlaylist"));
     setText("#musicNowPlayingLabel", tr("musicNowPlaying"));
     setText("#podcastNowPlayingLabel", tr("podcastNowPlaying"));
