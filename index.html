@@ -2208,7 +2208,7 @@ gtag('config', 'G-FJT3X93608');
     // Atualização do PWA: rede primeiro; cache apenas como fallback offline.
     function setupPWAUpdate() {
       if (!('serviceWorker' in navigator)) return;
-      navigator.serviceWorker.register('./service-worker37.js?v=338', { updateViaCache: 'none' }).then(function(reg) {
+      navigator.serviceWorker.register('./service-worker37.js?v=339', { updateViaCache: 'none' }).then(function(reg) {
         reg.update();
         reg.addEventListener('updatefound', function() {
           var newWorker = reg.installing;
@@ -3887,7 +3887,7 @@ padding:0 2px;">↩ Responder</button>`;
     }
 
     function updateNotesEditorControls() {
-      const copy = notesEditorCopy();
+      const copy = window.notesEditorCopy();
       const saveButton = document.getElementById("saveNoteButton");
       const cancelButton = document.getElementById("cancelNoteEditButton");
       if (saveButton) saveButton.textContent = editingNoteId ? copy.update : copy.save;
@@ -3902,13 +3902,13 @@ padding:0 2px;">↩ Responder</button>`;
       const field = document.getElementById("note");
       if (field) field.value = "";
       updateNotesEditorControls();
-      notesStatus(notesEditorCopy().cancelled);
+      notesStatus(window.notesEditorCopy().cancelled);
     }
 
     function editNote(id) {
       const note = notesListCache.find(item => item && String(item.id) === String(id));
       if (!note) {
-        notesStatus(notesEditorCopy().notFound, true);
+        notesStatus(window.notesEditorCopy().notFound, true);
         return;
       }
       const field = document.getElementById("note");
@@ -3916,7 +3916,7 @@ padding:0 2px;">↩ Responder</button>`;
       editingNoteId = String(note.id);
       field.value = String(note.text == null ? "" : note.text);
       updateNotesEditorControls();
-      notesStatus(notesEditorCopy().editing);
+      notesStatus(window.notesEditorCopy().editing);
       field.focus();
       field.scrollIntoView({ behavior: "smooth", block: "center" });
     }
@@ -3989,7 +3989,7 @@ padding:0 2px;">↩ Responder</button>`;
         }
       }
       notesListCache = notes;
-      const editorCopy = notesEditorCopy();
+      const editorCopy = window.notesEditorCopy();
       list.innerHTML = notes.length ? notes.map(n => {
         const noteId = escapeHtml(String(n.id));
         const noteText = escapeHtml(String(n.text == null ? "" : n.text));
@@ -3998,7 +3998,7 @@ padding:0 2px;">↩ Responder</button>`;
             <span class="note-item-text">${noteText}</span>
             <div class="note-item-actions">
               <button type="button" class="edit-note-btn" data-note-action="edit" data-note-id="${noteId}">${escapeHtml(editorCopy.edit)}</button>
-              <button type="button" class="delete-btn" data-note-action="delete" data-note-id="${noteId}" aria-label="Excluir anotação">🗑</button>
+              <button type="button" class="delete-btn" data-note-action="delete" data-note-id="${noteId}" aria-label="${escapeHtml(editorCopy.delete)}">🗑</button>
             </div>
           </div>
         `;
@@ -4010,7 +4010,7 @@ padding:0 2px;">↩ Responder</button>`;
       const noteField = document.getElementById("note");
       const noteText = noteField ? noteField.value.trim() : "";
       const noteIdToEdit = editingNoteId == null ? null : String(editingNoteId);
-      const editorCopy = notesEditorCopy();
+      const editorCopy = window.notesEditorCopy();
       if (!noteText) {
         notesStatus(notesCopy().empty, true);
         return;
@@ -4567,11 +4567,12 @@ padding:0 2px;">↩ Responder</button>`;
   window.notesCopy = notesCopy;
 
   var NOTES_EDITOR_I18N = {
-    pt: { save:"💾 Salvar", update:"💾 Atualizar", cancelEdit:"Cancelar edição", edit:"✏️ Editar", editing:"Editando anotação. Altere o texto e toque em Atualizar.", updated:"Anotação atualizada.", notFound:"A anotação não foi encontrada. Atualize a lista e tente novamente.", cancelled:"Edição cancelada." },
-    fr: { save:"💾 Enregistrer", update:"💾 Mettre à jour", cancelEdit:"Annuler la modification", edit:"✏️ Modifier", editing:"Modifiez la note puis appuyez sur Mettre à jour.", updated:"Note mise à jour.", notFound:"Note introuvable. Actualisez la liste et réessayez.", cancelled:"Modification annulée." },
-    es: { save:"💾 Guardar", update:"💾 Actualizar", cancelEdit:"Cancelar edición", edit:"✏️ Editar", editing:"Edita la anotación y pulsa Actualizar.", updated:"Anotación actualizada.", notFound:"No se encontró la anotación. Actualiza la lista e inténtalo de nuevo.", cancelled:"Edición cancelada." }
+    pt: { save:"💾 Salvar", update:"💾 Atualizar", cancelEdit:"Cancelar edição", edit:"✏️ Editar", delete:"Excluir anotação", editing:"Editando anotação. Altere o texto e toque em Atualizar.", updated:"Anotação atualizada.", notFound:"A anotação não foi encontrada. Atualize a lista e tente novamente.", cancelled:"Edição cancelada." },
+    fr: { save:"💾 Enregistrer", update:"💾 Mettre à jour", cancelEdit:"Annuler la modification", edit:"✏️ Modifier", delete:"Supprimer la note", editing:"Modifiez la note puis appuyez sur Mettre à jour.", updated:"Note mise à jour.", notFound:"Note introuvable. Actualisez la liste et réessayez.", cancelled:"Modification annulée." },
+    es: { save:"💾 Guardar", update:"💾 Actualizar", cancelEdit:"Cancelar edición", edit:"✏️ Editar", delete:"Eliminar anotación", editing:"Edita la anotación y pulsa Actualizar.", updated:"Anotación actualizada.", notFound:"No se encontró la anotación. Actualiza la lista e inténtalo de nuevo.", cancelled:"Edición cancelada." }
   };
   function notesEditorCopy(){ return NOTES_EDITOR_I18N[state.lang] || NOTES_EDITOR_I18N.pt; }
+  window.notesEditorCopy = notesEditorCopy;
 
   var RESOURCE_I18N = {
     pt: {
