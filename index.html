@@ -2196,7 +2196,7 @@ gtag('config', 'G-FJT3X93608');
     // Atualização do PWA: rede primeiro; cache apenas como fallback offline.
     function setupPWAUpdate() {
       if (!('serviceWorker' in navigator)) return;
-      navigator.serviceWorker.register('./service-worker37.js?v=335', { updateViaCache: 'none' }).then(function(reg) {
+      navigator.serviceWorker.register('./service-worker37.js?v=336', { updateViaCache: 'none' }).then(function(reg) {
         reg.update();
         reg.addEventListener('updatefound', function() {
           var newWorker = reg.installing;
@@ -2626,9 +2626,10 @@ gtag('config', 'G-FJT3X93608');
       const isPodcast = kind === "podcast";
       const heading = isPodcast ? "Playlist de Podcast - Vida Unileira" : "Playlist de Música - Vida Unileira";
       const caption = isPodcast
-        ? "Confira a playlist Atualizada hoje, desde o primeiro episódio.💜🎙️Clique e aguarde."
-        : "Confira a playlist Atualizada hoje, desde o primeiro vídeo.💜🎶Clique e aguarde.";
-      return heading + "\n\n" + caption + "\n\n" + url;
+        ? "Confira a playlist Atualizada hoje, desde o primeiro episódio.💜"
+        : "Confira a playlist Atualizada hoje, desde o primeiro vídeo.💜";
+      const action = isPodcast ? "🎙️Clique e aguarde." : "🎶Clique e aguarde.";
+      return heading + "\n\n" + caption + "\n\n" + action + "\n\n" + url;
     }
     function copyMusicPlaylistLink(url) {
       if (navigator.clipboard && window.isSecureContext) return navigator.clipboard.writeText(url);
