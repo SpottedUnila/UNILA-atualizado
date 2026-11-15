@@ -959,6 +959,9 @@ button:hover{
 }
 @media (prefers-reduced-motion:reduce){#aranduTag{animation:none;}}
 #radioPlayer{position:relative;}
+#radioPlayer .music-share-button{display:block;width:100%;margin:12px 0 0;padding:12px 16px;border:1px solid rgba(34,197,94,.42);border-radius:12px;background:rgba(34,197,94,.16);color:#fff;font-weight:800;cursor:pointer;}
+#radioPlayer .music-share-button:hover{background:rgba(34,197,94,.27);}
+#radioPlayer .music-share-hint{margin:8px 0 0;color:#cbd5e1;font-size:12px;line-height:1.4;text-align:center;}
 #podcastPlayer{position:relative;}
 .music-player-title{
   position:absolute;
@@ -1202,11 +1205,34 @@ button:hover{
 <script>
 let ytPlayer;
 let ytPodcastPlayer;
+const MUSIC_PLAYLIST_ID = "PLyTsVCtgNA7Uzq69sB_NhyJJEpNr1ePPM";
+let sharedMusicAutoplayPending = false;
+function startSharedMusicPlaylistFromBeginning(player) {
+  const target = player || ytPlayer;
+  if (!target || typeof target.loadPlaylist !== "function") {
+    sharedMusicAutoplayPending = true;
+    return false;
+  }
+  try {
+    target.unMute();
+    target.setVolume(100);
+    target.loadPlaylist({ listType: "playlist", list: MUSIC_PLAYLIST_ID, index: 0, startSeconds: 0 });
+    sharedMusicAutoplayPending = false;
+    return true;
+  } catch (error) {
+    sharedMusicAutoplayPending = true;
+    console.warn("Não foi possível iniciar a playlist compartilhada:", error);
+    return false;
+  }
+}
 function onYouTubeIframeAPIReady() {
   ytPlayer = new YT.Player("ytRadio", {
     playerVars: { autoplay: 0, controls: 1, playsinline: 1, origin: window.location.origin },
     events: {
-      'onReady': (event) => { event.target.unMute(); event.target.setVolume(100); }
+      'onReady': (event) => {
+        event.target.unMute(); event.target.setVolume(100);
+        if (sharedMusicAutoplayPending) startSharedMusicPlaylistFromBeginning(event.target);
+      }
     }
   });
   ytPodcastPlayer = new YT.Player("ytPodcast", {
@@ -1526,6 +1552,8 @@ gtag('config', 'G-FJT3X93608');
   <div id="radioPlayer" style="display:none; margin-bottom:80px; padding:20px;">
     <div class="music-player-title video-control-clone"><div class="radio-badge"><div class="radio-dot"></div><span class="video-control-label">Music</span></div><button type="button" class="video-control-button" onclick="toggleRadioSimples();" aria-label="Música"><span class="video-control-glyph">🎧</span></button></div>
     <iframe id="ytRadio" width="100%" height="200" src="https://www.youtube.com/embed/videoseries?list=PLyTsVCtgNA7Uzq69sB_NhyJJEpNr1ePPM&enablejsapi=1" frameborder="0" allow="autoplay" allowfullscreen></iframe>
+    <button id="shareMusicPlaylistButton" type="button" class="music-share-button" onclick="shareMusicPlaylist()">📤 Compartilhar playlist</button>
+    <p id="musicShareHint" class="music-share-hint">O link abre pelo primeiro vídeo e tenta iniciar a reprodução. Se o navegador bloquear, toque em Reproduzir no player.</p>
   </div>
 
   <div id="podcastPlayer" style="display:none; margin-bottom:80px; padding:20px;">
@@ -2089,7 +2117,7 @@ gtag('config', 'G-FJT3X93608');
     // Atualização do PWA: rede primeiro; cache apenas como fallback offline.
     function setupPWAUpdate() {
       if (!('serviceWorker' in navigator)) return;
-      navigator.serviceWorker.register('./service-worker37.js?v=328', { updateViaCache: 'none' }).then(function(reg) {
+      navigator.serviceWorker.register('./service-worker37.js?v=329', { updateViaCache: 'none' }).then(function(reg) {
         reg.update();
         reg.addEventListener('updatefound', function() {
           var newWorker = reg.installing;
@@ -2490,6 +2518,96 @@ gtag('config', 'G-FJT3X93608');
       permalink.searchParams.set("id", itemId);
       return permalink.toString();
     }
+    function musicPlaylistPermalink() {
+      const baseUrl = /^https?:$/.test(window.location.protocol)
+        ? window.location.origin + window.location.pathname
+        : VIDA_UNILEIRA_SITE_URL;
+      const permalink = new URL(baseUrl, VIDA_UNILEIRA_SITE_URL);
+      permalink.search = "";
+      permalink.hash = "";
+      permalink.searchParams.set("share", "music");
+      permalink.searchParams.set("playlist", MUSIC_PLAYLIST_ID);
+      return permalink.toString();
+    }
+    function musicShareTranslation(key, fallback) {
+      return typeof window.unilaTranslate === "function" ? window.unilaTranslate(key) : fallback;
+    }
+    function copyMusicPlaylistLink(url) {
+      if (navigator.clipboard && window.isSecureContext) return navigator.clipboard.writeText(url);
+      const helper = document.createElement("textarea");
+      helper.value = url;
+      helper.setAttribute("readonly", "");
+      helper.style.position = "fixed";
+      helper.style.opacity = "0";
+      document.body.appendChild(helper);
+      helper.select();
+      const copied = document.execCommand("copy");
+      helper.remove();
+      return copied ? Promise.resolve() : Promise.reject(new Error("A cópia não foi permitida pelo navegador."));
+    }
+    function showMusicShareOptions(url, title, description) {
+      const modal = document.createElement("div");
+      modal.className = "share-options-modal";
+      modal.innerHTML = '<div class="share-options-card" role="dialog" aria-modal="true" aria-label="Compartilhar playlist">' +
+        '<h3 data-music-share-title></h3><p data-music-share-description></p>' +
+        '<div class="share-options-grid"><button class="share-whatsapp" data-share="whatsapp">💬 WhatsApp</button>' +
+        '<button class="share-facebook" data-share="facebook">📘 Facebook</button>' +
+        '<button class="share-native" data-share="copy"></button></div>' +
+        '<button class="share-options-close" data-share="close"></button></div>';
+      modal.querySelector("[data-music-share-title]").textContent = title;
+      modal.querySelector("[data-music-share-description]").textContent = description;
+      modal.querySelector('[data-share="copy"]').textContent = musicShareTranslation("playlistCopyLink", "🔗 Copiar link");
+      modal.querySelector('[data-share="close"]').textContent = musicShareTranslation("cancel", "Cancelar");
+      document.body.appendChild(modal);
+      const close = function(){ modal.remove(); };
+      const shareText = title + "\n\n" + description + "\n\n" + url;
+      modal.querySelector('[data-share="close"]').onclick = close;
+      modal.addEventListener("click", function(event){ if (event.target === modal) close(); });
+      modal.addEventListener("keydown", function(event){ if (event.key === "Escape") close(); });
+      modal.querySelector('[data-share="whatsapp"]').onclick = function(){
+        close();
+        window.location.assign("https://wa.me/?text=" + encodeURIComponent(shareText));
+      };
+      modal.querySelector('[data-share="facebook"]').onclick = function(){
+        const shareUrl = new URL("https://www.facebook.com/sharer/sharer.php");
+        shareUrl.searchParams.set("u", url);
+        shareUrl.searchParams.set("quote", title + " — " + description);
+        close();
+        window.location.assign(shareUrl.toString());
+      };
+      modal.querySelector('[data-share="copy"]').onclick = async function(){
+        try {
+          await copyMusicPlaylistLink(url);
+          close();
+          if (typeof appAlert === "function") appAlert(musicShareTranslation("playlistLinkCopied", "Link da playlist copiado."));
+        } catch (error) {
+          console.warn("Não foi possível copiar o link da playlist:", error);
+          close();
+          if (typeof appAlert === "function") appAlert(url);
+        }
+      };
+    }
+    async function shareMusicPlaylist() {
+      const url = musicPlaylistPermalink();
+      const title = musicShareTranslation("playlistShareTitle", "Playlist de Música — Vida Unileira");
+      const description = musicShareTranslation("playlistShareDescription", "Este link abre a playlist desde o primeiro vídeo.");
+      const shareText = title + "\n\n" + description + "\n\n" + url;
+      if (window.AndroidShare && typeof window.AndroidShare.share === "function") {
+        try { window.AndroidShare.share(shareText); return; }
+        catch (error) { console.warn("Compartilhamento Android indisponível:", error); }
+      }
+      if (navigator.share && typeof navigator.share === "function") {
+        try {
+          await navigator.share({ title: title, text: description, url: url });
+          return;
+        } catch (error) {
+          if (error && error.name === "AbortError") return;
+          console.warn("Compartilhamento nativo indisponível:", error);
+        }
+      }
+      showMusicShareOptions(url, title, description);
+    }
+    window.shareMusicPlaylist = shareMusicPlaylist;
     function contentSharePayload(item, kind) {
       const record = item || {};
       const title = String(record.title || record.caption || (kind === "news" ? "Notícia do Vida Unileira" : "Publicação do Vida Unileira")).trim();
@@ -2687,9 +2805,27 @@ gtag('config', 'G-FJT3X93608');
       openPage("dynamicPage");
       return loadConhecaUNILA();
     }
+    function openSharedMusicPlaylist() {
+      const player = document.getElementById("radioPlayer");
+      const podcast = document.getElementById("podcastPlayer");
+      if (!player) return;
+      if (podcast && podcast.style.display === "block") {
+        podcast.style.display = "none";
+        pauseYouTube(ytPodcastPlayer, document.getElementById("ytPodcast"));
+      }
+      player.style.display = "block";
+      startSharedMusicPlaylistFromBeginning(ytPlayer);
+      window.setTimeout(function(){ player.scrollIntoView({ behavior: "smooth", block: "start" }); }, 300);
+    }
     async function openSharedContentFromUrl() {
       const params = new URLSearchParams(window.location.search);
       const kind = params.get("share");
+      if (kind === "music") {
+        const playlistId = params.get("playlist");
+        if (playlistId && playlistId !== MUSIC_PLAYLIST_ID) return;
+        openSharedMusicPlaylist();
+        return;
+      }
       const itemId = params.get("id");
       if (!itemId || (kind !== "news" && kind !== "conheca")) return;
       if (kind === "news") await openNewsPage();
@@ -3998,7 +4134,7 @@ padding:0 2px;">↩ Responder</button>`;
       locale: "pt-BR",
       weekdays: ["Domingo", "Segunda-feira", "Terça-feira", "Quarta-feira", "Quinta-feira", "Sexta-feira", "Sábado"],
       t: {
-        appTitle: "Vida Unileira", language: "Idioma", home: "Início", podcast: "Podcast", music: "Música", install: "📲 Instalar App",
+        appTitle: "Vida Unileira", language: "Idioma", home: "Início", podcast: "Podcast", music: "Música", sharePlaylist: "📤 Compartilhar playlist", playlistShareTitle: "Playlist de Música — Vida Unileira", playlistShareDescription: "Este link abre a playlist desde o primeiro vídeo.", playlistAutoplayHint: "O link abre pelo primeiro vídeo e tenta iniciar a reprodução. Se o navegador bloquear, toque em Reproduzir no player.", playlistCopyLink: "🔗 Copiar link", playlistLinkCopied: "Link da playlist copiado.", install: "📲 Instalar App",
         chatMenu: "💬 Chat", portal: "🌐 Portal Oficial", inscreva: "🎓 Portal Inscreva", sigaa: "📚 SIGAA", email: "📧 E-mail",
         google: "🔎 Pesquisa Google", youtube: "▶ YouTube", instagram: "Instagram Arandu", facebook: "📘 Facebook", library: "📖 Biblioteca",
         intercampus: "Intercampi", publicTransport: "🚌 Transporte Público", internationalPortal: "🌐 Portal Internacional", notices: "📄 Editais Oficiais", emergency: "🚨 Emergência",
@@ -4033,7 +4169,7 @@ padding:0 2px;">↩ Responder</button>`;
       locale: "fr-FR",
       weekdays: ["Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"],
       t: {
-        appTitle: "Vida Unileira", language: "Langue", home: "Accueil", podcast: "Podcast", music: "Musique", install: "📲 Installer l’application",
+        appTitle: "Vida Unileira", language: "Langue", home: "Accueil", podcast: "Podcast", music: "Musique", sharePlaylist: "📤 Partager la playlist", playlistShareTitle: "Playlist musicale — Vida Unileira", playlistShareDescription: "Ce lien ouvre la playlist dès la première vidéo.", playlistAutoplayHint: "Le lien ouvre la première vidéo et tente de démarrer la lecture. Si le navigateur le bloque, appuyez sur Lecture dans le lecteur.", playlistCopyLink: "🔗 Copier le lien", playlistLinkCopied: "Lien de la playlist copié.", install: "📲 Installer l’application",
         chatMenu: "💬 Chat", portal: "🌐 Portail officiel", inscreva: "🎓 Portal Inscreva", sigaa: "📚 SIGAA", email: "📧 E-mail",
         google: "🔎 Recherche Google", youtube: "▶ YouTube", instagram: "Instagram Arandu", facebook: "📘 Facebook", library: "📖 Bibliothèque",
         intercampus: "Intercampus", publicTransport: "🚌 Transport public", internationalPortal: "🌐 Portail international", notices: "📄 Avis officiels", emergency: "🚨 Urgence",
@@ -4068,7 +4204,7 @@ padding:0 2px;">↩ Responder</button>`;
       locale: "es-ES",
       weekdays: ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"],
       t: {
-        appTitle: "Vida Unileira", language: "Idioma", home: "Inicio", podcast: "Podcast", music: "Música", install: "📲 Instalar aplicación",
+        appTitle: "Vida Unileira", language: "Idioma", home: "Inicio", podcast: "Podcast", music: "Música", sharePlaylist: "📤 Compartir lista de reproducción", playlistShareTitle: "Lista de música — Vida Unileira", playlistShareDescription: "Este enlace abre la lista desde el primer video.", playlistAutoplayHint: "El enlace abre el primer video e intenta iniciar la reproducción. Si el navegador lo bloquea, pulsa Reproducir en el reproductor.", playlistCopyLink: "🔗 Copiar enlace", playlistLinkCopied: "Enlace de la lista copiado.", install: "📲 Instalar aplicación",
         chatMenu: "💬 Chat", portal: "🌐 Portal oficial", inscreva: "🎓 Portal Inscreva", sigaa: "📚 SIGAA", email: "📧 Correo",
         google: "🔎 Búsqueda Google", youtube: "▶ YouTube", instagram: "Instagram Arandu", facebook: "📘 Facebook", library: "📖 Biblioteca",
         intercampus: "Intercampus", publicTransport: "🚌 Transporte público", internationalPortal: "🌐 Portal Internacional", notices: "📄 Convocatorias oficiales", emergency: "🚨 Emergencia",
@@ -4388,6 +4524,8 @@ padding:0 2px;">↩ Responder</button>`;
     }
     setOwnText(document.querySelector(".podcast-badge"), tr("podcast"));
     setOwnText(document.querySelector(".radio-badge"), tr("music"));
+    setText("#shareMusicPlaylistButton", tr("sharePlaylist"));
+    setText("#musicShareHint", tr("playlistAutoplayHint"));
     document.querySelectorAll("#radioPlayer .video-control-label").forEach(function(el){ el.textContent = tr("music"); });
     document.querySelectorAll("#podcastPlayer .video-control-label").forEach(function(el){ el.textContent = tr("podcast"); });
     setText("#installBtn", tr("install"));
