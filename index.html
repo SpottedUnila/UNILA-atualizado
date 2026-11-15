@@ -1277,6 +1277,7 @@ gtag('config', 'G-FJT3X93608');
 .share-options-grid .share-whatsapp{background:#128c7e}
 .share-options-grid .share-facebook{background:#1877f2}
 .share-options-close{width:100%;margin-top:12px;padding:10px;border:0;border-radius:10px;background:transparent;color:#c4b5fd;font-weight:700;cursor:pointer}
+.shared-content-highlight{scroll-margin-top:140px;outline:3px solid #22c55e!important;box-shadow:0 0 24px rgba(34,197,94,.55)!important;transition:outline-color .3s ease,box-shadow .3s ease}
 </style>
 </head>
 
@@ -2088,7 +2089,7 @@ gtag('config', 'G-FJT3X93608');
     // Atualização do PWA: rede primeiro; cache apenas como fallback offline.
     function setupPWAUpdate() {
       if (!('serviceWorker' in navigator)) return;
-      navigator.serviceWorker.register('./service-worker37.js?v=327', { updateViaCache: 'none' }).then(function(reg) {
+      navigator.serviceWorker.register('./service-worker37.js?v=328', { updateViaCache: 'none' }).then(function(reg) {
         reg.update();
         reg.addEventListener('updatefound', function() {
           var newWorker = reg.installing;
@@ -2432,7 +2433,7 @@ gtag('config', 'G-FJT3X93608');
             const optimizedPoster = optimizeCloudinary(videoThumbUrl, 'image');
 
             newsHtml += `
-              <div class="news-card" style="background: rgba(30, 41, 59, 0.6); border-radius: 12px; padding: 10px; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.1);">
+              <div class="news-card" data-content-kind="news" data-content-id="${escapeHtml(news.id || '')}" style="background: rgba(30, 41, 59, 0.6); border-radius: 12px; padding: 10px; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.1);">
                 <h3 style="color:#22c55e; margin:0 0 5px;">${escapeHtml(news.title || 'Notícia')}</h3>
                 ${imageUrl ? `<div class="news-media"><img src="${optimizedImg}" style="width:100%;height:auto;max-height:650px;object-fit:contain;display:block;border-radius:8px;background:#000;cursor:pointer;" onclick="window.open(this.src, '_blank')"></div>` : ''}
                 ${videoUrl ? `<div class="news-media" style="width:100%;border-radius:8px;overflow:hidden;background:#000;"><video src="${optimizedVid}" poster="${optimizedPoster}" controls style="width:100%;height:auto;max-height:650px;display:block;object-fit:contain;background:#000;border-radius:8px;" preload="none" playsinline></video></div>${news.videoName ? `<p style="margin:6px 0;color:#cbd5e1;font-size:13px;">${escapeHtml(news.videoName)}</p>` : ''}` : ''}
@@ -2475,18 +2476,32 @@ gtag('config', 'G-FJT3X93608');
       const url = String(value || "").trim();
       return /^https?:\/\//i.test(url) ? url : "";
     }
+    function contentPermalink(record, kind) {
+      const itemId = String(record && record.id || "").trim();
+      if (!itemId) return VIDA_UNILEIRA_SITE_URL;
+      const baseUrl = /^https?:$/.test(window.location.protocol)
+        ? window.location.origin + window.location.pathname
+        : VIDA_UNILEIRA_SITE_URL;
+      const section = kind === "news" ? "news" : "conheca";
+      const permalink = new URL(baseUrl, VIDA_UNILEIRA_SITE_URL);
+      permalink.search = "";
+      permalink.hash = "";
+      permalink.searchParams.set("share", section);
+      permalink.searchParams.set("id", itemId);
+      return permalink.toString();
+    }
     function contentSharePayload(item, kind) {
       const record = item || {};
       const title = String(record.title || record.caption || (kind === "news" ? "Notícia do Vida Unileira" : "Publicação do Vida Unileira")).trim();
       const description = String(record.shareText || record.content || record.caption || "").trim();
       const externalUrl = safeExternalUrl(record.externalUrl || record.externalLink || record.link || record.sourceUrl);
-      return { title, description, externalUrl, siteUrl: VIDA_UNILEIRA_SITE_URL };
+      return { title, description, externalUrl, articleUrl: contentPermalink(record, kind), siteUrl: VIDA_UNILEIRA_SITE_URL };
     }
     function contentShareText(payload) {
       const parts = [payload.title];
       if (payload.description) parts.push(payload.description);
       if (payload.externalUrl) parts.push("Leia mais: " + payload.externalUrl);
-      parts.push("\nVida Unileira: " + (payload.externalUrl || payload.siteUrl));
+      parts.push("Abrir esta publicação no Vida Unileira: " + (payload.articleUrl || payload.siteUrl));
       return parts.join("\n\n");
     }
     function renderContentActions(item, kind) {
@@ -2500,26 +2515,33 @@ gtag('config', 'G-FJT3X93608');
     async function sharePublishedContent(encodedPayload) {
       let payload;
       try { payload = JSON.parse(decodeURIComponent(encodedPayload || "")); } catch (error) { return; }
-      const text = contentShareText(payload);
-      try {
-        if (navigator.share && typeof navigator.share === "function") {
-          await navigator.share({ title: payload.title, text, url: payload.externalUrl || payload.siteUrl });
-          return;
-        }
-      } catch (error) {
-        if (error && error.name === "AbortError") return;
-      }
-      try {
-        if (navigator.clipboard && window.isSecureContext) await navigator.clipboard.writeText(text);
-        else {
-          const helper = document.createElement("textarea");
-          helper.value = text; helper.setAttribute("readonly", ""); helper.style.position = "fixed"; helper.style.opacity = "0";
-          document.body.appendChild(helper); helper.select(); document.execCommand("copy"); helper.remove();
-        }
-        if (typeof appAlert === "function") appAlert("Texto e link copiados. Cole no WhatsApp, Instagram ou onde desejar.");
-      } catch (error) {
-        if (typeof appAlert === "function") appAlert("Não foi possível compartilhar automaticamente. Link do Vida Unileira: " + payload.siteUrl);
-      }
+      const modal = document.createElement("div");
+      modal.className = "share-options-modal";
+      modal.innerHTML = '<div class="share-options-card" role="dialog" aria-modal="true" aria-label="Compartilhar publicação">' +
+        '<h3 data-share-title></h3><p>Escolha onde compartilhar esta publicação. O link abrirá diretamente este conteúdo no Vida Unileira.</p>' +
+        '<div class="share-options-grid"><button class="share-whatsapp" data-share="whatsapp">💬 WhatsApp</button>' +
+        '<button class="share-facebook" data-share="facebook">📘 Facebook</button></div>' +
+        '<button class="share-options-close" data-share="close">Cancelar</button></div>';
+      modal.querySelector("[data-share-title]").textContent = payload.title || "Compartilhar publicação";
+      document.body.appendChild(modal);
+      const close = function(){ modal.remove(); };
+      const articleUrl = payload.articleUrl || payload.siteUrl || VIDA_UNILEIRA_SITE_URL;
+      const description = [payload.title, payload.description].filter(Boolean).join("\n\n");
+      modal.querySelector('[data-share="close"]').onclick = close;
+      modal.addEventListener("keydown", function(event){ if (event.key === "Escape") close(); });
+      modal.addEventListener("click", function(event){ if (event.target === modal) close(); });
+      modal.querySelector('[data-share="whatsapp"]').onclick = function(){
+        const text = contentShareText(payload);
+        close();
+        window.location.assign("https://wa.me/?text=" + encodeURIComponent(text));
+      };
+      modal.querySelector('[data-share="facebook"]').onclick = function(){
+        const shareUrl = new URL("https://www.facebook.com/sharer/sharer.php");
+        shareUrl.searchParams.set("u", articleUrl);
+        if (description) shareUrl.searchParams.set("quote", description);
+        close();
+        window.location.assign(shareUrl.toString());
+      };
     }
     window.sharePublishedContent = sharePublishedContent;
     function mediaDateValue(value) {
@@ -2632,7 +2654,7 @@ gtag('config', 'G-FJT3X93608');
         if (!items.length) {
           htmlConheca = '<p style="text-align:center;padding:20px;color:#94a3b8;">Nenhuma imagem ou vídeo publicado ainda.</p>';
         } else {
-          htmlConheca = items.map(item => `<div class="news-card" style="background:rgba(30,41,59,.6);border-radius:12px;padding:10px;margin-bottom:15px;border:1px solid rgba(255,255,255,.1);">${renderConhecaMedia(item)}</div>`).join("");
+          htmlConheca = items.map(item => `<div class="news-card" data-content-kind="conheca" data-content-id="${escapeHtml(item.id || "")}" style="background:rgba(30,41,59,.6);border-radius:12px;padding:10px;margin-bottom:15px;border:1px solid rgba(255,255,255,.1);">${renderConhecaMedia(item)}</div>`).join("");
         }
         box.innerHTML = htmlConheca;
         if (typeof translateDynamicUI === "function") translateDynamicUI();
@@ -2657,13 +2679,30 @@ gtag('config', 'G-FJT3X93608');
       window.__activeDynamicPage = "noticias";
       document.getElementById("dynamicTitle").textContent = typeof window.unilaTranslate === "function" ? window.unilaTranslate("news") : "📰 Notícias Alternativas da UNILA";
       openPage("dynamicPage");
-      loadNews();
+      return loadNews();
     }
     function openConhecaUNILAPage() {
       window.__activeDynamicPage = "conheca";
       document.getElementById("dynamicTitle").textContent = typeof window.unilaTranslate === "function" ? window.unilaTranslate("conheca") : "🏫 Conheça a UNILA";
       openPage("dynamicPage");
-      loadConhecaUNILA();
+      return loadConhecaUNILA();
+    }
+    async function openSharedContentFromUrl() {
+      const params = new URLSearchParams(window.location.search);
+      const kind = params.get("share");
+      const itemId = params.get("id");
+      if (!itemId || (kind !== "news" && kind !== "conheca")) return;
+      if (kind === "news") await openNewsPage();
+      else await openConhecaUNILAPage();
+      const card = Array.from(document.querySelectorAll("[data-content-kind][data-content-id]"))
+        .find(element => element.dataset.contentKind === kind && element.dataset.contentId === itemId);
+      if (!card) {
+        if (typeof appAlert === "function") appAlert("Esta publicação não está mais disponível.");
+        return;
+      }
+      card.classList.add("shared-content-highlight");
+      card.scrollIntoView({ behavior: "smooth", block: "start" });
+      window.setTimeout(() => card.classList.remove("shared-content-highlight"), 6000);
     }
 
     function scrollToTop() { window.scrollTo({ top: 0, behavior: 'smooth' }); }
@@ -3946,6 +3985,7 @@ padding:0 2px;">↩ Responder</button>`;
       db.collection('news').onSnapshot(snapshot => {
         // Notícias serão recarregadas quando o usuário clicar no botão
       });
+      await openSharedContentFromUrl();
     };
   </script>
 <script id="unila-i18n-script">
