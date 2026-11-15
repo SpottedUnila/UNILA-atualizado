@@ -596,17 +596,6 @@ button:hover{
   margin-bottom:10px;
 }
 
-.notes-cloud-info{
-  margin:8px 0 14px;
-  padding:10px 12px;
-  border:1px solid rgba(147,197,253,.35);
-  border-radius:10px;
-  background:rgba(15,23,42,.72);
-  color:#e0f2fe;
-  font-size:14px;
-  line-height:1.45;
-}
-
 .note-item{
   background:#1e293b;
   padding:12px;
@@ -1596,7 +1585,6 @@ gtag('config', 'G-FJT3X93608');
   <div id="notesPage" class="page">
     <h2>📝 Anotações</h2>
     <p id="notesNickNotice" class="academic-nick-notice">Crie um nick no Chat para inserir suas anotações.</p>
-    <p id="notesCloudInfo" class="notes-cloud-info">Depois de criar um nick no Chat, suas anotações ficam vinculadas a ele e salvas na nuvem.</p>
     <textarea id="note" placeholder="Escreva sua anotação aqui..."></textarea>
     <div class="note-editor-actions">
       <button id="saveNoteButton" type="button" onclick="saveNote()">💾 Salvar</button>
@@ -2220,7 +2208,7 @@ gtag('config', 'G-FJT3X93608');
     // Atualização do PWA: rede primeiro; cache apenas como fallback offline.
     function setupPWAUpdate() {
       if (!('serviceWorker' in navigator)) return;
-      navigator.serviceWorker.register('./service-worker37.js?v=341', { updateViaCache: 'none' }).then(function(reg) {
+      navigator.serviceWorker.register('./service-worker37.js?v=342', { updateViaCache: 'none' }).then(function(reg) {
         reg.update();
         reg.addEventListener('updatefound', function() {
           var newWorker = reg.installing;
@@ -4020,7 +4008,7 @@ padding:0 2px;">↩ Responder</button>`;
           </div>
         `;
       }).join("") : "<p>" + escapeHtml(notesCopy().noNotes) + "</p>";
-      notesStatus(snapshot && snapshot.exists ? notesCopy().loaded : (notes.length ? notesCopy().loaded : notesCopy().noNotes));
+      notesStatus(snapshot && snapshot.exists ? notesCopy().loaded : (notes.length ? notesCopy().loaded : notesCopy().emptyStatus));
     }
 
     async function saveNote() {
@@ -4574,9 +4562,9 @@ padding:0 2px;">↩ Responder</button>`;
   window.showAcademicGoalsReminder = showAcademicGoalsReminder;
 
   var NOTES_I18N = {
-    pt: { notice:"Crie um nick no Chat para inserir suas anotações.", cloudInfo:"Depois de criar um nick no Chat, suas anotações ficam vinculadas a ele e salvas na nuvem.", noNickLoad:"Defina um nick no Chat para carregar suas anotações.", noNotes:"Nenhuma anotação salva ainda.", loading:"Carregando suas anotações...", loaded:"Anotações carregadas e vinculadas ao seu nick.", noNickSave:"Defina um nick no Chat antes de salvar.", empty:"Escreva uma anotação antes de salvar.", saving:"Salvando sua anotação na nuvem...", saved:"Anotação salva e vinculada ao seu nick na nuvem.", deleted:"Anotação apagada.", errorLoad:"Não foi possível carregar as anotações agora.", errorTry:"Verifique a conexão e tente novamente.", errorSave:"Não foi possível salvar agora. Verifique a conexão e as regras do Firestore.", errorDelete:"Não foi possível excluir agora. Tente novamente.", confirm:"Excluir esta anotação?" },
-    fr: { notice:"Créez un pseudo dans le Chat pour saisir vos notes.", cloudInfo:"Après avoir créé un pseudo dans le Chat, vos notes sont liées à celui-ci et enregistrées dans le nuage.", noNickLoad:"Définissez un pseudo dans le Chat pour charger vos notes.", noNotes:"Aucune note enregistrée pour le moment.", loading:"Chargement de vos notes...", loaded:"Notes chargées et liées à votre pseudo.", noNickSave:"Définissez un pseudo dans le Chat avant d’enregistrer.", empty:"Écrivez une note avant d’enregistrer.", saving:"Enregistrement de votre note dans le nuage...", saved:"Note enregistrée et liée à votre pseudo dans le nuage.", deleted:"Note supprimée.", errorLoad:"Impossible de charger les notes maintenant.", errorTry:"Vérifiez la connexion et réessayez.", errorSave:"Impossible d’enregistrer maintenant. Vérifiez la connexion et les règles Firestore.", errorDelete:"Impossible de supprimer maintenant. Réessayez.", confirm:"Supprimer cette note ?" },
-    es: { notice:"Crea un nick en el Chat para ingresar tus anotaciones.", cloudInfo:"Después de crear un nick en el Chat, tus anotaciones quedan vinculadas a él y guardadas en la nube.", noNickLoad:"Define un nick en el Chat para cargar tus anotaciones.", noNotes:"Todavía no hay anotaciones guardadas.", loading:"Cargando tus anotaciones...", loaded:"Anotaciones cargadas y vinculadas a tu nick.", noNickSave:"Define un nick en el Chat antes de guardar.", empty:"Escribe una anotación antes de guardar.", saving:"Guardando tu anotación en la nube...", saved:"Anotación guardada y vinculada a tu nick en la nube.", deleted:"Anotación eliminada.", errorLoad:"No fue posible cargar las anotaciones ahora.", errorTry:"Verifica la conexión e inténtalo nuevamente.", errorSave:"No fue posible guardar ahora. Verifica la conexión y las reglas de Firestore.", errorDelete:"No fue posible eliminar ahora. Inténtalo nuevamente.", confirm:"¿Eliminar esta anotación?" }
+    pt: { notice:"Crie um nick no Chat para inserir suas anotações.", noNickLoad:"Defina um nick no Chat para carregar suas anotações.", noNotes:"Nenhuma anotação salva ainda.", emptyStatus:"As anotações que você salvar ficarão vinculadas ao seu nick e armazenadas na nuvem.", loading:"Carregando suas anotações...", loaded:"Anotações carregadas, vinculadas ao seu nick e salvas na nuvem.", noNickSave:"Defina um nick no Chat antes de salvar.", empty:"Escreva uma anotação antes de salvar.", saving:"Salvando sua anotação na nuvem...", saved:"Anotação salva e vinculada ao seu nick na nuvem.", deleted:"Anotação apagada.", errorLoad:"Não foi possível carregar as anotações agora.", errorTry:"Verifique a conexão e tente novamente.", errorSave:"Não foi possível salvar agora. Verifique a conexão e as regras do Firestore.", errorDelete:"Não foi possível excluir agora. Tente novamente.", confirm:"Excluir esta anotação?" },
+    fr: { notice:"Créez un pseudo dans le Chat pour saisir vos notes.", noNickLoad:"Définissez un pseudo dans le Chat pour charger vos notes.", noNotes:"Aucune note enregistrée pour le moment.", emptyStatus:"Les notes que vous enregistrerez seront liées à votre pseudo et stockées dans le nuage.", loading:"Chargement de vos notes...", loaded:"Notes chargées, liées à votre pseudo et enregistrées dans le nuage.", noNickSave:"Définissez un pseudo dans le Chat avant d’enregistrer.", empty:"Écrivez une note avant d’enregistrer.", saving:"Enregistrement de votre note dans le nuage...", saved:"Note enregistrée et liée à votre pseudo dans le nuage.", deleted:"Note supprimée.", errorLoad:"Impossible de charger les notes maintenant.", errorTry:"Vérifiez la connexion et réessayez.", errorSave:"Impossible d’enregistrer maintenant. Vérifiez la connexion et les règles Firestore.", errorDelete:"Impossible de supprimer maintenant. Réessayez.", confirm:"Supprimer cette note ?" },
+    es: { notice:"Crea un nick en el Chat para ingresar tus anotaciones.", noNickLoad:"Define un nick en el Chat para cargar tus anotaciones.", noNotes:"Todavía no hay anotaciones guardadas.", emptyStatus:"Las anotaciones que guardes quedarán vinculadas a tu nick y almacenadas en la nube.", loading:"Cargando tus anotaciones...", loaded:"Anotaciones cargadas, vinculadas a tu nick y guardadas en la nube.", noNickSave:"Define un nick en el Chat antes de guardar.", empty:"Escribe una anotación antes de guardar.", saving:"Guardando tu anotación en la nube...", saved:"Anotación guardada y vinculada a tu nick en la nube.", deleted:"Anotación eliminada.", errorLoad:"No fue posible cargar las anotaciones ahora.", errorTry:"Verifica la conexión e inténtalo nuevamente.", errorSave:"No fue posible guardar ahora. Verifica la conexión y las reglas de Firestore.", errorDelete:"No fue posible eliminar ahora. Inténtalo nuevamente.", confirm:"¿Eliminar esta anotación?" }
   };
   function notesCopy(){ return NOTES_I18N[state.lang] || NOTES_I18N.pt; }
   window.academicCopy = academicCopy;
@@ -4584,9 +4572,9 @@ padding:0 2px;">↩ Responder</button>`;
   window.notesCopy = notesCopy;
 
   var NOTES_EDITOR_I18N = {
-    pt: { save:"💾 Salvar", update:"💾 Atualizar", cancelEdit:"Cancelar edição", edit:"✏️ Editar", delete:"Excluir anotação", editing:"Editando anotação. Altere o texto e toque em Atualizar.", updated:"Anotação atualizada.", notFound:"A anotação não foi encontrada. Atualize a lista e tente novamente.", cancelled:"Edição cancelada." },
-    fr: { save:"💾 Enregistrer", update:"💾 Mettre à jour", cancelEdit:"Annuler la modification", edit:"✏️ Modifier", delete:"Supprimer la note", editing:"Modifiez la note puis appuyez sur Mettre à jour.", updated:"Note mise à jour.", notFound:"Note introuvable. Actualisez la liste et réessayez.", cancelled:"Modification annulée." },
-    es: { save:"💾 Guardar", update:"💾 Actualizar", cancelEdit:"Cancelar edición", edit:"✏️ Editar", delete:"Eliminar anotación", editing:"Edita la anotación y pulsa Actualizar.", updated:"Anotación actualizada.", notFound:"No se encontró la anotación. Actualiza la lista e inténtalo de nuevo.", cancelled:"Edición cancelada." }
+    pt: { save:"💾 Salvar", update:"💾 Atualizar", cancelEdit:"Cancelar edição", edit:"✏️ Editar", delete:"Excluir anotação", editing:"Editando anotação. Altere o texto e toque em Atualizar.", updated:"Anotação atualizada, vinculada ao seu nick e salva na nuvem.", notFound:"A anotação não foi encontrada. Atualize a lista e tente novamente.", cancelled:"Edição cancelada." },
+    fr: { save:"💾 Enregistrer", update:"💾 Mettre à jour", cancelEdit:"Annuler la modification", edit:"✏️ Modifier", delete:"Supprimer la note", editing:"Modifiez la note puis appuyez sur Mettre à jour.", updated:"Note mise à jour, liée à votre pseudo et enregistrée dans le nuage.", notFound:"Note introuvable. Actualisez la liste et réessayez.", cancelled:"Modification annulée." },
+    es: { save:"💾 Guardar", update:"💾 Actualizar", cancelEdit:"Cancelar edición", edit:"✏️ Editar", delete:"Eliminar anotación", editing:"Edita la anotación y pulsa Actualizar.", updated:"Anotación actualizada, vinculada a tu nick y guardada en la nube.", notFound:"No se encontró la anotación. Actualiza la lista e inténtalo de nuevo.", cancelled:"Edición cancelada." }
   };
   function notesEditorCopy(){ return NOTES_EDITOR_I18N[state.lang] || NOTES_EDITOR_I18N.pt; }
   window.notesEditorCopy = notesEditorCopy;
@@ -4848,8 +4836,6 @@ padding:0 2px;">↩ Responder</button>`;
       var notesLocale = notesCopy();
       var notesNotice = document.getElementById("notesNickNotice");
       if (notesNotice) { notesNotice.textContent = notesLocale.notice; notesNotice.style.display = nick ? "none" : "block"; }
-      var notesCloudInfo = document.getElementById("notesCloudInfo");
-      if (notesCloudInfo) notesCloudInfo.textContent = notesLocale.cloudInfo;
       setText("#notesPage h2", tr("notesHeading"));
       setPlaceholder("#note", tr("notePlaceholder"));
       updateNotesEditorControls();
