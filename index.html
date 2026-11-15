@@ -273,7 +273,7 @@ button:hover{
 #chatFirstAccessNotice{
   width:92%;
   max-width:560px;
-  margin:0 auto 12px;
+  margin:0 auto 40px;
   padding:12px 14px;
   border:1px solid rgba(34,197,94,.38);
   border-left:4px solid #22c55e;
@@ -1384,10 +1384,6 @@ gtag('config', 'G-FJT3X93608');
 </script>
 
 <style id="auth-controls-style">
-/* Desloca o conjunto de nick/e-mail/senha e ações 200px para baixo. */
-#nickArea > #nickInput,
-#nickArea > .auth-field-wrap,
-#nickArea > #nickEnterBtn { transform:translateY(250px); }
 .auth-field-wrap{position:relative;width:80%;margin:0 auto}.auth-field-wrap.full{width:100%}.auth-field-wrap input{padding-right:70px!important;box-sizing:border-box}.password-toggle{position:absolute;right:7px;top:6px;min-width:58px;padding:6px 7px!important;font-size:11px!important;background:rgba(124,58,237,.85)!important;border:0!important;border-radius:7px!important}.auth-link-button{display:block;margin:8px auto;background:transparent!important;border:0!important;color:#c4b5fd!important;text-decoration:underline;font-size:13px!important}
 </style>
 
@@ -2223,7 +2219,7 @@ gtag('config', 'G-FJT3X93608');
     // Atualização do PWA: rede primeiro; cache apenas como fallback offline.
     function setupPWAUpdate() {
       if (!('serviceWorker' in navigator)) return;
-      navigator.serviceWorker.register('./service-worker37.js?v=343', { updateViaCache: 'none' }).then(function(reg) {
+      navigator.serviceWorker.register('./service-worker37.js?v=344', { updateViaCache: 'none' }).then(function(reg) {
         reg.update();
         reg.addEventListener('updatefound', function() {
           var newWorker = reg.installing;
