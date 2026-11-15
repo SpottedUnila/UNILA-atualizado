@@ -2088,7 +2088,7 @@ gtag('config', 'G-FJT3X93608');
     // Atualização do PWA: rede primeiro; cache apenas como fallback offline.
     function setupPWAUpdate() {
       if (!('serviceWorker' in navigator)) return;
-      navigator.serviceWorker.register('./service-worker37.js?v=326', { updateViaCache: 'none' }).then(function(reg) {
+      navigator.serviceWorker.register('./service-worker37.js?v=327', { updateViaCache: 'none' }).then(function(reg) {
         reg.update();
         reg.addEventListener('updatefound', function() {
           var newWorker = reg.installing;
@@ -2438,6 +2438,7 @@ gtag('config', 'G-FJT3X93608');
                 ${videoUrl ? `<div class="news-media" style="width:100%;border-radius:8px;overflow:hidden;background:#000;"><video src="${optimizedVid}" poster="${optimizedPoster}" controls style="width:100%;height:auto;max-height:650px;display:block;object-fit:contain;background:#000;border-radius:8px;" preload="none" playsinline></video></div>${news.videoName ? `<p style="margin:6px 0;color:#cbd5e1;font-size:13px;">${escapeHtml(news.videoName)}</p>` : ''}` : ''}
                 <p class="news-content" style="color:#e0e0e0;">${escapeHtml(news.content || '')}</p>
                 <p class="news-date" style="font-size:12px; color:#94a3b8; text-align:right;">${date}</p>
+                ${renderContentActions(news, "news")}
               </div>
             `;
           });
@@ -2469,6 +2470,58 @@ gtag('config', 'G-FJT3X93608');
       if (url.startsWith("/manus-storage/")) return new URL(url, "https://spottedash-g7yfwvxv.manus.space").toString();
       return "";
     }
+    const VIDA_UNILEIRA_SITE_URL = "https://spottedunila.github.io/UNILA-atualizado/";
+    function safeExternalUrl(value) {
+      const url = String(value || "").trim();
+      return /^https?:\/\//i.test(url) ? url : "";
+    }
+    function contentSharePayload(item, kind) {
+      const record = item || {};
+      const title = String(record.title || record.caption || (kind === "news" ? "Notícia do Vida Unileira" : "Publicação do Vida Unileira")).trim();
+      const description = String(record.shareText || record.content || record.caption || "").trim();
+      const externalUrl = safeExternalUrl(record.externalUrl || record.externalLink || record.link || record.sourceUrl);
+      return { title, description, externalUrl, siteUrl: VIDA_UNILEIRA_SITE_URL };
+    }
+    function contentShareText(payload) {
+      const parts = [payload.title];
+      if (payload.description) parts.push(payload.description);
+      if (payload.externalUrl) parts.push("Leia mais: " + payload.externalUrl);
+      parts.push("\nVida Unileira: " + (payload.externalUrl || payload.siteUrl));
+      return parts.join("\n\n");
+    }
+    function renderContentActions(item, kind) {
+      const payload = contentSharePayload(item, kind);
+      const encoded = encodeURIComponent(JSON.stringify(payload));
+      const external = payload.externalUrl
+        ? `<a class="resource-open-link" href="${escapeHtml(payload.externalUrl)}" target="_blank" rel="noopener noreferrer">🔗 Abrir link externo</a>`
+        : "";
+      return `<div class="content-actions" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;">${external}<button type="button" class="resource-open-link" data-share-payload="${encoded}" onclick="sharePublishedContent(this.dataset.sharePayload)">📤 Compartilhar</button></div>`;
+    }
+    async function sharePublishedContent(encodedPayload) {
+      let payload;
+      try { payload = JSON.parse(decodeURIComponent(encodedPayload || "")); } catch (error) { return; }
+      const text = contentShareText(payload);
+      try {
+        if (navigator.share && typeof navigator.share === "function") {
+          await navigator.share({ title: payload.title, text, url: payload.externalUrl || payload.siteUrl });
+          return;
+        }
+      } catch (error) {
+        if (error && error.name === "AbortError") return;
+      }
+      try {
+        if (navigator.clipboard && window.isSecureContext) await navigator.clipboard.writeText(text);
+        else {
+          const helper = document.createElement("textarea");
+          helper.value = text; helper.setAttribute("readonly", ""); helper.style.position = "fixed"; helper.style.opacity = "0";
+          document.body.appendChild(helper); helper.select(); document.execCommand("copy"); helper.remove();
+        }
+        if (typeof appAlert === "function") appAlert("Texto e link copiados. Cole no WhatsApp, Instagram ou onde desejar.");
+      } catch (error) {
+        if (typeof appAlert === "function") appAlert("Não foi possível compartilhar automaticamente. Link do Vida Unileira: " + payload.siteUrl);
+      }
+    }
+    window.sharePublishedContent = sharePublishedContent;
     function mediaDateValue(value) {
       if (!value) return 0;
       if (typeof value.toMillis === "function") return value.toMillis();
@@ -2562,6 +2615,7 @@ gtag('config', 'G-FJT3X93608');
       if (media.videoUrl) {
         html += `<div class="conheca-media-block">${title ? `<h3 style="color:#22c55e;margin:0 0 6px;">${escapeHtml(title)}</h3>` : ""}<div class="news-media conheca-media-frame" style="width:100%;"><video src="${escapeHtml(optimizeCloudinary(media.videoUrl, "video"))}" poster="${escapeHtml(optimizeCloudinary(media.videoThumbUrl, "image"))}" controls style="width:100%;height:auto;max-height:650px;display:block;object-fit:contain;background:#000;border-radius:8px;" preload="none" playsinline></video>${dateOverlay}</div>${videoName ? `<p class="conheca-caption">${escapeHtml(videoName)}</p>` : ""}${renderConhecaCaptionAndMeta(item, "video")}</div>`;
       }
+      if (html) html += renderContentActions(item, "conheca");
       return html;
     }
 
