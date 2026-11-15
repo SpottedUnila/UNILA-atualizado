@@ -1271,6 +1271,27 @@ function scheduleNowPlayingTitleUpdate(player, elementId) {
     window.setTimeout(function(){ updateNowPlayingTitle(player, elementId); }, delay);
   });
 }
+async function getPodcastVideoTitleForShare() {
+  const titleElement = document.getElementById("podcastNowPlayingTitle");
+  for (let attempt = 0; attempt < 6; attempt += 1) {
+    let title = "";
+    try {
+      if (ytPodcastPlayer && typeof ytPodcastPlayer.getVideoData === "function") {
+        const videoData = ytPodcastPlayer.getVideoData();
+        title = String(videoData && videoData.title || "").trim();
+      }
+    } catch (error) {}
+    if (title) {
+      if (titleElement) {
+        titleElement.dataset.videoTitle = title;
+        titleElement.textContent = title;
+      }
+      return title;
+    }
+    if (attempt < 5) await new Promise(resolve => window.setTimeout(resolve, 150));
+  }
+  return String(titleElement && titleElement.dataset.videoTitle || "").trim();
+}
 function onMusicPlayerStateChange(event) {
   scheduleNowPlayingTitleUpdate(event && event.target ? event.target : ytPlayer, "musicNowPlayingTitle");
 }
@@ -2236,7 +2257,7 @@ gtag('config', 'G-FJT3X93608');
     // Atualização do PWA: rede primeiro; cache apenas como fallback offline.
     function setupPWAUpdate() {
       if (!('serviceWorker' in navigator)) return;
-      navigator.serviceWorker.register('./service-worker37.js?v=349', { updateViaCache: 'none' }).then(function(reg) {
+      navigator.serviceWorker.register('./service-worker37.js?v=350', { updateViaCache: 'none' }).then(function(reg) {
         reg.update();
         reg.addEventListener('updatefound', function() {
           var newWorker = reg.installing;
@@ -2662,14 +2683,19 @@ gtag('config', 'G-FJT3X93608');
     function musicShareTranslation(key, fallback) {
       return typeof window.unilaTranslate === "function" ? window.unilaTranslate(key) : fallback;
     }
-    function playlistWhatsAppMessage(kind, url) {
+    function podcastEpisodeShareLine(videoTitle, label) {
+      const cleanTitle = String(videoTitle || "").replace(/\s+/g, " ").trim();
+      return cleanTitle ? (label || "🎙️ Episódio") + ": " + cleanTitle : "";
+    }
+    function playlistWhatsAppMessage(kind, url, videoTitle) {
       const isPodcast = kind === "podcast";
       const heading = isPodcast ? "Playlist de Podcast - Vida Unileira" : "Playlist de Música - Vida Unileira";
       const caption = isPodcast
         ? "Confira a playlist Atualizada hoje, desde o primeiro episódio.💜"
         : "Confira a playlist Atualizada hoje, desde o primeiro vídeo.💜";
+      const videoTitleLine = isPodcast ? podcastEpisodeShareLine(videoTitle) : "";
       const action = isPodcast ? "🎙️Clique e aguarde 2 segundos e clique Play." : "🎶Clique e aguarde 2 segundos e clique Play.";
-      return heading + "\n\n" + caption + "\n\n" + action + "\n\n" + url;
+      return heading + "\n\n" + caption + (videoTitleLine ? "\n\n" + videoTitleLine : "") + "\n\n" + action + "\n\n" + url;
     }
     function copyMusicPlaylistLink(url) {
       if (navigator.clipboard && window.isSecureContext) return navigator.clipboard.writeText(url);
@@ -2751,7 +2777,10 @@ gtag('config', 'G-FJT3X93608');
       const url = podcastPlaylistPermalink();
       const title = musicShareTranslation("podcastShareTitle", "Playlist de Podcast — Vida Unileira");
       const description = musicShareTranslation("podcastShareDescription", "Este link abre a playlist de podcasts desde o primeiro episódio.");
-      const shareText = playlistWhatsAppMessage("podcast", url);
+      const podcastVideoTitle = await getPodcastVideoTitleForShare();
+      const translatedVideoTitleLine = podcastEpisodeShareLine(podcastVideoTitle, musicShareTranslation("podcastNowPlaying", "🎙️ Episódio atual"));
+      const shareDescription = translatedVideoTitleLine ? description + "\n\n" + translatedVideoTitleLine : description;
+      const shareText = playlistWhatsAppMessage("podcast", url, podcastVideoTitle);
       if (window.AndroidShare && typeof window.AndroidShare.share === "function") {
         try { window.AndroidShare.share(shareText); return; }
         catch (error) { console.warn("Compartilhamento Android indisponível:", error); }
@@ -2765,7 +2794,7 @@ gtag('config', 'G-FJT3X93608');
           console.warn("Compartilhamento nativo indisponível:", error);
         }
       }
-      showMusicShareOptions(url, title, description, shareText);
+      showMusicShareOptions(url, title, shareDescription, shareText);
     }
     window.sharePodcastPlaylist = sharePodcastPlaylist;
     function contentSharePayload(item, kind) {
