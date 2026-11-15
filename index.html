@@ -603,8 +603,17 @@ button:hover{
   margin-bottom:10px;
   display:flex;
   justify-content:space-between;
-  align-items:center;
+  align-items:flex-start;
+  gap:12px;
+  flex-wrap:wrap;
 }
+
+.note-item-text{flex:1;min-width:0;white-space:pre-wrap;overflow-wrap:anywhere;}
+.note-item-actions{display:flex;align-items:center;gap:8px;flex-shrink:0;}
+.note-item-actions button{min-height:40px;padding:8px 10px;border-radius:8px;color:#fff;border:0;cursor:pointer;font-size:14px;}
+.edit-note-btn{background:#2563eb;}
+#notesPage .note-editor-actions{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 8px;}
+#notesPage .note-editor-actions button{min-height:44px;padding:10px 14px;}
 
 .delete-btn{
   background:#dc2626;
@@ -1577,7 +1586,10 @@ gtag('config', 'G-FJT3X93608');
     <h2>📝 Anotações</h2>
     <p id="notesNickNotice" class="academic-nick-notice">Crie um nick no Chat para inserir suas anotações.</p>
     <textarea id="note" placeholder="Escreva sua anotação aqui..."></textarea>
-    <button onclick="saveNote()">💾 Salvar</button>
+    <div class="note-editor-actions">
+      <button id="saveNoteButton" type="button" onclick="saveNote()">💾 Salvar</button>
+      <button id="cancelNoteEditButton" type="button" style="display:none;" onclick="cancelNoteEdit()">Cancelar edição</button>
+    </div>
     <div id="list" style="margin-top:20px;"></div>
     <p id="notesStatus" role="status" style="min-height:22px; margin:12px 0 0; color:#bbf7d0; font-size:13px;"></p>
   </div>
@@ -2196,7 +2208,7 @@ gtag('config', 'G-FJT3X93608');
     // Atualização do PWA: rede primeiro; cache apenas como fallback offline.
     function setupPWAUpdate() {
       if (!('serviceWorker' in navigator)) return;
-      navigator.serviceWorker.register('./service-worker37.js?v=337', { updateViaCache: 'none' }).then(function(reg) {
+      navigator.serviceWorker.register('./service-worker37.js?v=338', { updateViaCache: 'none' }).then(function(reg) {
         reg.update();
         reg.addEventListener('updatefound', function() {
           var newWorker = reg.installing;
@@ -3846,6 +3858,8 @@ padding:0 2px;">↩ Responder</button>`;
 
     const NOTES_COLLECTION = "notes";
     const NOTES_BACKUP_KEY_PREFIX = "spotted_notes_backup_v1_";
+    let notesListCache = [];
+    let editingNoteId = null;
     function notesBackupStorageKey() { return NOTES_BACKUP_KEY_PREFIX + String(firebaseUid || "pending"); }
     function readNotesBackup() {
       try {
@@ -3872,6 +3886,53 @@ padding:0 2px;">↩ Responder</button>`;
       status.style.color = isError ? "#fecaca" : "#bbf7d0";
     }
 
+    function updateNotesEditorControls() {
+      const copy = notesEditorCopy();
+      const saveButton = document.getElementById("saveNoteButton");
+      const cancelButton = document.getElementById("cancelNoteEditButton");
+      if (saveButton) saveButton.textContent = editingNoteId ? copy.update : copy.save;
+      if (cancelButton) {
+        cancelButton.textContent = copy.cancelEdit;
+        cancelButton.style.display = editingNoteId ? "inline-flex" : "none";
+      }
+    }
+
+    function cancelNoteEdit() {
+      editingNoteId = null;
+      const field = document.getElementById("note");
+      if (field) field.value = "";
+      updateNotesEditorControls();
+      notesStatus(notesEditorCopy().cancelled);
+    }
+
+    function editNote(id) {
+      const note = notesListCache.find(item => item && String(item.id) === String(id));
+      if (!note) {
+        notesStatus(notesEditorCopy().notFound, true);
+        return;
+      }
+      const field = document.getElementById("note");
+      if (!field) return;
+      editingNoteId = String(note.id);
+      field.value = String(note.text == null ? "" : note.text);
+      updateNotesEditorControls();
+      notesStatus(notesEditorCopy().editing);
+      field.focus();
+      field.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+
+    function bindNotesListActions(list) {
+      if (list.dataset.noteActionsBound === "true") return;
+      list.dataset.noteActionsBound = "true";
+      list.addEventListener("click", function(event) {
+        const button = event.target.closest && event.target.closest("button[data-note-action]");
+        if (!button || !list.contains(button)) return;
+        const id = button.dataset.noteId;
+        if (button.dataset.noteAction === "edit") editNote(id);
+        else if (button.dataset.noteAction === "delete") deleteNote(id);
+      });
+    }
+
     async function waitForNotesAuth() {
       if (typeof authReady !== "undefined") await authReady;
       if (typeof db === "undefined" || !firebaseUid) throw new Error("Sessão Firebase ainda não está pronta.");
@@ -3880,7 +3941,13 @@ padding:0 2px;">↩ Responder</button>`;
     async function loadNotes(){
       const list = document.getElementById("list");
       if (!list) return;
+      bindNotesListActions(list);
       if (!nick) {
+        notesListCache = [];
+        editingNoteId = null;
+        const field = document.getElementById("note");
+        if (field) field.value = "";
+        updateNotesEditorControls();
         list.innerHTML = "<p>" + escapeHtml(notesCopy().noNickLoad) + "</p>";
         notesStatus(notesCopy().noNickLoad, true);
         return;
@@ -3915,23 +3982,35 @@ padding:0 2px;">↩ Responder</button>`;
         console.error("Erro ao carregar anotações:", error);
         notes = readNotesBackup();
         if (!notes.length) {
+          notesListCache = [];
           list.innerHTML = "<p>" + escapeHtml(notesCopy().errorLoad) + "</p>";
           notesStatus(notesCopy().errorTry + (error && error.code ? " (" + error.code + ")" : ""), true);
           return;
         }
       }
-      list.innerHTML = notes.length ? notes.map(n => `
-        <div class="note-item">
-          <span>${escapeHtml(n.text)}</span>
-          <button class="delete-btn" onclick="deleteNote('${escapeHtml(n.id)}')">🗑</button>
-        </div>
-      `).join("") : "<p>" + escapeHtml(notesCopy().noNotes) + "</p>";
+      notesListCache = notes;
+      const editorCopy = notesEditorCopy();
+      list.innerHTML = notes.length ? notes.map(n => {
+        const noteId = escapeHtml(String(n.id));
+        const noteText = escapeHtml(String(n.text == null ? "" : n.text));
+        return `
+          <div class="note-item">
+            <span class="note-item-text">${noteText}</span>
+            <div class="note-item-actions">
+              <button type="button" class="edit-note-btn" data-note-action="edit" data-note-id="${noteId}">${escapeHtml(editorCopy.edit)}</button>
+              <button type="button" class="delete-btn" data-note-action="delete" data-note-id="${noteId}" aria-label="Excluir anotação">🗑</button>
+            </div>
+          </div>
+        `;
+      }).join("") : "<p>" + escapeHtml(notesCopy().noNotes) + "</p>";
       notesStatus(snapshot && snapshot.exists ? notesCopy().loaded : (notes.length ? notesCopy().loaded : notesCopy().noNotes));
     }
 
     async function saveNote() {
       const noteField = document.getElementById("note");
       const noteText = noteField ? noteField.value.trim() : "";
+      const noteIdToEdit = editingNoteId == null ? null : String(editingNoteId);
+      const editorCopy = notesEditorCopy();
       if (!noteText) {
         notesStatus(notesCopy().empty, true);
         return;
@@ -3953,8 +4032,19 @@ padding:0 2px;">↩ Responder</button>`;
           console.warn("Não foi possível ler as anotações anteriores; usando a cópia local:", error);
         }
         const now = Date.now();
-        const notes = mergeNotes(previousNotes, [{ id: String(now), text: noteText, createdAt: now, updatedAt: now }]);
-        writeNotesBackup(notes);
+        let notes;
+        if (noteIdToEdit !== null) {
+          const existingNote = previousNotes.find(note => note && String(note.id) === noteIdToEdit);
+          if (!existingNote) {
+            notesStatus(editorCopy.notFound, true);
+            return;
+          }
+          const updatedNote = Object.assign({}, existingNote, { id: noteIdToEdit, text: noteText, updatedAt: now });
+          notes = mergeNotes(previousNotes.filter(note => String(note.id) !== noteIdToEdit), [updatedNote]);
+        } else {
+          notes = mergeNotes(previousNotes, [{ id: String(now), text: noteText, createdAt: now, updatedAt: now }]);
+          writeNotesBackup(notes);
+        }
         await firestoreSet(reference, {
           uid: firebaseUid,
           nick: nick,
@@ -3962,9 +4052,12 @@ padding:0 2px;">↩ Responder</button>`;
           updatedAt: now,
           source: "Vida Unileira"
         }, { merge: true });
+        writeNotesBackup(notes);
         if (noteField) noteField.value = "";
+        editingNoteId = null;
+        updateNotesEditorControls();
         await loadNotes();
-        notesStatus(notesCopy().saved);
+        notesStatus(noteIdToEdit !== null ? editorCopy.updated : notesCopy().saved);
       } catch (error) {
         console.error("Erro ao salvar anotação:", error);
         notesStatus(notesCopy().errorSave + (error && error.code ? " (" + error.code + ")" : ""), true);
@@ -3996,6 +4089,12 @@ padding:0 2px;">↩ Responder</button>`;
           await firestoreDelete(reference);
         }
         writeNotesBackup(notes);
+        if (editingNoteId != null && String(editingNoteId) === String(id)) {
+          editingNoteId = null;
+          const field = document.getElementById("note");
+          if (field) field.value = "";
+          updateNotesEditorControls();
+        }
         await loadNotes();
         notesStatus(notesCopy().deleted);
       } catch (error) {
@@ -4467,6 +4566,13 @@ padding:0 2px;">↩ Responder</button>`;
   window.academicGoalsText = academicGoalsText;
   window.notesCopy = notesCopy;
 
+  var NOTES_EDITOR_I18N = {
+    pt: { save:"💾 Salvar", update:"💾 Atualizar", cancelEdit:"Cancelar edição", edit:"✏️ Editar", editing:"Editando anotação. Altere o texto e toque em Atualizar.", updated:"Anotação atualizada.", notFound:"A anotação não foi encontrada. Atualize a lista e tente novamente.", cancelled:"Edição cancelada." },
+    fr: { save:"💾 Enregistrer", update:"💾 Mettre à jour", cancelEdit:"Annuler la modification", edit:"✏️ Modifier", editing:"Modifiez la note puis appuyez sur Mettre à jour.", updated:"Note mise à jour.", notFound:"Note introuvable. Actualisez la liste et réessayez.", cancelled:"Modification annulée." },
+    es: { save:"💾 Guardar", update:"💾 Actualizar", cancelEdit:"Cancelar edición", edit:"✏️ Editar", editing:"Edita la anotación y pulsa Actualizar.", updated:"Anotación actualizada.", notFound:"No se encontró la anotación. Actualiza la lista e inténtalo de nuevo.", cancelled:"Edición cancelada." }
+  };
+  function notesEditorCopy(){ return NOTES_EDITOR_I18N[state.lang] || NOTES_EDITOR_I18N.pt; }
+
   var RESOURCE_I18N = {
     pt: {
       mentalHealth: { title: "🧠 Saúde Mental", description: "Acesse o portal oficial da UNILA para consultar informações, orientações e serviços relacionados à saúde mental.", linkText: "Abrir portal de Saúde Mental" },
@@ -4726,7 +4832,7 @@ padding:0 2px;">↩ Responder</button>`;
       if (notesNotice) { notesNotice.textContent = notesLocale.notice; notesNotice.style.display = nick ? "none" : "block"; }
       setText("#notesPage h2", tr("notesHeading"));
       setPlaceholder("#note", tr("notePlaceholder"));
-      setText("#notesPage button", tr("save"));
+      updateNotesEditorControls();
       var notesPage = document.getElementById("notesPage");
       if (notesPage && notesPage.style.display === "block" && typeof loadNotes === "function") loadNotes();
 
