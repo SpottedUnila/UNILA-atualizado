@@ -270,6 +270,20 @@ button:hover{
 #desapegaPage h2{margin:0 0 8px;font-size:20px;line-height:1.25;}
 #chatPage > *,
 #desapegaPage > *{max-width:100%;box-sizing:border-box;}
+#chatFirstAccessNotice{
+  width:92%;
+  max-width:560px;
+  margin:0 auto 12px;
+  padding:12px 14px;
+  border:1px solid rgba(34,197,94,.38);
+  border-left:4px solid #22c55e;
+  border-radius:12px;
+  background:rgba(20,83,45,.24);
+  color:#dcfce7;
+  text-align:left;
+  font-size:14px;
+  line-height:1.5;
+}
 #chatPage{
   padding-top:140px;
 }
@@ -1526,6 +1540,7 @@ gtag('config', 'G-FJT3X93608');
   <div id="chatPage" class="page">
     <h2>💬 Chat UNILA</h2>
     <div id="nickArea">
+      <p id="chatFirstAccessNotice" role="note"></p>
       <input id="nickInput" autocomplete="username" placeholder="Digite seu nick..." style="padding:10px; border-radius:10px; border:none; margin-bottom:10px; width:80%;" />
       <div class="auth-field-wrap">
         <input id="nickPasswordInput" type="password" autocomplete="current-password" minlength="6" placeholder="Digite sua senha ou crie uma senha" style="padding:10px; border-radius:10px; border:none; margin-bottom:10px; width:80%;" />
@@ -2208,7 +2223,7 @@ gtag('config', 'G-FJT3X93608');
     // Atualização do PWA: rede primeiro; cache apenas como fallback offline.
     function setupPWAUpdate() {
       if (!('serviceWorker' in navigator)) return;
-      navigator.serviceWorker.register('./service-worker37.js?v=342', { updateViaCache: 'none' }).then(function(reg) {
+      navigator.serviceWorker.register('./service-worker37.js?v=343', { updateViaCache: 'none' }).then(function(reg) {
         reg.update();
         reg.addEventListener('updatefound', function() {
           var newWorker = reg.installing;
@@ -4385,7 +4400,9 @@ padding:0 2px;">↩ Responder</button>`;
         addresses: "🏫 Endereços", ru: "🍽️ Restaurantes Universitários", group: "👥 Grupo no Facebook", developer: "👨‍💻 Desenvolvedor", privacy: "🔒 Privacidade e exclusão",
         notes: "📝 Anotações", share: "📤 Compartilhar App", internet: "🌐 Internet", study: "🎓 Estude na", academicGoals: "📈 Meta Acadêmica", studentAid: "🎓 Auxílio Estudantil", mentalHealth: "🧠 Saúde Mental",
         enem: "📝 ENEM – Página do Participante", news: "📰 Notícias Alternativas", conheca: "🏫 Conheça a UNILA", desapega: "🔎 Achados e Perdidos e Desapega", upa: "Hospitais de Emergência 24h (UPA)", officialSources: "🔗 Portal da Transparência",
-        chatHeading: "💬 Chat UNILA", nickPlaceholder: "Digite seu nick...", enter: "🚪 Entrar", imageSelected: "Imagem selecionada",
+        chatHeading: "💬 Chat UNILA",
+        chatFirstAccessNotice: "Primeiro acesso: digite um nick e crie uma senha. Anote-a para não esquecer. Nos outros acessos e em qualquer dispositivo, use sempre o mesmo nick e a mesma senha. Mantenha a senha bem guardada: nem o desenvolvedor tem acesso a ela, e não será possível recuperá-la se você a esquecer.",
+        nickPlaceholder: "Digite seu nick...", enter: "🚪 Entrar", imageSelected: "Imagem selecionada",
         chatPlaceholder: "Digite sua mensagem...", anonymous: "👤 Enviar Anonimamente", changeNick: "🔄 Mudar Nick",
         developerHeading: "👨‍💻 Desenvolvedor", developerIntro: "Para trabalhos e parcerias entre em contato:", developerService: "Equipe Vida Unileira", contact: "Contato",
         notesHeading: "📝 Anotações", notePlaceholder: "Escreva sua anotação aqui...", save: "💾 Salvar", desapegaHeading: "🛒 Desapega Unileiro",
@@ -4422,7 +4439,9 @@ padding:0 2px;">↩ Responder</button>`;
         addresses: "🏫 Adresses", ru: "🍽️ Restaurants universitaires", group: "👥 Groupe Facebook", developer: "👨‍💻 Développeur", privacy: "🔒 Confidentialité et suppression",
         notes: "📝 Notes", share: "📤 Partager l’application", internet: "🌐 Internet", study: "🎓 Étudier", academicGoals: "📈 Objectif académique", studentAid: "🎓 Aide aux étudiants", mentalHealth: "🧠 Santé mentale",
         enem: "📝 ENEM", news: "📰 Actualités alternatives", conheca: "🏫 Découvrez l’UNILA", desapega: "🔎 Objets trouvés et perdus · Desapega", upa: "Hôpitaux d’urgence 24 h (UPA)", officialSources: "🔗 Portail de la transparence",
-        chatHeading: "💬 Chat UNILA", nickPlaceholder: "Saisissez votre pseudo...", enter: "🚪 Entrer", imageSelected: "Image sélectionnée",
+        chatHeading: "💬 Chat UNILA",
+        chatFirstAccessNotice: "Première connexion : saisissez un pseudo et créez un mot de passe. Notez-le pour ne pas l’oublier. Pour vos connexions suivantes, sur n’importe quel appareil, utilisez toujours le même pseudo et le même mot de passe. Gardez le mot de passe en lieu sûr : même le développeur ne peut pas y accéder, et il ne pourra pas être récupéré en cas d’oubli.",
+        nickPlaceholder: "Saisissez votre pseudo...", enter: "🚪 Entrer", imageSelected: "Image sélectionnée",
         chatPlaceholder: "Écrivez votre message...", anonymous: "👤 Envoyer anonymement", changeNick: "🔄 Changer de pseudo",
         developerHeading: "👨‍💻 Développeur", developerIntro: "Pour les travaux et les partenariats, contactez-nous :", developerService: "Équipe Vida Unileira", contact: "Contact",
         notesHeading: "📝 Notes", notePlaceholder: "Écrivez votre note ici...", save: "💾 Enregistrer", desapegaHeading: "🛒 Desapega Unileiro",
@@ -4459,7 +4478,9 @@ padding:0 2px;">↩ Responder</button>`;
         addresses: "🏫 Direcciones", ru: "🍽️ Restaurantes universitarios", group: "👥 Grupo de Facebook", developer: "👨‍💻 Desarrollador", privacy: "🔒 Privacidad y eliminación",
         notes: "📝 Anotaciones", share: "📤 Compartir aplicación", internet: "🌐 Internet", study: "🎓 Estudia", academicGoals: "📈 Meta académica", studentAid: "🎓 Ayuda estudiantil", mentalHealth: "🧠 Salud mental",
         enem: "📝 ENEM", news: "📰 Noticias alternativas", conheca: "🏫 Conoce la UNILA", desapega: "🔎 Objetos perdidos y encontrados · Desapega", upa: "Hospitales de emergencia 24 h (UPA)", officialSources: "🔗 Portal de la Transparencia",
-        chatHeading: "💬 Chat UNILA", nickPlaceholder: "Escribe tu nick...", enter: "🚪 Entrar", imageSelected: "Imagen seleccionada",
+        chatHeading: "💬 Chat UNILA",
+        chatFirstAccessNotice: "Primer acceso: escribe un nick y crea una contraseña. Anótala para no olvidarla. En los accesos siguientes y desde cualquier dispositivo, usa siempre el mismo nick y la misma contraseña. Guárdala bien: ni siquiera el desarrollador puede acceder a ella y no será posible recuperarla si la olvidas.",
+        nickPlaceholder: "Escribe tu nick...", enter: "🚪 Entrar", imageSelected: "Imagen seleccionada",
         chatPlaceholder: "Escribe tu mensaje...", anonymous: "👤 Enviar anónimamente", changeNick: "🔄 Cambiar nick",
         developerHeading: "👨‍💻 Desarrollador", developerIntro: "Para trabajos y alianzas, ponte en contacto:", developerService: "Equipo Vida Unileira", contact: "Contacto",
         notesHeading: "📝 Anotaciones", notePlaceholder: "Escribe tu anotación aquí...", save: "💾 Guardar", desapegaHeading: "🛒 Desapega Unileiro",
@@ -4796,6 +4817,7 @@ padding:0 2px;">↩ Responder</button>`;
     if (globalSearchInput) globalSearchInput.placeholder = state.lang === "fr" ? "Rechercher dans Vida Unileira..." : (state.lang === "es" ? "Buscar en Vida Unileira..." : "Buscar no Vida Unileira...");
 
     setText("#chatPage h2", tr("chatHeading"));
+    setText("#chatFirstAccessNotice", tr("chatFirstAccessNotice"));
     setPlaceholder("#nickInput", tr("nickPlaceholder"));
     setPlaceholder("#nickPasswordInput", "Digite sua senha ou crie uma senha");
     setPlaceholder("#nickDeletePasswordInput", "Digite sua senha para confirmar a exclusão");
