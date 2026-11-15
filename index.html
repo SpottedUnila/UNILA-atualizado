@@ -963,6 +963,9 @@ button:hover{
 #radioPlayer .music-share-button:hover,#podcastPlayer .music-share-button:hover{background:rgba(34,197,94,.27);}
 #radioPlayer .music-share-hint,#podcastPlayer .music-share-hint{margin:8px 0 0;color:#cbd5e1;font-size:12px;line-height:1.4;text-align:center;}
 #podcastPlayer{position:relative;}
+.current-video-title{margin:12px 0 0;padding:12px 14px;border-radius:10px;background:rgba(15,23,42,.58);color:#e2e8f0;font-size:14px;line-height:1.45;overflow-wrap:anywhere;}
+.current-video-label{display:block;margin-bottom:4px;color:#bfdbfe;font-weight:800;}
+.current-video-name{display:block;min-height:1.4em;}
 .music-player-title{
   position:absolute;
   top:-15px;
@@ -1209,6 +1212,30 @@ const MUSIC_PLAYLIST_ID = "PLyTsVCtgNA7Uzq69sB_NhyJJEpNr1ePPM";
 const PODCAST_PLAYLIST_ID = "PLyTsVCtgNA7Wf0kpU61OW_Er7JfxGigv6";
 let sharedMusicAutoplayPending = false;
 let sharedPodcastAutoplayPending = false;
+function updateNowPlayingTitle(player, elementId) {
+  const titleElement = document.getElementById(elementId);
+  if (!titleElement || !player || typeof player.getVideoData !== "function") return;
+  try {
+    const videoData = player.getVideoData();
+    const title = String(videoData && videoData.title || "").trim();
+    if (title) {
+      titleElement.dataset.videoTitle = title;
+      titleElement.textContent = title;
+    } else if (!titleElement.dataset.videoTitle) {
+      titleElement.textContent = typeof window.unilaTranslate === "function"
+        ? window.unilaTranslate("videoTitleLoading")
+        : "Carregando título...";
+    }
+  } catch (error) {}
+}
+function scheduleNowPlayingTitleUpdate(player, elementId) {
+  [0, 300, 850].forEach(function(delay) {
+    window.setTimeout(function(){ updateNowPlayingTitle(player, elementId); }, delay);
+  });
+}
+function onMusicPlayerStateChange(event) {
+  scheduleNowPlayingTitleUpdate(event && event.target ? event.target : ytPlayer, "musicNowPlayingTitle");
+}
 function startSharedMusicPlaylistFromBeginning(player) {
   const target = player || ytPlayer;
   if (!target || typeof target.loadPlaylist !== "function") {
@@ -1276,7 +1303,9 @@ function onYouTubeIframeAPIReady() {
       'onReady': (event) => {
         event.target.unMute(); event.target.setVolume(100);
         if (sharedMusicAutoplayPending) startSharedMusicPlaylistFromBeginning(event.target);
-      }
+        scheduleNowPlayingTitleUpdate(event.target, "musicNowPlayingTitle");
+      },
+      'onStateChange': onMusicPlayerStateChange
     }
   });
   ytPodcastPlayer = new YT.Player("ytPodcast", {
@@ -1285,6 +1314,7 @@ function onYouTubeIframeAPIReady() {
       'onReady': (event) => {
         event.target.unMute(); event.target.setVolume(100);
         if (sharedPodcastAutoplayPending) startSharedPodcastPlaylistFromBeginning(event.target);
+        scheduleNowPlayingTitleUpdate(event.target, "podcastNowPlayingTitle");
       },
       'onStateChange': onPodcastStateChange
     }
@@ -1316,6 +1346,7 @@ function pauseYouTube(player, iframe) {
 }
 
 function onPodcastStateChange(event) {
+  scheduleNowPlayingTitleUpdate(event && event.target ? event.target : ytPodcastPlayer, "podcastNowPlayingTitle");
   if (event.data === 0) {
     ytPodcastPlayer.nextVideo();
   }
@@ -1599,6 +1630,7 @@ gtag('config', 'G-FJT3X93608');
   <div id="radioPlayer" style="display:none; margin-bottom:80px; padding:20px;">
     <div class="music-player-title video-control-clone"><div class="radio-badge"><div class="radio-dot"></div><span class="video-control-label">Music</span></div><button type="button" class="video-control-button" onclick="toggleRadioSimples();" aria-label="Música"><span class="video-control-glyph">🎧</span></button></div>
     <iframe id="ytRadio" width="100%" height="200" src="https://www.youtube.com/embed/videoseries?list=PLyTsVCtgNA7Uzq69sB_NhyJJEpNr1ePPM&enablejsapi=1" frameborder="0" allow="autoplay" allowfullscreen></iframe>
+    <p class="current-video-title" aria-live="polite"><span id="musicNowPlayingLabel" class="current-video-label">🎵 Tocando agora</span><span id="musicNowPlayingTitle" class="current-video-name">Carregando título...</span></p>
     <button id="shareMusicPlaylistButton" type="button" class="music-share-button" onclick="shareMusicPlaylist()">📤 Compartilhar playlist</button>
     <p id="musicShareHint" class="music-share-hint">O link abre pelo primeiro vídeo e tenta iniciar a reprodução. Se o navegador bloquear, toque em Reproduzir no player.</p>
   </div>
@@ -1606,6 +1638,7 @@ gtag('config', 'G-FJT3X93608');
   <div id="podcastPlayer" style="display:none; margin-bottom:80px; padding:20px;">
     <div class="podcast-player-title video-control-clone"><div class="podcast-badge"><div class="podcast-dot"></div><span class="video-control-label">Podcast</span></div><button type="button" class="video-control-button" onclick="togglePodcastSimples();" aria-label="Podcast"><span class="video-control-glyph">🎙️</span></button></div>
     <iframe id="ytPodcast" width="100%" height="200" src="https://www.youtube.com/embed/videoseries?list=PLyTsVCtgNA7Wf0kpU61OW_Er7JfxGigv6&enablejsapi=1" frameborder="0" allow="autoplay" allowfullscreen></iframe>
+    <p class="current-video-title" aria-live="polite"><span id="podcastNowPlayingLabel" class="current-video-label">🎙️ Episódio atual</span><span id="podcastNowPlayingTitle" class="current-video-name">Carregando título...</span></p>
     <button id="sharePodcastPlaylistButton" type="button" class="music-share-button" onclick="sharePodcastPlaylist()">📤 Compartilhar playlist</button>
     <p id="podcastShareHint" class="music-share-hint">O link abre pelo primeiro episódio e tenta iniciar a reprodução. Se o navegador bloquear, toque em Reproduzir no player.</p>
   </div>
@@ -2166,7 +2199,7 @@ gtag('config', 'G-FJT3X93608');
     // Atualização do PWA: rede primeiro; cache apenas como fallback offline.
     function setupPWAUpdate() {
       if (!('serviceWorker' in navigator)) return;
-      navigator.serviceWorker.register('./service-worker37.js?v=330', { updateViaCache: 'none' }).then(function(reg) {
+      navigator.serviceWorker.register('./service-worker37.js?v=331', { updateViaCache: 'none' }).then(function(reg) {
         reg.update();
         reg.addEventListener('updatefound', function() {
           var newWorker = reg.installing;
@@ -4235,6 +4268,7 @@ padding:0 2px;">↩ Responder</button>`;
       t: {
         appTitle: "Vida Unileira", language: "Idioma", home: "Início", podcast: "Podcast", music: "Música", sharePlaylist: "📤 Compartilhar playlist", playlistShareTitle: "Playlist de Música — Vida Unileira", playlistShareDescription: "Este link abre a playlist desde o primeiro vídeo.", playlistAutoplayHint: "O link abre pelo primeiro vídeo e tenta iniciar a reprodução. Se o navegador bloquear, toque em Reproduzir no player.", playlistCopyLink: "🔗 Copiar link", playlistLinkCopied: "Link da playlist copiado.", install: "📲 Instalar App",
         podcastShareTitle: "Playlist de Podcast — Vida Unileira", podcastShareDescription: "Este link abre a playlist de podcasts desde o primeiro episódio.", podcastAutoplayHint: "O link abre pelo primeiro episódio e tenta iniciar a reprodução. Se o navegador bloquear, toque em Reproduzir no player.",
+        musicNowPlaying: "🎵 Tocando agora", podcastNowPlaying: "🎙️ Episódio atual", videoTitleLoading: "Carregando título...",
         chatMenu: "💬 Chat", portal: "🌐 Portal Oficial", inscreva: "🎓 Portal Inscreva", sigaa: "📚 SIGAA", email: "📧 E-mail",
         google: "🔎 Pesquisa Google", youtube: "▶ YouTube", instagram: "Instagram Arandu", facebook: "📘 Facebook", library: "📖 Biblioteca",
         intercampus: "Intercampi", publicTransport: "🚌 Transporte Público", internationalPortal: "🌐 Portal Internacional", notices: "📄 Editais Oficiais", emergency: "🚨 Emergência",
@@ -4271,6 +4305,7 @@ padding:0 2px;">↩ Responder</button>`;
       t: {
         appTitle: "Vida Unileira", language: "Langue", home: "Accueil", podcast: "Podcast", music: "Musique", sharePlaylist: "📤 Partager la playlist", playlistShareTitle: "Playlist musicale — Vida Unileira", playlistShareDescription: "Ce lien ouvre la playlist dès la première vidéo.", playlistAutoplayHint: "Le lien ouvre la première vidéo et tente de démarrer la lecture. Si le navigateur le bloque, appuyez sur Lecture dans le lecteur.", playlistCopyLink: "🔗 Copier le lien", playlistLinkCopied: "Lien de la playlist copié.", install: "📲 Installer l’application",
         podcastShareTitle: "Playlist de podcasts — Vida Unileira", podcastShareDescription: "Ce lien ouvre la playlist de podcasts dès le premier épisode.", podcastAutoplayHint: "Le lien ouvre le premier épisode et tente de démarrer la lecture. Si le navigateur le bloque, appuyez sur Lecture dans le lecteur.",
+        musicNowPlaying: "🎵 En lecture", podcastNowPlaying: "🎙️ Épisode actuel", videoTitleLoading: "Chargement du titre...",
         chatMenu: "💬 Chat", portal: "🌐 Portail officiel", inscreva: "🎓 Portal Inscreva", sigaa: "📚 SIGAA", email: "📧 E-mail",
         google: "🔎 Recherche Google", youtube: "▶ YouTube", instagram: "Instagram Arandu", facebook: "📘 Facebook", library: "📖 Bibliothèque",
         intercampus: "Intercampus", publicTransport: "🚌 Transport public", internationalPortal: "🌐 Portail international", notices: "📄 Avis officiels", emergency: "🚨 Urgence",
@@ -4307,6 +4342,7 @@ padding:0 2px;">↩ Responder</button>`;
       t: {
         appTitle: "Vida Unileira", language: "Idioma", home: "Inicio", podcast: "Podcast", music: "Música", sharePlaylist: "📤 Compartir lista de reproducción", playlistShareTitle: "Lista de música — Vida Unileira", playlistShareDescription: "Este enlace abre la lista desde el primer video.", playlistAutoplayHint: "El enlace abre el primer video e intenta iniciar la reproducción. Si el navegador lo bloquea, pulsa Reproducir en el reproductor.", playlistCopyLink: "🔗 Copiar enlace", playlistLinkCopied: "Enlace de la lista copiado.", install: "📲 Instalar aplicación",
         podcastShareTitle: "Lista de podcasts — Vida Unileira", podcastShareDescription: "Este enlace abre la lista de podcasts desde el primer episodio.", podcastAutoplayHint: "El enlace abre el primer episodio e intenta iniciar la reproducción. Si el navegador lo bloquea, pulsa Reproducir en el reproductor.",
+        musicNowPlaying: "🎵 Reproduciendo ahora", podcastNowPlaying: "🎙️ Episodio actual", videoTitleLoading: "Cargando título...",
         chatMenu: "💬 Chat", portal: "🌐 Portal oficial", inscreva: "🎓 Portal Inscreva", sigaa: "📚 SIGAA", email: "📧 Correo",
         google: "🔎 Búsqueda Google", youtube: "▶ YouTube", instagram: "Instagram Arandu", facebook: "📘 Facebook", library: "📖 Biblioteca",
         intercampus: "Intercampus", publicTransport: "🚌 Transporte público", internationalPortal: "🌐 Portal Internacional", notices: "📄 Convocatorias oficiales", emergency: "🚨 Emergencia",
@@ -4630,6 +4666,12 @@ padding:0 2px;">↩ Responder</button>`;
     setText("#musicShareHint", tr("playlistAutoplayHint"));
     setText("#sharePodcastPlaylistButton", tr("sharePlaylist"));
     setText("#podcastShareHint", tr("podcastAutoplayHint"));
+    setText("#musicNowPlayingLabel", tr("musicNowPlaying"));
+    setText("#podcastNowPlayingLabel", tr("podcastNowPlaying"));
+    ["musicNowPlayingTitle", "podcastNowPlayingTitle"].forEach(function(id) {
+      var titleNode = document.getElementById(id);
+      if (titleNode && !titleNode.dataset.videoTitle) titleNode.textContent = tr("videoTitleLoading");
+    });
     document.querySelectorAll("#radioPlayer .video-control-label").forEach(function(el){ el.textContent = tr("music"); });
     document.querySelectorAll("#podcastPlayer .video-control-label").forEach(function(el){ el.textContent = tr("podcast"); });
     setText("#installBtn", tr("install"));
