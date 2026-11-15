@@ -297,6 +297,8 @@ button:hover{
   text-align:left;
   font-size:14px;
   line-height:1.5;
+  transform:scale(0.5);
+  transform-origin:top center;
 }
 #chatPage{
   padding-top:140px;
@@ -2234,7 +2236,7 @@ gtag('config', 'G-FJT3X93608');
     // Atualização do PWA: rede primeiro; cache apenas como fallback offline.
     function setupPWAUpdate() {
       if (!('serviceWorker' in navigator)) return;
-      navigator.serviceWorker.register('./service-worker37.js?v=346', { updateViaCache: 'none' }).then(function(reg) {
+      navigator.serviceWorker.register('./service-worker37.js?v=347', { updateViaCache: 'none' }).then(function(reg) {
         reg.update();
         reg.addEventListener('updatefound', function() {
           var newWorker = reg.installing;
