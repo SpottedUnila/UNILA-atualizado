@@ -2220,7 +2220,7 @@ gtag('config', 'G-FJT3X93608');
     // Atualização do PWA: rede primeiro; cache apenas como fallback offline.
     function setupPWAUpdate() {
       if (!('serviceWorker' in navigator)) return;
-      navigator.serviceWorker.register('./service-worker37.js?v=340', { updateViaCache: 'none' }).then(function(reg) {
+      navigator.serviceWorker.register('./service-worker37.js?v=341', { updateViaCache: 'none' }).then(function(reg) {
         reg.update();
         reg.addEventListener('updatefound', function() {
           var newWorker = reg.installing;
@@ -2760,8 +2760,13 @@ gtag('config', 'G-FJT3X93608');
       return { title, description, externalUrl, articleUrl: contentPermalink(record, kind), siteUrl: VIDA_UNILEIRA_SITE_URL };
     }
     function contentShareText(payload) {
-      const parts = [payload.title];
-      if (payload.description) parts.push(payload.description);
+      const title = String(payload.title || "").trim();
+      let description = String(payload.description || "").trim();
+      const normalizeShareText = value => value.replace(/\s+/g, " ").toLowerCase();
+      if (title && description && normalizeShareText(title) === normalizeShareText(description)) description = "";
+      const parts = [];
+      if (title) parts.push(title);
+      if (description) parts.push(description);
       if (payload.externalUrl) parts.push("Leia mais: " + payload.externalUrl);
       parts.push("Abrir esta publicação no Vida Unileira: " + (payload.articleUrl || payload.siteUrl));
       return parts.join("\n\n");
