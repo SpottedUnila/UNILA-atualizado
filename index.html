@@ -1211,6 +1211,18 @@ function startSharedMusicPlaylistFromBeginning(player) {
   const target = player || ytPlayer;
   if (!target || typeof target.loadPlaylist !== "function") {
     sharedMusicAutoplayPending = true;
+    try {
+      const iframe = document.getElementById("ytRadio");
+      if (iframe && iframe.contentWindow) {
+        const command = (func, args) => iframe.contentWindow.postMessage(JSON.stringify({ event: "command", func, args: args || [] }), "*");
+        command("loadPlaylist", [{ listType: "playlist", list: MUSIC_PLAYLIST_ID, index: 0, startSeconds: 0 }]);
+        command("unMute");
+        command("setVolume", [100]);
+        command("playVideo");
+      }
+    } catch (error) {
+      console.warn("Não foi possível enviar comandos ao iframe da playlist:", error);
+    }
     return false;
   }
   try {
