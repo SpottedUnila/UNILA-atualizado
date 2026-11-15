@@ -2196,7 +2196,7 @@ gtag('config', 'G-FJT3X93608');
     // Atualização do PWA: rede primeiro; cache apenas como fallback offline.
     function setupPWAUpdate() {
       if (!('serviceWorker' in navigator)) return;
-      navigator.serviceWorker.register('./service-worker37.js?v=333', { updateViaCache: 'none' }).then(function(reg) {
+      navigator.serviceWorker.register('./service-worker37.js?v=334', { updateViaCache: 'none' }).then(function(reg) {
         reg.update();
         reg.addEventListener('updatefound', function() {
           var newWorker = reg.installing;
@@ -2622,6 +2622,14 @@ gtag('config', 'G-FJT3X93608');
     function musicShareTranslation(key, fallback) {
       return typeof window.unilaTranslate === "function" ? window.unilaTranslate(key) : fallback;
     }
+    function playlistWhatsAppMessage(kind, url) {
+      const isPodcast = kind === "podcast";
+      const heading = isPodcast ? "Playlist de Podcast - Vida Unileira" : "Playlist de Música - Vida Unileira";
+      const caption = isPodcast
+        ? "Confira a playlist Atualizada hoje, desde o primeiro episódio.💜🎙️"
+        : "Confira a playlist Atualizada hoje, desde o primeiro vídeo.💜🎶";
+      return heading + "\n\n" + caption + "\n\n" + url;
+    }
     function copyMusicPlaylistLink(url) {
       if (navigator.clipboard && window.isSecureContext) return navigator.clipboard.writeText(url);
       const helper = document.createElement("textarea");
@@ -2635,7 +2643,7 @@ gtag('config', 'G-FJT3X93608');
       helper.remove();
       return copied ? Promise.resolve() : Promise.reject(new Error("A cópia não foi permitida pelo navegador."));
     }
-    function showMusicShareOptions(url, title, description) {
+    function showMusicShareOptions(url, title, description, whatsappText) {
       const modal = document.createElement("div");
       modal.className = "share-options-modal";
       modal.innerHTML = '<div class="share-options-card" role="dialog" aria-modal="true" aria-label="Compartilhar playlist">' +
@@ -2650,7 +2658,7 @@ gtag('config', 'G-FJT3X93608');
       modal.querySelector('[data-share="close"]').textContent = musicShareTranslation("cancel", "Cancelar");
       document.body.appendChild(modal);
       const close = function(){ modal.remove(); };
-      const shareText = title + "\n\n" + description + "\n\n" + url;
+      const shareText = whatsappText || title + "\n\n" + description + "\n\n" + url;
       modal.querySelector('[data-share="close"]').onclick = close;
       modal.addEventListener("click", function(event){ if (event.target === modal) close(); });
       modal.addEventListener("keydown", function(event){ if (event.key === "Escape") close(); });
@@ -2681,42 +2689,42 @@ gtag('config', 'G-FJT3X93608');
       const url = musicPlaylistPermalink();
       const title = musicShareTranslation("playlistShareTitle", "Playlist de Música — Vida Unileira");
       const description = musicShareTranslation("playlistShareDescription", "Este link abre a playlist desde o primeiro vídeo.");
-      const shareText = title + "\n\n" + description + "\n\n" + url;
+      const shareText = playlistWhatsAppMessage("music", url);
       if (window.AndroidShare && typeof window.AndroidShare.share === "function") {
         try { window.AndroidShare.share(shareText); return; }
         catch (error) { console.warn("Compartilhamento Android indisponível:", error); }
       }
       if (navigator.share && typeof navigator.share === "function") {
         try {
-          await navigator.share({ title: title, text: description, url: url });
+          await navigator.share({ text: shareText });
           return;
         } catch (error) {
           if (error && error.name === "AbortError") return;
           console.warn("Compartilhamento nativo indisponível:", error);
         }
       }
-      showMusicShareOptions(url, title, description);
+      showMusicShareOptions(url, title, description, shareText);
     }
     window.shareMusicPlaylist = shareMusicPlaylist;
     async function sharePodcastPlaylist() {
       const url = podcastPlaylistPermalink();
       const title = musicShareTranslation("podcastShareTitle", "Playlist de Podcast — Vida Unileira");
       const description = musicShareTranslation("podcastShareDescription", "Este link abre a playlist de podcasts desde o primeiro episódio.");
-      const shareText = title + "\n\n" + description + "\n\n" + url;
+      const shareText = playlistWhatsAppMessage("podcast", url);
       if (window.AndroidShare && typeof window.AndroidShare.share === "function") {
         try { window.AndroidShare.share(shareText); return; }
         catch (error) { console.warn("Compartilhamento Android indisponível:", error); }
       }
       if (navigator.share && typeof navigator.share === "function") {
         try {
-          await navigator.share({ title: title, text: description, url: url });
+          await navigator.share({ text: shareText });
           return;
         } catch (error) {
           if (error && error.name === "AbortError") return;
           console.warn("Compartilhamento nativo indisponível:", error);
         }
       }
-      showMusicShareOptions(url, title, description);
+      showMusicShareOptions(url, title, description, shareText);
     }
     window.sharePodcastPlaylist = sharePodcastPlaylist;
     function contentSharePayload(item, kind) {
