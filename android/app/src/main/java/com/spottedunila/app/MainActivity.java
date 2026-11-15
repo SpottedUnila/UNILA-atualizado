@@ -26,6 +26,7 @@ public class MainActivity extends Activity {
         setContentView(webView);
         WebSettings settings = webView.getSettings();
         settings.setJavaScriptEnabled(true);
+        settings.setMediaPlaybackRequiresUserGesture(false);
         settings.setDomStorageEnabled(true);
         // O chat usa <input type="file"> para selecionar imagens. O WebView
         // precisa conseguir receber URIs de conteúdo do seletor do Android.
@@ -76,7 +77,31 @@ public class MainActivity extends Activity {
             }
         });
         webView.addJavascriptInterface(new AndroidShareBridge(), "AndroidShare");
-        webView.loadUrl(APP_URL);
+        webView.loadUrl(launchUriForIntent(getIntent()).toString());
+    }
+
+    private Uri launchUriForIntent(Intent intent) {
+        Uri candidate = intent == null ? null : intent.getData();
+        return isSupportedAppLink(candidate) ? candidate : Uri.parse(APP_URL);
+    }
+
+    private boolean isSupportedAppLink(Uri uri) {
+        if (uri == null || !"https".equalsIgnoreCase(uri.getScheme())
+                || !"spottedunila.github.io".equalsIgnoreCase(uri.getHost())) {
+            return false;
+        }
+        String path = uri.getPath();
+        return path != null && (path.equals("/UNILA-atualizado") || path.startsWith("/UNILA-atualizado/"));
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+        Uri candidate = intent == null ? null : intent.getData();
+        if (webView != null && isSupportedAppLink(candidate)) {
+            webView.loadUrl(candidate.toString());
+        }
     }
 
     @Override
