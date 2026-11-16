@@ -1650,8 +1650,8 @@ gtag('config', 'G-FJT3X93608');
     <button class="auxilio-estudantil" onclick="openLocalizedResource('studentAid')">🎓 Auxílio Estudantil</button>
     <button class="unila" onclick="openLocalizedResource('mentalHealth')">🧠 Saúde Mental</button>
     <a class="google menu-link" href="https://enem.inep.gov.br/participante/">📝 ENEM</a>
-    <button id="alternativeNewsButton" type="button" class="noticias" data-nila-action="news">📰 Notícias Alternativas</button>
-    <button id="conhecaUnilaButton" type="button" class="conheca-unila-btn" data-nila-action="conheca">🏫 Conheça a UNILA</button>
+    <button class="noticias" onclick="openNewsPage()">📰 Notícias Alternativas</button>
+    <button class="conheca-unila-btn" onclick="openConhecaUNILAPage()">🏫 Conheça a UNILA</button>
     <button class="desapega" onclick="openPage('desapegaPage')">🔎 Achados e Perdidos e Desapega</button>
     <button class="emergencia" data-search-key="upa" onclick="openUPAPage()" aria-label="Hospitais de Emergência 24h (UPA)">Hospitais de Emergência 24h (UPA)</button>
     <button class="dev" data-search-key="officialSources" onclick="openPage('officialSourcesPage')">🔗 Portal da Transparência</button>
@@ -2403,7 +2403,7 @@ gtag('config', 'G-FJT3X93608');
     // Atualização do PWA: rede primeiro; cache apenas como fallback offline.
     function setupPWAUpdate() {
       if (!('serviceWorker' in navigator)) return;
-      navigator.serviceWorker.register('./service-worker37.js?v=362', { updateViaCache: 'none' }).then(function(reg) {
+      navigator.serviceWorker.register('./service-worker37.js?v=359', { updateViaCache: 'none' }).then(function(reg) {
         reg.update();
         reg.addEventListener('updatefound', function() {
           var newWorker = reg.installing;
@@ -2799,6 +2799,9 @@ gtag('config', 'G-FJT3X93608');
         box.innerHTML = '<p style="color:#ef4444;">' + (typeof window.unilaTranslate === "function" ? window.unilaTranslate("newsError") : "Erro ao carregar notícias.") + '</p>';
       }
     }
+    // O botão usa onclick inline; a função precisa estar no escopo global do WebView.
+    window.openNewsPage = openNewsPage;
+    window.loadNews = loadNews;
     // Conheça a UNILA — conteúdo multimídia separado das notícias e administrável pelo painel.
     function escapeHtml(value) {
       return String(value == null ? "" : value)
@@ -3212,19 +3215,13 @@ gtag('config', 'G-FJT3X93608');
     async function loadConhecaRecords() {
       const bootstrap = Array.isArray(window.__CONHECA_BOOTSTRAP__) ? window.__CONHECA_BOOTSTRAP__ : [];
       const projectId = (typeof firebaseConfig !== "undefined" && firebaseConfig.projectId) ? firebaseConfig.projectId : "app-unila";
-      const endpoint = "https://firestore.googleapis.com/v1/projects/" + encodeURIComponent(projectId) + "/databases/(default)/documents/conhecaunila?pageSize=300";
-      const legacyEndpoint = "https://firestore.googleapis.com/v1/projects/" + encodeURIComponent(projectId) + "/databases/(default)/documents/conhecaUnila?pageSize=300";
+      const endpoint = "https://firestore.googleapis.com/v1/projects/" + encodeURIComponent(projectId) + "/databases/(default)/documents/conhecaUnila?pageSize=300";
       const controller = typeof AbortController === "function" ? new AbortController() : null;
       const timeoutId = window.setTimeout(function(){ if (controller) controller.abort(); }, 4000);
       try {
-        let response = await fetch(endpoint, { cache: "no-store", signal: controller ? controller.signal : undefined });
-        if (!response.ok) response = await fetch(legacyEndpoint, { cache: "no-store", signal: controller ? controller.signal : undefined });
+        const response = await fetch(endpoint, { cache: "no-store", signal: controller ? controller.signal : undefined });
         if (!response.ok) throw new Error("Firestore REST HTTP " + response.status);
-        let payload = await response.json();
-        if (!(payload.documents || []).length) {
-          const legacyResponse = await fetch(legacyEndpoint, { cache: "no-store", signal: controller ? controller.signal : undefined });
-          if (legacyResponse.ok) payload = await legacyResponse.json();
-        }
+        const payload = await response.json();
         const records = (payload.documents || []).map(function(document){
           const parts = String(document.name || "").split("/");
           return Object.assign({id: parts[parts.length - 1] || ""}, firestoreRestRecord(document.fields || {}));
@@ -3233,9 +3230,7 @@ gtag('config', 'G-FJT3X93608');
       } catch (restError) {
         console.warn("Firestore indisponível; usando catálogo local de Conheça a UNILA.", restError);
         if (bootstrap.length) return bootstrap;
-        let snapshot;
-        try { snapshot = await db.collection("conhecaunila").get(); }
-        catch (lowercaseError) { snapshot = await db.collection("conhecaUnila").get(); }
+        const snapshot = await db.collection("conhecaUnila").get();
         return snapshot.docs.map(function(doc){ return Object.assign({id:doc.id}, doc.data()); });
       } finally {
         window.clearTimeout(timeoutId);
@@ -3289,7 +3284,7 @@ gtag('config', 'G-FJT3X93608');
     let conhecaMediaUnsubscribe = null;
     function listenConhecaMediaChanges() {
       if (conhecaMediaUnsubscribe) return;
-      conhecaMediaUnsubscribe = db.collection("conhecaunila").onSnapshot(() => {
+      conhecaMediaUnsubscribe = db.collection("conhecaUnila").onSnapshot(() => {
         const dynamicPage = document.getElementById("dynamicPage");
         // O listener não pode sobrescrever UPA, Notícias ou qualquer outra página.
         if (window.__activeDynamicPage === "conheca" && dynamicPage && dynamicPage.style.display === "block" && typeof window.loadConhecaUNILA === "function") {
@@ -3348,21 +3343,7 @@ gtag('config', 'G-FJT3X93608');
       return undefined;
     }
     // Exposição explícita para onclick inline, listeners do Firebase e wrappers de idioma.
-    window.openNewsPage = openNewsPage;
     window.openConhecaUNILAPage = openConhecaUNILAPage;
-    window.openConhecaUnilaPage = openConhecaUNILAPage;
-    document.addEventListener("DOMContentLoaded", function() {
-      var newsButton = document.getElementById("alternativeNewsButton");
-      var conhecaButton = document.getElementById("conhecaUnilaButton");
-      if (newsButton) newsButton.addEventListener("click", function(event) {
-        event.preventDefault();
-        window.openNewsPage();
-      });
-      if (conhecaButton) conhecaButton.addEventListener("click", function(event) {
-        event.preventDefault();
-        window.openConhecaUNILAPage();
-      });
-    });
     function openSharedMusicPlaylist() {
       const player = document.getElementById("radioPlayer");
       const podcast = document.getElementById("podcastPlayer");
@@ -4777,9 +4758,9 @@ padding:0 2px;">↩ Responder</button>`;
         shouldScrollToBottom = true;
         listenChat();
       }
-      // Não exibir um modal sobre o menu principal ao iniciar o aplicativo.
-      // O usuário pode abrir Meta Acadêmica pelo botão correspondente sem
-      // bloquear o acesso a Notícias Alternativas e Conheça a UNILA.
+      setTimeout(function(){
+        if (typeof window.showAcademicGoalsReminder === "function") window.showAcademicGoalsReminder();
+      }, 900);
       // Escutar mudanças em notícias em tempo real
       db.collection('news').onSnapshot(snapshot => {
         // Notícias serão recarregadas quando o usuário clicar no botão
@@ -6256,18 +6237,5 @@ padding:0 2px;">↩ Responder</button>`;
       <button type="button" aria-label="Redefinir imagem" onclick="resetConhecaImageTransform()">⟳</button>
     </div>
   </div>
-  <script>
-    // Delegação em captura: funciona mesmo quando o menu é re-renderizado por idioma
-    // e não depende de Firebase para abrir a página imediatamente.
-    document.addEventListener("click", function(event) {
-      var button = event.target && event.target.closest ? event.target.closest("[data-nila-action]") : null;
-      if (!button) return;
-      var action = button.getAttribute("data-nila-action");
-      event.preventDefault();
-      event.stopImmediatePropagation();
-      if (action === "news" && typeof window.openNewsPage === "function") window.openNewsPage();
-      if (action === "conheca" && typeof window.openConhecaUnilaPage === "function") window.openConhecaUnilaPage();
-    }, true);
-  </script>
 </body>
 </html>
