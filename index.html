@@ -3194,6 +3194,7 @@ gtag('config', 'G-FJT3X93608');
         box.innerHTML = '<p style="color:#ef4444;">' + (typeof window.unilaTranslate === 'function' ? window.unilaTranslate('mediaError') : 'Error loading media.') + '</p>';
       }
     }
+    window.loadConhecaUNILA = loadConhecaUNILA;
 
     let conhecaMediaUnsubscribe = null;
     function listenConhecaMediaChanges() {
@@ -3214,10 +3215,22 @@ gtag('config', 'G-FJT3X93608');
     }
     function openConhecaUNILAPage() {
       window.__activeDynamicPage = "conheca";
-      document.getElementById("dynamicTitle").textContent = typeof window.unilaTranslate === "function" ? window.unilaTranslate("conheca") : "🏫 Conheça a UNILA";
+      state.currentDynamicId = "conheca";
+      var title = document.getElementById("dynamicTitle");
+      if (title) title.textContent = typeof window.unilaTranslate === "function" ? window.unilaTranslate("conheca") : "🏫 Conheça a UNILA";
       openPage("dynamicPage");
-      return loadConhecaUNILA();
+      var result;
+      try { result = loadConhecaUNILA(); }
+      catch (error) {
+        console.error("Erro ao abrir Conheça a UNILA:", error);
+        var box = document.getElementById("dynamicContent");
+        if (box) box.innerHTML = '<p style="color:#ef4444;">' + (typeof window.unilaTranslate === "function" ? window.unilaTranslate("mediaError") : "Error loading media.") + '</p>';
+        return Promise.resolve();
+      }
+      return result;
     }
+    // Exposição explícita para onclick inline, listeners do Firebase e wrappers de idioma.
+    window.openConhecaUNILAPage = openConhecaUNILAPage;
     function openSharedMusicPlaylist() {
       const player = document.getElementById("radioPlayer");
       const podcast = document.getElementById("podcastPlayer");
