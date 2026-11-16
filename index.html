@@ -3228,15 +3228,22 @@ gtag('config', 'G-FJT3X93608');
       var title = document.getElementById("dynamicTitle");
       if (title) title.textContent = typeof window.unilaTranslate === "function" ? window.unilaTranslate("conheca") : "🏫 Conheça a UNILA";
       openPage("dynamicPage");
-      var result;
-      try { result = loadConhecaUNILA(); }
-      catch (error) {
+      try {
+        var pendingLoad = loadConhecaUNILA();
+        if (pendingLoad && typeof pendingLoad.catch === "function") {
+          pendingLoad.catch(function(error) {
+            console.error("Erro ao carregar Conheça a UNILA:", error);
+            var box = document.getElementById("dynamicContent");
+            if (box) box.innerHTML = '<p style="color:#ef4444;">' + (typeof window.unilaTranslate === "function" ? window.unilaTranslate("mediaError") : "Error loading media.") + '</p>';
+          });
+        }
+      } catch (error) {
         console.error("Erro ao abrir Conheça a UNILA:", error);
         var box = document.getElementById("dynamicContent");
         if (box) box.innerHTML = '<p style="color:#ef4444;">' + (typeof window.unilaTranslate === "function" ? window.unilaTranslate("mediaError") : "Error loading media.") + '</p>';
-        return Promise.resolve();
       }
-      return result;
+      // Não retornar a Promise: WebViews podem bloquear o evento de toque aguardando o Firebase.
+      return undefined;
     }
     // Exposição explícita para onclick inline, listeners do Firebase e wrappers de idioma.
     window.openConhecaUNILAPage = openConhecaUNILAPage;
