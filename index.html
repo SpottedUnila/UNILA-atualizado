@@ -5130,7 +5130,7 @@ padding:0 2px;">↩ Responder</button>`;
     var text = String(value == null ? "" : value).trim();
     // Os rótulos do admin_content podem substituir os valores do código.
     // Mantém apenas a exceção "Conheça a UNILA" solicitada para o menu.
-    if (key !== "conheca") {
+    if (key !== "conheca" && key !== "admission") {
       text = text
         .replace(/\bVida Unileira\b/gi, "")
         .replace(/\b(?:Sistema Acad[eê]mico|Système académique)\b/gi, "")
