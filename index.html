@@ -2403,7 +2403,7 @@ gtag('config', 'G-FJT3X93608');
     // Atualização do PWA: rede primeiro; cache apenas como fallback offline.
     function setupPWAUpdate() {
       if (!('serviceWorker' in navigator)) return;
-      navigator.serviceWorker.register('./service-worker37.js?v=359', { updateViaCache: 'none' }).then(function(reg) {
+      navigator.serviceWorker.register('./service-worker37.js?v=360', { updateViaCache: 'none' }).then(function(reg) {
         reg.update();
         reg.addEventListener('updatefound', function() {
           var newWorker = reg.installing;
@@ -3294,52 +3294,39 @@ gtag('config', 'G-FJT3X93608');
     }
     function openNewsPage() {
       window.__activeDynamicPage = "noticias";
-      document.getElementById("dynamicTitle").textContent = typeof window.unilaTranslate === "function" ? window.unilaTranslate("news") : "📰 Notícias Alternativas da UNILA";
+      var title = document.getElementById("dynamicTitle");
+      if (title) title.textContent = "📰 Notícias Alternativas";
       openPage("dynamicPage");
-      var newsBox = document.getElementById("dynamicContent");
-      if (newsBox) newsBox.innerHTML = '<p style="text-align:center;padding:20px;color:#94a3b8;">' + (typeof window.unilaTranslate === "function" ? window.unilaTranslate("loading") : "Carregando...") + '</p>';
-      // Não aguarda o Firebase dentro do evento de toque do Android.
-      window.setTimeout(function(){
-        try {
-          var pendingNews = loadNews();
-          if (pendingNews && typeof pendingNews.catch === "function") {
-            pendingNews.catch(function(error){
-              console.error("Erro ao carregar notícias:", error);
-              if (newsBox) newsBox.innerHTML = '<p style="color:#ef4444;">' + (typeof window.unilaTranslate === "function" ? window.unilaTranslate("newsError") : "Erro ao carregar notícias.") + '</p>';
-            });
-          }
-        } catch (error) {
-          console.error("Erro ao abrir Notícias da UNILA:", error);
-          if (newsBox) newsBox.innerHTML = '<p style="color:#ef4444;">' + (typeof window.unilaTranslate === "function" ? window.unilaTranslate("newsError") : "Erro ao carregar notícias.") + '</p>';
-        }
-      }, 0);
+      var box = document.getElementById("dynamicContent");
+      try {
+        var records = (Array.isArray(window.__NEWS_BOOTSTRAP__) ? window.__NEWS_BOOTSTRAP__.slice() : [])
+          .sort(function(a,b){ return newsPublishedValue(b) - newsPublishedValue(a); });
+        if (box) box.innerHTML = renderNewsItems(records);
+      } catch (error) {
+        console.error("Erro ao exibir Notícias locais:", error);
+        if (box) box.innerHTML = '<p style="color:#ef4444;">Erro ao carregar notícias.</p>';
+      }
       return undefined;
     }
     function openConhecaUNILAPage() {
       window.__activeDynamicPage = "conheca";
       var title = document.getElementById("dynamicTitle");
-      if (title) title.textContent = typeof window.unilaTranslate === "function" ? window.unilaTranslate("conheca") : "🏫 Conheça a UNILA";
+      if (title) title.textContent = "🏫 Conheça a UNILA";
       openPage("dynamicPage");
-      // Inicia o Firebase no próximo ciclo: o WebView conclui o toque antes de qualquer operação assíncrona.
-      var immediateBox = document.getElementById("dynamicContent");
-      if (immediateBox) immediateBox.innerHTML = '<p style="text-align:center;padding:20px;color:#94a3b8;">' + (typeof window.unilaTranslate === "function" ? window.unilaTranslate("loading") : "Carregando...") + '</p>';
-      window.setTimeout(function() {
-        try {
-          var pendingLoad = loadConhecaUNILA();
-          if (pendingLoad && typeof pendingLoad.catch === "function") {
-            pendingLoad.catch(function(error) {
-              console.error("Erro ao carregar Conheça a UNILA:", error);
-              var box = document.getElementById("dynamicContent");
-              if (box) box.innerHTML = '<p style="color:#ef4444;">' + (typeof window.unilaTranslate === "function" ? window.unilaTranslate("mediaError") : "Error loading media.") + '</p>';
-            });
-          }
-        } catch (error) {
-          console.error("Erro ao carregar Conheça a UNILA:", error);
-          var box = document.getElementById("dynamicContent");
-          if (box) box.innerHTML = '<p style="color:#ef4444;">' + (typeof window.unilaTranslate === "function" ? window.unilaTranslate("mediaError") : "Error loading media.") + '</p>';
+      var box = document.getElementById("dynamicContent");
+      try {
+        var records = Array.isArray(window.__CONHECA_BOOTSTRAP__) ? window.__CONHECA_BOOTSTRAP__.slice() : [];
+        var items = records.filter(function(item){ var media = getConhecaMedia(item); return media.imageUrl || media.videoUrl; })
+          .sort(function(a,b){ return conhecaDateValue(b) - conhecaDateValue(a); });
+        if (!items.length) {
+          if (box) box.innerHTML = '<p style="text-align:center;padding:20px;color:#94a3b8;">Nenhuma imagem ou vídeo publicado ainda.</p>';
+        } else if (box) {
+          box.innerHTML = items.map(function(item){ return '<div class="news-card" style="background:rgba(30,41,59,.6);border-radius:12px;padding:10px;margin-bottom:15px;border:1px solid rgba(255,255,255,.1);">' + renderConhecaMedia(item) + '</div>'; }).join("");
         }
-      }, 0);
-      // Não retornar a Promise: WebViews podem bloquear o evento de toque aguardando o Firebase.
+      } catch (error) {
+        console.error("Erro ao exibir Conheça local:", error);
+        if (box) box.innerHTML = '<p style="color:#ef4444;">Erro ao carregar mídias.</p>';
+      }
       return undefined;
     }
     // Exposição explícita para onclick inline, listeners do Firebase e wrappers de idioma.
