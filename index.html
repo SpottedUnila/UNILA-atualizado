@@ -1645,7 +1645,6 @@ gtag('config', 'G-FJT3X93608');
     <button class="notes" onclick="openPage('notesPage')">📝 Anotações</button>
     <button class="share" onclick="shareApp()">📤 Compartilhar App</button>
     <button class="internet" onclick="openDynamic('internet','page')">🌐 Internet</button>
-    <button class="estude" onclick="openDynamic('estude','page')">🎓 Estude na</button>
     <button class="estude" data-search-key="admission" onclick="window.location.href='https://portal.unila.edu.br/ingresso'">🎓 Métodos da UNILA – Formas de ingresso</button>
     <button class="meta-academica" onclick="openAcademicGoalsPage()">📈 Meta Acadêmica</button>
     <button class="auxilio-estudantil" onclick="openLocalizedResource('studentAid')">🎓 Auxílio Estudantil</button>
@@ -2403,7 +2402,7 @@ gtag('config', 'G-FJT3X93608');
     // Atualização do PWA: rede primeiro; cache apenas como fallback offline.
     function setupPWAUpdate() {
       if (!('serviceWorker' in navigator)) return;
-      navigator.serviceWorker.register('./service-worker37.js?v=361', { updateViaCache: 'none' }).then(function(reg) {
+      navigator.serviceWorker.register('./service-worker37.js?v=362', { updateViaCache: 'none' }).then(function(reg) {
         reg.update();
         reg.addEventListener('updatefound', function() {
           var newWorker = reg.installing;
@@ -5214,7 +5213,7 @@ padding:0 2px;">↩ Responder</button>`;
 
   var menuKeys = [
     "chatMenu", "portal", "inscreva", "sigaa", "email", "youtube", "instagram", "facebook", "library", "intercampus", "publicTransport", "internationalPortal", "notices",
-    "emergency", "addresses", "ru", "group", "developer", "privacy", "notes", "share", "internet", "study", "admission", "academicGoals", "studentAid", "mentalHealth", "enem", "news", "conheca", "desapega", "upa", "officialSources"
+    "emergency", "addresses", "ru", "group", "developer", "privacy", "notes", "share", "internet", "admission", "academicGoals", "studentAid", "mentalHealth", "enem", "news", "conheca", "desapega", "upa", "officialSources"
   ];
 
   function applyStaticTranslations(){
