@@ -1009,6 +1009,7 @@ button:hover{
 .podcast-description-label{display:block;margin:0 0 5px;color:#bfdbfe;font-weight:800;}
 .podcast-description-text{margin:0;white-space:pre-wrap;}
 .podcast-description-text.is-collapsed{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;overflow:hidden;}
+.podcast-description-text.is-expanded{display:block;max-height:12em;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;touch-action:pan-y;padding-right:4px;}
 .podcast-description-toggle{display:inline-block;margin:6px 0 0;padding:0;border:0;background:transparent;color:#86efac;font:inherit;font-weight:800;text-decoration:underline;text-underline-offset:2px;cursor:pointer;}
 .podcast-description-toggle:focus-visible{outline:2px solid #86efac;outline-offset:3px;border-radius:3px;}
 .music-player-title{
@@ -1296,6 +1297,8 @@ function togglePodcastDescription() {
   const expanded = button.getAttribute("aria-expanded") !== "true";
   button.setAttribute("aria-expanded", String(expanded));
   text.classList.toggle("is-collapsed", !expanded);
+  text.classList.toggle("is-expanded", expanded);
+  text.scrollTop = 0;
   updatePodcastDescriptionToggleLabel();
 }
 function renderPodcastDescription(description, videoId) {
@@ -1305,7 +1308,9 @@ function renderPodcastDescription(description, videoId) {
   if (!panel || !text || !button || videoId !== activePodcastDescriptionVideoId) return;
   const value = String(description || "").trim();
   text.textContent = value;
+  text.classList.remove("is-expanded");
   text.classList.add("is-collapsed");
+  text.scrollTop = 0;
   button.hidden = true;
   button.setAttribute("aria-expanded", "false");
   panel.hidden = !value;
@@ -2345,7 +2350,7 @@ gtag('config', 'G-FJT3X93608');
     // Atualização do PWA: rede primeiro; cache apenas como fallback offline.
     function setupPWAUpdate() {
       if (!('serviceWorker' in navigator)) return;
-      navigator.serviceWorker.register('./service-worker37.js?v=351', { updateViaCache: 'none' }).then(function(reg) {
+      navigator.serviceWorker.register('./service-worker37.js?v=352', { updateViaCache: 'none' }).then(function(reg) {
         reg.update();
         reg.addEventListener('updatefound', function() {
           var newWorker = reg.installing;
