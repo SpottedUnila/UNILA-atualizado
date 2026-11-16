@@ -1650,8 +1650,8 @@ gtag('config', 'G-FJT3X93608');
     <button class="auxilio-estudantil" onclick="openLocalizedResource('studentAid')">🎓 Auxílio Estudantil</button>
     <button class="unila" onclick="openLocalizedResource('mentalHealth')">🧠 Saúde Mental</button>
     <a class="google menu-link" href="https://enem.inep.gov.br/participante/">📝 ENEM</a>
-    <button class="noticias" onclick="openNewsPage()">📰 Notícias Alternativas</button>
-    <button class="conheca-unila-btn" onclick="openConhecaUNILAPage()">🏫 Conheça a UNILA</button>
+    <button id="alternativeNewsButton" type="button" class="noticias" onclick="return window.openNewsPage()">📰 Notícias Alternativas</button>
+    <button id="conhecaUnilaButton" type="button" class="conheca-unila-btn" onclick="return window.openConhecaUNILAPage()">🏫 Conheça a UNILA</button>
     <button class="desapega" onclick="openPage('desapegaPage')">🔎 Achados e Perdidos e Desapega</button>
     <button class="emergencia" data-search-key="upa" onclick="openUPAPage()" aria-label="Hospitais de Emergência 24h (UPA)">Hospitais de Emergência 24h (UPA)</button>
     <button class="dev" data-search-key="officialSources" onclick="openPage('officialSourcesPage')">🔗 Portal da Transparência</button>
@@ -2403,7 +2403,7 @@ gtag('config', 'G-FJT3X93608');
     // Atualização do PWA: rede primeiro; cache apenas como fallback offline.
     function setupPWAUpdate() {
       if (!('serviceWorker' in navigator)) return;
-      navigator.serviceWorker.register('./service-worker37.js?v=358', { updateViaCache: 'none' }).then(function(reg) {
+      navigator.serviceWorker.register('./service-worker37.js?v=359', { updateViaCache: 'none' }).then(function(reg) {
         reg.update();
         reg.addEventListener('updatefound', function() {
           var newWorker = reg.installing;
@@ -3340,7 +3340,20 @@ gtag('config', 'G-FJT3X93608');
       return undefined;
     }
     // Exposição explícita para onclick inline, listeners do Firebase e wrappers de idioma.
+    window.openNewsPage = openNewsPage;
     window.openConhecaUNILAPage = openConhecaUNILAPage;
+    document.addEventListener("DOMContentLoaded", function() {
+      var newsButton = document.getElementById("alternativeNewsButton");
+      var conhecaButton = document.getElementById("conhecaUnilaButton");
+      if (newsButton) newsButton.addEventListener("click", function(event) {
+        event.preventDefault();
+        window.openNewsPage();
+      });
+      if (conhecaButton) conhecaButton.addEventListener("click", function(event) {
+        event.preventDefault();
+        window.openConhecaUNILAPage();
+      });
+    });
     function openSharedMusicPlaylist() {
       const player = document.getElementById("radioPlayer");
       const podcast = document.getElementById("podcastPlayer");
