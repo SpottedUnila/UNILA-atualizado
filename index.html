@@ -3182,17 +3182,10 @@ gtag('config', 'G-FJT3X93608');
       return record;
     }
     async function loadConhecaRecords() {
-      const sdkRead = db.collection("conhecaUnila").get().then(function(snapshot){
-        return snapshot.docs.map(function(doc){ return Object.assign({id:doc.id}, doc.data()); });
-      });
-      const timeout = new Promise(function(_, reject){
-        window.setTimeout(function(){ reject(new Error("Firestore SDK timeout")); }, 7000);
-      });
+      const projectId = (typeof firebaseConfig !== "undefined" && firebaseConfig.projectId) ? firebaseConfig.projectId : "app-unila";
+      const endpoint = "https://firestore.googleapis.com/v1/projects/" + encodeURIComponent(projectId) + "/databases/(default)/documents/conhecaUnila?pageSize=300";
       try {
-        return await Promise.race([sdkRead, timeout]);
-      } catch (sdkError) {
-        console.warn("Leitura do SDK do Firestore demorou; usando fallback REST.", sdkError);
-        const endpoint = "https://firestore.googleapis.com/v1/projects/" + encodeURIComponent(firebaseConfig.projectId) + "/databases/(default)/documents/conhecaUnila?pageSize=300";
+        // Leitura pública direta: não depende do estado de autenticação nem do cache offline do SDK.
         const response = await fetch(endpoint, { cache: "no-store" });
         if (!response.ok) throw new Error("Firestore REST HTTP " + response.status);
         const payload = await response.json();
@@ -3200,9 +3193,12 @@ gtag('config', 'G-FJT3X93608');
           const parts = String(document.name || "").split("/");
           return Object.assign({id: parts[parts.length - 1] || ""}, firestoreRestRecord(document.fields || {}));
         });
+      } catch (restError) {
+        console.warn("Leitura REST indisponível; tentando o SDK do Firestore.", restError);
+        const snapshot = await db.collection("conhecaUnila").get();
+        return snapshot.docs.map(function(doc){ return Object.assign({id:doc.id}, doc.data()); });
       }
     }
-
     async function loadConhecaUNILA() {
       const box = document.getElementById("dynamicContent");
       if (!box) return;
