@@ -3174,21 +3174,30 @@ gtag('config', 'G-FJT3X93608');
         const items = snapshot.docs.map(doc => ({id:doc.id, ...doc.data()}))
           .filter(item => getConhecaMedia(item).imageUrl || getConhecaMedia(item).videoUrl)
           .sort((a, b) => conhecaDateValue(b) - conhecaDateValue(a));
-        const translatedItems = await Promise.all(items.map(async function(item) {
-          const translated = Object.assign({}, item);
-          for (const field of ["title", "videoName", "caption", "imageCaption", "videoCaption"]) {
-            if (translated[field]) translated[field] = await translateMediaText(translated[field]);
+        function renderConhecaItems(renderItems) {
+          if (!renderItems.length) {
+            return '<p style="text-align:center;padding:20px;color:#94a3b8;">' + (typeof window.unilaTranslate === 'function' ? window.unilaTranslate('noMedia') : 'No images or videos have been published yet.') + '</p>';
           }
-          return translated;
-        }));
-        let htmlConheca = "";
-        if (!translatedItems.length) {
-          htmlConheca = '<p style="text-align:center;padding:20px;color:#94a3b8;">' + (typeof window.unilaTranslate === 'function' ? window.unilaTranslate('noMedia') : 'No images or videos have been published yet.') + '</p>';
-        } else {
-          htmlConheca = translatedItems.map(item => `<div class="news-card" data-content-kind="conheca" data-content-id="${escapeHtml(item.id || "")}" style="background:rgba(30,41,59,.6);border-radius:12px;padding:10px;margin-bottom:15px;border:1px solid rgba(255,255,255,.1);">${renderConhecaMedia(item)}</div>`).join("");
+          return renderItems.map(item => `<div class="news-card" data-content-kind="conheca" data-content-id="${escapeHtml(item.id || "")}" style="background:rgba(30,41,59,.6);border-radius:12px;padding:10px;margin-bottom:15px;border:1px solid rgba(255,255,255,.1);">${renderConhecaMedia(item)}</div>`).join("");
         }
-        box.innerHTML = htmlConheca;
+        // Exibe a página assim que o Firebase responde; tradução nunca bloqueia a entrada.
+        box.innerHTML = renderConhecaItems(items);
         if (typeof translateDynamicUI === "function") translateDynamicUI();
+        if (state.lang !== "pt" && items.length) {
+          Promise.all(items.map(async function(item) {
+            const translated = Object.assign({}, item);
+            for (const field of ["title", "videoName", "caption", "imageCaption", "videoCaption"]) {
+              if (translated[field]) translated[field] = await translateMediaText(translated[field]);
+            }
+            return translated;
+          })).then(function(translatedItems) {
+            if (window.__activeDynamicPage !== "conheca" || document.getElementById("dynamicContent") !== box) return;
+            box.innerHTML = renderConhecaItems(translatedItems);
+            if (typeof translateDynamicUI === "function") translateDynamicUI();
+          }).catch(function(error) {
+            console.warn("Tradução das mídias de Conheça a UNILA indisponível; mantendo o conteúdo original.", error);
+          });
+        }
       } catch(e) {
         console.error("Erro ao carregar Conheça a UNILA:", e);
         box.innerHTML = '<p style="color:#ef4444;">' + (typeof window.unilaTranslate === 'function' ? window.unilaTranslate('mediaError') : 'Error loading media.') + '</p>';
