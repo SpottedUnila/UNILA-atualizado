@@ -1645,7 +1645,7 @@ gtag('config', 'G-FJT3X93608');
     <button class="notes" onclick="openPage('notesPage')">📝 Anotações</button>
     <button class="share" onclick="shareApp()">📤 Compartilhar App</button>
     <button class="internet" onclick="openDynamic('internet','page')">🌐 Internet</button>
-    <button class="estude" data-search-key="admission" onclick="window.location.href='https://portal.unila.edu.br/ingresso'">🎓 Métodos da UNILA – Formas de ingresso</button>
+    <button class="estude" data-search-key="admission" onclick="window.location.href='https://portal.unila.edu.br/ingresso'">🎓 UNILA – Formas de ingresso</button>
     <button class="meta-academica" onclick="openAcademicGoalsPage()">📈 Meta Acadêmica</button>
     <button class="auxilio-estudantil" onclick="openLocalizedResource('studentAid')">🎓 Auxílio Estudantil</button>
     <button class="unila" onclick="openLocalizedResource('mentalHealth')">🧠 Saúde Mental</button>
@@ -2402,7 +2402,7 @@ gtag('config', 'G-FJT3X93608');
     // Atualização do PWA: rede primeiro; cache apenas como fallback offline.
     function setupPWAUpdate() {
       if (!('serviceWorker' in navigator)) return;
-      navigator.serviceWorker.register('./service-worker37.js?v=362', { updateViaCache: 'none' }).then(function(reg) {
+      navigator.serviceWorker.register('./service-worker37.js?v=363', { updateViaCache: 'none' }).then(function(reg) {
         reg.update();
         reg.addEventListener('updatefound', function() {
           var newWorker = reg.installing;
@@ -4772,7 +4772,7 @@ padding:0 2px;">↩ Responder</button>`;
         google: "🔎 Pesquisa Google", youtube: "▶ YouTube", instagram: "Instagram Arandu", facebook: "📘 Facebook", library: "📖 Biblioteca",
         intercampus: "Intercampi", publicTransport: "🚌 Transporte Público", internationalPortal: "🌐 Portal Internacional", notices: "📄 Editais Oficiais", emergency: "🚨 Emergência",
         addresses: "🏫 Endereços", ru: "🍽️ Restaurantes Universitários", group: "👥 Grupo no Facebook", developer: "👨‍💻 Desenvolvedor", privacy: "🔒 Privacidade e exclusão",
-        notes: "📝 Anotações", share: "📤 Compartilhar App", internet: "🌐 Internet", study: "🎓 Estude na", academicGoals: "📈 Meta Acadêmica", admission: "🎓 Métodos da UNILA – Formas de ingresso", studentAid: "🎓 Auxílio Estudantil", mentalHealth: "🧠 Saúde Mental",
+        notes: "📝 Anotações", share: "📤 Compartilhar App", internet: "🌐 Internet", study: "🎓 Estude na", academicGoals: "📈 Meta Acadêmica", admission: "🎓 UNILA – Formas de ingresso", studentAid: "🎓 Auxílio Estudantil", mentalHealth: "🧠 Saúde Mental",
         enem: "📝 ENEM – Página do Participante", news: "📰 Notícias Alternativas", conheca: "🏫 Conheça a UNILA", desapega: "🔎 Achados e Perdidos e Desapega", upa: "Hospitais de Emergência 24h (UPA)", officialSources: "🔗 Portal da Transparência",
         chatHeading: "💬 Chat UNILA",
         chatFirstAccessNotice: "Primeiro acesso: digite um nick e crie uma senha. Anote-a para não esquecer. Nos outros acessos e em qualquer dispositivo, use sempre o mesmo nick e a mesma senha. Mantenha a senha bem guardada: nem o desenvolvedor tem acesso a ela, e não será possível recuperá-la se você a esquecer.",
@@ -4813,7 +4813,7 @@ padding:0 2px;">↩ Responder</button>`;
         google: "🔎 Recherche Google", youtube: "▶ YouTube", instagram: "Instagram Arandu", facebook: "📘 Facebook", library: "📖 Bibliothèque",
         intercampus: "Intercampus", publicTransport: "🚌 Transport public", internationalPortal: "🌐 Portail international", notices: "📄 Avis officiels", emergency: "🚨 Urgence",
         addresses: "🏫 Adresses", ru: "🍽️ Restaurants universitaires", group: "👥 Groupe Facebook", developer: "👨‍💻 Développeur", privacy: "🔒 Confidentialité et suppression",
-        notes: "📝 Notes", share: "📤 Partager l’application", internet: "🌐 Internet", study: "🎓 Étudier", academicGoals: "📈 Objectif académique", admission: "🎓 Modalités d’admission à l’UNILA", studentAid: "🎓 Aide aux étudiants", mentalHealth: "🧠 Santé mentale",
+        notes: "📝 Notes", share: "📤 Partager l’application", internet: "🌐 Internet", study: "🎓 Étudier", academicGoals: "📈 Objectif académique", admission: "🎓 Admission à l’UNILA", studentAid: "🎓 Aide aux étudiants", mentalHealth: "🧠 Santé mentale",
         enem: "📝 ENEM", news: "📰 Actualités alternatives", conheca: "🏫 Découvrez l’UNILA", desapega: "🔎 Objets trouvés et perdus · Desapega", upa: "Hôpitaux d’urgence 24 h (UPA)", officialSources: "🔗 Portail de la transparence",
         chatHeading: "💬 Chat UNILA",
         chatFirstAccessNotice: "Première connexion : saisissez un pseudo et créez un mot de passe. Notez-le pour ne pas l’oublier. Pour vos connexions suivantes, sur n’importe quel appareil, utilisez toujours le même pseudo et le même mot de passe. Gardez le mot de passe en lieu sûr : même le développeur ne peut pas y accéder, et il ne pourra pas être récupéré en cas d’oubli.",
@@ -4854,7 +4854,7 @@ padding:0 2px;">↩ Responder</button>`;
         google: "🔎 Búsqueda Google", youtube: "▶ YouTube", instagram: "Instagram Arandu", facebook: "📘 Facebook", library: "📖 Biblioteca",
         intercampus: "Intercampus", publicTransport: "🚌 Transporte público", internationalPortal: "🌐 Portal Internacional", notices: "📄 Convocatorias oficiales", emergency: "🚨 Emergencia",
         addresses: "🏫 Direcciones", ru: "🍽️ Restaurantes universitarios", group: "👥 Grupo de Facebook", developer: "👨‍💻 Desarrollador", privacy: "🔒 Privacidad y eliminación",
-        notes: "📝 Anotaciones", share: "📤 Compartir aplicación", internet: "🌐 Internet", study: "🎓 Estudia", academicGoals: "📈 Meta académica", admission: "🎓 Métodos de ingreso a la UNILA", studentAid: "🎓 Ayuda estudiantil", mentalHealth: "🧠 Salud mental",
+        notes: "📝 Anotaciones", share: "📤 Compartir aplicación", internet: "🌐 Internet", study: "🎓 Estudia", academicGoals: "📈 Meta académica", admission: "🎓 Ingreso a la UNILA", studentAid: "🎓 Ayuda estudiantil", mentalHealth: "🧠 Salud mental",
         enem: "📝 ENEM", news: "📰 Noticias alternativas", conheca: "🏫 Conoce la UNILA", desapega: "🔎 Objetos perdidos y encontrados · Desapega", upa: "Hospitales de emergencia 24 h (UPA)", officialSources: "🔗 Portal de la Transparencia",
         chatHeading: "💬 Chat UNILA",
         chatFirstAccessNotice: "Primer acceso: escribe un nick y crea una contraseña. Anótala para no olvidarla. En los accesos siguientes y desde cualquier dispositivo, usa siempre el mismo nick y la misma contraseña. Guárdala bien: ni siquiera el desarrollador puede acceder a ella y no será posible recuperarla si la olvidas.",
@@ -4898,7 +4898,7 @@ padding:0 2px;">↩ Responder</button>`;
       google: "🔎 Google Search", youtube: "▶ YouTube", instagram: "Instagram Arandu", facebook: "📘 Facebook", library: "📖 Library",
       intercampus: "Intercampus Shuttle", publicTransport: "🚌 Public Transport", internationalPortal: "🌐 International Portal", notices: "📄 Official Notices", emergency: "🚨 Emergency",
       addresses: "🏫 Campus Addresses", ru: "🍽️ University Restaurants", group: "👥 Facebook Group", developer: "👨‍💻 Developer", privacy: "🔒 Privacy and data deletion",
-      notes: "📝 Notes", share: "📤 Share app", internet: "🌐 Internet", study: "🎓 Study at UNILA", academicGoals: "📈 Academic Goals", admission: "🎓 UNILA Admission Options", studentAid: "🎓 Student Aid", mentalHealth: "🧠 Mental Health",
+      notes: "📝 Notes", share: "📤 Share app", internet: "🌐 Internet", study: "🎓 Study at UNILA", academicGoals: "📈 Academic Goals", admission: "🎓 UNILA Admission", studentAid: "🎓 Student Aid", mentalHealth: "🧠 Mental Health",
       enem: "📝 ENEM – Participant Portal", news: "📰 Alternative News", conheca: "🏫 Discover UNILA", desapega: "🔎 Lost and Found · Marketplace", upa: "24-hour Emergency Care Units (UPA)", officialSources: "🔗 Transparency Portal",
       chatHeading: "💬 UNILA Chat",
       chatFirstAccessNotice: "First access: enter a nickname and create a password. Write it down so you do not forget it. On every later visit and on any device, always use the same nickname and password. Keep your password safe: not even the developer can access it, and it cannot be recovered if you forget it.",
