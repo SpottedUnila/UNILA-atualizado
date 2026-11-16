@@ -3183,7 +3183,8 @@ gtag('config', 'G-FJT3X93608');
         // Exibe a página assim que o Firebase responde; tradução nunca bloqueia a entrada.
         box.innerHTML = renderConhecaItems(items);
         if (typeof translateDynamicUI === "function") translateDynamicUI();
-        if (state.lang !== "pt" && items.length) {
+        const activeLanguage = typeof window.unilaCurrentLanguage === "function" ? window.unilaCurrentLanguage() : (localStorage.getItem("unila_language") || "pt");
+        if (activeLanguage !== "pt" && items.length) {
           Promise.all(items.map(async function(item) {
             const translated = Object.assign({}, item);
             for (const field of ["title", "videoName", "caption", "imageCaption", "videoCaption"]) {
@@ -3224,7 +3225,6 @@ gtag('config', 'G-FJT3X93608');
     }
     function openConhecaUNILAPage() {
       window.__activeDynamicPage = "conheca";
-      state.currentDynamicId = "conheca";
       var title = document.getElementById("dynamicTitle");
       if (title) title.textContent = typeof window.unilaTranslate === "function" ? window.unilaTranslate("conheca") : "🏫 Conheça a UNILA";
       openPage("dynamicPage");
