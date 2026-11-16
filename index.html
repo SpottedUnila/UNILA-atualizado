@@ -3268,7 +3268,24 @@ gtag('config', 'G-FJT3X93608');
       window.__activeDynamicPage = "noticias";
       document.getElementById("dynamicTitle").textContent = typeof window.unilaTranslate === "function" ? window.unilaTranslate("news") : "📰 Notícias Alternativas da UNILA";
       openPage("dynamicPage");
-      return loadNews();
+      var newsBox = document.getElementById("dynamicContent");
+      if (newsBox) newsBox.innerHTML = '<p style="text-align:center;padding:20px;color:#94a3b8;">' + (typeof window.unilaTranslate === "function" ? window.unilaTranslate("loading") : "Carregando...") + '</p>';
+      // Não aguarda o Firebase dentro do evento de toque do Android.
+      window.setTimeout(function(){
+        try {
+          var pendingNews = loadNews();
+          if (pendingNews && typeof pendingNews.catch === "function") {
+            pendingNews.catch(function(error){
+              console.error("Erro ao carregar notícias:", error);
+              if (newsBox) newsBox.innerHTML = '<p style="color:#ef4444;">' + (typeof window.unilaTranslate === "function" ? window.unilaTranslate("newsError") : "Erro ao carregar notícias.") + '</p>';
+            });
+          }
+        } catch (error) {
+          console.error("Erro ao abrir Notícias da UNILA:", error);
+          if (newsBox) newsBox.innerHTML = '<p style="color:#ef4444;">' + (typeof window.unilaTranslate === "function" ? window.unilaTranslate("newsError") : "Erro ao carregar notícias.") + '</p>';
+        }
+      }, 0);
+      return undefined;
     }
     function openConhecaUNILAPage() {
       window.__activeDynamicPage = "conheca";
