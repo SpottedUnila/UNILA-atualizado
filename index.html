@@ -2403,7 +2403,7 @@ gtag('config', 'G-FJT3X93608');
     // Atualização do PWA: rede primeiro; cache apenas como fallback offline.
     function setupPWAUpdate() {
       if (!('serviceWorker' in navigator)) return;
-      navigator.serviceWorker.register('./service-worker37.js?v=361', { updateViaCache: 'none' }).then(function(reg) {
+      navigator.serviceWorker.register('./service-worker37.js?v=362', { updateViaCache: 'none' }).then(function(reg) {
         reg.update();
         reg.addEventListener('updatefound', function() {
           var newWorker = reg.installing;
@@ -4777,9 +4777,9 @@ padding:0 2px;">↩ Responder</button>`;
         shouldScrollToBottom = true;
         listenChat();
       }
-      setTimeout(function(){
-        if (typeof window.showAcademicGoalsReminder === "function") window.showAcademicGoalsReminder();
-      }, 900);
+      // Não exibir um modal sobre o menu principal ao iniciar o aplicativo.
+      // O usuário pode abrir Meta Acadêmica pelo botão correspondente sem
+      // bloquear o acesso a Notícias Alternativas e Conheça a UNILA.
       // Escutar mudanças em notícias em tempo real
       db.collection('news').onSnapshot(snapshot => {
         // Notícias serão recarregadas quando o usuário clicar no botão
