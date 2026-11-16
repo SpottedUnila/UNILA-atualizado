@@ -1650,8 +1650,8 @@ gtag('config', 'G-FJT3X93608');
     <button class="auxilio-estudantil" onclick="openLocalizedResource('studentAid')">🎓 Auxílio Estudantil</button>
     <button class="unila" onclick="openLocalizedResource('mentalHealth')">🧠 Saúde Mental</button>
     <a class="google menu-link" href="https://enem.inep.gov.br/participante/">📝 ENEM</a>
-    <button id="alternativeNewsButton" type="button" class="noticias" onclick="return window.openNewsPage()">📰 Notícias Alternativas</button>
-    <button id="conhecaUnilaButton" type="button" class="conheca-unila-btn" onclick="return window.openConhecaUnilaPage()">🏫 Conheça a UNILA</button>
+    <button id="alternativeNewsButton" type="button" class="noticias" data-nila-action="news">📰 Notícias Alternativas</button>
+    <button id="conhecaUnilaButton" type="button" class="conheca-unila-btn" data-nila-action="conheca">🏫 Conheça a UNILA</button>
     <button class="desapega" onclick="openPage('desapegaPage')">🔎 Achados e Perdidos e Desapega</button>
     <button class="emergencia" data-search-key="upa" onclick="openUPAPage()" aria-label="Hospitais de Emergência 24h (UPA)">Hospitais de Emergência 24h (UPA)</button>
     <button class="dev" data-search-key="officialSources" onclick="openPage('officialSourcesPage')">🔗 Portal da Transparência</button>
@@ -2403,7 +2403,7 @@ gtag('config', 'G-FJT3X93608');
     // Atualização do PWA: rede primeiro; cache apenas como fallback offline.
     function setupPWAUpdate() {
       if (!('serviceWorker' in navigator)) return;
-      navigator.serviceWorker.register('./service-worker37.js?v=360', { updateViaCache: 'none' }).then(function(reg) {
+      navigator.serviceWorker.register('./service-worker37.js?v=361', { updateViaCache: 'none' }).then(function(reg) {
         reg.update();
         reg.addEventListener('updatefound', function() {
           var newWorker = reg.installing;
@@ -6256,5 +6256,18 @@ padding:0 2px;">↩ Responder</button>`;
       <button type="button" aria-label="Redefinir imagem" onclick="resetConhecaImageTransform()">⟳</button>
     </div>
   </div>
+  <script>
+    // Delegação em captura: funciona mesmo quando o menu é re-renderizado por idioma
+    // e não depende de Firebase para abrir a página imediatamente.
+    document.addEventListener("click", function(event) {
+      var button = event.target && event.target.closest ? event.target.closest("[data-nila-action]") : null;
+      if (!button) return;
+      var action = button.getAttribute("data-nila-action");
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      if (action === "news" && typeof window.openNewsPage === "function") window.openNewsPage();
+      if (action === "conheca" && typeof window.openConhecaUnilaPage === "function") window.openConhecaUnilaPage();
+    }, true);
+  </script>
 </body>
 </html>
