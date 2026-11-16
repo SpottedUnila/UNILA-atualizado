@@ -1258,6 +1258,21 @@ const MUSIC_PLAYLIST_ID = "PLyTsVCtgNA7Uzq69sB_NhyJJEpNr1ePPM";
 const PODCAST_PLAYLIST_ID = "PLyTsVCtgNA7Wf0kpU61OW_Er7JfxGigv6";
 let sharedMusicAutoplayPending = false;
 let sharedPodcastAutoplayPending = false;
+function translateMediaText(text) {
+  const value = String(text == null ? "" : text);
+  if (!value.trim() || typeof window.unilaTranslateDynamicText !== "function") return Promise.resolve(value);
+  return window.unilaTranslateDynamicText(value);
+}
+function applyTranslatedVideoTitle(titleElement, sourceTitle) {
+  if (!titleElement) return;
+  const source = String(sourceTitle || "").trim();
+  if (!source) return;
+  titleElement.dataset.videoTitle = source;
+  titleElement.dataset.videoTitleSource = source;
+  translateMediaText(source).then(function(translated) {
+    if (titleElement.dataset.videoTitleSource === source) titleElement.textContent = translated || source;
+  }).catch(function() { titleElement.textContent = source; });
+}
 function updateNowPlayingTitle(player, elementId) {
   const titleElement = document.getElementById(elementId);
   if (!titleElement || !player || typeof player.getVideoData !== "function") return;
@@ -1265,8 +1280,7 @@ function updateNowPlayingTitle(player, elementId) {
     const videoData = player.getVideoData();
     const title = String(videoData && videoData.title || "").trim();
     if (title) {
-      titleElement.dataset.videoTitle = title;
-      titleElement.textContent = title;
+      applyTranslatedVideoTitle(titleElement, title);
     } else if (!titleElement.dataset.videoTitle) {
       titleElement.textContent = typeof window.unilaTranslate === "function"
         ? window.unilaTranslate("videoTitleLoading")
@@ -1307,20 +1321,26 @@ function renderPodcastDescription(description, videoId) {
   const text = document.getElementById("podcastDescriptionText");
   const button = document.getElementById("podcastDescriptionToggle");
   if (!panel || !text || !button || videoId !== activePodcastDescriptionVideoId) return;
-  const value = String(description || "").trim();
-  text.textContent = value;
-  text.classList.remove("is-expanded");
-  text.classList.add("is-collapsed");
-  text.scrollTop = 0;
-  button.hidden = true;
-  button.setAttribute("aria-expanded", "false");
-  panel.hidden = !value;
-  if (!value) return;
-  window.requestAnimationFrame(function() {
-    if (videoId !== activePodcastDescriptionVideoId) return;
-    button.hidden = text.scrollHeight <= text.clientHeight + 1;
-    updatePodcastDescriptionToggleLabel();
-  });
+  const source = String(description || "").trim();
+  const requestId = videoId;
+  const apply = function(value) {
+    if (requestId !== activePodcastDescriptionVideoId) return;
+    text.dataset.sourceDescription = source;
+    text.textContent = value || source;
+    text.classList.remove("is-expanded");
+    text.classList.add("is-collapsed");
+    text.scrollTop = 0;
+    button.hidden = true;
+    button.setAttribute("aria-expanded", "false");
+    panel.hidden = !(value || source);
+    if (!(value || source)) return;
+    window.requestAnimationFrame(function() {
+      if (requestId !== activePodcastDescriptionVideoId) return;
+      button.hidden = text.scrollHeight <= text.clientHeight + 1;
+      updatePodcastDescriptionToggleLabel();
+    });
+  };
+  translateMediaText(source).then(apply).catch(function() { apply(source); });
 }
 async function fetchPodcastVideoDescription(videoId) {
   const id = String(videoId || "").trim();
@@ -1386,11 +1406,8 @@ async function getPodcastVideoTitleForShare() {
       }
     } catch (error) {}
     if (title) {
-      if (titleElement) {
-        titleElement.dataset.videoTitle = title;
-        titleElement.textContent = title;
-      }
-      return title;
+      if (titleElement) applyTranslatedVideoTitle(titleElement, title);
+      return await translateMediaText(title);
     }
     if (attempt < 5) await new Promise(resolve => window.setTimeout(resolve, 150));
   }
@@ -2706,19 +2723,26 @@ gtag('config', 'G-FJT3X93608');
     }
     function newsDateText(news) {
       const timestamp = newsPublishedValue(news);
-      return timestamp ? new Date(timestamp).toLocaleString('pt-BR') : 'Data indisponível';
+      return timestamp ? new Date(timestamp).toLocaleString(document.documentElement.lang || 'pt-BR') : (typeof window.unilaTranslate === 'function' ? window.unilaTranslate('dateUnavailable') : 'Date unavailable');
     }
     async function loadNews() {
       try {
         // Evita misturar na consulta tipos diferentes de timestamp dos documentos antigos e novos.
         const snapshot = await db.collection('news').get();
         const records = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })).sort((a, b) => newsPublishedValue(b) - newsPublishedValue(a));
+        const translatedRecords = await Promise.all(records.map(async function(news) {
+          const translated = Object.assign({}, news);
+          for (const field of ["title", "content", "videoName", "caption", "videoCaption"]) {
+            if (translated[field]) translated[field] = await translateMediaText(translated[field]);
+          }
+          return translated;
+        }));
         let newsHtml = '';
         
-        if (!records.length) {
+        if (!translatedRecords.length) {
           newsHtml = '<p style="text-align:center; padding:20px; color:#94a3b8;">Nenhuma notícia publicada ainda.</p>';
         } else {
-          records.forEach(news => {
+          translatedRecords.forEach(news => {
             const date = newsDateText(news);
             
             // Normaliza URLs do storage do AdminPanel antes da otimização.
@@ -2955,7 +2979,7 @@ gtag('config', 'G-FJT3X93608');
     window.shareMusicPlaylist = shareMusicPlaylist;
     async function sharePodcastPlaylist() {
       const url = podcastPlaylistPermalink();
-      const title = "Playlist de Podcast🎙️ - Vida Unileira";
+      const title = musicShareTranslation("podcastShareTitle", "Podcast Playlist🎙️ — Vida Unileira");
       const podcastVideoTitle = await getPodcastVideoTitleForShare();
       const podcastVideoId = await getPodcastVideoIdForShare();
       let podcastVideoDescription = "";
@@ -3008,21 +3032,21 @@ gtag('config', 'G-FJT3X93608');
       const payload = contentSharePayload(item, kind);
       const encoded = encodeURIComponent(JSON.stringify(payload));
       const external = payload.externalUrl
-        ? `<a class="resource-open-link" href="${escapeHtml(payload.externalUrl)}" target="_blank" rel="noopener noreferrer">🔗 Abrir link externo</a>`
+        ? `<a class="resource-open-link" href="${escapeHtml(payload.externalUrl)}" target="_blank" rel="noopener noreferrer">🔗 ${musicShareTranslation("openExternal", "Abrir link externo")}</a>`
         : "";
-      return `<div class="content-actions" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;">${external}<button type="button" class="resource-open-link" data-share-payload="${encoded}" onclick="sharePublishedContent(this.dataset.sharePayload)">📤 Compartilhar</button></div>`;
+      return `<div class="content-actions" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;">${external}<button type="button" class="resource-open-link" data-share-payload="${encoded}" onclick="sharePublishedContent(this.dataset.sharePayload)">📤 ${musicShareTranslation("share", "Compartilhar")}</button></div>`;
     }
     async function sharePublishedContent(encodedPayload) {
       let payload;
       try { payload = JSON.parse(decodeURIComponent(encodedPayload || "")); } catch (error) { return; }
       const modal = document.createElement("div");
       modal.className = "share-options-modal";
-      modal.innerHTML = '<div class="share-options-card" role="dialog" aria-modal="true" aria-label="Compartilhar publicação">' +
-        '<h3 data-share-title></h3><p>Escolha onde compartilhar esta publicação. O link abrirá diretamente este conteúdo no Vida Unileira.</p>' +
+      modal.innerHTML = '<div class="share-options-card" role="dialog" aria-modal="true" aria-label="' + musicShareTranslation("share", "Compartilhar") + '">' +
+        '<h3 data-share-title></h3><p>' + musicShareTranslation("shareContentHint", "Choose where to share this post. The link will open this content directly in Vida Unileira.") + '</p>' +
         '<div class="share-options-grid"><button class="share-whatsapp" data-share="whatsapp">💬 WhatsApp</button>' +
         '<button class="share-facebook" data-share="facebook">📘 Facebook</button></div>' +
-        '<button class="share-options-close" data-share="close">Cancelar</button></div>';
-      modal.querySelector("[data-share-title]").textContent = payload.title || "Compartilhar publicação";
+        '<button class="share-options-close" data-share="close">' + musicShareTranslation("cancel", "Cancelar") + '</button></div>';
+      modal.querySelector("[data-share-title]").textContent = payload.title || musicShareTranslation("share", "Compartilhar");
       document.body.appendChild(modal);
       const close = function(){ modal.remove(); };
       const articleUrl = payload.articleUrl || payload.siteUrl || VIDA_UNILEIRA_SITE_URL;
@@ -3120,8 +3144,8 @@ gtag('config', 'G-FJT3X93608');
       else if (raw && typeof raw.seconds === 'number') date = new Date(raw.seconds * 1000);
       else if (typeof raw === 'number') date = new Date(raw);
       else if (typeof raw === 'string') date = new Date(raw);
-      if (!date || Number.isNaN(date.getTime())) return 'Data indisponível';
-      return date.toLocaleDateString('pt-BR');
+      if (!date || Number.isNaN(date.getTime())) return typeof window.unilaTranslate === 'function' ? window.unilaTranslate('dateUnavailable') : 'Date unavailable';
+      return date.toLocaleDateString(document.documentElement.lang || 'pt-BR');
     }
 
     function renderConhecaMedia(item) {
@@ -3144,23 +3168,30 @@ gtag('config', 'G-FJT3X93608');
     async function loadConhecaUNILA() {
       const box = document.getElementById("dynamicContent");
       if (!box) return;
-      box.innerHTML = '<p style="text-align:center;padding:20px;color:#94a3b8;">Carregando...</p>';
+      box.innerHTML = '<p style="text-align:center;padding:20px;color:#94a3b8;">' + (typeof window.unilaTranslate === 'function' ? window.unilaTranslate('loading') : 'Loading...') + '</p>';
       try {
         const snapshot = await db.collection("conhecaUnila").get();
         const items = snapshot.docs.map(doc => ({id:doc.id, ...doc.data()}))
           .filter(item => getConhecaMedia(item).imageUrl || getConhecaMedia(item).videoUrl)
           .sort((a, b) => conhecaDateValue(b) - conhecaDateValue(a));
+        const translatedItems = await Promise.all(items.map(async function(item) {
+          const translated = Object.assign({}, item);
+          for (const field of ["title", "videoName", "caption", "imageCaption", "videoCaption"]) {
+            if (translated[field]) translated[field] = await translateMediaText(translated[field]);
+          }
+          return translated;
+        }));
         let htmlConheca = "";
-        if (!items.length) {
-          htmlConheca = '<p style="text-align:center;padding:20px;color:#94a3b8;">Nenhuma imagem ou vídeo publicado ainda.</p>';
+        if (!translatedItems.length) {
+          htmlConheca = '<p style="text-align:center;padding:20px;color:#94a3b8;">' + (typeof window.unilaTranslate === 'function' ? window.unilaTranslate('noMedia') : 'No images or videos have been published yet.') + '</p>';
         } else {
-          htmlConheca = items.map(item => `<div class="news-card" data-content-kind="conheca" data-content-id="${escapeHtml(item.id || "")}" style="background:rgba(30,41,59,.6);border-radius:12px;padding:10px;margin-bottom:15px;border:1px solid rgba(255,255,255,.1);">${renderConhecaMedia(item)}</div>`).join("");
+          htmlConheca = translatedItems.map(item => `<div class="news-card" data-content-kind="conheca" data-content-id="${escapeHtml(item.id || "")}" style="background:rgba(30,41,59,.6);border-radius:12px;padding:10px;margin-bottom:15px;border:1px solid rgba(255,255,255,.1);">${renderConhecaMedia(item)}</div>`).join("");
         }
         box.innerHTML = htmlConheca;
         if (typeof translateDynamicUI === "function") translateDynamicUI();
       } catch(e) {
         console.error("Erro ao carregar Conheça a UNILA:", e);
-        box.innerHTML = '<p style="color:#ef4444;">Erro ao carregar as mídias.</p>';
+        box.innerHTML = '<p style="color:#ef4444;">' + (typeof window.unilaTranslate === 'function' ? window.unilaTranslate('mediaError') : 'Error loading media.') + '</p>';
       }
     }
 
@@ -4621,7 +4652,7 @@ padding:0 2px;">↩ Responder</button>`;
       locale: "pt-BR",
       weekdays: ["Domingo", "Segunda-feira", "Terça-feira", "Quarta-feira", "Quinta-feira", "Sexta-feira", "Sábado"],
       t: {
-        appTitle: "Vida Unileira", language: "Idioma", home: "Início", podcast: "Podcast", music: "Música", sharePlaylist: "📤 Compartilhar playlist", playlistShareTitle: "Playlist de Música — Vida Unileira", playlistShareDescription: "Este link abre a playlist desde o primeiro vídeo.", playlistAutoplayHint: "O link abre pelo primeiro vídeo e tenta iniciar a reprodução. Se o navegador bloquear, toque em Reproduzir no player.", playlistCopyLink: "🔗 Copiar link", playlistLinkCopied: "Link da playlist copiado.", install: "📲 Instalar App",
+        appTitle: "Vida Unileira", language: "Idioma", home: "Início", podcast: "Podcast", music: "Música", share: "Compartilhar", cancel: "Cancelar", openExternal: "Abrir link externo", loading: "Carregando...", noMedia: "Nenhuma imagem ou vídeo publicado ainda.", mediaError: "Erro ao carregar as mídias.", dateUnavailable: "Data indisponível", shareContentHint: "Escolha onde compartilhar esta publicação. O link abrirá diretamente este conteúdo no Vida Unileira.", sharePlaylist: "📤 Compartilhar playlist", playlistShareTitle: "Playlist de Música — Vida Unileira", playlistShareDescription: "Este link abre a playlist desde o primeiro vídeo.", playlistAutoplayHint: "O link abre pelo primeiro vídeo e tenta iniciar a reprodução. Se o navegador bloquear, toque em Reproduzir no player.", playlistCopyLink: "🔗 Copiar link", playlistLinkCopied: "Link da playlist copiado.", install: "📲 Instalar App",
         podcastShareTitle: "Playlist de Podcast — Vida Unileira", podcastShareDescription: "Este link abre a playlist de podcasts desde o primeiro episódio.",
         musicNowPlaying: "🎵 Tocando agora", podcastNowPlaying: "🎙️ Episódio atual", videoTitleLoading: "Carregando título...",
         podcastDescription: "Descrição do episódio", showMore: "Mostrar mais", showLess: "Mostrar menos", searchPlaceholder: "Buscar no Vida Unileira...", nickPasswordPlaceholder: "Digite sua senha ou crie uma senha", nickDeletePasswordPlaceholder: "Digite sua senha para confirmar a exclusão", showPasswordShort: "Mostrar", hidePasswordShort: "Ocultar", showPassword: "Mostrar senha", hidePassword: "Ocultar senha",
@@ -4663,7 +4694,7 @@ padding:0 2px;">↩ Responder</button>`;
       locale: "fr-FR",
       weekdays: ["Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"],
       t: {
-        appTitle: "Vida Unileira", language: "Langue", home: "Accueil", podcast: "Podcast", music: "Musique", sharePlaylist: "📤 Partager la playlist", playlistShareTitle: "Playlist musicale — Vida Unileira", playlistShareDescription: "Ce lien ouvre la playlist dès la première vidéo.", playlistAutoplayHint: "Le lien ouvre la première vidéo et tente de démarrer la lecture. Si le navigateur le bloque, appuyez sur Lecture dans le lecteur.", playlistCopyLink: "🔗 Copier le lien", playlistLinkCopied: "Lien de la playlist copié.", install: "📲 Installer l’application",
+        appTitle: "Vida Unileira", language: "Langue", home: "Accueil", podcast: "Podcast", music: "Musique", share: "Partager", cancel: "Annuler", openExternal: "Ouvrir le lien externe", loading: "Chargement...", noMedia: "Aucune image ou vidéo publiée pour le moment.", mediaError: "Erreur lors du chargement des médias.", dateUnavailable: "Date indisponible", shareContentHint: "Choisissez où partager cette publication. Le lien ouvrira directement ce contenu dans Vida Unileira.", sharePlaylist: "📤 Partager la playlist", playlistShareTitle: "Playlist musicale — Vida Unileira", playlistShareDescription: "Ce lien ouvre la playlist dès la première vidéo.", playlistAutoplayHint: "Le lien ouvre la première vidéo et tente de démarrer la lecture. Si le navigateur le bloque, appuyez sur Lecture dans le lecteur.", playlistCopyLink: "🔗 Copier le lien", playlistLinkCopied: "Lien de la playlist copié.", install: "📲 Installer l’application",
         podcastShareTitle: "Playlist de podcasts — Vida Unileira", podcastShareDescription: "Ce lien ouvre la playlist de podcasts dès le premier épisode.",
         musicNowPlaying: "🎵 En lecture", podcastNowPlaying: "🎙️ Épisode actuel", videoTitleLoading: "Chargement du titre...", podcastDescription: "Description de l’épisode", showMore: "Afficher plus", showLess: "Afficher moins", searchPlaceholder: "Rechercher dans Vida Unileira...", nickPasswordPlaceholder: "Saisissez votre mot de passe ou créez-en un", nickDeletePasswordPlaceholder: "Saisissez votre mot de passe pour confirmer la suppression", showPasswordShort: "Afficher", hidePasswordShort: "Masquer", showPassword: "Afficher le mot de passe", hidePassword: "Masquer le mot de passe",
         chatMenu: "💬 Chat", portal: "🌐 Portail officiel", inscreva: "🎓 Portal Inscreva", sigaa: "📚 SIGAA", email: "📧 E-mail",
@@ -4703,7 +4734,7 @@ padding:0 2px;">↩ Responder</button>`;
       locale: "es-ES",
       weekdays: ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"],
       t: {
-        appTitle: "Vida Unileira", language: "Idioma", home: "Inicio", podcast: "Podcast", music: "Música", sharePlaylist: "📤 Compartir lista de reproducción", playlistShareTitle: "Lista de música — Vida Unileira", playlistShareDescription: "Este enlace abre la lista desde el primer video.", playlistAutoplayHint: "El enlace abre el primer video e intenta iniciar la reproducción. Si el navegador lo bloquea, pulsa Reproducir en el reproductor.", playlistCopyLink: "🔗 Copiar enlace", playlistLinkCopied: "Enlace de la lista copiado.", install: "📲 Instalar aplicación",
+        appTitle: "Vida Unileira", language: "Idioma", home: "Inicio", podcast: "Podcast", music: "Música", share: "Compartir", cancel: "Cancelar", openExternal: "Abrir enlace externo", loading: "Cargando...", noMedia: "Aún no hay imágenes o vídeos publicados.", mediaError: "Error al cargar los medios.", dateUnavailable: "Fecha no disponible", shareContentHint: "Elige dónde compartir esta publicación. El enlace abrirá directamente este contenido en Vida Unileira.", sharePlaylist: "📤 Compartir lista de reproducción", playlistShareTitle: "Lista de música — Vida Unileira", playlistShareDescription: "Este enlace abre la lista desde el primer video.", playlistAutoplayHint: "El enlace abre el primer video e intenta iniciar la reproducción. Si el navegador lo bloquea, pulsa Reproducir en el reproductor.", playlistCopyLink: "🔗 Copiar enlace", playlistLinkCopied: "Enlace de la lista copiado.", install: "📲 Instalar aplicación",
         podcastShareTitle: "Lista de podcasts — Vida Unileira", podcastShareDescription: "Este enlace abre la lista de podcasts desde el primer episodio.",
         musicNowPlaying: "🎵 Reproduciendo ahora", podcastNowPlaying: "🎙️ Episodio actual", videoTitleLoading: "Cargando título...",
         podcastDescription: "Descripción del episodio", showMore: "Mostrar más", showLess: "Mostrar menos", searchPlaceholder: "Buscar en Vida Unileira...", nickPasswordPlaceholder: "Escribe tu contraseña o crea una", nickDeletePasswordPlaceholder: "Escribe tu contraseña para confirmar la eliminación", showPasswordShort: "Mostrar", hidePasswordShort: "Ocultar", showPassword: "Mostrar contraseña", hidePassword: "Ocultar contraseña",
@@ -4746,7 +4777,7 @@ padding:0 2px;">↩ Responder</button>`;
     locale: "en-US",
     weekdays: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
     t: {
-      appTitle: "Vida Unileira", language: "Language", home: "Home", podcast: "Podcast", music: "Music",
+      appTitle: "Vida Unileira", language: "Language", home: "Home", podcast: "Podcast", music: "Music", share: "Share", cancel: "Cancel", openExternal: "Open external link", loading: "Loading...", noMedia: "No images or videos have been published yet.", mediaError: "Error loading media.", dateUnavailable: "Date unavailable", shareContentHint: "Choose where to share this post. The link will open this content directly in Vida Unileira.",
       sharePlaylist: "📤 Share playlist", playlistShareTitle: "Music Playlist — Vida Unileira", playlistShareDescription: "This link opens the playlist from the first video.", playlistAutoplayHint: "The link opens the playlist at the first video and attempts to start playback. If your browser blocks it, tap Play in the player.", playlistCopyLink: "🔗 Copy link", playlistLinkCopied: "Playlist link copied.", install: "📲 Install app",
       podcastShareTitle: "Podcast Playlist🎙️ — Vida Unileira", podcastShareDescription: "This link opens the podcast playlist from the first episode.",
       musicNowPlaying: "🎵 Now playing", podcastNowPlaying: "🎙️ Current episode", videoTitleLoading: "Loading title...", podcastDescription: "Episode description", showMore: "Show more", showLess: "Show less",
@@ -4962,6 +4993,22 @@ padding:0 2px;">↩ Responder</button>`;
   window.unilaLocalizedContent = localizedContent;
   window.unilaDefaultContent = defaultContent;
   window.unilaTranslate = tr;
+  var dynamicTranslationCache = Object.create(null);
+  function translateDynamicText(value){
+    var text = String(value == null ? "" : value);
+    var target = state.lang;
+    if (!text.trim() || target === "pt") return Promise.resolve(text);
+    var cacheKey = target + "\n" + text;
+    if (dynamicTranslationCache[cacheKey]) return Promise.resolve(dynamicTranslationCache[cacheKey]);
+    var url = "https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=" + encodeURIComponent(target) + "&dt=t&q=" + encodeURIComponent(text);
+    return fetch(url).then(function(response){ if (!response.ok) throw new Error("Translation request failed"); return response.json(); }).then(function(data){
+      var translated = Array.isArray(data) && Array.isArray(data[0]) ? data[0].map(function(part){ return part && part[0] ? part[0] : ""; }).join("") : text;
+      dynamicTranslationCache[cacheKey] = translated || text;
+      return dynamicTranslationCache[cacheKey];
+    }).catch(function(){ return text; });
+  }
+  window.unilaTranslateDynamicText = translateDynamicText;
+  window.unilaCurrentLanguage = function(){ return state.lang; };
   function setText(selector, value){
     var el = document.querySelector(selector);
     if (el && el.textContent !== value) el.textContent = value;
@@ -5263,6 +5310,9 @@ padding:0 2px;">↩ Responder</button>`;
         if (text === "Nenhuma notícia publicada ainda.") el.textContent = tr("noNews");
         if (text === "Erro ao carregar notícias.") el.textContent = tr("newsError");
         if (text === "Nenhum anúncio.") el.textContent = tr("noAds");
+        if (text === "Carregando...") el.textContent = tr("loading");
+        if (text === "Nenhuma imagem ou vídeo publicado ainda.") el.textContent = tr("noMedia");
+        if (text === "Erro ao carregar as mídias.") el.textContent = tr("mediaError");
       });
       root.querySelectorAll("span").forEach(function(el){
         var text = el.textContent;
@@ -5313,11 +5363,26 @@ padding:0 2px;">↩ Responder</button>`;
     return message;
   }
 
+  function refreshDynamicContentForLanguage(){
+    if (window.__activeDynamicPage === "noticias" && typeof window.loadNews === "function") window.loadNews();
+    if (window.__activeDynamicPage === "conheca" && typeof window.loadConhecaUNILA === "function") window.loadConhecaUNILA();
+  }
+  window.unilaRefreshDynamicContent = refreshDynamicContentForLanguage;
+  window.unilaRefreshMediaTranslations = function(){
+    ["musicNowPlayingTitle", "podcastNowPlayingTitle"].forEach(function(id){
+      var node = document.getElementById(id);
+      var source = node && (node.dataset.videoTitleSource || node.dataset.videoTitle);
+      if (node && source) applyTranslatedVideoTitle(node, source);
+    });
+    if (typeof activePodcastDescriptionVideoId !== "undefined" && activePodcastDescriptionVideoId && typeof podcastDescriptionCache !== "undefined" && podcastDescriptionCache.has(activePodcastDescriptionVideoId)) renderPodcastDescription(podcastDescriptionCache.get(activePodcastDescriptionVideoId), activePodcastDescriptionVideoId);
+  };
   function changeLanguage(lang){
     if (SUPPORTED_LANGUAGES.indexOf(lang) === -1) return;
     state.lang = lang;
     localStorage.setItem("unila_language", lang);
     applyStaticTranslations();
+    if (window.unilaRefreshMediaTranslations) window.unilaRefreshMediaTranslations();
+    if (window.unilaRefreshDynamicContent) window.unilaRefreshDynamicContent();
   }
 
   function initialize(){
