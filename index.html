@@ -2403,7 +2403,7 @@ gtag('config', 'G-FJT3X93608');
     // Atualização do PWA: rede primeiro; cache apenas como fallback offline.
     function setupPWAUpdate() {
       if (!('serviceWorker' in navigator)) return;
-      navigator.serviceWorker.register('./service-worker37.js?v=356', { updateViaCache: 'none' }).then(function(reg) {
+      navigator.serviceWorker.register('./service-worker37.js?v=357', { updateViaCache: 'none' }).then(function(reg) {
         reg.update();
         reg.addEventListener('updatefound', function() {
           var newWorker = reg.installing;
@@ -3267,6 +3267,8 @@ gtag('config', 'G-FJT3X93608');
       if (title) title.textContent = typeof window.unilaTranslate === "function" ? window.unilaTranslate("conheca") : "🏫 Conheça a UNILA";
       openPage("dynamicPage");
       // Inicia o Firebase no próximo ciclo: o WebView conclui o toque antes de qualquer operação assíncrona.
+      var immediateBox = document.getElementById("dynamicContent");
+      if (immediateBox) immediateBox.innerHTML = '<p style="text-align:center;padding:20px;color:#94a3b8;">' + (typeof window.unilaTranslate === "function" ? window.unilaTranslate("loading") : "Carregando...") + '</p>';
       window.setTimeout(function() {
         try {
           var pendingLoad = loadConhecaUNILA();
