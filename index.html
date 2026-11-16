@@ -1282,6 +1282,7 @@ function scheduleNowPlayingTitleUpdate(player, elementId) {
 // Chave pública do navegador: restrita à YouTube Data API v3 e ao domínio spottedunila.github.io no Google Cloud.
 const YOUTUBE_DATA_API_KEY = "AIzaSyAy2IcmhXSzu4h28EuIeeizoNiF1sUyjOQ";
 const podcastDescriptionCache = new Map();
+const podcastDescriptionRequests = new Map();
 let activePodcastDescriptionVideoId = "";
 let podcastDescriptionRequestId = 0;
 function updatePodcastDescriptionToggleLabel() {
@@ -1321,6 +1322,31 @@ function renderPodcastDescription(description, videoId) {
     updatePodcastDescriptionToggleLabel();
   });
 }
+async function fetchPodcastVideoDescription(videoId) {
+  const id = String(videoId || "").trim();
+  if (!id) return "";
+  if (podcastDescriptionCache.has(id)) return podcastDescriptionCache.get(id);
+  if (podcastDescriptionRequests.has(id)) return podcastDescriptionRequests.get(id);
+  const request = (async function() {
+    const url = new URL("https://www.googleapis.com/youtube/v3/videos");
+    url.searchParams.set("part", "snippet");
+    url.searchParams.set("id", id);
+    url.searchParams.set("key", YOUTUBE_DATA_API_KEY);
+    const response = await fetch(url.toString(), { method: "GET" });
+    if (!response.ok) throw new Error("YouTube Data API returned HTTP " + response.status);
+    const data = await response.json();
+    const description = String(data && data.items && data.items[0] && data.items[0].snippet && data.items[0].snippet.description || "");
+    podcastDescriptionCache.set(id, description);
+    if (id === activePodcastDescriptionVideoId) renderPodcastDescription(description, id);
+    return description;
+  })();
+  podcastDescriptionRequests.set(id, request);
+  try {
+    return await request;
+  } finally {
+    if (podcastDescriptionRequests.get(id) === request) podcastDescriptionRequests.delete(id);
+  }
+}
 async function loadPodcastDescription(player, attempt) {
   const currentPlayer = player || ytPodcastPlayer;
   if (!currentPlayer || typeof currentPlayer.getVideoData !== "function") return;
@@ -1330,24 +1356,17 @@ async function loadPodcastDescription(player, attempt) {
     if ((attempt || 0) < 4) window.setTimeout(function(){ loadPodcastDescription(currentPlayer, (attempt || 0) + 1); }, 250);
     return;
   }
-  if (videoId === activePodcastDescriptionVideoId) return;
+  if (videoId === activePodcastDescriptionVideoId) {
+    if (podcastDescriptionCache.has(videoId)) renderPodcastDescription(podcastDescriptionCache.get(videoId), videoId);
+    return;
+  }
   activePodcastDescriptionVideoId = videoId;
   const requestId = ++podcastDescriptionRequestId;
   const panel = document.getElementById("podcastDescription");
   if (panel) panel.hidden = true;
-  const cached = podcastDescriptionCache.get(videoId);
-  if (cached !== undefined) { renderPodcastDescription(cached, videoId); return; }
   try {
-    const url = new URL("https://www.googleapis.com/youtube/v3/videos");
-    url.searchParams.set("part", "snippet");
-    url.searchParams.set("id", videoId);
-    url.searchParams.set("key", YOUTUBE_DATA_API_KEY);
-    const response = await fetch(url.toString(), { method: "GET" });
-    if (!response.ok) throw new Error("YouTube Data API returned HTTP " + response.status);
-    const data = await response.json();
-    const description = String(data && data.items && data.items[0] && data.items[0].snippet && data.items[0].snippet.description || "");
+    const description = await fetchPodcastVideoDescription(videoId);
     if (requestId !== podcastDescriptionRequestId || videoId !== activePodcastDescriptionVideoId) return;
-    podcastDescriptionCache.set(videoId, description);
     renderPodcastDescription(description, videoId);
   } catch (error) {
     if (requestId === podcastDescriptionRequestId && videoId === activePodcastDescriptionVideoId) {
@@ -1376,6 +1395,18 @@ async function getPodcastVideoTitleForShare() {
     if (attempt < 5) await new Promise(resolve => window.setTimeout(resolve, 150));
   }
   return String(titleElement && titleElement.dataset.videoTitle || "").trim();
+}
+async function getPodcastVideoIdForShare() {
+  for (let attempt = 0; attempt < 6; attempt += 1) {
+    try {
+      if (ytPodcastPlayer && typeof ytPodcastPlayer.getVideoData === "function") {
+        const videoId = String((ytPodcastPlayer.getVideoData() || {}).video_id || "").trim();
+        if (videoId) return videoId;
+      }
+    } catch (error) {}
+    if (attempt < 5) await new Promise(resolve => window.setTimeout(resolve, 150));
+  }
+  return "";
 }
 function onMusicPlayerStateChange(event) {
   scheduleNowPlayingTitleUpdate(event && event.target ? event.target : ytPlayer, "musicNowPlayingTitle");
@@ -2350,7 +2381,7 @@ gtag('config', 'G-FJT3X93608');
     // Atualização do PWA: rede primeiro; cache apenas como fallback offline.
     function setupPWAUpdate() {
       if (!('serviceWorker' in navigator)) return;
-      navigator.serviceWorker.register('./service-worker37.js?v=352', { updateViaCache: 'none' }).then(function(reg) {
+      navigator.serviceWorker.register('./service-worker37.js?v=353', { updateViaCache: 'none' }).then(function(reg) {
         reg.update();
         reg.addEventListener('updatefound', function() {
           var newWorker = reg.installing;
@@ -2780,15 +2811,66 @@ gtag('config', 'G-FJT3X93608');
       const cleanTitle = String(videoTitle || "").replace(/\s+/g, " ").trim();
       return cleanTitle ? (label || "🎙️ Episódio") + ": " + cleanTitle : "";
     }
-    function playlistWhatsAppMessage(kind, url, videoTitle) {
+    function extractPodcastGuestNames(description, videoTitle) {
+      const found = [];
+      function addCandidate(raw) {
+        let name = String(raw || "").replace(/\s+/g, " ").trim();
+        name = name.replace(/\s*\([^)]*\)\s*$/, "").replace(/[,:;.!?]+$/, "");
+        name = name.replace(/\b(?:professor(?:a)?|prof\.?|doutor(?:a)?|dr\.?|dra\.?)\s+/gi, "").trim();
+        if (name.length < 3 || name.length > 110 || !/[A-ZÁÀÂÃÉÊÍÓÔÕÚÇ]/.test(name)) return;
+        const normalized = name.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+        if (!found.some(function(existing){ return existing.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase() === normalized; })) found.push(name);
+      }
+      const lines = String(description || "").split(/\r?\n/);
+      for (let i = 0; i < lines.length; i += 1) {
+        const label = lines[i].match(/^\s*(?:convidad[oa]s?|entrevistad[oa]s?|participantes?)\s*[:\-–—]\s*(.*)$/i);
+        if (!label) continue;
+        let value = label[1].trim();
+        if (!value) {
+          for (let j = i + 1; j < lines.length; j += 1) {
+            value = lines[j].trim();
+            if (value) break;
+          }
+        }
+        if (value) addCandidate(value);
+      }
+      const token = "[A-ZÁÀÂÃÉÊÍÓÔÕÚÇ][A-Za-zÁÀÂÃÉÊÍÓÔÕÚÇáàâãéêíóôõúçüÜ'’.-]+";
+      const personName = token + "(?:\\s+(?:(?:de|da|do|dos|das|e)\\s+)?" + token + "){1,4}";
+      const sources = [String(videoTitle || ""), String(description || "")];
+      const patterns = [
+        new RegExp("\\b(?:entrevista\\s+com|convidado\\s*[:\\-–—])\\s*(" + personName + ")(?=\\s*(?:,|[.;!?]|$))", "gi"),
+        new RegExp("\\b(?:traz como entrevistad[oa]|como entrevistad[oa]|como convidad[oa])\\s+(" + personName + ")(?=\\s*(?:,|[.;!?]|$)|\\s+(?:da|do|de|nesta|é|em)\\b)", "gi"),
+        new RegExp("\\b(?:professor(?:a)?|pesquisador(?:a)?|cientista|doutor(?:a)?|reitor(?:a)?|artista)\\s+(" + personName + ")(?=\\s*(?:,|[.;!?]|$)|\\s+(?:da|do|de|nesta|é|em)\\b)", "gi"),
+        new RegExp("(" + personName + ")\\s+(?:é|foi)\\s+(?:o|a)\\s+entrevistad[oa]\\b", "gi")
+      ];
+      sources.forEach(function(source){
+        patterns.forEach(function(pattern){
+          let match;
+          while ((match = pattern.exec(source)) !== null) addCandidate(match[1]);
+        });
+      });
+      return found.slice(0, 4);
+    }
+    function podcastGuestShareLine(guestNames) {
+      const names = Array.isArray(guestNames) ? guestNames.filter(Boolean) : [];
+      if (!names.length) return "";
+      return (names.length === 1 ? "Convidado: " : "Convidados: ") + names.join(", ");
+    }
+    function playlistWhatsAppMessage(kind, url, videoTitle, guestNames) {
       const isPodcast = kind === "podcast";
-      const heading = isPodcast ? "Playlist de Podcast - Vida Unileira" : "Playlist de Música - Vida Unileira";
-      const caption = isPodcast
-        ? "Confira a playlist Atualizada hoje, desde o primeiro episódio.💜"
-        : "Confira a playlist Atualizada hoje, desde o primeiro vídeo.💜";
-      const videoTitleLine = isPodcast ? podcastEpisodeShareLine(videoTitle) : "";
-      const action = isPodcast ? "🎙️Clique e aguarde 2 segundos e clique Play." : "🎶Clique e aguarde 2 segundos e clique Play.";
-      return heading + "\n\n" + caption + (videoTitleLine ? "\n\n" + videoTitleLine : "") + "\n\n" + action + "\n\n" + url;
+      if (isPodcast) {
+        const episodeLine = podcastEpisodeShareLine(videoTitle, "Episódio");
+        const guestsLine = podcastGuestShareLine(guestNames);
+        const lines = ["Playlist de Podcast🎙️ - Vida Unileira"];
+        if (episodeLine) lines.push(episodeLine + " 🎙️");
+        if (guestsLine) lines.push(guestsLine);
+        lines.push("🎙️Clique e aguarde uns segundos e clique Play.", url);
+        return lines.join("\n\n");
+      }
+      const heading = "Playlist de Música - Vida Unileira";
+      const caption = "Confira a playlist Atualizada hoje, desde o primeiro vídeo.💜";
+      const action = "🎶Clique e aguarde 2 segundos e clique Play.";
+      return heading + "\n\n" + caption + "\n\n" + action + "\n\n" + url;
     }
     function copyMusicPlaylistLink(url) {
       if (navigator.clipboard && window.isSecureContext) return navigator.clipboard.writeText(url);
@@ -2868,12 +2950,20 @@ gtag('config', 'G-FJT3X93608');
     window.shareMusicPlaylist = shareMusicPlaylist;
     async function sharePodcastPlaylist() {
       const url = podcastPlaylistPermalink();
-      const title = musicShareTranslation("podcastShareTitle", "Playlist de Podcast — Vida Unileira");
-      const description = musicShareTranslation("podcastShareDescription", "Este link abre a playlist de podcasts desde o primeiro episódio.");
+      const title = "Playlist de Podcast🎙️ - Vida Unileira";
       const podcastVideoTitle = await getPodcastVideoTitleForShare();
-      const translatedVideoTitleLine = podcastEpisodeShareLine(podcastVideoTitle, musicShareTranslation("podcastNowPlaying", "🎙️ Episódio atual"));
-      const shareDescription = translatedVideoTitleLine ? description + "\n\n" + translatedVideoTitleLine : description;
-      const shareText = playlistWhatsAppMessage("podcast", url, podcastVideoTitle);
+      const podcastVideoId = await getPodcastVideoIdForShare();
+      let podcastVideoDescription = "";
+      if (podcastVideoId) {
+        try { podcastVideoDescription = await fetchPodcastVideoDescription(podcastVideoId); }
+        catch (error) { console.warn("Não foi possível carregar os dados do episódio para compartilhar.", error); }
+      }
+      const guestNames = extractPodcastGuestNames(podcastVideoDescription, podcastVideoTitle);
+      const episodeShareLine = podcastEpisodeShareLine(podcastVideoTitle, "Episódio");
+      const episodeTitleLine = episodeShareLine ? episodeShareLine + " 🎙️" : "";
+      const guestLine = podcastGuestShareLine(guestNames);
+      const shareDescription = [episodeTitleLine, guestLine].filter(Boolean).join("\n\n");
+      const shareText = playlistWhatsAppMessage("podcast", url, podcastVideoTitle, guestNames);
       if (window.AndroidShare && typeof window.AndroidShare.share === "function") {
         try { window.AndroidShare.share(shareText); return; }
         catch (error) { console.warn("Compartilhamento Android indisponível:", error); }
