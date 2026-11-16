@@ -1651,7 +1651,7 @@ gtag('config', 'G-FJT3X93608');
     <button class="unila" onclick="openLocalizedResource('mentalHealth')">🧠 Saúde Mental</button>
     <a class="google menu-link" href="https://enem.inep.gov.br/participante/">📝 ENEM</a>
     <button id="alternativeNewsButton" type="button" class="noticias" onclick="return window.openNewsPage()">📰 Notícias Alternativas</button>
-    <button id="conhecaUnilaButton" type="button" class="conheca-unila-btn" onclick="return window.openConhecaUNILAPage()">🏫 Conheça a UNILA</button>
+    <button id="conhecaUnilaButton" type="button" class="conheca-unila-btn" onclick="return window.openConhecaUnilaPage()">🏫 Conheça a UNILA</button>
     <button class="desapega" onclick="openPage('desapegaPage')">🔎 Achados e Perdidos e Desapega</button>
     <button class="emergencia" data-search-key="upa" onclick="openUPAPage()" aria-label="Hospitais de Emergência 24h (UPA)">Hospitais de Emergência 24h (UPA)</button>
     <button class="dev" data-search-key="officialSources" onclick="openPage('officialSourcesPage')">🔗 Portal da Transparência</button>
@@ -2403,7 +2403,7 @@ gtag('config', 'G-FJT3X93608');
     // Atualização do PWA: rede primeiro; cache apenas como fallback offline.
     function setupPWAUpdate() {
       if (!('serviceWorker' in navigator)) return;
-      navigator.serviceWorker.register('./service-worker37.js?v=359', { updateViaCache: 'none' }).then(function(reg) {
+      navigator.serviceWorker.register('./service-worker37.js?v=360', { updateViaCache: 'none' }).then(function(reg) {
         reg.update();
         reg.addEventListener('updatefound', function() {
           var newWorker = reg.installing;
@@ -3212,13 +3212,19 @@ gtag('config', 'G-FJT3X93608');
     async function loadConhecaRecords() {
       const bootstrap = Array.isArray(window.__CONHECA_BOOTSTRAP__) ? window.__CONHECA_BOOTSTRAP__ : [];
       const projectId = (typeof firebaseConfig !== "undefined" && firebaseConfig.projectId) ? firebaseConfig.projectId : "app-unila";
-      const endpoint = "https://firestore.googleapis.com/v1/projects/" + encodeURIComponent(projectId) + "/databases/(default)/documents/conhecaUnila?pageSize=300";
+      const endpoint = "https://firestore.googleapis.com/v1/projects/" + encodeURIComponent(projectId) + "/databases/(default)/documents/conhecaunila?pageSize=300";
+      const legacyEndpoint = "https://firestore.googleapis.com/v1/projects/" + encodeURIComponent(projectId) + "/databases/(default)/documents/conhecaUnila?pageSize=300";
       const controller = typeof AbortController === "function" ? new AbortController() : null;
       const timeoutId = window.setTimeout(function(){ if (controller) controller.abort(); }, 4000);
       try {
-        const response = await fetch(endpoint, { cache: "no-store", signal: controller ? controller.signal : undefined });
+        let response = await fetch(endpoint, { cache: "no-store", signal: controller ? controller.signal : undefined });
+        if (!response.ok) response = await fetch(legacyEndpoint, { cache: "no-store", signal: controller ? controller.signal : undefined });
         if (!response.ok) throw new Error("Firestore REST HTTP " + response.status);
-        const payload = await response.json();
+        let payload = await response.json();
+        if (!(payload.documents || []).length) {
+          const legacyResponse = await fetch(legacyEndpoint, { cache: "no-store", signal: controller ? controller.signal : undefined });
+          if (legacyResponse.ok) payload = await legacyResponse.json();
+        }
         const records = (payload.documents || []).map(function(document){
           const parts = String(document.name || "").split("/");
           return Object.assign({id: parts[parts.length - 1] || ""}, firestoreRestRecord(document.fields || {}));
@@ -3227,7 +3233,9 @@ gtag('config', 'G-FJT3X93608');
       } catch (restError) {
         console.warn("Firestore indisponível; usando catálogo local de Conheça a UNILA.", restError);
         if (bootstrap.length) return bootstrap;
-        const snapshot = await db.collection("conhecaUnila").get();
+        let snapshot;
+        try { snapshot = await db.collection("conhecaunila").get(); }
+        catch (lowercaseError) { snapshot = await db.collection("conhecaUnila").get(); }
         return snapshot.docs.map(function(doc){ return Object.assign({id:doc.id}, doc.data()); });
       } finally {
         window.clearTimeout(timeoutId);
@@ -3281,7 +3289,7 @@ gtag('config', 'G-FJT3X93608');
     let conhecaMediaUnsubscribe = null;
     function listenConhecaMediaChanges() {
       if (conhecaMediaUnsubscribe) return;
-      conhecaMediaUnsubscribe = db.collection("conhecaUnila").onSnapshot(() => {
+      conhecaMediaUnsubscribe = db.collection("conhecaunila").onSnapshot(() => {
         const dynamicPage = document.getElementById("dynamicPage");
         // O listener não pode sobrescrever UPA, Notícias ou qualquer outra página.
         if (window.__activeDynamicPage === "conheca" && dynamicPage && dynamicPage.style.display === "block" && typeof window.loadConhecaUNILA === "function") {
@@ -3342,6 +3350,7 @@ gtag('config', 'G-FJT3X93608');
     // Exposição explícita para onclick inline, listeners do Firebase e wrappers de idioma.
     window.openNewsPage = openNewsPage;
     window.openConhecaUNILAPage = openConhecaUNILAPage;
+    window.openConhecaUnilaPage = openConhecaUNILAPage;
     document.addEventListener("DOMContentLoaded", function() {
       var newsButton = document.getElementById("alternativeNewsButton");
       var conhecaButton = document.getElementById("conhecaUnilaButton");
