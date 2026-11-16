@@ -2423,7 +2423,7 @@ gtag('config', 'G-FJT3X93608');
     // Atualização do PWA: rede primeiro; cache apenas como fallback offline.
     function setupPWAUpdate() {
       if (!('serviceWorker' in navigator)) return;
-      navigator.serviceWorker.register('./service-worker37.js?v=364', { updateViaCache: 'none' }).then(function(reg) {
+      navigator.serviceWorker.register('./service-worker37.js?v=365', { updateViaCache: 'none' }).then(function(reg) {
         reg.update();
         reg.addEventListener('updatefound', function() {
           var newWorker = reg.installing;
@@ -4271,7 +4271,7 @@ padding:0 2px;">↩ Responder</button>`;
       } else { player.style.display = "none"; pauseYouTube(ytPodcastPlayer, iframe); }
     }
 
-    const ACTIVE_SUBJECTS_COLLECTION = "active_subjects";
+    const ACTIVE_SUBJECTS_RECORD_ID = "__active_subjects__";
     const MAX_ACTIVE_SUBJECT_FOLDERS = 10;
     const MAX_ACTIVE_SUBJECT_FILE_BYTES = 10 * 1024 * 1024;
     let activeSubjectsState = { folders: [] };
@@ -4281,7 +4281,7 @@ padding:0 2px;">↩ Responder</button>`;
       const node = document.getElementById("activeSubjectStatus");
       if (node) { node.textContent = message || ""; node.style.color = isError ? "#fecaca" : "#bbf7d0"; }
     }
-    function activeSubjectsReference() { return db.collection(ACTIVE_SUBJECTS_COLLECTION).doc(firebaseUid); }
+    function activeSubjectsReference() { return db.collection("notes").doc(firebaseUid); }
     function activeSubjectFolder() { return activeSubjectsState.folders.find(folder => String(folder.id) === String(activeSubjectFolderId)); }
     function renderActiveSubjectItems() {
       const folder = activeSubjectFolder(), list = document.getElementById("activeSubjectItems");
@@ -4309,7 +4309,12 @@ padding:0 2px;">↩ Responder</button>`;
       workspace.scrollIntoView({ behavior: "smooth", block: "start" });
     }
     async function saveActiveSubjectsState() {
-      await firestoreSet(activeSubjectsReference(), { uid: firebaseUid, nick: nick, folders: activeSubjectsState.folders, updatedAt: Date.now(), source: "Vida Unileira" }, { merge: true });
+      const reference = activeSubjectsReference();
+      const snapshot = await firestoreGet(reference);
+      const existing = snapshot.exists && Array.isArray(snapshot.data().notes) ? snapshot.data().notes : [];
+      const plainNotes = existing.filter(item => String(item && item.id) !== ACTIVE_SUBJECTS_RECORD_ID);
+      plainNotes.push({ id: ACTIVE_SUBJECTS_RECORD_ID, kind: "activeSubjects", folders: activeSubjectsState.folders, updatedAt: Date.now() });
+      await firestoreSet(reference, { uid: firebaseUid, nick: nick, notes: plainNotes, updatedAt: Date.now(), source: "Vida Unileira" }, { merge: true });
     }
     async function loadActiveSubjects() {
       const foldersNode = document.getElementById("activeSubjectsFolders");
@@ -4320,7 +4325,8 @@ padding:0 2px;">↩ Responder</button>`;
         await waitForNotesAuth();
         const snapshot = await firestoreGet(activeSubjectsReference());
         const data = snapshot.exists ? snapshot.data() : {};
-        activeSubjectsState = { folders: Array.isArray(data.folders) ? data.folders.slice(0, MAX_ACTIVE_SUBJECT_FOLDERS) : [] };
+        const record = Array.isArray(data.notes) ? data.notes.find(item => item && String(item.id) === ACTIVE_SUBJECTS_RECORD_ID) : null;
+        activeSubjectsState = { folders: record && Array.isArray(record.folders) ? record.folders.slice(0, MAX_ACTIVE_SUBJECT_FOLDERS) : [] };
         renderActiveSubjectFolders();
         if (activeSubjectsState.folders.length) selectActiveSubjectFolder(activeSubjectsState.folders[0].id);
       } catch (error) { console.error("Erro ao carregar matérias:", error); foldersNode.innerHTML = "<p>Não foi possível carregar suas matérias agora.</p>"; }
@@ -4385,7 +4391,7 @@ padding:0 2px;">↩ Responder</button>`;
       [...(Array.isArray(primary) ? primary : []), ...(Array.isArray(secondary) ? secondary : [])].forEach(note => {
         if (note && note.id != null) map.set(String(note.id), note);
       });
-      return Array.from(map.values()).sort((a, b) => Number(b.updatedAt || b.createdAt || 0) - Number(a.updatedAt || a.createdAt || 0));
+      return Array.from(map.values()).filter(note => note && note.kind !== "activeSubjects").sort((a, b) => Number(b.updatedAt || b.createdAt || 0) - Number(a.updatedAt || a.createdAt || 0));
     }
 
     function notesStatus(message, isError) {
