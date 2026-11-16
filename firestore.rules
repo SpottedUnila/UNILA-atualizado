@@ -84,6 +84,19 @@ service cloud.firestore {
       allow delete: if isOwnerUid(document);
     }
 
+    // Matérias ativas privadas do usuário, com limite de 10 pastas validado pelo cliente.
+    match /active_subjects/{document} {
+      allow read: if isOwnerUid(document);
+      allow create: if isOwnerUid(document)
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.keys().hasOnly(['uid', 'nick', 'folders', 'updatedAt', 'source', 'createdAt']);
+      allow update: if isOwnerUid(document)
+        && resource.data.uid == request.auth.uid
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.keys().hasOnly(['uid', 'nick', 'folders', 'updatedAt', 'source', 'createdAt']);
+      allow delete: if isOwnerUid(document);
+    }
+
     // Metas acadêmicas privadas do usuário.
     match /academic_goals/{document} {
       allow read: if isOwnerUid(document);

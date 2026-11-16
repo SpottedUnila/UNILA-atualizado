@@ -1642,6 +1642,7 @@ gtag('config', 'G-FJT3X93608');
     <a class="facebook menu-link" href="https://facebook.com/groups/660879523972023/">👥 Grupo no Facebook</a>
     <button class="dev" onclick="openDynamic('dev','page')">👨‍💻 Desenvolvedor</button>
     <button class="dev" onclick="window.location.href='privacy.html'">🔒 Privacidade e exclusão</button>
+    <button class="notes" onclick="openPage('activeSubjectsPage')">📚 Minhas matérias ativas</button>
     <button class="notes" onclick="openPage('notesPage')">📝 Anotações</button>
     <button class="share" onclick="shareApp()">📤 Compartilhar App</button>
     <button class="internet" onclick="openDynamic('internet','page')">🌐 Internet</button>
@@ -1764,6 +1765,26 @@ gtag('config', 'G-FJT3X93608');
     <h2>👨‍💻 Desenvolvedor</h2>
     <p>Para trabalhos e parcerias entre em contato:</p>
     <p>Equipe Vida Unileira<br>Contato: <a href="mailto:universecreativepixel@gmail.com">universecreativepixel@gmail.com</a></p>
+  </div>
+
+  <div id="activeSubjectsPage" class="page">
+    <h2>📚 Minhas matérias ativas</h2>
+    <p id="subjectsNickNotice" class="academic-nick-notice">Crie um nick no Chat para usar suas matérias ativas.</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:12px 0;">
+      <input id="subjectFolderName" type="text" maxlength="50" placeholder="Nome da matéria (ex.: Cálculo)" style="flex:1;min-width:190px;padding:11px;border-radius:9px;border:0;">
+      <button type="button" onclick="createActiveSubjectFolder()">➕ Criar pasta</button>
+    </div>
+    <div id="activeSubjectsFolders" style="display:grid;gap:10px;"></div>
+    <div id="activeSubjectWorkspace" style="display:none;margin-top:16px;padding:14px;border:1px solid rgba(255,255,255,.25);border-radius:14px;background:rgba(0,0,0,.16);">
+      <h3 id="activeSubjectTitle" style="margin:0 0 10px;"></h3>
+      <textarea id="activeSubjectText" maxlength="30000" placeholder="Escreva um texto ou anotação nesta matéria..." style="width:100%;min-height:120px;box-sizing:border-box;padding:12px;border-radius:10px;border:0;resize:vertical;"></textarea>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:10px;">
+        <button type="button" onclick="saveActiveSubjectText()">💾 Salvar texto</button>
+        <label style="display:inline-flex;align-items:center;gap:7px;padding:10px 12px;border-radius:9px;background:#0ea5e9;color:white;font-weight:700;cursor:pointer;">📎 Anexar arquivo<input id="activeSubjectFile" type="file" accept="image/*,.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx" style="display:none;" onchange="uploadActiveSubjectFile(event)"></label>
+      </div>
+      <p id="activeSubjectStatus" role="status" style="min-height:22px;margin:10px 0 0;color:#bbf7d0;font-size:13px;"></p>
+      <div id="activeSubjectItems" style="display:grid;gap:8px;margin-top:12px;"></div>
+    </div>
   </div>
 
   <div id="notesPage" class="page">
@@ -2402,7 +2423,7 @@ gtag('config', 'G-FJT3X93608');
     // Atualização do PWA: rede primeiro; cache apenas como fallback offline.
     function setupPWAUpdate() {
       if (!('serviceWorker' in navigator)) return;
-      navigator.serviceWorker.register('./service-worker37.js?v=363', { updateViaCache: 'none' }).then(function(reg) {
+      navigator.serviceWorker.register('./service-worker37.js?v=364', { updateViaCache: 'none' }).then(function(reg) {
         reg.update();
         reg.addEventListener('updatefound', function() {
           var newWorker = reg.installing;
@@ -3398,6 +3419,7 @@ gtag('config', 'G-FJT3X93608');
         shouldScrollToBottom = true;
         listenChat();
       }
+      if(id === 'activeSubjectsPage') loadActiveSubjects();
       if(id === 'notesPage') loadNotes();
       if(id === 'desapegaPage') listenAds();
     }
@@ -4247,6 +4269,100 @@ padding:0 2px;">↩ Responder</button>`;
         player.style.display = "block"; playYouTubeWithSound(ytPodcastPlayer, iframe);
         setTimeout(() => player.scrollIntoView({ behavior: "smooth" }), 300);
       } else { player.style.display = "none"; pauseYouTube(ytPodcastPlayer, iframe); }
+    }
+
+    const ACTIVE_SUBJECTS_COLLECTION = "active_subjects";
+    const MAX_ACTIVE_SUBJECT_FOLDERS = 10;
+    const MAX_ACTIVE_SUBJECT_FILE_BYTES = 10 * 1024 * 1024;
+    let activeSubjectsState = { folders: [] };
+    let activeSubjectFolderId = null;
+
+    function activeSubjectsStatus(message, isError) {
+      const node = document.getElementById("activeSubjectStatus");
+      if (node) { node.textContent = message || ""; node.style.color = isError ? "#fecaca" : "#bbf7d0"; }
+    }
+    function activeSubjectsReference() { return db.collection(ACTIVE_SUBJECTS_COLLECTION).doc(firebaseUid); }
+    function activeSubjectFolder() { return activeSubjectsState.folders.find(folder => String(folder.id) === String(activeSubjectFolderId)); }
+    function renderActiveSubjectItems() {
+      const folder = activeSubjectFolder(), list = document.getElementById("activeSubjectItems");
+      if (!folder || !list) return;
+      const items = Array.isArray(folder.items) ? folder.items : [];
+      list.innerHTML = items.length ? items.slice().reverse().map(item => {
+        if (item.kind === "file") return `<div style="display:flex;justify-content:space-between;gap:8px;align-items:center;padding:9px;border-radius:9px;background:rgba(255,255,255,.12);"><a href="${escapeHtml(item.url)}" target="_blank" rel="noopener noreferrer" style="color:#bae6fd;overflow-wrap:anywhere;">📎 ${escapeHtml(item.name)}</a><button type="button" data-subject-delete="${escapeHtml(String(item.id))}" style="background:#b91c1c;padding:6px 9px;">🗑</button></div>`;
+        return `<div style="display:flex;justify-content:space-between;gap:8px;padding:9px;border-radius:9px;background:rgba(255,255,255,.12);"><span style="white-space:pre-wrap;overflow-wrap:anywhere;">📝 ${escapeHtml(item.text || "")}</span><button type="button" data-subject-delete="${escapeHtml(String(item.id))}" style="background:#b91c1c;padding:6px 9px;">🗑</button></div>`;
+      }).join("") : "<p>Nenhum conteúdo nesta matéria ainda.</p>";
+      list.querySelectorAll("button[data-subject-delete]").forEach(button => button.addEventListener("click", () => deleteActiveSubjectItem(button.dataset.subjectDelete)));
+    }
+    function renderActiveSubjectFolders() {
+      const list = document.getElementById("activeSubjectsFolders");
+      if (!list) return;
+      list.innerHTML = activeSubjectsState.folders.length ? activeSubjectsState.folders.map(folder => `<div style="display:flex;justify-content:space-between;gap:8px;align-items:center;padding:11px 13px;border-radius:11px;background:rgba(14,165,233,.24);"><button type="button" onclick="selectActiveSubjectFolder('${escapeHtml(String(folder.id))}')" style="flex:1;text-align:left;background:transparent;padding:4px 0;">📁 ${escapeHtml(folder.name)} <small>(${Array.isArray(folder.items) ? folder.items.length : 0})</small></button><button type="button" onclick="deleteActiveSubjectFolder('${escapeHtml(String(folder.id))}')" style="background:#b91c1c;padding:6px 9px;">🗑</button></div>`).join("") : "<p>Crie sua primeira pasta de matéria. Você pode ter até 10.</p>";
+    }
+    function selectActiveSubjectFolder(id) {
+      activeSubjectFolderId = String(id);
+      const folder = activeSubjectFolder(), workspace = document.getElementById("activeSubjectWorkspace");
+      if (!folder || !workspace) return;
+      workspace.style.display = "block";
+      document.getElementById("activeSubjectTitle").textContent = "📁 " + folder.name;
+      document.getElementById("activeSubjectText").value = "";
+      renderActiveSubjectItems();
+      workspace.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+    async function saveActiveSubjectsState() {
+      await firestoreSet(activeSubjectsReference(), { uid: firebaseUid, nick: nick, folders: activeSubjectsState.folders, updatedAt: Date.now(), source: "Vida Unileira" }, { merge: true });
+    }
+    async function loadActiveSubjects() {
+      const foldersNode = document.getElementById("activeSubjectsFolders");
+      if (!foldersNode) return;
+      if (!nick) { foldersNode.innerHTML = "<p>Crie um nick no Chat antes de usar suas matérias ativas.</p>"; document.getElementById("activeSubjectWorkspace").style.display = "none"; return; }
+      foldersNode.innerHTML = "<p>Carregando suas matérias...</p>";
+      try {
+        await waitForNotesAuth();
+        const snapshot = await firestoreGet(activeSubjectsReference());
+        const data = snapshot.exists ? snapshot.data() : {};
+        activeSubjectsState = { folders: Array.isArray(data.folders) ? data.folders.slice(0, MAX_ACTIVE_SUBJECT_FOLDERS) : [] };
+        renderActiveSubjectFolders();
+        if (activeSubjectsState.folders.length) selectActiveSubjectFolder(activeSubjectsState.folders[0].id);
+      } catch (error) { console.error("Erro ao carregar matérias:", error); foldersNode.innerHTML = "<p>Não foi possível carregar suas matérias agora.</p>"; }
+    }
+    async function createActiveSubjectFolder() {
+      if (!nick) { appAlert("Crie ou entre com um nick antes de criar uma matéria."); return; }
+      const input = document.getElementById("subjectFolderName"), name = input ? input.value.trim() : "";
+      if (!name) { appAlert("Digite o nome da matéria."); return; }
+      if (activeSubjectsState.folders.length >= MAX_ACTIVE_SUBJECT_FOLDERS) { appAlert("Você já atingiu o limite de 10 pastas."); return; }
+      const now = Date.now();
+      activeSubjectsState.folders.push({ id: String(now), name: name, items: [], createdAt: now, updatedAt: now });
+      try { await waitForNotesAuth(); await saveActiveSubjectsState(); input.value = ""; renderActiveSubjectFolders(); selectActiveSubjectFolder(activeSubjectsState.folders.at(-1).id); activeSubjectsStatus("Pasta criada e vinculada ao seu nick."); } catch (error) { activeSubjectsState.folders.pop(); activeSubjectsStatus("Não foi possível criar a pasta.", true); }
+    }
+    async function deleteActiveSubjectFolder(id) {
+      if (!confirm("Excluir esta pasta e todo o seu conteúdo?")) return;
+      activeSubjectsState.folders = activeSubjectsState.folders.filter(folder => String(folder.id) !== String(id));
+      try { await waitForNotesAuth(); await saveActiveSubjectsState(); activeSubjectFolderId = null; document.getElementById("activeSubjectWorkspace").style.display = "none"; renderActiveSubjectFolders(); } catch (error) { activeSubjectsStatus("Não foi possível excluir a pasta.", true); }
+    }
+    async function saveActiveSubjectText() {
+      const folder = activeSubjectFolder(), field = document.getElementById("activeSubjectText"), text = field ? field.value.trim() : "";
+      if (!folder || !text) { activeSubjectsStatus("Selecione uma pasta e escreva um texto.", true); return; }
+      const now = Date.now(); folder.items = Array.isArray(folder.items) ? folder.items : []; folder.items.push({ id: String(now), kind: "text", text: text, createdAt: now }); folder.updatedAt = now;
+      try { await waitForNotesAuth(); await saveActiveSubjectsState(); field.value = ""; renderActiveSubjectFolders(); renderActiveSubjectItems(); activeSubjectsStatus("Texto salvo e vinculado ao seu nick."); } catch (error) { folder.items.pop(); activeSubjectsStatus("Não foi possível salvar o texto.", true); }
+    }
+    async function uploadActiveSubjectFile(event) {
+      const file = event.target.files && event.target.files[0], folder = activeSubjectFolder();
+      if (!file || !folder) { activeSubjectsStatus("Selecione uma pasta antes de anexar um arquivo.", true); return; }
+      if (file.size > MAX_ACTIVE_SUBJECT_FILE_BYTES) { appAlert("O arquivo deve ter no máximo 10 MB."); event.target.value = ""; return; }
+      activeSubjectsStatus("Enviando arquivo...");
+      try {
+        const formData = new FormData(); formData.append("file", file); formData.append("upload_preset", "ml_default");
+        const response = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/auto/upload`, { method: "POST", body: formData });
+        const data = await response.json(); if (!response.ok || !data.secure_url) throw new Error(data.error?.message || "Upload rejeitado");
+        const now = Date.now(); folder.items = Array.isArray(folder.items) ? folder.items : []; folder.items.push({ id: String(now), kind: "file", name: file.name, type: file.type || "application/octet-stream", size: file.size, url: data.secure_url, createdAt: now }); folder.updatedAt = now;
+        await waitForNotesAuth(); await saveActiveSubjectsState(); renderActiveSubjectFolders(); renderActiveSubjectItems(); activeSubjectsStatus("Arquivo anexado e vinculado ao seu nick.");
+      } catch (error) { console.error("Erro ao anexar arquivo:", error); activeSubjectsStatus("Não foi possível anexar este arquivo.", true); }
+      event.target.value = "";
+    }
+    async function deleteActiveSubjectItem(id) {
+      const folder = activeSubjectFolder(); if (!folder) return;
+      folder.items = (folder.items || []).filter(item => String(item.id) !== String(id));
+      try { await waitForNotesAuth(); await saveActiveSubjectsState(); renderActiveSubjectFolders(); renderActiveSubjectItems(); activeSubjectsStatus("Conteúdo removido."); } catch (error) { activeSubjectsStatus("Não foi possível remover o conteúdo.", true); }
     }
 
     const NOTES_COLLECTION = "notes";
@@ -5213,7 +5329,7 @@ padding:0 2px;">↩ Responder</button>`;
 
   var menuKeys = [
     "chatMenu", "portal", "inscreva", "sigaa", "email", "youtube", "instagram", "facebook", "library", "intercampus", "publicTransport", "internationalPortal", "notices",
-    "emergency", "addresses", "ru", "group", "developer", "privacy", "notes", "share", "internet", "admission", "academicGoals", "studentAid", "mentalHealth", "enem", "news", "conheca", "desapega", "upa", "officialSources"
+    "emergency", "addresses", "ru", "group", "developer", "privacy", "activeSubjects", "notes", "share", "internet", "admission", "academicGoals", "studentAid", "mentalHealth", "enem", "news", "conheca", "desapega", "upa", "officialSources"
   ];
 
   function applyStaticTranslations(){
