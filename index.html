@@ -1004,6 +1004,13 @@ button:hover{
 .current-video-title{margin:12px 0 0;padding:12px 14px;border-radius:10px;background:rgba(15,23,42,.58);color:#e2e8f0;font-size:14px;line-height:1.45;overflow-wrap:anywhere;}
 .current-video-label{display:block;margin-bottom:4px;color:#bfdbfe;font-weight:800;}
 .current-video-name{display:block;min-height:1.4em;}
+.podcast-description{margin:8px 0 0;padding:12px 14px;border:1px solid rgba(148,163,184,.22);border-radius:10px;background:rgba(15,23,42,.42);color:#e2e8f0;font-size:14px;line-height:1.5;overflow-wrap:anywhere;}
+.podcast-description[hidden],.podcast-description-toggle[hidden]{display:none!important;}
+.podcast-description-label{display:block;margin:0 0 5px;color:#bfdbfe;font-weight:800;}
+.podcast-description-text{margin:0;white-space:pre-wrap;}
+.podcast-description-text.is-collapsed{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;overflow:hidden;}
+.podcast-description-toggle{display:inline-block;margin:6px 0 0;padding:0;border:0;background:transparent;color:#86efac;font:inherit;font-weight:800;text-decoration:underline;text-underline-offset:2px;cursor:pointer;}
+.podcast-description-toggle:focus-visible{outline:2px solid #86efac;outline-offset:3px;border-radius:3px;}
 .music-player-title{
   position:absolute;
   top:-15px;
@@ -1271,6 +1278,79 @@ function scheduleNowPlayingTitleUpdate(player, elementId) {
     window.setTimeout(function(){ updateNowPlayingTitle(player, elementId); }, delay);
   });
 }
+// Chave pública do navegador: restrita à YouTube Data API v3 e ao domínio spottedunila.github.io no Google Cloud.
+const YOUTUBE_DATA_API_KEY = "AIzaSyAy2IcmhXSzu4h28EuIeeizoNiF1sUyjOQ";
+const podcastDescriptionCache = new Map();
+let activePodcastDescriptionVideoId = "";
+let podcastDescriptionRequestId = 0;
+function updatePodcastDescriptionToggleLabel() {
+  const button = document.getElementById("podcastDescriptionToggle");
+  if (!button || typeof window.unilaTranslate !== "function") return;
+  const expanded = button.getAttribute("aria-expanded") === "true";
+  button.textContent = window.unilaTranslate(expanded ? "showLess" : "showMore");
+}
+function togglePodcastDescription() {
+  const text = document.getElementById("podcastDescriptionText");
+  const button = document.getElementById("podcastDescriptionToggle");
+  if (!text || !button || button.hidden) return;
+  const expanded = button.getAttribute("aria-expanded") !== "true";
+  button.setAttribute("aria-expanded", String(expanded));
+  text.classList.toggle("is-collapsed", !expanded);
+  updatePodcastDescriptionToggleLabel();
+}
+function renderPodcastDescription(description, videoId) {
+  const panel = document.getElementById("podcastDescription");
+  const text = document.getElementById("podcastDescriptionText");
+  const button = document.getElementById("podcastDescriptionToggle");
+  if (!panel || !text || !button || videoId !== activePodcastDescriptionVideoId) return;
+  const value = String(description || "").trim();
+  text.textContent = value;
+  text.classList.add("is-collapsed");
+  button.hidden = true;
+  button.setAttribute("aria-expanded", "false");
+  panel.hidden = !value;
+  if (!value) return;
+  window.requestAnimationFrame(function() {
+    if (videoId !== activePodcastDescriptionVideoId) return;
+    button.hidden = text.scrollHeight <= text.clientHeight + 1;
+    updatePodcastDescriptionToggleLabel();
+  });
+}
+async function loadPodcastDescription(player, attempt) {
+  const currentPlayer = player || ytPodcastPlayer;
+  if (!currentPlayer || typeof currentPlayer.getVideoData !== "function") return;
+  let videoId = "";
+  try { videoId = String((currentPlayer.getVideoData() || {}).video_id || "").trim(); } catch (error) {}
+  if (!videoId) {
+    if ((attempt || 0) < 4) window.setTimeout(function(){ loadPodcastDescription(currentPlayer, (attempt || 0) + 1); }, 250);
+    return;
+  }
+  if (videoId === activePodcastDescriptionVideoId) return;
+  activePodcastDescriptionVideoId = videoId;
+  const requestId = ++podcastDescriptionRequestId;
+  const panel = document.getElementById("podcastDescription");
+  if (panel) panel.hidden = true;
+  const cached = podcastDescriptionCache.get(videoId);
+  if (cached !== undefined) { renderPodcastDescription(cached, videoId); return; }
+  try {
+    const url = new URL("https://www.googleapis.com/youtube/v3/videos");
+    url.searchParams.set("part", "snippet");
+    url.searchParams.set("id", videoId);
+    url.searchParams.set("key", YOUTUBE_DATA_API_KEY);
+    const response = await fetch(url.toString(), { method: "GET" });
+    if (!response.ok) throw new Error("YouTube Data API returned HTTP " + response.status);
+    const data = await response.json();
+    const description = String(data && data.items && data.items[0] && data.items[0].snippet && data.items[0].snippet.description || "");
+    if (requestId !== podcastDescriptionRequestId || videoId !== activePodcastDescriptionVideoId) return;
+    podcastDescriptionCache.set(videoId, description);
+    renderPodcastDescription(description, videoId);
+  } catch (error) {
+    if (requestId === podcastDescriptionRequestId && videoId === activePodcastDescriptionVideoId) {
+      if (panel) panel.hidden = true;
+      console.warn("Não foi possível carregar a descrição do podcast pelo YouTube Data API.", error);
+    }
+  }
+}
 async function getPodcastVideoTitleForShare() {
   const titleElement = document.getElementById("podcastNowPlayingTitle");
   for (let attempt = 0; attempt < 6; attempt += 1) {
@@ -1405,8 +1485,10 @@ function pauseYouTube(player, iframe) {
 }
 
 function onPodcastStateChange(event) {
-  scheduleNowPlayingTitleUpdate(event && event.target ? event.target : ytPodcastPlayer, "podcastNowPlayingTitle");
-  if (event.data === 0) {
+  const player = event && event.target ? event.target : ytPodcastPlayer;
+  scheduleNowPlayingTitleUpdate(player, "podcastNowPlayingTitle");
+  if (event && event.data === 1) loadPodcastDescription(player, 0);
+  if (event && event.data === 0) {
     ytPodcastPlayer.nextVideo();
   }
 }
@@ -1452,8 +1534,9 @@ gtag('config', 'G-FJT3X93608');
     <div id="languageControl" class="language-control" title="Idioma">
       <select id="languageSelect" aria-label="Idioma">
         <option value="pt">PT</option>
-        <option value="fr">FR</option>
+        <option value="en">EN</option>
         <option value="es">ES</option>
+        <option value="ar">AR</option>
       </select>
     </div>
     <div class="podcast-container">
@@ -1698,6 +1781,11 @@ gtag('config', 'G-FJT3X93608');
     <div class="podcast-player-title video-control-clone"><div class="podcast-badge"><div class="podcast-dot"></div><span class="video-control-label">Podcast</span></div><button type="button" class="video-control-button" onclick="togglePodcastSimples();" aria-label="Podcast"><span class="video-control-glyph">🎙️</span></button></div>
     <iframe id="ytPodcast" width="100%" height="200" src="https://www.youtube.com/embed/videoseries?list=PLyTsVCtgNA7Wf0kpU61OW_Er7JfxGigv6&enablejsapi=1" frameborder="0" allow="autoplay" allowfullscreen></iframe>
     <p class="current-video-title" aria-live="polite"><span id="podcastNowPlayingLabel" class="current-video-label">🎙️ Episódio atual</span><span id="podcastNowPlayingTitle" class="current-video-name">Carregando título...</span></p>
+    <section id="podcastDescription" class="podcast-description" aria-live="polite" hidden>
+      <span id="podcastDescriptionLabel" class="podcast-description-label">Descrição do episódio</span>
+      <p id="podcastDescriptionText" class="podcast-description-text is-collapsed" dir="auto"></p>
+      <button id="podcastDescriptionToggle" class="podcast-description-toggle" type="button" aria-expanded="false" aria-controls="podcastDescriptionText" onclick="togglePodcastDescription()" hidden>Mostrar mais</button>
+    </section>
     <button id="sharePodcastPlaylistButton" type="button" class="music-share-button" onclick="sharePodcastPlaylist()">📤 Compartilhar playlist</button>
   </div>
 
@@ -2257,7 +2345,7 @@ gtag('config', 'G-FJT3X93608');
     // Atualização do PWA: rede primeiro; cache apenas como fallback offline.
     function setupPWAUpdate() {
       if (!('serviceWorker' in navigator)) return;
-      navigator.serviceWorker.register('./service-worker37.js?v=350', { updateViaCache: 'none' }).then(function(reg) {
+      navigator.serviceWorker.register('./service-worker37.js?v=351', { updateViaCache: 'none' }).then(function(reg) {
         reg.update();
         reg.addEventListener('updatefound', function() {
           var newWorker = reg.installing;
@@ -4436,6 +4524,7 @@ padding:0 2px;">↩ Responder</button>`;
         appTitle: "Vida Unileira", language: "Idioma", home: "Início", podcast: "Podcast", music: "Música", sharePlaylist: "📤 Compartilhar playlist", playlistShareTitle: "Playlist de Música — Vida Unileira", playlistShareDescription: "Este link abre a playlist desde o primeiro vídeo.", playlistAutoplayHint: "O link abre pelo primeiro vídeo e tenta iniciar a reprodução. Se o navegador bloquear, toque em Reproduzir no player.", playlistCopyLink: "🔗 Copiar link", playlistLinkCopied: "Link da playlist copiado.", install: "📲 Instalar App",
         podcastShareTitle: "Playlist de Podcast — Vida Unileira", podcastShareDescription: "Este link abre a playlist de podcasts desde o primeiro episódio.",
         musicNowPlaying: "🎵 Tocando agora", podcastNowPlaying: "🎙️ Episódio atual", videoTitleLoading: "Carregando título...",
+        podcastDescription: "Descrição do episódio", showMore: "Mostrar mais", showLess: "Mostrar menos",
         chatMenu: "💬 Chat", portal: "🌐 Portal Oficial", inscreva: "🎓 Portal Inscreva", sigaa: "📚 SIGAA", email: "📧 E-mail",
         google: "🔎 Pesquisa Google", youtube: "▶ YouTube", instagram: "Instagram Arandu", facebook: "📘 Facebook", library: "📖 Biblioteca",
         intercampus: "Intercampi", publicTransport: "🚌 Transporte Público", internationalPortal: "🌐 Portal Internacional", notices: "📄 Editais Oficiais", emergency: "🚨 Emergência",
@@ -4516,6 +4605,7 @@ padding:0 2px;">↩ Responder</button>`;
         appTitle: "Vida Unileira", language: "Idioma", home: "Inicio", podcast: "Podcast", music: "Música", sharePlaylist: "📤 Compartir lista de reproducción", playlistShareTitle: "Lista de música — Vida Unileira", playlistShareDescription: "Este enlace abre la lista desde el primer video.", playlistAutoplayHint: "El enlace abre el primer video e intenta iniciar la reproducción. Si el navegador lo bloquea, pulsa Reproducir en el reproductor.", playlistCopyLink: "🔗 Copiar enlace", playlistLinkCopied: "Enlace de la lista copiado.", install: "📲 Instalar aplicación",
         podcastShareTitle: "Lista de podcasts — Vida Unileira", podcastShareDescription: "Este enlace abre la lista de podcasts desde el primer episodio.",
         musicNowPlaying: "🎵 Reproduciendo ahora", podcastNowPlaying: "🎙️ Episodio actual", videoTitleLoading: "Cargando título...",
+        podcastDescription: "Descripción del episodio", showMore: "Mostrar más", showLess: "Mostrar menos",
         chatMenu: "💬 Chat", portal: "🌐 Portal oficial", inscreva: "🎓 Portal Inscreva", sigaa: "📚 SIGAA", email: "📧 Correo",
         google: "🔎 Búsqueda Google", youtube: "▶ YouTube", instagram: "Instagram Arandu", facebook: "📘 Facebook", library: "📖 Biblioteca",
         intercampus: "Intercampus", publicTransport: "🚌 Transporte público", internationalPortal: "🌐 Portal Internacional", notices: "📄 Convocatorias oficiales", emergency: "🚨 Emergencia",
@@ -4550,6 +4640,8 @@ padding:0 2px;">↩ Responder</button>`;
       }
     }
   };
+  I18N.en = { locale: "en-US", weekdays: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"], t: Object.assign({}, I18N.pt.t, { podcastDescription: "Episode description", showMore: "Show more", showLess: "Show less", videoTitleLoading: "Loading title..." }), content: I18N.pt.content };
+  I18N.ar = { locale: "ar", weekdays: ["الأحد", "الاثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت"], t: Object.assign({}, I18N.pt.t, { podcastDescription: "وصف الحلقة", showMore: "عرض المزيد", showLess: "عرض أقل", videoTitleLoading: "جارٍ تحميل العنوان..." }), content: I18N.pt.content };
 
   var ACADEMIC_I18N = {
     pt: {
@@ -4685,7 +4777,7 @@ padding:0 2px;">↩ Responder</button>`;
     lang: localStorage.getItem("unila_language") || "pt",
     currentDynamicId: null
   };
-  if (!I18N[state.lang]) state.lang = "pt";
+  if (!I18N[state.lang] || state.lang === "fr") { state.lang = "pt"; localStorage.setItem("unila_language", "pt"); }
 
   function current(){ return I18N[state.lang] || I18N.pt; }
   function tr(key){
@@ -4850,6 +4942,8 @@ padding:0 2px;">↩ Responder</button>`;
     setText("#sharePodcastPlaylistButton", tr("sharePlaylist"));
     setText("#musicNowPlayingLabel", tr("musicNowPlaying"));
     setText("#podcastNowPlayingLabel", tr("podcastNowPlaying"));
+    setText("#podcastDescriptionLabel", tr("podcastDescription"));
+    updatePodcastDescriptionToggleLabel();
     ["musicNowPlayingTitle", "podcastNowPlayingTitle"].forEach(function(id) {
       var titleNode = document.getElementById(id);
       if (titleNode && !titleNode.dataset.videoTitle) titleNode.textContent = tr("videoTitleLoading");
