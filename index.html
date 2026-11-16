@@ -3199,7 +3199,9 @@ gtag('config', 'G-FJT3X93608');
         return snapshot.docs.map(function(doc){ return Object.assign({id:doc.id}, doc.data()); });
       }
     }
+    let conhecaLoadSequence = 0;
     async function loadConhecaUNILA() {
+      const loadSequence = ++conhecaLoadSequence;
       const box = document.getElementById("dynamicContent");
       if (!box) return;
       box.innerHTML = '<p style="text-align:center;padding:20px;color:#94a3b8;">' + (typeof window.unilaTranslate === 'function' ? window.unilaTranslate('loading') : 'Loading...') + '</p>';
@@ -3214,7 +3216,9 @@ gtag('config', 'G-FJT3X93608');
           }
           return renderItems.map(item => `<div class="news-card" data-content-kind="conheca" data-content-id="${escapeHtml(item.id || "")}" style="background:rgba(30,41,59,.6);border-radius:12px;padding:10px;margin-bottom:15px;border:1px solid rgba(255,255,255,.1);">${renderConhecaMedia(item)}</div>`).join("");
         }
-        // Exibe a página assim que o Firebase responde; tradução nunca bloqueia a entrada.
+        // Uma troca de idioma pode iniciar outra leitura; somente a mais recente pode renderizar.
+        if (loadSequence !== conhecaLoadSequence || window.__activeDynamicPage !== "conheca") return;
+        // Exibe a página assim que o Firestore responde; tradução nunca bloqueia a entrada.
         box.innerHTML = renderConhecaItems(items);
         if (typeof translateDynamicUI === "function") translateDynamicUI();
         const activeLanguage = typeof window.unilaCurrentLanguage === "function" ? window.unilaCurrentLanguage() : (localStorage.getItem("unila_language") || "pt");
@@ -3226,7 +3230,7 @@ gtag('config', 'G-FJT3X93608');
             }
             return translated;
           })).then(function(translatedItems) {
-            if (window.__activeDynamicPage !== "conheca" || document.getElementById("dynamicContent") !== box) return;
+            if (loadSequence !== conhecaLoadSequence || window.__activeDynamicPage !== "conheca" || document.getElementById("dynamicContent") !== box) return;
             box.innerHTML = renderConhecaItems(translatedItems);
             if (typeof translateDynamicUI === "function") translateDynamicUI();
           }).catch(function(error) {
