@@ -3165,13 +3165,51 @@ gtag('config', 'G-FJT3X93608');
       return html;
     }
 
+    function firestoreRestValue(field) {
+      if (!field || typeof field !== "object") return field;
+      if (Object.prototype.hasOwnProperty.call(field, "stringValue")) return field.stringValue;
+      if (Object.prototype.hasOwnProperty.call(field, "timestampValue")) return field.timestampValue;
+      if (Object.prototype.hasOwnProperty.call(field, "integerValue")) return Number(field.integerValue);
+      if (Object.prototype.hasOwnProperty.call(field, "doubleValue")) return Number(field.doubleValue);
+      if (Object.prototype.hasOwnProperty.call(field, "booleanValue")) return Boolean(field.booleanValue);
+      if (field.arrayValue && Array.isArray(field.arrayValue.values)) return field.arrayValue.values.map(firestoreRestValue);
+      if (field.mapValue && field.mapValue.fields) return firestoreRestRecord(field.mapValue.fields);
+      return "";
+    }
+    function firestoreRestRecord(fields) {
+      const record = {};
+      Object.keys(fields || {}).forEach(function(key){ record[key] = firestoreRestValue(fields[key]); });
+      return record;
+    }
+    async function loadConhecaRecords() {
+      const sdkRead = db.collection("conhecaUnila").get().then(function(snapshot){
+        return snapshot.docs.map(function(doc){ return Object.assign({id:doc.id}, doc.data()); });
+      });
+      const timeout = new Promise(function(_, reject){
+        window.setTimeout(function(){ reject(new Error("Firestore SDK timeout")); }, 7000);
+      });
+      try {
+        return await Promise.race([sdkRead, timeout]);
+      } catch (sdkError) {
+        console.warn("Leitura do SDK do Firestore demorou; usando fallback REST.", sdkError);
+        const endpoint = "https://firestore.googleapis.com/v1/projects/" + encodeURIComponent(firebaseConfig.projectId) + "/databases/(default)/documents/conhecaUnila?pageSize=300";
+        const response = await fetch(endpoint, { cache: "no-store" });
+        if (!response.ok) throw new Error("Firestore REST HTTP " + response.status);
+        const payload = await response.json();
+        return (payload.documents || []).map(function(document){
+          const parts = String(document.name || "").split("/");
+          return Object.assign({id: parts[parts.length - 1] || ""}, firestoreRestRecord(document.fields || {}));
+        });
+      }
+    }
+
     async function loadConhecaUNILA() {
       const box = document.getElementById("dynamicContent");
       if (!box) return;
       box.innerHTML = '<p style="text-align:center;padding:20px;color:#94a3b8;">' + (typeof window.unilaTranslate === 'function' ? window.unilaTranslate('loading') : 'Loading...') + '</p>';
       try {
-        const snapshot = await db.collection("conhecaUnila").get();
-        const items = snapshot.docs.map(doc => ({id:doc.id, ...doc.data()}))
+        const records = await loadConhecaRecords();
+        const items = records
           .filter(item => getConhecaMedia(item).imageUrl || getConhecaMedia(item).videoUrl)
           .sort((a, b) => conhecaDateValue(b) - conhecaDateValue(a));
         function renderConhecaItems(renderItems) {
