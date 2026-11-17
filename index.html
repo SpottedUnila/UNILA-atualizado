@@ -4274,7 +4274,7 @@ padding:0 2px;">↩ Responder</button>`;
     }
 
     const ACTIVE_SUBJECTS_RECORD_ID = "__active_subjects__";
-    const MAX_ACTIVE_SUBJECT_FOLDERS = 10;
+    const MAX_ACTIVE_SUBJECT_FOLDERS = 100;
     const MAX_ACTIVE_SUBJECT_FILE_BYTES = 10 * 1024 * 1024;
     const ACTIVE_SUBJECT_PALETTE = [
       { bg: "rgba(14,165,233,.24)", panel: "rgba(14,165,233,.16)", border: "rgba(125,211,252,.7)", accent: "#7dd3fc" },
@@ -4329,7 +4329,7 @@ padding:0 2px;">↩ Responder</button>`;
     function renderActiveSubjectFolders() {
       const list = document.getElementById("activeSubjectsFolders");
       if (!list) return;
-      list.innerHTML = activeSubjectsState.folders.length ? activeSubjectsState.folders.map(folder => { const theme = activeSubjectTheme(folder); return `<div style="display:flex;justify-content:space-between;gap:8px;align-items:center;padding:11px 13px;border-radius:11px;background:${theme.bg};border:1px solid ${theme.border};box-shadow:0 4px 16px rgba(0,0,0,.1);"><button type="button" onclick="selectActiveSubjectFolder('${escapeHtml(String(folder.id))}')" style="flex:1;text-align:left;background:transparent;padding:4px 0;color:${theme.accent};font-weight:700;">📁 ${escapeHtml(folder.name)} <small style="color:white;">(${Array.isArray(folder.items) ? folder.items.length : 0})</small></button><button type="button" onclick="deleteActiveSubjectFolder('${escapeHtml(String(folder.id))}')" style="background:#b91c1c;padding:6px 9px;">🗑</button></div>`; }).join("") : "<p>Crie sua primeira pasta de matéria. Você pode ter até 10.</p>";
+      list.innerHTML = activeSubjectsState.folders.length ? activeSubjectsState.folders.map(folder => { const theme = activeSubjectTheme(folder); return `<div style="display:flex;justify-content:space-between;gap:8px;align-items:center;padding:11px 13px;border-radius:11px;background:${theme.bg};border:1px solid ${theme.border};box-shadow:0 4px 16px rgba(0,0,0,.1);"><button type="button" onclick="selectActiveSubjectFolder('${escapeHtml(String(folder.id))}')" style="flex:1;text-align:left;background:transparent;padding:4px 0;color:${theme.accent};font-weight:700;">📁 ${escapeHtml(folder.name)} <small style="color:white;">(${Array.isArray(folder.items) ? folder.items.length : 0})</small></button><button type="button" onclick="deleteActiveSubjectFolder('${escapeHtml(String(folder.id))}')" style="background:#b91c1c;padding:6px 9px;">🗑</button></div>`; }).join("") : "<p>Crie sua primeira pasta de matéria. Você pode ter até 100.</p>";
     }
     function selectActiveSubjectFolder(id) {
       const requestedId = String(id);
@@ -4401,7 +4401,7 @@ padding:0 2px;">↩ Responder</button>`;
       if (!nick) { appAlert("Crie ou entre com um nick antes de criar uma matéria."); return; }
       const input = document.getElementById("subjectFolderName"), name = input ? input.value.trim() : "";
       if (!name) { appAlert("Digite o nome da matéria."); return; }
-      if (activeSubjectsState.folders.length >= MAX_ACTIVE_SUBJECT_FOLDERS) { appAlert("Você já atingiu o limite de 10 pastas."); return; }
+      if (activeSubjectsState.folders.length >= MAX_ACTIVE_SUBJECT_FOLDERS) { appAlert("Você já atingiu o limite de 100 pastas."); return; }
       const now = Date.now();
       activeSubjectsState.folders.push({ id: String(now), name: name, colorIndex: activeSubjectsState.folders.length % ACTIVE_SUBJECT_PALETTE.length, items: [], createdAt: now, updatedAt: now });
       try { await waitForNotesAuth(); await saveActiveSubjectsState(); input.value = ""; renderActiveSubjectFolders(); activeSubjectsStatus("Pasta criada e vinculada ao seu nick. Toque nela para abrir."); } catch (error) { activeSubjectsState.folders.pop(); activeSubjectsStatus("Não foi possível criar a pasta.", true); }
