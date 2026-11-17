@@ -1643,7 +1643,7 @@ gtag('config', 'G-FJT3X93608');
     <a class="facebook menu-link" href="https://facebook.com/groups/660879523972023/">👥 Grupo no Facebook</a>
     <button class="dev" onclick="openDynamic('dev','page')">👨‍💻 Desenvolvedor</button>
     <button class="dev" onclick="window.location.href='privacy.html'">🔒 Privacidade e exclusão</button>
-    <button class="notes" onclick="openPage('activeSubjectsPage')">📚 Minhas matérias ativas</button>
+    <button class="notes" onclick="openPage('activeSubjectsPage')">Minhas Matérias</button>
     <button class="notes" onclick="openPage('notesPage')">📝 Anotações</button>
     <button class="share" onclick="shareApp()">📤 Compartilhar App</button>
     <button class="internet" onclick="openDynamic('internet','page')">🌐 Internet</button>
@@ -1769,7 +1769,7 @@ gtag('config', 'G-FJT3X93608');
   </div>
 
   <div id="activeSubjectsPage" class="page">
-    <h2>📚 Minhas matérias ativas</h2>
+    <h2>Minhas Matérias</h2>
     <p id="subjectsNickNotice" class="academic-nick-notice">Crie um nick no Chat para usar suas matérias ativas.</p>
     <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:12px 0;">
       <input id="subjectFolderName" type="text" maxlength="50" placeholder="Nome da matéria (ex.: Cálculo)" style="flex:1;min-width:190px;padding:11px;border-radius:9px;border:0;">
@@ -4371,7 +4371,7 @@ padding:0 2px;">↩ Responder</button>`;
       if (!notice) return;
       const currentNick = String(typeof nick !== "undefined" ? nick : "").trim();
       if (currentNick) {
-        const template = typeof window.unilaTranslate === "function" ? window.unilaTranslate("activeSubjectsWelcome") : "👋 Bem-vindo, {nick}! Aqui estão suas matérias ativas.";
+        const template = typeof window.unilaTranslate === "function" ? window.unilaTranslate("activeSubjectsWelcome") : "Olá, {nick}, bem-vindo";
         notice.textContent = template.replace("{nick}", currentNick);
         notice.style.display = "block";
       } else {
@@ -4959,7 +4959,7 @@ padding:0 2px;">↩ Responder</button>`;
         chatMenu: "💬 Chat", portal: "🌐 Portal Oficial", inscreva: "🎓 Portal Inscreva", sigaa: "📚 SIGAA", email: "📧 E-mail",
         google: "🔎 Pesquisa Google", youtube: "▶ YouTube", instagram: "Instagram Arandu", facebook: "📘 Facebook", library: "📖 Biblioteca",
         intercampus: "Intercampi", publicTransport: "🚌 Transporte Público", internationalPortal: "🌐 Portal Internacional", notices: "📄 Editais Oficiais", emergency: "🚨 Emergência",
-        addresses: "🏫 Endereços", ru: "🍽️ Restaurantes Universitários", group: "👥 Grupo no Facebook", developer: "👨‍💻 Desenvolvedor", privacy: "🔒 Privacidade e exclusão", activeSubjects: "📚 Minhas matérias ativas",
+        addresses: "🏫 Endereços", ru: "🍽️ Restaurantes Universitários", group: "👥 Grupo no Facebook", developer: "👨‍💻 Desenvolvedor", privacy: "🔒 Privacidade e exclusão", activeSubjects: "Minhas Matérias",
         notes: "📝 Anotações", share: "📤 Compartilhar App", internet: "🌐 Internet", study: "🎓 Estude na", academicGoals: "📈 Meta Acadêmica", admission: "🎓 UNILA – Formas de ingresso", studentAid: "🎓 Auxílio Estudantil", mentalHealth: "🧠 Saúde Mental",
         enem: "📝 ENEM – Página do Participante", news: "📰 Notícias Alternativas", conheca: "🏫 Conheça a UNILA", desapega: "🔎 Achados e Perdidos e Desapega", upa: "Hospitais de Emergência 24h (UPA)", officialSources: "🔗 Portal da Transparência",
         chatHeading: "💬 Chat UNILA",
@@ -4977,7 +4977,7 @@ padding:0 2px;">↩ Responder</button>`;
         replying: "Respondendo a", today: "Hoje às", yesterday: "Ontem às", at: "às", verify: "Verificando...", sending: "Enviando...", saving: "Salvando...",
         reactNick: "Defina um nick para reagir.", replyNick: "Defina um nick para responder.", typeNick: "Digite um Nick!", nickUsed: "Nick em uso!",
         fillAll: "Preencha tudo!", deleteReplyConfirm: "Excluir esta resposta?", deleteAdConfirm: "Excluir este anúncio?",
-        error: "Erro: ", errorReply: "Erro ao responder: ", errorDeleteReply: "Erro ao excluir resposta: ", shareMessage: "Confira o UNILA App!", activeSubjectsWelcome: "👋 Bem-vindo, {nick}! Aqui estão suas matérias ativas.", activeSubjectsNoNick: "Crie um nick no Chat para usar suas matérias ativas."
+        error: "Erro: ", errorReply: "Erro ao responder: ", errorDeleteReply: "Erro ao excluir resposta: ", shareMessage: "Confira o UNILA App!", activeSubjectsWelcome: "Olá, {nick}, bem-vindo", activeSubjectsNoNick: "Crie um nick no Chat para usar suas matérias ativas."
       },
       content: {
         emergencia: "Polícia Militar: 190\nSAMU (Ambulância): 192\nBombeiros: 193\n\nHospital Municipal: (45) 2105-4100\nGuarda Municipal: (45) 2105-5100\nDelegacia da Mulher: (45) 3521-9200\nDefesa Civil: 199\n\nPolícia Federal: (45) 3522-1174\nPolícia Rodoviária Federal: (45) 3576-1400\n\nPrae-UNILA: +55 45 3522-9983\nPrograd-UNILA: +55 (45) 3522-9766\n\nDisque Denúncia: 181\nConselho Tutelar: (45) 3521-1112\nCentro de Intoxicações: 0800 722 6001\n\n⚠ Em situações graves, ligue imediatamente.",
@@ -5000,7 +5000,7 @@ padding:0 2px;">↩ Responder</button>`;
         chatMenu: "💬 Chat", portal: "🌐 Portail officiel", inscreva: "🎓 Portal Inscreva", sigaa: "📚 SIGAA", email: "📧 E-mail",
         google: "🔎 Recherche Google", youtube: "▶ YouTube", instagram: "Instagram Arandu", facebook: "📘 Facebook", library: "📖 Bibliothèque",
         intercampus: "Intercampus", publicTransport: "🚌 Transport public", internationalPortal: "🌐 Portail international", notices: "📄 Avis officiels", emergency: "🚨 Urgence",
-        addresses: "🏫 Adresses", ru: "🍽️ Restaurants universitaires", group: "👥 Groupe Facebook", developer: "👨‍💻 Développeur", privacy: "🔒 Confidentialité et suppression", activeSubjects: "📚 Mes matières actives",
+        addresses: "🏫 Adresses", ru: "🍽️ Restaurants universitaires", group: "👥 Groupe Facebook", developer: "👨‍💻 Développeur", privacy: "🔒 Confidentialité et suppression", activeSubjects: "Mes matières",
         notes: "📝 Notes", share: "📤 Partager l’application", internet: "🌐 Internet", study: "🎓 Étudier", academicGoals: "📈 Objectif académique", admission: "🎓 Admission à l’UNILA", studentAid: "🎓 Aide aux étudiants", mentalHealth: "🧠 Santé mentale",
         enem: "📝 ENEM", news: "📰 Actualités alternatives", conheca: "🏫 Découvrez l’UNILA", desapega: "🔎 Objets trouvés et perdus · Desapega", upa: "Hôpitaux d’urgence 24 h (UPA)", officialSources: "🔗 Portail de la transparence",
         chatHeading: "💬 Chat UNILA",
@@ -5018,7 +5018,7 @@ padding:0 2px;">↩ Responder</button>`;
         replying: "Réponse à", today: "Aujourd’hui à", yesterday: "Hier à", at: "à", verify: "Vérification...", sending: "Envoi...", saving: "Enregistrement...",
         reactNick: "Définissez un pseudo pour réagir.", replyNick: "Définissez un pseudo pour répondre.", typeNick: "Saisissez un pseudo !", nickUsed: "Pseudo déjà utilisé !",
         fillAll: "Veuillez tout remplir !", deleteReplyConfirm: "Supprimer cette réponse ?", deleteAdConfirm: "Supprimer cette annonce ?",
-        error: "Erreur : ", errorReply: "Erreur lors de la réponse : ", errorDeleteReply: "Erreur lors de la suppression de la réponse : ", shareMessage: "Découvrez l’application UNILA !", activeSubjectsWelcome: "👋 Bienvenue, {nick} ! Voici vos matières actives.", activeSubjectsNoNick: "Créez un pseudo dans le Chat pour utiliser vos matières actives."
+        error: "Erreur : ", errorReply: "Erreur lors de la réponse : ", errorDeleteReply: "Erreur lors de la suppression de la réponse : ", shareMessage: "Découvrez l’application UNILA !", activeSubjectsWelcome: "Bonjour, {nick}, bienvenue", activeSubjectsNoNick: "Créez un pseudo dans le Chat pour utiliser vos matières actives."
       },
       content: {
         emergencia: "Police militaire : 190\nSAMU (Ambulance) : 192\nPompiers : 193\n\nHôpital municipal : (45) 2105-4100\nPolice municipale : (45) 2105-5100\nDélégation des femmes : (45) 3521-9200\nProtection civile : 199\n\nPolice fédérale : (45) 3522-1174\nPolice routière fédérale : (45) 3576-1400\n\nPrae-UNILA : +55 45 3522-9983\nPrograd-UNILA : +55 (45) 3522-9766\n\nLigne de dénonciation : 181\nConseil tutélaire : (45) 3521-1112\nCentre antipoison : 0800 722 6001\n\n⚠ En cas de situation grave, appelez immédiatement.",
@@ -5041,7 +5041,7 @@ padding:0 2px;">↩ Responder</button>`;
         chatMenu: "💬 Chat", portal: "🌐 Portal oficial", inscreva: "🎓 Portal Inscreva", sigaa: "📚 SIGAA", email: "📧 Correo",
         google: "🔎 Búsqueda Google", youtube: "▶ YouTube", instagram: "Instagram Arandu", facebook: "📘 Facebook", library: "📖 Biblioteca",
         intercampus: "Intercampus", publicTransport: "🚌 Transporte público", internationalPortal: "🌐 Portal Internacional", notices: "📄 Convocatorias oficiales", emergency: "🚨 Emergencia",
-        addresses: "🏫 Direcciones", ru: "🍽️ Restaurantes universitarios", group: "👥 Grupo de Facebook", developer: "👨‍💻 Desarrollador", privacy: "🔒 Privacidad y eliminación", activeSubjects: "📚 Mis materias activas",
+        addresses: "🏫 Direcciones", ru: "🍽️ Restaurantes universitarios", group: "👥 Grupo de Facebook", developer: "👨‍💻 Desarrollador", privacy: "🔒 Privacidad y eliminación", activeSubjects: "Mis materias",
         notes: "📝 Anotaciones", share: "📤 Compartir aplicación", internet: "🌐 Internet", study: "🎓 Estudia", academicGoals: "📈 Meta académica", admission: "🎓 Ingreso a la UNILA", studentAid: "🎓 Ayuda estudiantil", mentalHealth: "🧠 Salud mental",
         enem: "📝 ENEM", news: "📰 Noticias alternativas", conheca: "🏫 Conoce la UNILA", desapega: "🔎 Objetos perdidos y encontrados · Desapega", upa: "Hospitales de emergencia 24 h (UPA)", officialSources: "🔗 Portal de la Transparencia",
         chatHeading: "💬 Chat UNILA",
@@ -5059,7 +5059,7 @@ padding:0 2px;">↩ Responder</button>`;
         replying: "Respondiendo a", today: "Hoy a las", yesterday: "Ayer a las", at: "a las", verify: "Verificando...", sending: "Enviando...", saving: "Guardando...",
         reactNick: "Define un nick para reaccionar.", replyNick: "Define un nick para responder.", typeNick: "¡Escribe un nick!", nickUsed: "¡Nick en uso!",
         fillAll: "¡Completa todos los campos!", deleteReplyConfirm: "¿Eliminar esta respuesta?", deleteAdConfirm: "¿Eliminar este anuncio?",
-        error: "Error: ", errorReply: "Error al responder: ", errorDeleteReply: "Error al eliminar la respuesta: ", shareMessage: "¡Mira la aplicación UNILA!", activeSubjectsWelcome: "👋 ¡Bienvenido, {nick}! Aquí están tus materias activas.", activeSubjectsNoNick: "Crea un nick en el Chat para usar tus materias activas."
+        error: "Error: ", errorReply: "Error al responder: ", errorDeleteReply: "Error al eliminar la respuesta: ", shareMessage: "¡Mira la aplicación UNILA!", activeSubjectsWelcome: "Hola, {nick}, bienvenido", activeSubjectsNoNick: "Crea un nick en el Chat para usar tus materias activas."
       },
       content: {
         emergencia: "Policía Militar: 190\nSAMU (Ambulancia): 192\nBomberos: 193\n\nHospital Municipal: (45) 2105-4100\nGuardia Municipal: (45) 2105-5100\nComisaría de la Mujer: (45) 3521-9200\nDefensa Civil: 199\n\nPolicía Federal: (45) 3522-1174\nPolicía Federal de Carreteras: (45) 3576-1400\n\nPrae-UNILA: +55 45 3522-9983\nPrograd-UNILA: +55 (45) 3522-9766\n\nLínea de denuncias: 181\nConsejo Tutelar: (45) 3521-1112\nCentro de Intoxicaciones: 0800 722 6001\n\n⚠ En situaciones graves, llama inmediatamente.",
@@ -5085,7 +5085,7 @@ padding:0 2px;">↩ Responder</button>`;
       chatMenu: "💬 Chat", portal: "🌐 Official Portal", inscreva: "🎓 Inscreva Portal", sigaa: "📚 SIGAA", email: "📧 E-mail",
       google: "🔎 Google Search", youtube: "▶ YouTube", instagram: "Instagram Arandu", facebook: "📘 Facebook", library: "📖 Library",
       intercampus: "Intercampus Shuttle", publicTransport: "🚌 Public Transport", internationalPortal: "🌐 International Portal", notices: "📄 Official Notices", emergency: "🚨 Emergency",
-      addresses: "🏫 Campus Addresses", ru: "🍽️ University Restaurants", group: "👥 Facebook Group", developer: "👨‍💻 Developer", privacy: "🔒 Privacy and data deletion", activeSubjects: "📚 My active subjects",
+      addresses: "🏫 Campus Addresses", ru: "🍽️ University Restaurants", group: "👥 Facebook Group", developer: "👨‍💻 Developer", privacy: "🔒 Privacy and data deletion", activeSubjects: "My Subjects",
       notes: "📝 Notes", share: "📤 Share app", internet: "🌐 Internet", study: "🎓 Study at UNILA", academicGoals: "📈 Academic Goals", admission: "🎓 UNILA Admission", studentAid: "🎓 Student Aid", mentalHealth: "🧠 Mental Health",
       enem: "📝 ENEM – Participant Portal", news: "📰 Alternative News", conheca: "🏫 Discover UNILA", desapega: "🔎 Lost and Found · Marketplace", upa: "24-hour Emergency Care Units (UPA)", officialSources: "🔗 Transparency Portal",
       chatHeading: "💬 UNILA Chat",
@@ -5103,7 +5103,7 @@ padding:0 2px;">↩ Responder</button>`;
       replying: "Replying to", today: "Today at", yesterday: "Yesterday at", at: "at", verify: "Verifying...", sending: "Sending...", saving: "Saving...",
       reactNick: "Set a nickname to react.", replyNick: "Set a nickname to reply.", typeNick: "Enter a nickname!", nickUsed: "Nickname already in use!",
       fillAll: "Please fill in all fields!", deleteReplyConfirm: "Delete this reply?", deleteAdConfirm: "Delete this ad?",
-      error: "Error: ", errorReply: "Error replying: ", errorDeleteReply: "Error deleting reply: ", shareMessage: "Check out the Vida Unileira app!", activeSubjectsWelcome: "👋 Welcome, {nick}! Here are your active subjects.", activeSubjectsNoNick: "Create a nickname in Chat to use your active subjects."
+      error: "Error: ", errorReply: "Error replying: ", errorDeleteReply: "Error deleting reply: ", shareMessage: "Check out the Vida Unileira app!", activeSubjectsWelcome: "Hello, {nick}, welcome", activeSubjectsNoNick: "Create a nickname in Chat to use your active subjects."
     },
     content: {
       emergencia: "Military Police: 190\nSAMU (Ambulance): 192\nFire Department: 193\n\nMunicipal Hospital: (45) 2105-4100\nMunicipal Guard: (45) 2105-5100\nWomen's Police Station: (45) 3521-9200\nCivil Defense: 199\n\nFederal Police: (45) 3522-1174\nFederal Highway Police: (45) 3576-1400\n\nPrae-UNILA: +55 45 3522-9983\nPrograd-UNILA: +55 (45) 3522-9766\n\nCrime Hotline: 181\nChild Protection Council: (45) 3521-1112\nPoison Control Center: 0800 722 6001\n\n⚠ In serious emergencies, call immediately.",
