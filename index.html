@@ -2429,7 +2429,7 @@ gtag('config', 'G-FJT3X93608');
     // Atualização do PWA: rede primeiro; cache apenas como fallback offline.
     function setupPWAUpdate() {
       if (!('serviceWorker' in navigator)) return;
-      navigator.serviceWorker.register('./service-worker37.js?v=378', { updateViaCache: 'none' }).then(function(reg) {
+      navigator.serviceWorker.register('./service-worker37.js?v=379', { updateViaCache: 'none' }).then(function(reg) {
         reg.update();
         reg.addEventListener('updatefound', function() {
           var newWorker = reg.installing;
@@ -4430,7 +4430,7 @@ padding:0 2px;">↩ Responder</button>`;
     }
     async function deleteActiveSubjectFolder(id) {
       const folder = activeSubjectsState.folders.find(entry => String(entry.id) === String(id));
-      if (!folder || !confirm("Excluir esta pasta e todo o seu conteúdo? Os arquivos serão movidos para a lixeira do Google Drive.")) return;
+      if (!folder || !confirm("Você tem certeza que deseja excluir esta matéria ou este documento?")) return;
       const previousFolders = activeSubjectsState.folders;
       try {
         await deleteActiveSubjectDriveFiles((folder.items || []).filter(item => item && item.kind === "file"));
@@ -4440,7 +4440,7 @@ padding:0 2px;">↩ Responder</button>`;
         const workspace = document.getElementById("activeSubjectWorkspace");
         if (workspace) workspace.style.display = "none";
         renderActiveSubjectFolders();
-        activeSubjectsStatus("Pasta excluída; os arquivos foram movidos para a lixeira do Drive.");
+        activeSubjectsStatus("Excluído");
       } catch (error) {
         activeSubjectsState.folders = previousFolders;
         renderActiveSubjectFolders();
@@ -4534,7 +4534,7 @@ padding:0 2px;">↩ Responder</button>`;
       const folder = activeSubjectFolder(); if (!folder) return;
       const item = (folder.items || []).find(entry => String(entry.id) === String(id));
       if (!item) return;
-      if (item.kind === "file" && !confirm("Excluir este documento do app e movê-lo para a lixeira do Google Drive?")) return;
+      if (!confirm("Você tem certeza que deseja excluir esta matéria ou este documento?")) return;
       const previousItems = folder.items;
       const previousUpdatedAt = folder.updatedAt;
       try {
@@ -4543,7 +4543,7 @@ padding:0 2px;">↩ Responder</button>`;
         folder.updatedAt = Date.now();
         await waitForNotesAuth(); await saveActiveSubjectsState();
         renderActiveSubjectFolders(); renderActiveSubjectItems();
-        activeSubjectsStatus(item.kind === "file" ? "Documento movido para a lixeira do Google Drive e removido do app." : "Conteúdo removido.");
+        activeSubjectsStatus("Excluído");
       } catch (error) {
         folder.items = previousItems;
         folder.updatedAt = previousUpdatedAt;
