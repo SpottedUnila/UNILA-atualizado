@@ -1778,7 +1778,6 @@ gtag('config', 'G-FJT3X93608');
       <input id="subjectFolderName" type="text" maxlength="50" placeholder="Nome da matéria (ex.: Cálculo)" style="flex:1;min-width:190px;padding:11px;border-radius:9px;border:0;">
       <button type="button" onclick="createActiveSubjectFolder()">➕ Criar pasta</button>
     </div>
-    <div id="activeSubjectsFolders" class="active-subjects-folders-scroll" style="display:grid;gap:10px;"></div>
     <div id="activeSubjectWorkspace" style="display:none;margin-top:16px;padding:14px;border:1px solid rgba(255,255,255,.25);border-radius:14px;background:rgba(0,0,0,.16);">
       <h3 id="activeSubjectTitle" style="margin:0 0 4px;"></h3>
       <p id="activeSubjectFolderMeta" style="margin:0 0 10px;font-size:12px;opacity:.82;"></p>
@@ -1792,6 +1791,7 @@ gtag('config', 'G-FJT3X93608');
     </div>
   </div>
 
+    <div id="activeSubjectsFolders" class="active-subjects-folders-scroll" style="display:grid;gap:10px;"></div>
   <div id="notesPage" class="page">
     <h2>📝 Anotações</h2>
     <p id="notesNickNotice" class="academic-nick-notice">Crie um nick no Chat para inserir suas anotações.</p>
@@ -2428,7 +2428,7 @@ gtag('config', 'G-FJT3X93608');
     // Atualização do PWA: rede primeiro; cache apenas como fallback offline.
     function setupPWAUpdate() {
       if (!('serviceWorker' in navigator)) return;
-      navigator.serviceWorker.register('./service-worker37.js?v=371', { updateViaCache: 'none' }).then(function(reg) {
+      navigator.serviceWorker.register('./service-worker37.js?v=372', { updateViaCache: 'none' }).then(function(reg) {
         reg.update();
         reg.addEventListener('updatefound', function() {
           var newWorker = reg.installing;
