@@ -4366,9 +4366,23 @@ padding:0 2px;">↩ Responder</button>`;
       plainNotes.push({ id: ACTIVE_SUBJECTS_RECORD_ID, kind: "activeSubjects", folders: activeSubjectsState.folders, updatedAt: Date.now() });
       await firestoreSet(reference, { uid: firebaseUid, nick: nick, notes: plainNotes, updatedAt: Date.now(), source: "Vida Unileira" }, { merge: true });
     }
+    function updateActiveSubjectsGreeting() {
+      const notice = document.getElementById("subjectsNickNotice");
+      if (!notice) return;
+      const currentNick = String(typeof nick !== "undefined" ? nick : "").trim();
+      if (currentNick) {
+        const template = typeof window.unilaTranslate === "function" ? window.unilaTranslate("activeSubjectsWelcome") : "👋 Bem-vindo, {nick}! Aqui estão suas matérias ativas.";
+        notice.textContent = template.replace("{nick}", currentNick);
+        notice.style.display = "block";
+      } else {
+        notice.textContent = typeof window.unilaTranslate === "function" ? window.unilaTranslate("activeSubjectsNoNick") : "Crie um nick no Chat para usar suas matérias ativas.";
+        notice.style.display = "block";
+      }
+    }
     async function loadActiveSubjects() {
       const foldersNode = document.getElementById("activeSubjectsFolders");
       if (!foldersNode) return;
+      updateActiveSubjectsGreeting();
       if (!nick) { foldersNode.innerHTML = "<p>Crie um nick no Chat antes de usar suas matérias ativas.</p>"; document.getElementById("activeSubjectWorkspace").style.display = "none"; return; }
       foldersNode.innerHTML = "<p>Carregando suas matérias...</p>";
       try {
@@ -4963,7 +4977,7 @@ padding:0 2px;">↩ Responder</button>`;
         replying: "Respondendo a", today: "Hoje às", yesterday: "Ontem às", at: "às", verify: "Verificando...", sending: "Enviando...", saving: "Salvando...",
         reactNick: "Defina um nick para reagir.", replyNick: "Defina um nick para responder.", typeNick: "Digite um Nick!", nickUsed: "Nick em uso!",
         fillAll: "Preencha tudo!", deleteReplyConfirm: "Excluir esta resposta?", deleteAdConfirm: "Excluir este anúncio?",
-        error: "Erro: ", errorReply: "Erro ao responder: ", errorDeleteReply: "Erro ao excluir resposta: ", shareMessage: "Confira o UNILA App!"
+        error: "Erro: ", errorReply: "Erro ao responder: ", errorDeleteReply: "Erro ao excluir resposta: ", shareMessage: "Confira o UNILA App!", activeSubjectsWelcome: "👋 Bem-vindo, {nick}! Aqui estão suas matérias ativas.", activeSubjectsNoNick: "Crie um nick no Chat para usar suas matérias ativas."
       },
       content: {
         emergencia: "Polícia Militar: 190\nSAMU (Ambulância): 192\nBombeiros: 193\n\nHospital Municipal: (45) 2105-4100\nGuarda Municipal: (45) 2105-5100\nDelegacia da Mulher: (45) 3521-9200\nDefesa Civil: 199\n\nPolícia Federal: (45) 3522-1174\nPolícia Rodoviária Federal: (45) 3576-1400\n\nPrae-UNILA: +55 45 3522-9983\nPrograd-UNILA: +55 (45) 3522-9766\n\nDisque Denúncia: 181\nConselho Tutelar: (45) 3521-1112\nCentro de Intoxicações: 0800 722 6001\n\n⚠ Em situações graves, ligue imediatamente.",
@@ -5004,7 +5018,7 @@ padding:0 2px;">↩ Responder</button>`;
         replying: "Réponse à", today: "Aujourd’hui à", yesterday: "Hier à", at: "à", verify: "Vérification...", sending: "Envoi...", saving: "Enregistrement...",
         reactNick: "Définissez un pseudo pour réagir.", replyNick: "Définissez un pseudo pour répondre.", typeNick: "Saisissez un pseudo !", nickUsed: "Pseudo déjà utilisé !",
         fillAll: "Veuillez tout remplir !", deleteReplyConfirm: "Supprimer cette réponse ?", deleteAdConfirm: "Supprimer cette annonce ?",
-        error: "Erreur : ", errorReply: "Erreur lors de la réponse : ", errorDeleteReply: "Erreur lors de la suppression de la réponse : ", shareMessage: "Découvrez l’application UNILA !"
+        error: "Erreur : ", errorReply: "Erreur lors de la réponse : ", errorDeleteReply: "Erreur lors de la suppression de la réponse : ", shareMessage: "Découvrez l’application UNILA !", activeSubjectsWelcome: "👋 Bienvenue, {nick} ! Voici vos matières actives.", activeSubjectsNoNick: "Créez un pseudo dans le Chat pour utiliser vos matières actives."
       },
       content: {
         emergencia: "Police militaire : 190\nSAMU (Ambulance) : 192\nPompiers : 193\n\nHôpital municipal : (45) 2105-4100\nPolice municipale : (45) 2105-5100\nDélégation des femmes : (45) 3521-9200\nProtection civile : 199\n\nPolice fédérale : (45) 3522-1174\nPolice routière fédérale : (45) 3576-1400\n\nPrae-UNILA : +55 45 3522-9983\nPrograd-UNILA : +55 (45) 3522-9766\n\nLigne de dénonciation : 181\nConseil tutélaire : (45) 3521-1112\nCentre antipoison : 0800 722 6001\n\n⚠ En cas de situation grave, appelez immédiatement.",
@@ -5045,7 +5059,7 @@ padding:0 2px;">↩ Responder</button>`;
         replying: "Respondiendo a", today: "Hoy a las", yesterday: "Ayer a las", at: "a las", verify: "Verificando...", sending: "Enviando...", saving: "Guardando...",
         reactNick: "Define un nick para reaccionar.", replyNick: "Define un nick para responder.", typeNick: "¡Escribe un nick!", nickUsed: "¡Nick en uso!",
         fillAll: "¡Completa todos los campos!", deleteReplyConfirm: "¿Eliminar esta respuesta?", deleteAdConfirm: "¿Eliminar este anuncio?",
-        error: "Error: ", errorReply: "Error al responder: ", errorDeleteReply: "Error al eliminar la respuesta: ", shareMessage: "¡Mira la aplicación UNILA!"
+        error: "Error: ", errorReply: "Error al responder: ", errorDeleteReply: "Error al eliminar la respuesta: ", shareMessage: "¡Mira la aplicación UNILA!", activeSubjectsWelcome: "👋 ¡Bienvenido, {nick}! Aquí están tus materias activas.", activeSubjectsNoNick: "Crea un nick en el Chat para usar tus materias activas."
       },
       content: {
         emergencia: "Policía Militar: 190\nSAMU (Ambulancia): 192\nBomberos: 193\n\nHospital Municipal: (45) 2105-4100\nGuardia Municipal: (45) 2105-5100\nComisaría de la Mujer: (45) 3521-9200\nDefensa Civil: 199\n\nPolicía Federal: (45) 3522-1174\nPolicía Federal de Carreteras: (45) 3576-1400\n\nPrae-UNILA: +55 45 3522-9983\nPrograd-UNILA: +55 (45) 3522-9766\n\nLínea de denuncias: 181\nConsejo Tutelar: (45) 3521-1112\nCentro de Intoxicaciones: 0800 722 6001\n\n⚠ En situaciones graves, llama inmediatamente.",
@@ -5089,7 +5103,7 @@ padding:0 2px;">↩ Responder</button>`;
       replying: "Replying to", today: "Today at", yesterday: "Yesterday at", at: "at", verify: "Verifying...", sending: "Sending...", saving: "Saving...",
       reactNick: "Set a nickname to react.", replyNick: "Set a nickname to reply.", typeNick: "Enter a nickname!", nickUsed: "Nickname already in use!",
       fillAll: "Please fill in all fields!", deleteReplyConfirm: "Delete this reply?", deleteAdConfirm: "Delete this ad?",
-      error: "Error: ", errorReply: "Error replying: ", errorDeleteReply: "Error deleting reply: ", shareMessage: "Check out the Vida Unileira app!"
+      error: "Error: ", errorReply: "Error replying: ", errorDeleteReply: "Error deleting reply: ", shareMessage: "Check out the Vida Unileira app!", activeSubjectsWelcome: "👋 Welcome, {nick}! Here are your active subjects.", activeSubjectsNoNick: "Create a nickname in Chat to use your active subjects."
     },
     content: {
       emergencia: "Military Police: 190\nSAMU (Ambulance): 192\nFire Department: 193\n\nMunicipal Hospital: (45) 2105-4100\nMunicipal Guard: (45) 2105-5100\nWomen's Police Station: (45) 3521-9200\nCivil Defense: 199\n\nFederal Police: (45) 3522-1174\nFederal Highway Police: (45) 3576-1400\n\nPrae-UNILA: +55 45 3522-9983\nPrograd-UNILA: +55 (45) 3522-9766\n\nCrime Hotline: 181\nChild Protection Council: (45) 3521-1112\nPoison Control Center: 0800 722 6001\n\n⚠ In serious emergencies, call immediately.",
@@ -5492,6 +5506,7 @@ padding:0 2px;">↩ Responder</button>`;
         updateAcademicProgress();
       }
 
+      if (typeof updateActiveSubjectsGreeting === "function") updateActiveSubjectsGreeting();
       var notesLocale = notesCopy();
       var notesNotice = document.getElementById("notesNickNotice");
       if (notesNotice) { notesNotice.textContent = notesLocale.notice; notesNotice.style.display = nick ? "none" : "block"; }
