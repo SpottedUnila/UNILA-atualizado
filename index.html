@@ -4280,6 +4280,8 @@ padding:0 2px;">↩ Responder</button>`;
     const ACTIVE_SUBJECTS_RECORD_ID = "__active_subjects__";
     const MAX_ACTIVE_SUBJECT_FOLDERS = 100;
     const MAX_ACTIVE_SUBJECT_FILE_BYTES = 10 * 1024 * 1024;
+    // Substituir pelo URL /exec do Web App do Google Apps Script após a publicação.
+    const ACTIVE_SUBJECTS_DRIVE_UPLOAD_URL = "https://script.google.com/macros/s/AKfycbzdD7Ns8ccauG30Nn_mgeUSkjLTq1D4F59RvrTnYiiNyrcWMJNrC109Zq2F3-qO22VOwg/exec";
     const ACTIVE_SUBJECT_PALETTE = [
       { bg: "rgba(8,99,140,.24)", panel: "rgba(8,99,140,.16)", border: "rgba(75,127,151,.7)", accent: "#7dd3fc" },
       { bg: "rgba(101,51,148,.24)", panel: "rgba(101,51,148,.16)", border: "rgba(130,108,152,.7)", accent: "#d8b4fe" },
@@ -4437,20 +4439,40 @@ padding:0 2px;">↩ Responder</button>`;
       const now = Date.now(); folder.items = Array.isArray(folder.items) ? folder.items : []; folder.items.push({ id: String(now), kind: "text", text: text, insertedAt: now, createdAt: now }); folder.updatedAt = now;
       try { await waitForNotesAuth(); await saveActiveSubjectsState(); field.value = ""; renderActiveSubjectFolders(); renderActiveSubjectItems(); activeSubjectsStatus("Texto salvo e vinculado ao seu nick."); } catch (error) { folder.items.pop(); activeSubjectsStatus("Não foi possível salvar o texto.", true); }
     }
+    function fileAsBase64(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(String(reader.result || "").split(",")[1] || "");
+        reader.onerror = () => reject(new Error("Não foi possível ler o arquivo."));
+        reader.readAsDataURL(file);
+      });
+    }
     async function uploadActiveSubjectFile(event) {
       const file = event.target.files && event.target.files[0], folder = activeSubjectFolder();
       const descriptionField = document.getElementById("activeSubjectFileDescription");
       const description = descriptionField ? descriptionField.value.trim().slice(0, 500) : "";
       if (!file || !folder) { activeSubjectsStatus("Selecione uma pasta antes de anexar um arquivo.", true); return; }
       if (file.size > MAX_ACTIVE_SUBJECT_FILE_BYTES) { appAlert("O arquivo deve ter no máximo 10 MB."); event.target.value = ""; return; }
-      activeSubjectsStatus("Enviando arquivo...");
+      if (!ACTIVE_SUBJECTS_DRIVE_UPLOAD_URL || ACTIVE_SUBJECTS_DRIVE_UPLOAD_URL.includes("COLE_SEU_DEPLOYMENT_ID")) {
+        appAlert("O envio pelo Google Drive ainda está sendo configurado. Tente novamente após a publicação do Web App.");
+        event.target.value = "";
+        return;
+      }
+      activeSubjectsStatus("Enviando arquivo para o Google Drive...");
       try {
-        const formData = new FormData(); formData.append("file", file); formData.append("upload_preset", "ml_default");
-        const response = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/auto/upload`, { method: "POST", body: formData });
-        const data = await response.json(); if (!response.ok || !data.secure_url) throw new Error(data.error?.message || "Upload rejeitado");
-        const now = Date.now(); folder.items = Array.isArray(folder.items) ? folder.items : []; folder.items.push({ id: String(now), kind: "file", name: file.name, originalName: file.name, description: description, type: file.type || "application/octet-stream", mimeType: file.type || "application/octet-stream", size: file.size, sizeBytes: file.size, url: data.secure_url, insertedAt: now, createdAt: now }); folder.updatedAt = now;
-        await waitForNotesAuth(); await saveActiveSubjectsState(); renderActiveSubjectFolders(); renderActiveSubjectItems(); activeSubjectsStatus("Arquivo anexado e vinculado ao seu nick.");
-      } catch (error) { console.error("Erro ao anexar arquivo:", error); activeSubjectsStatus("Não foi possível anexar este arquivo.", true); }
+        const base64 = await fileAsBase64(file);
+        const response = await fetch(ACTIVE_SUBJECTS_DRIVE_UPLOAD_URL, {
+          method: "POST",
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify({ name: file.name, mimeType: file.type || "application/octet-stream", description: description, uid: firebaseUid, subjectId: folder.id, base64: base64 })
+        });
+        const data = await response.json();
+        if (!response.ok || !data.ok || !data.url) throw new Error(data.error || "Upload rejeitado");
+        const now = Date.now(); folder.items = Array.isArray(folder.items) ? folder.items : [];
+        folder.items.push({ id: String(now), kind: "file", name: data.name || file.name, originalName: file.name, description: description, type: data.mimeType || file.type || "application/octet-stream", mimeType: data.mimeType || file.type || "application/octet-stream", size: data.size || file.size, sizeBytes: data.size || file.size, url: data.url, downloadUrl: data.downloadUrl || data.url, driveFileId: data.id || "", insertedAt: data.insertedAt || now, createdAt: now });
+        folder.updatedAt = now;
+        await waitForNotesAuth(); await saveActiveSubjectsState(); renderActiveSubjectFolders(); renderActiveSubjectItems(); activeSubjectsStatus("Arquivo salvo no Google Drive e vinculado ao seu nick.");
+      } catch (error) { console.error("Erro ao anexar arquivo no Google Drive:", error); activeSubjectsStatus("Não foi possível anexar o arquivo no Google Drive.", true); }
       event.target.value = "";
       if (descriptionField) descriptionField.value = "";
     }
