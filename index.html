@@ -321,6 +321,11 @@ button:hover{
 .resource-page{background:rgba(10,22,34,.68);}
 .resource-page-description{color:#e2e8f0;line-height:1.6;}
 .resource-open-link{display:inline-block;margin-top:14px;padding:12px 16px;border-radius:12px;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.1);color:#fff;text-decoration:none;font-weight:700;}
+/* Lista de matérias rolável: a última pasta permanece 50 px acima da base da área. */
+.active-subjects-folders-scroll{max-height:min(65vh,calc(100dvh - 260px));min-height:60px;overflow-y:auto;overflow-x:hidden;padding:0 6px 50px 0;box-sizing:border-box;scroll-padding-bottom:50px;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;}
+.active-subjects-folders-scroll::-webkit-scrollbar{width:7px;}
+.active-subjects-folders-scroll::-webkit-scrollbar-thumb{background:rgba(196,181,253,.52);border-radius:999px;}
+@media(max-width:720px){.active-subjects-folders-scroll{max-height:min(62vh,calc(100dvh - 245px));}}
 .academic-goals-intro{margin:0 0 16px;color:#e2e8f0;line-height:1.55;}
 .academic-goals-user{display:inline-block;margin:0 0 16px;padding:7px 10px;border-radius:999px;background:rgba(255,255,255,.1);color:#dbeafe;font-size:13px;}
 .academic-nick-notice{margin:0 0 16px;padding:11px 13px;border-radius:12px;background:rgba(250,204,21,.14);border:1px solid rgba(250,204,21,.42);color:#fef08a;font-weight:700;line-height:1.45;}
@@ -1775,7 +1780,7 @@ gtag('config', 'G-FJT3X93608');
       <input id="subjectFolderName" type="text" maxlength="50" placeholder="Nome da matéria (ex.: Cálculo)" style="flex:1;min-width:190px;padding:11px;border-radius:9px;border:0;">
       <button type="button" onclick="createActiveSubjectFolder()">➕ Criar pasta</button>
     </div>
-    <div id="activeSubjectsFolders" style="display:grid;gap:10px;"></div>
+    <div id="activeSubjectsFolders" class="active-subjects-folders-scroll" style="display:grid;gap:10px;"></div>
     <div id="activeSubjectWorkspace" style="display:none;margin-top:16px;padding:14px;border:1px solid rgba(255,255,255,.25);border-radius:14px;background:rgba(0,0,0,.16);">
       <h3 id="activeSubjectTitle" style="margin:0 0 4px;"></h3>
       <p id="activeSubjectFolderMeta" style="margin:0 0 10px;font-size:12px;opacity:.82;"></p>
