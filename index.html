@@ -324,6 +324,9 @@ button:hover{
 /* Lista de matérias rolável: a última pasta permanece 50 px acima da base da área. */
 .active-subjects-folders-scroll{min-height:60px;overflow:visible;padding:0 6px 50px 0;box-sizing:border-box;scroll-padding-bottom:50px;}
 @media(max-width:720px){.active-subjects-folders-scroll{padding-bottom:50px;}}
+.active-subject-folder-button{backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);box-shadow:0 3px 12px rgba(0,0,0,.22);transition:filter .18s ease,transform .18s ease,box-shadow .18s ease;}
+.active-subject-folder-button:hover{filter:brightness(1.2);transform:translateY(-1px);box-shadow:0 6px 16px rgba(0,0,0,.3);}
+.active-subject-folder-button:focus-visible{outline:2px solid #fff;outline-offset:2px;}
 .academic-goals-intro{margin:0 0 16px;color:#e2e8f0;line-height:1.55;}
 .academic-goals-user{display:inline-block;margin:0 0 16px;padding:7px 10px;border-radius:999px;background:rgba(255,255,255,.1);color:#dbeafe;font-size:13px;}
 .academic-nick-notice{margin:0 0 16px;padding:11px 13px;border-radius:12px;background:rgba(250,204,21,.14);border:1px solid rgba(250,204,21,.42);color:#fef08a;font-weight:700;line-height:1.45;}
@@ -2429,7 +2432,7 @@ gtag('config', 'G-FJT3X93608');
     // Atualização do PWA: rede primeiro; cache apenas como fallback offline.
     function setupPWAUpdate() {
       if (!('serviceWorker' in navigator)) return;
-      navigator.serviceWorker.register('./service-worker37.js?v=379', { updateViaCache: 'none' }).then(function(reg) {
+      navigator.serviceWorker.register('./service-worker37.js?v=380', { updateViaCache: 'none' }).then(function(reg) {
         reg.update();
         reg.addEventListener('updatefound', function() {
           var newWorker = reg.installing;
@@ -4283,16 +4286,16 @@ padding:0 2px;">↩ Responder</button>`;
     // Substituir pelo URL /exec do Web App do Google Apps Script após a publicação.
     const ACTIVE_SUBJECTS_DRIVE_UPLOAD_URL = "https://script.google.com/macros/s/AKfycbw5ocE80I5ZoC4-B5gCBdRmCIQpYHsNofjthVUGgx1N3a_ZVFTQmgsoDVlJX2Che7HF7g/exec";
     const ACTIVE_SUBJECT_PALETTE = [
-      { bg: "rgba(8,99,140,.24)", panel: "rgba(8,99,140,.16)", border: "rgba(75,127,151,.7)", accent: "#7dd3fc" },
-      { bg: "rgba(101,51,148,.24)", panel: "rgba(101,51,148,.16)", border: "rgba(130,108,152,.7)", accent: "#d8b4fe" },
-      { bg: "rgba(10,111,77,.24)", panel: "rgba(10,111,77,.16)", border: "rgba(66,139,110,.7)", accent: "#6ee7b7" },
-      { bg: "rgba(147,95,7,.25)", panel: "rgba(147,95,7,.16)", border: "rgba(152,112,70,.75)", accent: "#fdba74" },
-      { bg: "rgba(146,38,56,.23)", panel: "rgba(146,38,56,.15)", border: "rgba(152,98,105,.72)", accent: "#fda4af" },
-      { bg: "rgba(12,110,100,.24)", panel: "rgba(12,110,100,.16)", border: "rgba(56,140,127,.7)", accent: "#5eead4" },
-      { bg: "rgba(59,61,145,.25)", panel: "rgba(59,61,145,.16)", border: "rgba(99,108,151,.72)", accent: "#a5b4fc" },
-      { bg: "rgba(79,122,13,.24)", panel: "rgba(79,122,13,.16)", border: "rgba(114,145,60,.7)", accent: "#bef264" },
-      { bg: "rgba(142,43,92,.24)", panel: "rgba(142,43,92,.16)", border: "rgba(149,101,127,.72)", accent: "#f9a8d4" },
-      { bg: "rgba(4,109,127,.24)", panel: "rgba(4,109,127,.16)", border: "rgba(62,139,149,.72)", accent: "#67e8f9" }
+      { bg: "rgba(5,67,94,.58)", panel: "rgba(5,67,94,.34)", border: "rgba(90,190,225,.78)", accent: "#bae6fd" },
+      { bg: "rgba(62,32,96,.58)", panel: "rgba(62,32,96,.34)", border: "rgba(183,148,230,.78)", accent: "#e9d5ff" },
+      { bg: "rgba(5,72,48,.58)", panel: "rgba(5,72,48,.34)", border: "rgba(89,195,145,.78)", accent: "#bbf7d0" },
+      { bg: "rgba(92,55,5,.60)", panel: "rgba(92,55,5,.35)", border: "rgba(226,170,92,.8)", accent: "#fed7aa" },
+      { bg: "rgba(91,26,40,.58)", panel: "rgba(91,26,40,.34)", border: "rgba(225,125,145,.78)", accent: "#fecdd3" },
+      { bg: "rgba(5,72,67,.58)", panel: "rgba(5,72,67,.34)", border: "rgba(84,195,181,.78)", accent: "#ccfbf1" },
+      { bg: "rgba(37,39,95,.60)", panel: "rgba(37,39,95,.35)", border: "rgba(140,153,235,.8)", accent: "#e0e7ff" },
+      { bg: "rgba(49,76,10,.58)", panel: "rgba(49,76,10,.34)", border: "rgba(169,200,91,.78)", accent: "#ecfccb" },
+      { bg: "rgba(86,26,57,.58)", panel: "rgba(86,26,57,.34)", border: "rgba(220,125,179,.78)", accent: "#fce7f3" },
+      { bg: "rgba(4,69,82,.58)", panel: "rgba(4,69,82,.34)", border: "rgba(86,197,216,.78)", accent: "#cffafe" }
     ];
     let activeSubjectsState = { folders: [] };
     let activeSubjectFolderId = null;
@@ -4339,7 +4342,7 @@ padding:0 2px;">↩ Responder</button>`;
     function renderActiveSubjectFolders() {
       const list = document.getElementById("activeSubjectsFolders");
       if (!list) return;
-      list.innerHTML = activeSubjectsState.folders.length ? activeSubjectsState.folders.map(folder => { const theme = activeSubjectTheme(folder); const folderId = escapeHtml(String(folder.id)); return `<div style="display:flex;justify-content:space-between;gap:8px;align-items:center;padding:11px 13px;border-radius:11px;background:${theme.bg};border:1px solid ${theme.border};box-shadow:0 4px 16px rgba(0,0,0,.1);"><button type="button" data-subject-folder="${folderId}" style="flex:1;text-align:left;background:transparent;padding:4px 0;color:${theme.accent};font-weight:700;">📁 ${escapeHtml(folder.name)} <small style="color:white;">(${Array.isArray(folder.items) ? folder.items.length : 0})</small></button><button type="button" data-subject-delete-folder="${folderId}" style="background:#b91c1c;padding:6px 9px;">🗑</button></div>`; }).join("") : "<p>Crie sua primeira pasta de matéria. Você pode ter até 100.</p>";
+      list.innerHTML = activeSubjectsState.folders.length ? activeSubjectsState.folders.map(folder => { const theme = activeSubjectTheme(folder); const folderId = escapeHtml(String(folder.id)); return `<div style="display:flex;justify-content:space-between;gap:8px;align-items:center;padding:11px 13px;border-radius:11px;background:${theme.bg};border:1px solid ${theme.border};box-shadow:0 4px 16px rgba(0,0,0,.18);"><button type="button" class="active-subject-folder-button" data-subject-folder="${folderId}" style="flex:1;text-align:left;background:linear-gradient(135deg,${theme.bg},${theme.panel});border:1px solid ${theme.border};border-radius:9px;padding:10px 12px;color:${theme.accent};font-weight:700;">📁 ${escapeHtml(folder.name)} <small style="color:#fff;">(${Array.isArray(folder.items) ? folder.items.length : 0})</small></button><button type="button" data-subject-delete-folder="${folderId}" style="background:#b91c1c;padding:6px 9px;">🗑</button></div>`; }).join("") : "<p>Crie sua primeira pasta de matéria. Você pode ter até 100.</p>";
       list.querySelectorAll("[data-subject-folder]").forEach(button => button.addEventListener("click", () => selectActiveSubjectFolder(button.dataset.subjectFolder)));
       list.querySelectorAll("[data-subject-delete-folder]").forEach(button => button.addEventListener("click", () => deleteActiveSubjectFolder(button.dataset.subjectDeleteFolder)));
     }
