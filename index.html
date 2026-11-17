@@ -328,6 +328,7 @@ button:hover{
 .active-subject-folder-button{backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);box-shadow:0 3px 12px rgba(0,0,0,.22);transition:filter .18s ease,transform .18s ease,box-shadow .18s ease;}
 .active-subject-folder-button:hover{filter:brightness(1.2);transform:translateY(-1px);box-shadow:0 6px 16px rgba(0,0,0,.3);}
 .active-subject-folder-button:focus-visible{outline:2px solid #fff;outline-offset:2px;}
+.active-subjects-cloud-info{margin:0 0 16px;padding:10px 12px;border:1px solid rgba(56,189,248,.28);border-radius:12px;background:rgba(8,47,73,.35);color:#dbeafe;font-size:13px;line-height:1.5;}
 #activeSubjectDeleteDialog{width:min(420px,calc(100vw - 40px));box-sizing:border-box;padding:22px;border:1px solid rgba(167,139,250,.55);border-radius:18px;background:linear-gradient(145deg,rgba(35,20,57,.98),rgba(10,22,34,.98));color:#fff;box-shadow:0 20px 60px rgba(0,0,0,.58);}
 #activeSubjectDeleteDialog::backdrop{background:rgba(0,0,0,.68);backdrop-filter:blur(5px);}
 .active-subject-delete-question{margin:0;color:#fff;font-size:18px;font-weight:700;line-height:1.45;}
@@ -1786,6 +1787,7 @@ gtag('config', 'G-FJT3X93608');
   <div id="activeSubjectsPage" class="page">
     <h2>Minhas Matérias</h2>
     <p id="subjectsNickNotice" class="academic-nick-notice">Crie um nick no Chat para usar suas matérias ativas.</p>
+    <p id="activeSubjectsCloudInfo" class="active-subjects-cloud-info">O conteúdo que você salvar em Minhas Matérias ficará vinculado ao seu nick e armazenado na nuvem.</p>
     <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:12px 0;">
       <input id="subjectFolderName" type="text" maxlength="50" placeholder="Nome da matéria (ex.: Cálculo)" style="flex:1;min-width:190px;padding:11px;border-radius:9px;border:0;">
       <button type="button" onclick="createActiveSubjectFolder()">➕ Criar pasta</button>
@@ -2441,7 +2443,7 @@ gtag('config', 'G-FJT3X93608');
     // Atualização do PWA: rede primeiro; cache apenas como fallback offline.
     function setupPWAUpdate() {
       if (!('serviceWorker' in navigator)) return;
-      navigator.serviceWorker.register('./service-worker37.js?v=384', { updateViaCache: 'none' }).then(function(reg) {
+      navigator.serviceWorker.register('./service-worker37.js?v=385', { updateViaCache: 'none' }).then(function(reg) {
         reg.update();
         reg.addEventListener('updatefound', function() {
           var newWorker = reg.installing;
