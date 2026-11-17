@@ -1779,12 +1779,13 @@ gtag('config', 'G-FJT3X93608');
       <button type="button" onclick="createActiveSubjectFolder()">➕ Criar pasta</button>
     </div>
     <div id="activeSubjectWorkspace" style="display:none;margin-top:16px;padding:14px;border:1px solid rgba(255,255,255,.25);border-radius:14px;background:rgba(0,0,0,.16);">
-      <h3 id="activeSubjectTitle" style="margin:0 0 4px;"></h3>
+      <h3 id="activeSubjectTitle" role="button" tabindex="0" aria-expanded="true" title="Toque para recolher" style="margin:0 0 4px;cursor:pointer;user-select:none;"></h3>
       <p id="activeSubjectFolderMeta" style="margin:0 0 10px;font-size:12px;opacity:.82;"></p>
       <textarea id="activeSubjectText" maxlength="30000" placeholder="Escreva um texto ou anotação nesta matéria..." style="width:100%;min-height:120px;box-sizing:border-box;padding:12px;border-radius:10px;border:0;resize:vertical;"></textarea>
       <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:10px;">
         <button type="button" onclick="saveActiveSubjectText()">💾 Salvar texto</button>
         <label style="display:inline-flex;align-items:center;gap:7px;padding:10px 12px;border-radius:9px;background:#0ea5e9;color:white;font-weight:700;cursor:pointer;">📎 Anexar arquivo<input id="activeSubjectFile" type="file" accept="image/*,.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx" style="display:none;" onchange="uploadActiveSubjectFile(event)"></label>
+        <input id="activeSubjectFileDescription" type="text" maxlength="500" placeholder="Descrição do arquivo (opcional)" style="flex:1;min-width:220px;padding:10px;border-radius:9px;border:0;box-sizing:border-box;">
       </div>
       <p id="activeSubjectStatus" role="status" style="min-height:22px;margin:10px 0 0;color:#bbf7d0;font-size:13px;"></p>
       <div id="activeSubjectItems" style="display:grid;gap:8px;margin-top:12px;"></div>
@@ -4324,9 +4325,13 @@ padding:0 2px;">↩ Responder</button>`;
       const theme = activeSubjectTheme(folder), items = Array.isArray(folder.items) ? folder.items : [];
       list.innerHTML = items.length ? items.slice().reverse().map(item => {
         const inserted = activeSubjectDate(item.insertedAt || item.createdAt);
-        if (item.kind === "file") return `<div style="display:flex;justify-content:space-between;gap:8px;align-items:center;padding:10px;border-radius:9px;background:${theme.panel};border:1px solid ${theme.border};"><div style="min-width:0;"><a href="${escapeHtml(item.url)}" target="_blank" rel="noopener noreferrer" style="color:${theme.accent};font-weight:700;overflow-wrap:anywhere;">📎 ${escapeHtml(item.name || item.originalName || "Arquivo")}</a><div style="font-size:11px;opacity:.82;margin-top:4px;">Inserido em ${escapeHtml(inserted)} · ${escapeHtml(item.type || item.mimeType || "tipo desconhecido")} · ${escapeHtml(activeSubjectFileSize(item.size || item.sizeBytes))}</div></div><button type="button" data-subject-delete="${escapeHtml(String(item.id))}" style="background:#b91c1c;padding:6px 9px;">🗑</button></div>`;
+        if (item.kind === "file") {
+          const description = item.description ? `<div style="margin-top:5px;white-space:pre-wrap;overflow-wrap:anywhere;">📝 ${escapeHtml(item.description)}</div>` : "";
+          return `<div style="display:flex;justify-content:space-between;gap:8px;align-items:center;padding:10px;border-radius:9px;background:${theme.panel};border:1px solid ${theme.border};"><div style="min-width:0;"><a href="${escapeHtml(item.url)}" target="_blank" rel="noopener noreferrer" style="color:${theme.accent};font-weight:700;overflow-wrap:anywhere;">📎 ${escapeHtml(item.name || item.originalName || "Arquivo")}</a>${description}<div style="font-size:11px;opacity:.82;margin-top:4px;">Inserido em ${escapeHtml(inserted)} · ${escapeHtml(item.type || item.mimeType || "tipo desconhecido")} · ${escapeHtml(activeSubjectFileSize(item.size || item.sizeBytes))}</div></div><div style="display:flex;gap:5px;align-items:center;flex-shrink:0;"><button type="button" data-subject-edit-file="${escapeHtml(String(item.id))}" style="background:#2563eb;padding:6px 9px;">✏️</button><button type="button" data-subject-delete="${escapeHtml(String(item.id))}" style="background:#b91c1c;padding:6px 9px;">🗑</button></div></div>`;
+        }
         return `<div style="display:flex;justify-content:space-between;gap:8px;padding:10px;border-radius:9px;background:${theme.panel};border:1px solid ${theme.border};"><div style="min-width:0;"><div style="white-space:pre-wrap;overflow-wrap:anywhere;">📝 ${escapeHtml(item.text || "")}</div><div style="font-size:11px;opacity:.82;margin-top:5px;">Inserido em ${escapeHtml(inserted)} · texto</div></div><button type="button" data-subject-delete="${escapeHtml(String(item.id))}" style="background:#b91c1c;padding:6px 9px;">🗑</button></div>`;
       }).join("") : "<p>Nenhum conteúdo nesta matéria ainda.</p>";
+      list.querySelectorAll("button[data-subject-edit-file]").forEach(button => button.addEventListener("click", () => editActiveSubjectFile(button.dataset.subjectEditFile)));
       list.querySelectorAll("button[data-subject-delete]").forEach(button => button.addEventListener("click", () => deleteActiveSubjectItem(button.dataset.subjectDelete)));
     }
     function renderActiveSubjectFolders() {
@@ -4351,8 +4356,15 @@ padding:0 2px;">↩ Responder</button>`;
       workspace.style.display = "block";
       workspace.style.background = theme.panel;
       workspace.style.borderColor = theme.border;
-      document.getElementById("activeSubjectTitle").textContent = "📁 " + folder.name;
-      document.getElementById("activeSubjectTitle").style.color = theme.accent;
+      const titleNode = document.getElementById("activeSubjectTitle");
+      titleNode.textContent = "📁 " + folder.name;
+      titleNode.style.color = theme.accent;
+      titleNode.setAttribute("aria-expanded", "true");
+      if (!titleNode.dataset.collapseReady) {
+        titleNode.dataset.collapseReady = "true";
+        titleNode.addEventListener("click", () => toggleActiveSubjectFolder());
+        titleNode.addEventListener("keydown", event => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); toggleActiveSubjectFolder(); } });
+      }
       document.getElementById("activeSubjectFolderMeta").textContent = "Matéria criada em " + activeSubjectDate(folder.createdAt) + " · tema " + (Number(folder.colorIndex) + 1);
       document.getElementById("activeSubjectText").value = "";
       renderActiveSubjectItems();
@@ -4362,6 +4374,9 @@ padding:0 2px;">↩ Responder</button>`;
         const rect = workspace.getBoundingClientRect();
         if (rect.top < safeTop) window.scrollBy({ top: rect.top - safeTop, behavior: "smooth" });
       }, 0);
+    }
+    function toggleActiveSubjectFolder() {
+      if (activeSubjectFolderId != null) selectActiveSubjectFolder(activeSubjectFolderId);
     }
     async function saveActiveSubjectsState() {
       const reference = activeSubjectsReference();
@@ -4424,6 +4439,8 @@ padding:0 2px;">↩ Responder</button>`;
     }
     async function uploadActiveSubjectFile(event) {
       const file = event.target.files && event.target.files[0], folder = activeSubjectFolder();
+      const descriptionField = document.getElementById("activeSubjectFileDescription");
+      const description = descriptionField ? descriptionField.value.trim().slice(0, 500) : "";
       if (!file || !folder) { activeSubjectsStatus("Selecione uma pasta antes de anexar um arquivo.", true); return; }
       if (file.size > MAX_ACTIVE_SUBJECT_FILE_BYTES) { appAlert("O arquivo deve ter no máximo 10 MB."); event.target.value = ""; return; }
       activeSubjectsStatus("Enviando arquivo...");
@@ -4431,10 +4448,21 @@ padding:0 2px;">↩ Responder</button>`;
         const formData = new FormData(); formData.append("file", file); formData.append("upload_preset", "ml_default");
         const response = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/auto/upload`, { method: "POST", body: formData });
         const data = await response.json(); if (!response.ok || !data.secure_url) throw new Error(data.error?.message || "Upload rejeitado");
-        const now = Date.now(); folder.items = Array.isArray(folder.items) ? folder.items : []; folder.items.push({ id: String(now), kind: "file", name: file.name, originalName: file.name, type: file.type || "application/octet-stream", mimeType: file.type || "application/octet-stream", size: file.size, sizeBytes: file.size, url: data.secure_url, insertedAt: now, createdAt: now }); folder.updatedAt = now;
+        const now = Date.now(); folder.items = Array.isArray(folder.items) ? folder.items : []; folder.items.push({ id: String(now), kind: "file", name: file.name, originalName: file.name, description: description, type: file.type || "application/octet-stream", mimeType: file.type || "application/octet-stream", size: file.size, sizeBytes: file.size, url: data.secure_url, insertedAt: now, createdAt: now }); folder.updatedAt = now;
         await waitForNotesAuth(); await saveActiveSubjectsState(); renderActiveSubjectFolders(); renderActiveSubjectItems(); activeSubjectsStatus("Arquivo anexado e vinculado ao seu nick.");
       } catch (error) { console.error("Erro ao anexar arquivo:", error); activeSubjectsStatus("Não foi possível anexar este arquivo.", true); }
       event.target.value = "";
+      if (descriptionField) descriptionField.value = "";
+    }
+    async function editActiveSubjectFile(id) {
+      const folder = activeSubjectFolder();
+      const item = folder && (folder.items || []).find(entry => String(entry.id) === String(id));
+      if (!item) return;
+      const next = window.prompt("Edite a descrição do arquivo:", item.description || "");
+      if (next === null) return;
+      item.description = String(next).trim().slice(0, 500);
+      folder.updatedAt = Date.now();
+      try { await waitForNotesAuth(); await saveActiveSubjectsState(); renderActiveSubjectItems(); activeSubjectsStatus("Descrição do arquivo atualizada."); } catch (error) { activeSubjectsStatus("Não foi possível atualizar a descrição.", true); }
     }
     async function deleteActiveSubjectItem(id) {
       const folder = activeSubjectFolder(); if (!folder) return;
