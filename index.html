@@ -1790,9 +1790,9 @@ gtag('config', 'G-FJT3X93608');
       <p id="activeSubjectStatus" role="status" style="min-height:22px;margin:10px 0 0;color:#bbf7d0;font-size:13px;"></p>
       <div id="activeSubjectItems" style="display:grid;gap:8px;margin-top:12px;"></div>
     </div>
-  </div>
 
     <div id="activeSubjectsFolders" class="active-subjects-folders-scroll" style="display:grid;gap:10px;"></div>
+  </div>
   <div id="notesPage" class="page">
     <h2>📝 Anotações</h2>
     <p id="notesNickNotice" class="academic-nick-notice">Crie um nick no Chat para inserir suas anotações.</p>
@@ -2429,7 +2429,7 @@ gtag('config', 'G-FJT3X93608');
     // Atualização do PWA: rede primeiro; cache apenas como fallback offline.
     function setupPWAUpdate() {
       if (!('serviceWorker' in navigator)) return;
-      navigator.serviceWorker.register('./service-worker37.js?v=377', { updateViaCache: 'none' }).then(function(reg) {
+      navigator.serviceWorker.register('./service-worker37.js?v=378', { updateViaCache: 'none' }).then(function(reg) {
         reg.update();
         reg.addEventListener('updatefound', function() {
           var newWorker = reg.installing;
