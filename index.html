@@ -2424,7 +2424,7 @@ gtag('config', 'G-FJT3X93608');
     // Atualização do PWA: rede primeiro; cache apenas como fallback offline.
     function setupPWAUpdate() {
       if (!('serviceWorker' in navigator)) return;
-      navigator.serviceWorker.register('./service-worker37.js?v=366', { updateViaCache: 'none' }).then(function(reg) {
+      navigator.serviceWorker.register('./service-worker37.js?v=367', { updateViaCache: 'none' }).then(function(reg) {
         reg.update();
         reg.addEventListener('updatefound', function() {
           var newWorker = reg.installing;
@@ -4331,8 +4331,15 @@ padding:0 2px;">↩ Responder</button>`;
       list.innerHTML = activeSubjectsState.folders.length ? activeSubjectsState.folders.map(folder => { const theme = activeSubjectTheme(folder); return `<div style="display:flex;justify-content:space-between;gap:8px;align-items:center;padding:11px 13px;border-radius:11px;background:${theme.bg};border:1px solid ${theme.border};box-shadow:0 4px 16px rgba(0,0,0,.1);"><button type="button" onclick="selectActiveSubjectFolder('${escapeHtml(String(folder.id))}')" style="flex:1;text-align:left;background:transparent;padding:4px 0;color:${theme.accent};font-weight:700;">📁 ${escapeHtml(folder.name)} <small style="color:white;">(${Array.isArray(folder.items) ? folder.items.length : 0})</small></button><button type="button" onclick="deleteActiveSubjectFolder('${escapeHtml(String(folder.id))}')" style="background:#b91c1c;padding:6px 9px;">🗑</button></div>`; }).join("") : "<p>Crie sua primeira pasta de matéria. Você pode ter até 10.</p>";
     }
     function selectActiveSubjectFolder(id) {
-      activeSubjectFolderId = String(id);
-      const folder = activeSubjectFolder(), workspace = document.getElementById("activeSubjectWorkspace");
+      const requestedId = String(id);
+      const workspace = document.getElementById("activeSubjectWorkspace");
+      if (String(activeSubjectFolderId) === requestedId && workspace && workspace.style.display !== "none") {
+        activeSubjectFolderId = null;
+        workspace.style.display = "none";
+        return;
+      }
+      activeSubjectFolderId = requestedId;
+      const folder = activeSubjectFolder();
       if (!folder || !workspace) return;
       const theme = activeSubjectTheme(folder);
       workspace.style.display = "block";
@@ -4364,8 +4371,10 @@ padding:0 2px;">↩ Responder</button>`;
         const data = snapshot.exists ? snapshot.data() : {};
         const record = Array.isArray(data.notes) ? data.notes.find(item => item && String(item.id) === ACTIVE_SUBJECTS_RECORD_ID) : null;
         activeSubjectsState = { folders: record && Array.isArray(record.folders) ? record.folders.slice(0, MAX_ACTIVE_SUBJECT_FOLDERS).map((folder, index) => Object.assign({ colorIndex: index }, folder)) : [] };
+        activeSubjectFolderId = null;
+        const workspace = document.getElementById("activeSubjectWorkspace");
+        if (workspace) workspace.style.display = "none";
         renderActiveSubjectFolders();
-        if (activeSubjectsState.folders.length) selectActiveSubjectFolder(activeSubjectsState.folders[0].id);
       } catch (error) { console.error("Erro ao carregar matérias:", error); foldersNode.innerHTML = "<p>Não foi possível carregar suas matérias agora.</p>"; }
     }
     async function createActiveSubjectFolder() {
@@ -4375,7 +4384,7 @@ padding:0 2px;">↩ Responder</button>`;
       if (activeSubjectsState.folders.length >= MAX_ACTIVE_SUBJECT_FOLDERS) { appAlert("Você já atingiu o limite de 10 pastas."); return; }
       const now = Date.now();
       activeSubjectsState.folders.push({ id: String(now), name: name, colorIndex: activeSubjectsState.folders.length % ACTIVE_SUBJECT_PALETTE.length, items: [], createdAt: now, updatedAt: now });
-      try { await waitForNotesAuth(); await saveActiveSubjectsState(); input.value = ""; renderActiveSubjectFolders(); selectActiveSubjectFolder(activeSubjectsState.folders.at(-1).id); activeSubjectsStatus("Pasta criada e vinculada ao seu nick."); } catch (error) { activeSubjectsState.folders.pop(); activeSubjectsStatus("Não foi possível criar a pasta.", true); }
+      try { await waitForNotesAuth(); await saveActiveSubjectsState(); input.value = ""; renderActiveSubjectFolders(); activeSubjectsStatus("Pasta criada e vinculada ao seu nick. Toque nela para abrir."); } catch (error) { activeSubjectsState.folders.pop(); activeSubjectsStatus("Não foi possível criar a pasta.", true); }
     }
     async function deleteActiveSubjectFolder(id) {
       if (!confirm("Excluir esta pasta e todo o seu conteúdo?")) return;
