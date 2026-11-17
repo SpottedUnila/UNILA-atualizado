@@ -2429,7 +2429,7 @@ gtag('config', 'G-FJT3X93608');
     // Atualização do PWA: rede primeiro; cache apenas como fallback offline.
     function setupPWAUpdate() {
       if (!('serviceWorker' in navigator)) return;
-      navigator.serviceWorker.register('./service-worker37.js?v=376', { updateViaCache: 'none' }).then(function(reg) {
+      navigator.serviceWorker.register('./service-worker37.js?v=377', { updateViaCache: 'none' }).then(function(reg) {
         reg.update();
         reg.addEventListener('updatefound', function() {
           var newWorker = reg.installing;
@@ -4429,9 +4429,23 @@ padding:0 2px;">↩ Responder</button>`;
       try { await waitForNotesAuth(); await saveActiveSubjectsState(); input.value = ""; renderActiveSubjectFolders(); activeSubjectsStatus("Pasta criada e vinculada ao seu nick. Toque nela para abrir."); } catch (error) { activeSubjectsState.folders.pop(); activeSubjectsStatus("Não foi possível criar a pasta.", true); }
     }
     async function deleteActiveSubjectFolder(id) {
-      if (!confirm("Excluir esta pasta e todo o seu conteúdo?")) return;
-      activeSubjectsState.folders = activeSubjectsState.folders.filter(folder => String(folder.id) !== String(id));
-      try { await waitForNotesAuth(); await saveActiveSubjectsState(); activeSubjectFolderId = null; document.getElementById("activeSubjectWorkspace").style.display = "none"; renderActiveSubjectFolders(); } catch (error) { activeSubjectsStatus("Não foi possível excluir a pasta.", true); }
+      const folder = activeSubjectsState.folders.find(entry => String(entry.id) === String(id));
+      if (!folder || !confirm("Excluir esta pasta e todo o seu conteúdo? Os arquivos serão movidos para a lixeira do Google Drive.")) return;
+      const previousFolders = activeSubjectsState.folders;
+      try {
+        await deleteActiveSubjectDriveFiles((folder.items || []).filter(item => item && item.kind === "file"));
+        activeSubjectsState.folders = activeSubjectsState.folders.filter(entry => String(entry.id) !== String(id));
+        await waitForNotesAuth(); await saveActiveSubjectsState();
+        activeSubjectFolderId = null;
+        const workspace = document.getElementById("activeSubjectWorkspace");
+        if (workspace) workspace.style.display = "none";
+        renderActiveSubjectFolders();
+        activeSubjectsStatus("Pasta excluída; os arquivos foram movidos para a lixeira do Drive.");
+      } catch (error) {
+        activeSubjectsState.folders = previousFolders;
+        renderActiveSubjectFolders();
+        activeSubjectsStatus(activeSubjectDriveDeleteError(error), true);
+      }
     }
     async function saveActiveSubjectText() {
       const folder = activeSubjectFolder(), field = document.getElementById("activeSubjectText"), text = field ? field.value.trim() : "";
@@ -4486,10 +4500,56 @@ padding:0 2px;">↩ Responder</button>`;
       folder.updatedAt = Date.now();
       try { await waitForNotesAuth(); await saveActiveSubjectsState(); renderActiveSubjectItems(); activeSubjectsStatus("Descrição do arquivo atualizada."); } catch (error) { activeSubjectsStatus("Não foi possível atualizar a descrição.", true); }
     }
+    async function deleteActiveSubjectDriveFiles(items) {
+      const files = Array.isArray(items) ? items : [];
+      if (!files.length) return;
+      if (files.some(item => !item || !item.driveFileId)) throw new Error("Este anexo não possui um ID do Drive para exclusão segura.");
+      if (!ACTIVE_SUBJECTS_DRIVE_UPLOAD_URL) throw new Error("O serviço de exclusão do Drive não está configurado.");
+      await waitForNotesAuth();
+      const user = (typeof auth !== "undefined" && auth.currentUser) || firebaseUser;
+      if (!user) throw new Error("A sessão do usuário não está pronta. Entre novamente no app.");
+      const idToken = await user.getIdToken();
+      const fileIds = files.map(item => String(item.driveFileId));
+      for (let i = 0; i < fileIds.length; i += 50) {
+        const response = await fetch(ACTIVE_SUBJECTS_DRIVE_UPLOAD_URL, {
+          method: "POST",
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify({ action: "delete", fileIds: fileIds.slice(i, i + 50), idToken: idToken })
+        });
+        const data = await response.json();
+        if (!response.ok || !data.ok) {
+          const error = new Error(data.error || "O Drive não aceitou a exclusão.");
+          error.code = data.code || "DRIVE_DELETE_FAILED";
+          throw error;
+        }
+      }
+    }
+    function activeSubjectDriveDeleteError(error) {
+      if (error && (error.code === "FILE_NOT_OWNED" || error.code === "FILE_NOT_ACCESSIBLE")) {
+        return "Não foi possível apagar este arquivo na conta nova. Anexos enviados antes da migração podem continuar na conta antiga e precisam ser apagados pelo Drive antigo.";
+      }
+      return error && error.message ? error.message : "Não foi possível apagar o arquivo no Drive.";
+    }
     async function deleteActiveSubjectItem(id) {
       const folder = activeSubjectFolder(); if (!folder) return;
-      folder.items = (folder.items || []).filter(item => String(item.id) !== String(id));
-      try { await waitForNotesAuth(); await saveActiveSubjectsState(); renderActiveSubjectFolders(); renderActiveSubjectItems(); activeSubjectsStatus("Conteúdo removido."); } catch (error) { activeSubjectsStatus("Não foi possível remover o conteúdo.", true); }
+      const item = (folder.items || []).find(entry => String(entry.id) === String(id));
+      if (!item) return;
+      if (item.kind === "file" && !confirm("Excluir este documento do app e movê-lo para a lixeira do Google Drive?")) return;
+      const previousItems = folder.items;
+      const previousUpdatedAt = folder.updatedAt;
+      try {
+        if (item.kind === "file") await deleteActiveSubjectDriveFiles([item]);
+        folder.items = (folder.items || []).filter(entry => String(entry.id) !== String(id));
+        folder.updatedAt = Date.now();
+        await waitForNotesAuth(); await saveActiveSubjectsState();
+        renderActiveSubjectFolders(); renderActiveSubjectItems();
+        activeSubjectsStatus(item.kind === "file" ? "Documento movido para a lixeira do Google Drive e removido do app." : "Conteúdo removido.");
+      } catch (error) {
+        folder.items = previousItems;
+        folder.updatedAt = previousUpdatedAt;
+        renderActiveSubjectItems();
+        activeSubjectsStatus(activeSubjectDriveDeleteError(error), true);
+      }
     }
 
     const NOTES_COLLECTION = "notes";
