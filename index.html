@@ -324,8 +324,7 @@ button:hover{
 /* Lista de matérias rolável: a última pasta permanece 50 px acima da base da área. */
 .active-subjects-folders-scroll{min-height:60px;overflow:visible;padding:0 6px 50px 0;box-sizing:border-box;scroll-padding-bottom:50px;}
 @media(max-width:720px){.active-subjects-folders-scroll{padding-bottom:50px;}}
-#activeSubjectWorkspace{margin:20px 0 28px!important;box-shadow:0 12px 30px rgba(0,0,0,.32);}
-#activeSubjectsFolders{gap:16px!important;}
+#activeSubjectWorkspace{margin:20px 0 50px!important;box-shadow:0 12px 30px rgba(0,0,0,.32);}
 .active-subject-folder-button{backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);box-shadow:0 3px 12px rgba(0,0,0,.22);transition:filter .18s ease,transform .18s ease,box-shadow .18s ease;}
 .active-subject-folder-button:hover{filter:brightness(1.2);transform:translateY(-1px);box-shadow:0 6px 16px rgba(0,0,0,.3);}
 .active-subject-folder-button:focus-visible{outline:2px solid #fff;outline-offset:2px;}
@@ -2442,7 +2441,7 @@ gtag('config', 'G-FJT3X93608');
     // Atualização do PWA: rede primeiro; cache apenas como fallback offline.
     function setupPWAUpdate() {
       if (!('serviceWorker' in navigator)) return;
-      navigator.serviceWorker.register('./service-worker37.js?v=383', { updateViaCache: 'none' }).then(function(reg) {
+      navigator.serviceWorker.register('./service-worker37.js?v=384', { updateViaCache: 'none' }).then(function(reg) {
         reg.update();
         reg.addEventListener('updatefound', function() {
           var newWorker = reg.installing;
