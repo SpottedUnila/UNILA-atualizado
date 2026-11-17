@@ -304,6 +304,7 @@ button:hover{
   padding-top:140px;
 }
 #notesPage,
+#activeSubjectsPage,
 #desapegaPage,
 #resourcePage,
 #officialSourcesPage{
@@ -2424,7 +2425,7 @@ gtag('config', 'G-FJT3X93608');
     // Atualização do PWA: rede primeiro; cache apenas como fallback offline.
     function setupPWAUpdate() {
       if (!('serviceWorker' in navigator)) return;
-      navigator.serviceWorker.register('./service-worker37.js?v=367', { updateViaCache: 'none' }).then(function(reg) {
+      navigator.serviceWorker.register('./service-worker37.js?v=368', { updateViaCache: 'none' }).then(function(reg) {
         reg.update();
         reg.addEventListener('updatefound', function() {
           var newWorker = reg.installing;
@@ -4350,7 +4351,12 @@ padding:0 2px;">↩ Responder</button>`;
       document.getElementById("activeSubjectFolderMeta").textContent = "Matéria criada em " + activeSubjectDate(folder.createdAt) + " · tema " + (Number(folder.colorIndex) + 1);
       document.getElementById("activeSubjectText").value = "";
       renderActiveSubjectItems();
-      workspace.scrollIntoView({ behavior: "smooth", block: "start" });
+      // A busca global e os controles do topo são fixos; nunca role o conteúdo para trás deles.
+      window.setTimeout(() => {
+        const safeTop = 140;
+        const rect = workspace.getBoundingClientRect();
+        if (rect.top < safeTop) window.scrollBy({ top: rect.top - safeTop, behavior: "smooth" });
+      }, 0);
     }
     async function saveActiveSubjectsState() {
       const reference = activeSubjectsReference();
