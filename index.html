@@ -1659,7 +1659,7 @@ gtag('config', 'G-FJT3X93608');
     <a class="facebook menu-link" href="https://facebook.com/groups/660879523972023/">👥 Grupo no Facebook</a>
     <button class="dev" onclick="openDynamic('dev','page')">👨‍💻 Desenvolvedor</button>
     <button class="dev" onclick="window.location.href='privacy.html'">🔒 Privacidade e exclusão</button>
-    <button class="notes" onclick="openPage('activeSubjectsPage')">Minhas Matérias</button>
+    <button class="notes" onclick="openPage('activeSubjectsPage')">📚Pastas de Matérias</button>
     <button class="notes" onclick="openPage('notesPage')">📝 Anotações</button>
     <button class="share" onclick="shareApp()">📤 Compartilhar App</button>
     <button class="internet" onclick="openDynamic('internet','page')">🌐 Internet</button>
@@ -2443,7 +2443,7 @@ gtag('config', 'G-FJT3X93608');
     // Atualização do PWA: rede primeiro; cache apenas como fallback offline.
     function setupPWAUpdate() {
       if (!('serviceWorker' in navigator)) return;
-      navigator.serviceWorker.register('./service-worker37.js?v=385', { updateViaCache: 'none' }).then(function(reg) {
+      navigator.serviceWorker.register('./service-worker37.js?v=386', { updateViaCache: 'none' }).then(function(reg) {
         reg.update();
         reg.addEventListener('updatefound', function() {
           var newWorker = reg.installing;
