@@ -2432,7 +2432,7 @@ gtag('config', 'G-FJT3X93608');
     // Atualização do PWA: rede primeiro; cache apenas como fallback offline.
     function setupPWAUpdate() {
       if (!('serviceWorker' in navigator)) return;
-      navigator.serviceWorker.register('./service-worker37.js?v=380', { updateViaCache: 'none' }).then(function(reg) {
+      navigator.serviceWorker.register('./service-worker37.js?v=381', { updateViaCache: 'none' }).then(function(reg) {
         reg.update();
         reg.addEventListener('updatefound', function() {
           var newWorker = reg.installing;
@@ -4433,7 +4433,7 @@ padding:0 2px;">↩ Responder</button>`;
     }
     async function deleteActiveSubjectFolder(id) {
       const folder = activeSubjectsState.folders.find(entry => String(entry.id) === String(id));
-      if (!folder || !confirm("Você tem certeza que deseja excluir esta matéria ou este documento?")) return;
+      if (!folder || !confirm("Tem certeza que deseja excluir?")) return;
       const previousFolders = activeSubjectsState.folders;
       try {
         await deleteActiveSubjectDriveFiles((folder.items || []).filter(item => item && item.kind === "file"));
@@ -4537,7 +4537,7 @@ padding:0 2px;">↩ Responder</button>`;
       const folder = activeSubjectFolder(); if (!folder) return;
       const item = (folder.items || []).find(entry => String(entry.id) === String(id));
       if (!item) return;
-      if (!confirm("Você tem certeza que deseja excluir esta matéria ou este documento?")) return;
+      if (!confirm("Tem certeza que deseja excluir?")) return;
       const previousItems = folder.items;
       const previousUpdatedAt = folder.updatedAt;
       try {
