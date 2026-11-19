@@ -1668,7 +1668,7 @@ gtag('config', 'G-FJT3X93608');
     <button class="auxilio-estudantil" onclick="openLocalizedResource('studentAid')">🎓 Auxílio Estudantil</button>
     <button class="unila" onclick="openLocalizedResource('mentalHealth')">🧠 Saúde Mental</button>
     <a class="google menu-link" href="https://enem.inep.gov.br/participante/">📝 ENEM</a>
-    <button class="noticias" onclick="openNewsPage()">📰 Notícias Alternativas</button>
+    <button class="noticias" onclick="openNewsPage()">📰 Notícias Unileiras</button>
     <button class="conheca-unila-btn" onclick="openConhecaUNILAPage()">🏫 Conheça a UNILA</button>
     <button class="desapega" onclick="openPage('desapegaPage')">🔎 Achados e Perdidos e Desapega</button>
     <button class="emergencia" data-search-key="upa" onclick="openUPAPage()" aria-label="Hospitais de Emergência 24h (UPA)">Hospitais de Emergência 24h (UPA)</button>
@@ -2443,7 +2443,7 @@ gtag('config', 'G-FJT3X93608');
     // Atualização do PWA: rede primeiro; cache apenas como fallback offline.
     function setupPWAUpdate() {
       if (!('serviceWorker' in navigator)) return;
-      navigator.serviceWorker.register('./service-worker37.js?v=388', { updateViaCache: 'none' }).then(function(reg) {
+      navigator.serviceWorker.register('./service-worker37.js?v=389', { updateViaCache: 'none' }).then(function(reg) {
         reg.update();
         reg.addEventListener('updatefound', function() {
           var newWorker = reg.installing;
@@ -3335,7 +3335,7 @@ gtag('config', 'G-FJT3X93608');
     function openNewsPage() {
       window.__activeDynamicPage = "noticias";
       var title = document.getElementById("dynamicTitle");
-      if (title) title.textContent = "📰 Notícias Alternativas";
+      if (title) title.textContent = "📰 Notícias Unileiras";
       openPage("dynamicPage");
       var box = document.getElementById("dynamicContent");
       try {
@@ -5107,7 +5107,7 @@ padding:0 2px;">↩ Responder</button>`;
         intercampus: "Intercampi", publicTransport: "🚌 Transporte Público", internationalPortal: "🌐 Portal Internacional", notices: "📄 Editais Oficiais", emergency: "🚨 Emergência",
         addresses: "🏫 Endereços", ru: "🍽️ Restaurantes Universitários", group: "👥 Grupo no Facebook", developer: "👨‍💻 Desenvolvedor", privacy: "🔒 Privacidade e exclusão", activeSubjects: "Minhas Matérias",
         notes: "📝 Anotações", share: "📤 Compartilhar App", internet: "🌐 Internet", study: "🎓 Estude na", academicGoals: "📈 Meta Acadêmica", admission: "🎓 UNILA – Formas de ingresso", studentAid: "🎓 Auxílio Estudantil", mentalHealth: "🧠 Saúde Mental",
-        enem: "📝 ENEM – Página do Participante", news: "📰 Notícias Alternativas", conheca: "🏫 Conheça a UNILA", desapega: "🔎 Achados e Perdidos e Desapega", upa: "Hospitais de Emergência 24h (UPA)", officialSources: "🔗 Portal da Transparência",
+        enem: "📝 ENEM – Página do Participante", news: "📰 Notícias Unileiras", conheca: "🏫 Conheça a UNILA", desapega: "🔎 Achados e Perdidos e Desapega", upa: "Hospitais de Emergência 24h (UPA)", officialSources: "🔗 Portal da Transparência",
         chatHeading: "💬 Chat UNILA",
         chatFirstAccessNotice: "Primeiro acesso: digite um nick e crie uma senha. Anote-a para não esquecer. Nos outros acessos e em qualquer dispositivo, use sempre o mesmo nick e a mesma senha. Mantenha a senha bem guardada: nem o desenvolvedor tem acesso a ela, e não será possível recuperá-la se você a esquecer.",
         chatPasswordManagerNotice: "Importante: para guardar suas senhas com segurança, use o app Senhas do Google. Ele ajuda a protegê-las e a sincronizá-las nos seus dispositivos.",
