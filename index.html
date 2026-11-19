@@ -2451,7 +2451,7 @@ gtag('config', 'G-FJT3X93608');
     // Atualização do PWA: rede primeiro; cache apenas como fallback offline.
     function setupPWAUpdate() {
       if (!('serviceWorker' in navigator)) return;
-      navigator.serviceWorker.register('./service-worker37.js?v=403', { updateViaCache: 'none' }).then(function(reg) {
+      navigator.serviceWorker.register('./service-worker37.js?v=404', { updateViaCache: 'none' }).then(function(reg) {
         reg.update();
         reg.addEventListener('updatefound', function() {
           var newWorker = reg.installing;
@@ -4318,6 +4318,7 @@ padding:0 2px;">↩ Responder</button>`;
     ];
     let activeSubjectsState = { folders: [] };
     let activeSubjectFolderId = null;
+    let activeSubjectsRemoteUpdatedAt = 0;
 
     function activeSubjectTheme(folder) {
       const index = Number.isFinite(Number(folder && folder.colorIndex)) ? Number(folder.colorIndex) : 0;
@@ -4357,6 +4358,11 @@ padding:0 2px;">↩ Responder</button>`;
     function activeSubjectsStatus(message, isError) {
       const node = document.getElementById("activeSubjectStatus");
       if (node) { node.textContent = message || ""; node.style.color = isError ? "#fecaca" : "#bbf7d0"; }
+    }
+    function activeSubjectSaveErrorMessage(error, fallback) {
+      return error && error.code === "active-subjects-conflict"
+        ? "Há alterações mais recentes na nuvem. Reabra Organizar Matérias para atualizar antes de tentar novamente."
+        : fallback;
     }
     function activeSubjectsReference() { return db.collection("notes").doc(firebaseUid); }
     function activeSubjectsLegacyReference() { return db.collection("active_subjects").doc(firebaseUid); }
@@ -4430,19 +4436,27 @@ padding:0 2px;">↩ Responder</button>`;
       await waitForNotesAuth();
       if (!firebaseUid || !nick) throw new Error("Entre com seu nick antes de salvar as matérias na nuvem.");
       const folders = JSON.parse(JSON.stringify(activeSubjectsState.folders));
-      const updatedAt = Date.now();
-      const reference = activeSubjectsReference();
-      const snapshot = await firestoreGetServer(reference);
-      const existing = snapshot.exists && Array.isArray(snapshot.data().notes) ? snapshot.data().notes : [];
-      const plainNotes = existing.filter(item => String(item && item.id) !== ACTIVE_SUBJECTS_RECORD_ID);
-      plainNotes.push({ id: ACTIVE_SUBJECTS_RECORD_ID, kind: "activeSubjects", folders: folders, updatedAt: updatedAt });
-      await firestoreSet(reference, { uid: firebaseUid, nick: nick, notes: plainNotes, updatedAt: updatedAt, source: "Vida Unileira" }, { merge: true });
-      const confirmed = await firestoreGetServer(reference);
-      const saved = confirmed.exists ? confirmed.data() : {};
-      const savedRecord = Array.isArray(saved.notes) ? saved.notes.find(item => item && String(item.id) === ACTIVE_SUBJECTS_RECORD_ID) : null;
-      if (!confirmed.exists || saved.uid !== firebaseUid || !savedRecord || Number(savedRecord.updatedAt) !== updatedAt || !Array.isArray(savedRecord.folders) || savedRecord.folders.length !== folders.length) {
+      const updatedAt = Math.max(Date.now(), (Number(activeSubjectsRemoteUpdatedAt) || 0) + 1);
+      const expectedUpdatedAt = activeSubjectsRemoteUpdatedAt;
+      const saved = await updateNotesDocumentTransaction(existing => {
+        const currentRecord = existing.find(item => item && String(item.id) === ACTIVE_SUBJECTS_RECORD_ID);
+        const currentUpdatedAt = currentRecord ? Number(currentRecord.updatedAt) || 0 : 0;
+        if (currentUpdatedAt !== expectedUpdatedAt) {
+          const error = new Error("As matérias na nuvem foram atualizadas em outra sessão.");
+          error.code = "active-subjects-conflict";
+          throw error;
+        }
+        const preserved = existing.filter(item => String(item && item.id) !== ACTIVE_SUBJECTS_RECORD_ID);
+        preserved.push({ id: ACTIVE_SUBJECTS_RECORD_ID, kind: "activeSubjects", folders: folders, updatedAt: updatedAt });
+        return preserved;
+      }, updatedAt);
+      const confirmed = await firestoreGetServer(saved.reference);
+      const savedData = confirmed.exists ? confirmed.data() : {};
+      const savedRecord = Array.isArray(savedData.notes) ? savedData.notes.find(item => item && String(item.id) === ACTIVE_SUBJECTS_RECORD_ID) : null;
+      if (!confirmed.exists || savedData.uid !== firebaseUid || !savedRecord || Number(savedRecord.updatedAt) !== updatedAt || !Array.isArray(savedRecord.folders) || savedRecord.folders.length !== folders.length || savedRecord.folders.some((folder, index) => String(folder && folder.id) !== String(folders[index] && folders[index].id))) {
         throw new Error("O Firestore não confirmou a gravação remota das matérias.");
       }
+      activeSubjectsRemoteUpdatedAt = updatedAt;
     }
     function updateActiveSubjectsGreeting() {
       const notice = document.getElementById("subjectsNickNotice");
@@ -4472,6 +4486,7 @@ padding:0 2px;">↩ Responder</button>`;
         const notesData = notesSnapshot.exists ? notesSnapshot.data() : {};
         const legacyData = legacySnapshot.exists ? legacySnapshot.data() : {};
         const embeddedRecord = Array.isArray(notesData.notes) ? notesData.notes.find(item => item && String(item.id) === ACTIVE_SUBJECTS_RECORD_ID) : null;
+        activeSubjectsRemoteUpdatedAt = embeddedRecord ? Number(embeddedRecord.updatedAt) || 0 : 0;
         const candidates = [];
         if (Array.isArray(legacyData.folders)) candidates.push({ folders: legacyData.folders, updatedAt: Number(legacyData.updatedAt) || 0, source: "active_subjects" });
         if (embeddedRecord && Array.isArray(embeddedRecord.folders)) candidates.push({ folders: embeddedRecord.folders, updatedAt: Number(embeddedRecord.updatedAt) || 0, source: "notes" });
@@ -4485,7 +4500,7 @@ padding:0 2px;">↩ Responder</button>`;
             activeSubjectsStatus("Matérias recuperadas e sincronizadas na nuvem.");
           } catch (migrationError) {
             console.warn("Matérias antigas recuperadas; a migração para notes/{UID} não foi concluída:", migrationError);
-            activeSubjectsStatus("Matérias antigas recuperadas, mas a sincronização na nuvem não foi confirmada.", true);
+            activeSubjectsStatus(activeSubjectSaveErrorMessage(migrationError, "Matérias antigas recuperadas, mas a sincronização na nuvem não foi confirmada."), true);
           }
         }
         activeSubjectFolderId = null;
@@ -4501,7 +4516,7 @@ padding:0 2px;">↩ Responder</button>`;
       if (activeSubjectsState.folders.length >= MAX_ACTIVE_SUBJECT_FOLDERS) { appAlert("Você já atingiu o limite de 100 pastas."); return; }
       const now = Date.now();
       activeSubjectsState.folders.push({ id: String(now), name: name, colorIndex: activeSubjectsState.folders.length % ACTIVE_SUBJECT_PALETTE.length, items: [], createdAt: now, updatedAt: now });
-      try { await waitForNotesAuth(); await saveActiveSubjectsState(); input.value = ""; renderActiveSubjectFolders(); activeSubjectsStatus("Pasta criada e salva na nuvem. Toque nela para abrir."); } catch (error) { console.error("Erro ao criar matéria:", error); activeSubjectsState.folders.pop(); activeSubjectsStatus(error && error.code === "permission-denied" ? "O Firestore bloqueou o salvamento na nuvem. Atualize o app e tente novamente." : "Não foi possível salvar na nuvem. Verifique a conexão e tente novamente.", true); }
+      try { await waitForNotesAuth(); await saveActiveSubjectsState(); input.value = ""; renderActiveSubjectFolders(); activeSubjectsStatus("Pasta criada e salva na nuvem. Toque nela para abrir."); } catch (error) { console.error("Erro ao criar matéria:", error); activeSubjectsState.folders.pop(); activeSubjectsStatus(activeSubjectSaveErrorMessage(error, error && error.code === "permission-denied" ? "O Firestore bloqueou o salvamento na nuvem. Atualize o app e tente novamente." : "Não foi possível salvar na nuvem. Verifique a conexão e tente novamente."), true); }
     }
     async function deleteActiveSubjectFolder(id) {
       const folder = activeSubjectsState.folders.find(entry => String(entry.id) === String(id));
@@ -4519,14 +4534,14 @@ padding:0 2px;">↩ Responder</button>`;
       } catch (error) {
         activeSubjectsState.folders = previousFolders;
         renderActiveSubjectFolders();
-        activeSubjectsStatus(activeSubjectDriveDeleteError(error), true);
+        activeSubjectsStatus(activeSubjectSaveErrorMessage(error, activeSubjectDriveDeleteError(error)), true);
       }
     }
     async function saveActiveSubjectText() {
       const folder = activeSubjectFolder(), field = document.getElementById("activeSubjectText"), text = field ? field.value.trim() : "";
       if (!folder || !text) { activeSubjectsStatus("Selecione uma pasta e escreva um texto.", true); return; }
       const now = Date.now(); folder.items = Array.isArray(folder.items) ? folder.items : []; folder.items.push({ id: String(now), kind: "text", text: text, insertedAt: now, createdAt: now }); folder.updatedAt = now;
-      try { await waitForNotesAuth(); await saveActiveSubjectsState(); field.value = ""; renderActiveSubjectFolders(); renderActiveSubjectItems(); activeSubjectsStatus("Texto salvo e vinculado ao seu nick."); } catch (error) { folder.items.pop(); activeSubjectsStatus("Não foi possível salvar o texto.", true); }
+      try { await waitForNotesAuth(); await saveActiveSubjectsState(); field.value = ""; renderActiveSubjectFolders(); renderActiveSubjectItems(); activeSubjectsStatus("Texto salvo e vinculado ao seu nick."); } catch (error) { folder.items.pop(); activeSubjectsStatus(activeSubjectSaveErrorMessage(error, "Não foi possível salvar o texto."), true); }
     }
     function fileAsBase64(file) {
       return new Promise((resolve, reject) => {
@@ -4561,7 +4576,7 @@ padding:0 2px;">↩ Responder</button>`;
         folder.items.push({ id: String(now), kind: "file", name: data.name || file.name, originalName: file.name, description: description, type: data.mimeType || file.type || "application/octet-stream", mimeType: data.mimeType || file.type || "application/octet-stream", size: data.size || file.size, sizeBytes: data.size || file.size, url: data.url, downloadUrl: data.downloadUrl || data.url, driveFileId: data.id || "", insertedAt: data.insertedAt || now, createdAt: now });
         folder.updatedAt = now;
         await waitForNotesAuth(); await saveActiveSubjectsState(); renderActiveSubjectFolders(); renderActiveSubjectItems(); activeSubjectsStatus("Arquivo salvo no Google Drive e vinculado ao seu nick.");
-      } catch (error) { console.error("Erro ao anexar arquivo no Google Drive:", error); activeSubjectsStatus("Não foi possível anexar o arquivo no Google Drive.", true); }
+      } catch (error) { console.error("Erro ao anexar arquivo no Google Drive:", error); activeSubjectsStatus(activeSubjectSaveErrorMessage(error, "Não foi possível anexar o arquivo no Google Drive."), true); }
       event.target.value = "";
       if (descriptionField) descriptionField.value = "";
     }
@@ -4573,7 +4588,8 @@ padding:0 2px;">↩ Responder</button>`;
       if (next === null) return;
       item.description = String(next).trim().slice(0, 500);
       folder.updatedAt = Date.now();
-      try { await waitForNotesAuth(); await saveActiveSubjectsState(); renderActiveSubjectItems(); activeSubjectsStatus("Descrição do arquivo atualizada."); } catch (error) { activeSubjectsStatus("Não foi possível atualizar a descrição.", true); }
+      try { await waitForNotesAuth(); await saveActiveSubjectsState(); renderActiveSubjectItems(); activeSubjectsStatus("Descrição do arquivo atualizada."); }
+      catch (error) { activeSubjectsStatus(activeSubjectSaveErrorMessage(error, "Não foi possível atualizar a descrição."), true); }
     }
     async function deleteActiveSubjectDriveFiles(items) {
       const files = Array.isArray(items) ? items : [];
@@ -4623,7 +4639,7 @@ padding:0 2px;">↩ Responder</button>`;
         folder.items = previousItems;
         folder.updatedAt = previousUpdatedAt;
         renderActiveSubjectItems();
-        activeSubjectsStatus(activeSubjectDriveDeleteError(error), true);
+        activeSubjectsStatus(activeSubjectSaveErrorMessage(error, activeSubjectDriveDeleteError(error)), true);
       }
     }
 
@@ -4631,15 +4647,37 @@ padding:0 2px;">↩ Responder</button>`;
     const NOTES_BACKUP_KEY_PREFIX = "spotted_notes_backup_v1_";
     let notesListCache = [];
     let editingNoteId = null;
+    async function updateNotesDocumentTransaction(transform, updatedAt) {
+      await waitForNotesAuth();
+      if (!firebaseUid || !nick) throw new Error("Entre com seu nick antes de salvar na nuvem.");
+      const reference = db.collection(NOTES_COLLECTION).doc(firebaseUid);
+      const timestamp = Number(updatedAt) || Date.now();
+      const notes = await withFirestoreRetry(() => db.runTransaction(async transaction => {
+        const snapshot = await transaction.get(reference);
+        const data = snapshot.exists ? (snapshot.data() || {}) : {};
+        const currentNotes = Array.isArray(data.notes) ? data.notes : [];
+        const nextNotes = transform(currentNotes.slice());
+        if (!Array.isArray(nextNotes)) throw new Error("A atualização das anotações não retornou uma lista válida.");
+        transaction.set(reference, {
+          uid: firebaseUid,
+          nick: nick,
+          notes: nextNotes,
+          updatedAt: timestamp,
+          source: "Vida Unileira"
+        }, { merge: true });
+        return nextNotes;
+      }));
+      return { reference: reference, notes: notes };
+    }
     function notesBackupStorageKey() { return NOTES_BACKUP_KEY_PREFIX + String(firebaseUid || "pending"); }
     function readNotesBackup() {
       try {
         const notes = JSON.parse(localStorage.getItem(notesBackupStorageKey()) || "[]");
-        return Array.isArray(notes) ? notes : [];
+        return Array.isArray(notes) ? notes.filter(note => note && note.kind !== "activeSubjects") : [];
       } catch (error) { return []; }
     }
     function writeNotesBackup(notes) {
-      try { localStorage.setItem(notesBackupStorageKey(), JSON.stringify(Array.isArray(notes) ? notes : [])); }
+      try { localStorage.setItem(notesBackupStorageKey(), JSON.stringify(Array.isArray(notes) ? notes.filter(note => note && note.kind !== "activeSubjects") : [])); }
       catch (error) { console.warn("Não foi possível guardar a cópia local das anotações:", error); }
     }
     function mergeNotes(primary, secondary) {
@@ -4647,7 +4685,7 @@ padding:0 2px;">↩ Responder</button>`;
       [...(Array.isArray(primary) ? primary : []), ...(Array.isArray(secondary) ? secondary : [])].forEach(note => {
         if (note && note.id != null) map.set(String(note.id), note);
       });
-      return Array.from(map.values()).filter(note => note && note.kind !== "activeSubjects").sort((a, b) => Number(b.updatedAt || b.createdAt || 0) - Number(a.updatedAt || a.createdAt || 0));
+      return Array.from(map.values()).filter(Boolean).sort((a, b) => Number(b.updatedAt || b.createdAt || 0) - Number(a.updatedAt || a.createdAt || 0));
     }
 
     function notesStatus(message, isError) {
@@ -4729,7 +4767,7 @@ padding:0 2px;">↩ Responder</button>`;
       try {
         await waitForNotesAuth();
         const reference = db.collection(NOTES_COLLECTION).doc(firebaseUid);
-        snapshot = await firestoreGet(reference);
+        snapshot = await firestoreGetServer(reference);
         const cloudNotes = snapshot.exists && Array.isArray(snapshot.data().notes) ? snapshot.data().notes : [];
         const localNotes = readNotesBackup();
         notes = mergeNotes(cloudNotes, localNotes);
@@ -4737,13 +4775,8 @@ padding:0 2px;">↩ Responder</button>`;
         const hasLocalOnlyNotes = localNotes.some(note => note && !cloudIds.has(String(note.id)));
         if (hasLocalOnlyNotes) {
           try {
-            await firestoreSet(reference, {
-              uid: firebaseUid,
-              nick: nick,
-              notes: notes,
-              updatedAt: Date.now(),
-              source: "Vida Unileira"
-            }, { merge: true });
+            const synced = await updateNotesDocumentTransaction(current => mergeNotes(current, localNotes), Date.now());
+            notes = synced.notes;
           } catch (syncError) {
             console.warn("Não foi possível sincronizar a cópia local das anotações:", syncError);
           }
@@ -4759,9 +4792,10 @@ padding:0 2px;">↩ Responder</button>`;
           return;
         }
       }
-      notesListCache = notes;
+      const visibleNotes = notes.filter(note => note && note.kind !== "activeSubjects");
+      notesListCache = visibleNotes;
       const editorCopy = window.notesEditorCopy();
-      list.innerHTML = notes.length ? notes.map(n => {
+      list.innerHTML = visibleNotes.length ? visibleNotes.map(n => {
         const noteId = escapeHtml(String(n.id));
         const noteText = escapeHtml(String(n.text == null ? "" : n.text));
         return `
@@ -4774,7 +4808,7 @@ padding:0 2px;">↩ Responder</button>`;
           </div>
         `;
       }).join("") : "<p>" + escapeHtml(notesCopy().noNotes) + "</p>";
-      notesStatus(snapshot && snapshot.exists ? notesCopy().loaded : (notes.length ? notesCopy().loaded : notesCopy().emptyStatus));
+      notesStatus(snapshot && snapshot.exists ? notesCopy().loaded : (visibleNotes.length ? notesCopy().loaded : notesCopy().emptyStatus));
     }
 
     async function saveNote() {
@@ -4793,37 +4827,24 @@ padding:0 2px;">↩ Responder</button>`;
       notesStatus(notesCopy().saving);
       try {
         await waitForNotesAuth();
-        const reference = db.collection(NOTES_COLLECTION).doc(firebaseUid);
-        let previousNotes = readNotesBackup();
-        try {
-          const previous = await firestoreGet(reference);
-          const cloudNotes = previous.exists && Array.isArray(previous.data().notes) ? previous.data().notes : [];
-          previousNotes = mergeNotes(cloudNotes, previousNotes);
-        } catch (error) {
-          console.warn("Não foi possível ler as anotações anteriores; usando a cópia local:", error);
-        }
         const now = Date.now();
-        let notes;
-        if (noteIdToEdit !== null) {
-          const existingNote = previousNotes.find(note => note && String(note.id) === noteIdToEdit);
-          if (!existingNote) {
-            notesStatus(editorCopy.notFound, true);
-            return;
+        const localNotes = readNotesBackup();
+        const newNote = noteIdToEdit === null ? { id: String(now), text: noteText, createdAt: now, updatedAt: now } : null;
+        const updated = await updateNotesDocumentTransaction(current => {
+          const merged = mergeNotes(current, localNotes);
+          if (noteIdToEdit !== null) {
+            const existingNote = merged.find(note => note && note.kind !== "activeSubjects" && String(note.id) === noteIdToEdit);
+            if (!existingNote) {
+              const error = new Error("A anotação não foi encontrada.");
+              error.code = "note-not-found";
+              throw error;
+            }
+            const updatedNote = Object.assign({}, existingNote, { id: noteIdToEdit, text: noteText, updatedAt: now });
+            return mergeNotes(merged.filter(note => String(note.id) !== noteIdToEdit), [updatedNote]);
           }
-          const updatedNote = Object.assign({}, existingNote, { id: noteIdToEdit, text: noteText, updatedAt: now });
-          notes = mergeNotes(previousNotes.filter(note => String(note.id) !== noteIdToEdit), [updatedNote]);
-        } else {
-          notes = mergeNotes(previousNotes, [{ id: String(now), text: noteText, createdAt: now, updatedAt: now }]);
-          writeNotesBackup(notes);
-        }
-        await firestoreSet(reference, {
-          uid: firebaseUid,
-          nick: nick,
-          notes: notes,
-          updatedAt: now,
-          source: "Vida Unileira"
-        }, { merge: true });
-        writeNotesBackup(notes);
+          return mergeNotes(merged, [newNote]);
+        }, now);
+        writeNotesBackup(updated.notes);
         if (noteField) noteField.value = "";
         editingNoteId = null;
         updateNotesEditorControls();
@@ -4831,6 +4852,7 @@ padding:0 2px;">↩ Responder</button>`;
         notesStatus(noteIdToEdit !== null ? editorCopy.updated : notesCopy().saved);
       } catch (error) {
         console.error("Erro ao salvar anotação:", error);
+        if (error && error.code === "note-not-found") { notesStatus(editorCopy.notFound, true); return; }
         notesStatus(notesCopy().errorSave + (error && error.code ? " (" + error.code + ")" : ""), true);
       }
     }
@@ -4843,23 +4865,9 @@ padding:0 2px;">↩ Responder</button>`;
       // A exclusão é direta; nenhuma confirmação com nome, nick, e-mail ou endereço é exibida.
       try {
         await waitForNotesAuth();
-        const reference = db.collection(NOTES_COLLECTION).doc(firebaseUid);
-        let previousNotes = readNotesBackup();
-        let snapshot = null;
-        try {
-          snapshot = await firestoreGet(reference);
-          const cloudNotes = snapshot.exists && Array.isArray(snapshot.data().notes) ? snapshot.data().notes : [];
-          previousNotes = mergeNotes(cloudNotes, previousNotes);
-        } catch (error) {
-          console.warn("Não foi possível ler as anotações antes da exclusão:", error);
-        }
-        const notes = previousNotes.filter(note => String(note.id) !== String(id));
-        if (notes.length) {
-          await firestoreSet(reference, { uid: firebaseUid, nick: nick, notes: notes, updatedAt: Date.now() }, { merge: true });
-        } else if (snapshot && snapshot.exists) {
-          await firestoreDelete(reference);
-        }
-        writeNotesBackup(notes);
+        const noteId = String(id);
+        const updated = await updateNotesDocumentTransaction(current => mergeNotes(current, readNotesBackup()).filter(note => note && (note.kind === "activeSubjects" || String(note.id) !== noteId)), Date.now());
+        writeNotesBackup(updated.notes);
         if (editingNoteId != null && String(editingNoteId) === String(id)) {
           editingNoteId = null;
           const field = document.getElementById("note");
