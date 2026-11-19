@@ -324,9 +324,9 @@ button:hover{
 .resource-open-link{display:inline-block;margin-top:14px;padding:12px 16px;border-radius:12px;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.1);color:#fff;text-decoration:none;font-weight:700;}
 /* Reserva o espaço do botão Home fixo mais uma folga, para o último cartão ficar acima dele ao rolar até o fim. */
 .active-subjects-folders-scroll{min-height:60px;overflow:visible;padding:0 6px calc(65px + 58px + 16px + env(safe-area-inset-bottom,0px)) 0;box-sizing:border-box;scroll-padding-bottom:calc(65px + 58px + 16px + env(safe-area-inset-bottom,0px));}
-.active-subjects-count{display:inline-flex;align-items:center;justify-content:center;flex:0 0 52px;width:52px;height:52px;box-sizing:border-box;border:1px solid rgba(255,255,255,.14);border-radius:50%;background:rgba(255,255,255,.12);backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px);box-shadow:0 4px 14px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.15);color:#fff;text-shadow:0 2px 8px rgba(0,0,0,1);font-size:18px;font-weight:900;transition:transform .18s ease,background .18s ease,box-shadow .18s ease;}
-.active-subjects-count:hover,.active-subjects-count:focus-visible{background:rgba(255,255,255,.18);box-shadow:0 8px 24px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.15);}
-.active-subjects-count:active{background:rgba(0,0,0,.32);}
+.active-subjects-count{display:inline-flex;align-items:center;justify-content:center;flex:0 0 52px;width:52px;height:52px;box-sizing:border-box;border:1px solid rgba(255,243,150,.52);border-radius:50%;background:radial-gradient(ellipse at 28% 16%,rgba(255,255,190,.7),transparent 38%),linear-gradient(135deg,rgba(255,230,65,.58),rgba(245,180,0,.4) 55%,rgba(255,250,125,.55));backdrop-filter:blur(5px) saturate(1.35);-webkit-backdrop-filter:blur(5px) saturate(1.35);box-shadow:0 0 18px rgba(255,220,0,.42),0 4px 14px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,220,.38);color:#fffde7;text-shadow:0 2px 8px rgba(90,60,0,.95),0 0 8px rgba(255,255,200,.45);font-size:18px;font-weight:900;transition:transform .18s ease,background .18s ease,box-shadow .18s ease;}
+.active-subjects-count:hover,.active-subjects-count:focus-visible{background:radial-gradient(ellipse at 28% 16%,rgba(255,255,220,.88),transparent 42%),linear-gradient(135deg,rgba(255,240,95,.72),rgba(255,195,0,.54) 55%,rgba(255,255,155,.68));box-shadow:0 0 26px rgba(255,220,0,.62),0 8px 24px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,235,.55);}
+.active-subjects-count:active{background:rgba(204,145,0,.52);}
 #activeSubjectWorkspace{margin:20px 0 50px!important;box-shadow:0 12px 30px rgba(0,0,0,.32);}
 .active-subject-folder-button{backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);box-shadow:0 3px 12px rgba(0,0,0,.22);transition:filter .18s ease,transform .18s ease,box-shadow .18s ease;}
 .active-subject-folder-button:hover{filter:brightness(1.2);transform:translateY(-1px);box-shadow:0 6px 16px rgba(0,0,0,.3);}
@@ -2447,7 +2447,7 @@ gtag('config', 'G-FJT3X93608');
     // Atualização do PWA: rede primeiro; cache apenas como fallback offline.
     function setupPWAUpdate() {
       if (!('serviceWorker' in navigator)) return;
-      navigator.serviceWorker.register('./service-worker37.js?v=396', { updateViaCache: 'none' }).then(function(reg) {
+      navigator.serviceWorker.register('./service-worker37.js?v=397', { updateViaCache: 'none' }).then(function(reg) {
         reg.update();
         reg.addEventListener('updatefound', function() {
           var newWorker = reg.installing;
