@@ -4358,8 +4358,8 @@ padding:0 2px;">↩ Responder</button>`;
       const node = document.getElementById("activeSubjectStatus");
       if (node) { node.textContent = message || ""; node.style.color = isError ? "#fecaca" : "#bbf7d0"; }
     }
-    function activeSubjectsReference() { return db.collection("active_subjects").doc(firebaseUid); }
-    function activeSubjectsNotesReference() { return db.collection("notes").doc(firebaseUid); }
+    function activeSubjectsReference() { return db.collection("notes").doc(firebaseUid); }
+    function activeSubjectsLegacyReference() { return db.collection("active_subjects").doc(firebaseUid); }
     function activeSubjectFolder() { return activeSubjectsState.folders.find(folder => String(folder.id) === String(activeSubjectFolderId)); }
     function renderActiveSubjectItems() {
       const folder = activeSubjectFolder(), list = document.getElementById("activeSubjectItems");
@@ -4432,24 +4432,16 @@ padding:0 2px;">↩ Responder</button>`;
       const folders = JSON.parse(JSON.stringify(activeSubjectsState.folders));
       const updatedAt = Date.now();
       const reference = activeSubjectsReference();
-      await firestoreSet(reference, { uid: firebaseUid, nick: nick, folders: folders, updatedAt: updatedAt, source: "Vida Unileira" }, { merge: true });
-
+      const snapshot = await firestoreGetServer(reference);
+      const existing = snapshot.exists && Array.isArray(snapshot.data().notes) ? snapshot.data().notes : [];
+      const plainNotes = existing.filter(item => String(item && item.id) !== ACTIVE_SUBJECTS_RECORD_ID);
+      plainNotes.push({ id: ACTIVE_SUBJECTS_RECORD_ID, kind: "activeSubjects", folders: folders, updatedAt: updatedAt });
+      await firestoreSet(reference, { uid: firebaseUid, nick: nick, notes: plainNotes, updatedAt: updatedAt, source: "Vida Unileira" }, { merge: true });
       const confirmed = await firestoreGetServer(reference);
       const saved = confirmed.exists ? confirmed.data() : {};
-      if (!confirmed.exists || saved.uid !== firebaseUid || Number(saved.updatedAt) !== updatedAt || !Array.isArray(saved.folders) || saved.folders.length !== folders.length) {
+      const savedRecord = Array.isArray(saved.notes) ? saved.notes.find(item => item && String(item.id) === ACTIVE_SUBJECTS_RECORD_ID) : null;
+      if (!confirmed.exists || saved.uid !== firebaseUid || !savedRecord || Number(savedRecord.updatedAt) !== updatedAt || !Array.isArray(savedRecord.folders) || savedRecord.folders.length !== folders.length) {
         throw new Error("O Firestore não confirmou a gravação remota das matérias.");
-      }
-
-      // Mantém o registro embutido no documento de notas para versões anteriores do PWA.
-      try {
-        const notesReference = activeSubjectsNotesReference();
-        const notesSnapshot = await firestoreGet(notesReference);
-        const existing = notesSnapshot.exists && Array.isArray(notesSnapshot.data().notes) ? notesSnapshot.data().notes : [];
-        const plainNotes = existing.filter(item => String(item && item.id) !== ACTIVE_SUBJECTS_RECORD_ID);
-        plainNotes.push({ id: ACTIVE_SUBJECTS_RECORD_ID, kind: "activeSubjects", folders: folders, updatedAt: updatedAt });
-        await firestoreSet(notesReference, { uid: firebaseUid, nick: nick, notes: plainNotes, updatedAt: updatedAt, source: "Vida Unileira" }, { merge: true });
-      } catch (mirrorError) {
-        console.warn("Matérias salvas e confirmadas na coleção active_subjects; a cópia compatível em notes falhou:", mirrorError);
       }
     }
     function updateActiveSubjectsGreeting() {
@@ -4473,26 +4465,26 @@ padding:0 2px;">↩ Responder</button>`;
       foldersNode.innerHTML = "<p>Carregando suas matérias...</p>";
       try {
         await waitForNotesAuth();
-        const [subjectsSnapshot, notesSnapshot] = await Promise.all([
+        const [notesSnapshot, legacySnapshot] = await Promise.all([
           firestoreGetServer(activeSubjectsReference()),
-          firestoreGetServer(activeSubjectsNotesReference())
+          firestoreGetServer(activeSubjectsLegacyReference())
         ]);
-        const subjectsData = subjectsSnapshot.exists ? subjectsSnapshot.data() : {};
         const notesData = notesSnapshot.exists ? notesSnapshot.data() : {};
+        const legacyData = legacySnapshot.exists ? legacySnapshot.data() : {};
         const embeddedRecord = Array.isArray(notesData.notes) ? notesData.notes.find(item => item && String(item.id) === ACTIVE_SUBJECTS_RECORD_ID) : null;
         const candidates = [];
-        if (Array.isArray(subjectsData.folders)) candidates.push({ folders: subjectsData.folders, updatedAt: Number(subjectsData.updatedAt) || 0, source: "active_subjects" });
+        if (Array.isArray(legacyData.folders)) candidates.push({ folders: legacyData.folders, updatedAt: Number(legacyData.updatedAt) || 0, source: "active_subjects" });
         if (embeddedRecord && Array.isArray(embeddedRecord.folders)) candidates.push({ folders: embeddedRecord.folders, updatedAt: Number(embeddedRecord.updatedAt) || 0, source: "notes" });
         candidates.sort((a, b) => b.updatedAt - a.updatedAt);
         const record = candidates[0] || null;
-        const needsMigration = Boolean(record && record.source === "notes");
+        const needsMigration = Boolean(record && record.source === "active_subjects");
         activeSubjectsState = { folders: record && Array.isArray(record.folders) ? record.folders.slice(0, MAX_ACTIVE_SUBJECT_FOLDERS).map((folder, index) => Object.assign({ colorIndex: index }, folder)) : [] };
         if (needsMigration) {
           try {
             await saveActiveSubjectsState();
             activeSubjectsStatus("Matérias recuperadas e sincronizadas na nuvem.");
           } catch (migrationError) {
-            console.warn("Matérias antigas recuperadas; a cópia para o documento dedicado não foi concluída:", migrationError);
+            console.warn("Matérias antigas recuperadas; a migração para notes/{UID} não foi concluída:", migrationError);
             activeSubjectsStatus("Matérias antigas recuperadas, mas a sincronização na nuvem não foi confirmada.", true);
           }
         }
@@ -4509,7 +4501,7 @@ padding:0 2px;">↩ Responder</button>`;
       if (activeSubjectsState.folders.length >= MAX_ACTIVE_SUBJECT_FOLDERS) { appAlert("Você já atingiu o limite de 100 pastas."); return; }
       const now = Date.now();
       activeSubjectsState.folders.push({ id: String(now), name: name, colorIndex: activeSubjectsState.folders.length % ACTIVE_SUBJECT_PALETTE.length, items: [], createdAt: now, updatedAt: now });
-      try { await waitForNotesAuth(); await saveActiveSubjectsState(); input.value = ""; renderActiveSubjectFolders(); activeSubjectsStatus("Pasta criada e vinculada ao seu nick. Toque nela para abrir."); } catch (error) { activeSubjectsState.folders.pop(); activeSubjectsStatus("Não foi possível criar a pasta.", true); }
+      try { await waitForNotesAuth(); await saveActiveSubjectsState(); input.value = ""; renderActiveSubjectFolders(); activeSubjectsStatus("Pasta criada e salva na nuvem. Toque nela para abrir."); } catch (error) { console.error("Erro ao criar matéria:", error); activeSubjectsState.folders.pop(); activeSubjectsStatus(error && error.code === "permission-denied" ? "O Firestore bloqueou o salvamento na nuvem. Atualize o app e tente novamente." : "Não foi possível salvar na nuvem. Verifique a conexão e tente novamente.", true); }
     }
     async function deleteActiveSubjectFolder(id) {
       const folder = activeSubjectsState.folders.find(entry => String(entry.id) === String(id));
