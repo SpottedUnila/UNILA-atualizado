@@ -1659,7 +1659,7 @@ gtag('config', 'G-FJT3X93608');
     <a class="facebook menu-link" href="https://facebook.com/groups/660879523972023/">👥 Grupo no Facebook</a>
     <button class="dev" onclick="openDynamic('dev','page')">👨‍💻 Desenvolvedor</button>
     <button class="dev" onclick="window.location.href='privacy.html'">🔒 Privacidade e exclusão</button>
-    <button class="notes" onclick="openPage('activeSubjectsPage')">📚Pastas de Matérias</button>
+    <button class="notes" onclick="openPage('activeSubjectsPage')">📚Organizar Matérias📚</button>
     <button class="notes" onclick="openPage('notesPage')">📝 Anotações</button>
     <button class="share" onclick="shareApp()">📤 Compartilhar App</button>
     <button class="internet" onclick="openDynamic('internet','page')">🌐 Internet</button>
@@ -2443,7 +2443,7 @@ gtag('config', 'G-FJT3X93608');
     // Atualização do PWA: rede primeiro; cache apenas como fallback offline.
     function setupPWAUpdate() {
       if (!('serviceWorker' in navigator)) return;
-      navigator.serviceWorker.register('./service-worker37.js?v=389', { updateViaCache: 'none' }).then(function(reg) {
+      navigator.serviceWorker.register('./service-worker37.js?v=390', { updateViaCache: 'none' }).then(function(reg) {
         reg.update();
         reg.addEventListener('updatefound', function() {
           var newWorker = reg.installing;
@@ -5105,7 +5105,7 @@ padding:0 2px;">↩ Responder</button>`;
         chatMenu: "💬 Chat", portal: "🌐 Portal Oficial", inscreva: "🎓 Portal Inscreva", sigaa: "📚 SIGAA", email: "📧 E-mail",
         google: "🔎 Pesquisa Google", youtube: "▶ YouTube", instagram: "Instagram Arandu", facebook: "📘 Facebook", library: "📖 Biblioteca",
         intercampus: "Intercampi", publicTransport: "🚌 Transporte Público", internationalPortal: "🌐 Portal Internacional", notices: "📄 Editais Oficiais", emergency: "🚨 Emergência",
-        addresses: "🏫 Endereços", ru: "🍽️ Restaurantes Universitários", group: "👥 Grupo no Facebook", developer: "👨‍💻 Desenvolvedor", privacy: "🔒 Privacidade e exclusão", activeSubjects: "Minhas Matérias",
+        addresses: "🏫 Endereços", ru: "🍽️ Restaurantes Universitários", group: "👥 Grupo no Facebook", developer: "👨‍💻 Desenvolvedor", privacy: "🔒 Privacidade e exclusão", activeSubjects: "📚Organizar Matérias📚",
         notes: "📝 Anotações", share: "📤 Compartilhar App", internet: "🌐 Internet", study: "🎓 Estude na", academicGoals: "📈 Meta Acadêmica", admission: "🎓 UNILA – Formas de ingresso", studentAid: "🎓 Auxílio Estudantil", mentalHealth: "🧠 Saúde Mental",
         enem: "📝 ENEM – Página do Participante", news: "📰 Notícias Unileiras", conheca: "🏫 Conheça a UNILA", desapega: "🔎 Achados e Perdidos e Desapega", upa: "Hospitais de Emergência 24h (UPA)", officialSources: "🔗 Portal da Transparência",
         chatHeading: "💬 Chat UNILA",
