@@ -324,6 +324,7 @@ button:hover{
 .resource-open-link{display:inline-block;margin-top:14px;padding:12px 16px;border-radius:12px;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.1);color:#fff;text-decoration:none;font-weight:700;}
 /* Reserva o espaço do botão Home fixo mais uma folga, para o último cartão ficar acima dele ao rolar até o fim. */
 .active-subjects-folders-scroll{min-height:60px;overflow:visible;padding:0 6px calc(65px + 58px + 16px + env(safe-area-inset-bottom,0px)) 0;box-sizing:border-box;scroll-padding-bottom:calc(65px + 58px + 16px + env(safe-area-inset-bottom,0px));}
+.active-subjects-count{display:inline-flex;align-items:center;justify-content:center;flex:0 0 44px;width:44px;height:44px;box-sizing:border-box;border:1px solid rgba(255,255,255,.3);border-radius:50%;background:linear-gradient(135deg,rgba(37,99,235,.72),rgba(124,58,237,.7));box-shadow:0 4px 14px rgba(0,0,0,.28);color:#fff;text-shadow:0 2px 8px rgba(0,0,0,.8);font-size:16px;font-weight:800;}
 #activeSubjectWorkspace{margin:20px 0 50px!important;box-shadow:0 12px 30px rgba(0,0,0,.32);}
 .active-subject-folder-button{backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);box-shadow:0 3px 12px rgba(0,0,0,.22);transition:filter .18s ease,transform .18s ease,box-shadow .18s ease;}
 .active-subject-folder-button:hover{filter:brightness(1.2);transform:translateY(-1px);box-shadow:0 6px 16px rgba(0,0,0,.3);}
@@ -1790,7 +1791,8 @@ gtag('config', 'G-FJT3X93608');
     <p id="activeSubjectsCloudInfo" class="active-subjects-cloud-info">O conteúdo que você salvar em Minhas Matérias ficará vinculado ao seu nick e armazenado na nuvem.</p>
     <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:12px 0;">
       <input id="subjectFolderName" type="text" maxlength="50" placeholder="Nome da matéria (ex.: Cálculo)" style="flex:1;min-width:190px;padding:11px;border-radius:9px;border:0;">
-      <button type="button" onclick="createActiveSubjectFolder()">➕ Criar pasta</button>
+      <button type="button" onclick="createActiveSubjectFolder()">➕ Criar Matéria</button>
+      <span id="activeSubjectsCount" class="active-subjects-count" aria-label="Quantidade de matérias cadastradas">0</span>
     </div>
     <div id="activeSubjectWorkspace" style="display:none;margin-top:16px;padding:14px;border:1px solid rgba(255,255,255,.25);border-radius:14px;background:rgba(0,0,0,.16);">
       <h3 id="activeSubjectTitle" role="button" tabindex="0" aria-expanded="true" title="Toque para recolher" style="margin:0 0 4px;cursor:pointer;user-select:none;"></h3>
@@ -2443,7 +2445,7 @@ gtag('config', 'G-FJT3X93608');
     // Atualização do PWA: rede primeiro; cache apenas como fallback offline.
     function setupPWAUpdate() {
       if (!('serviceWorker' in navigator)) return;
-      navigator.serviceWorker.register('./service-worker37.js?v=391', { updateViaCache: 'none' }).then(function(reg) {
+      navigator.serviceWorker.register('./service-worker37.js?v=392', { updateViaCache: 'none' }).then(function(reg) {
         reg.update();
         reg.addEventListener('updatefound', function() {
           var newWorker = reg.installing;
@@ -4370,6 +4372,12 @@ padding:0 2px;">↩ Responder</button>`;
     function renderActiveSubjectFolders() {
       const list = document.getElementById("activeSubjectsFolders");
       if (!list) return;
+      const count = document.getElementById("activeSubjectsCount");
+      if (count) {
+        const total = activeSubjectsState.folders.length;
+        count.textContent = String(total);
+        count.setAttribute("aria-label", total + (total === 1 ? " matéria cadastrada" : " matérias cadastradas"));
+      }
       list.innerHTML = activeSubjectsState.folders.length ? activeSubjectsState.folders.map(folder => { const theme = activeSubjectTheme(folder); const folderId = escapeHtml(String(folder.id)); return `<div style="display:flex;justify-content:space-between;gap:8px;align-items:center;padding:11px 13px;border-radius:11px;background:${theme.bg};border:1px solid ${theme.border};box-shadow:0 4px 16px rgba(0,0,0,.18);"><button type="button" class="active-subject-folder-button" data-subject-folder="${folderId}" style="flex:1;text-align:left;background:linear-gradient(135deg,${theme.bg},${theme.panel});border:1px solid ${theme.border};border-radius:9px;padding:10px 12px;color:${theme.accent};font-weight:700;">📁 ${escapeHtml(folder.name)} <small style="color:#fff;">(${Array.isArray(folder.items) ? folder.items.length : 0})</small></button><button type="button" data-subject-delete-folder="${folderId}" style="background:#b91c1c;padding:6px 9px;">🗑</button></div>`; }).join("") : "<p>Crie sua primeira pasta de matéria. Você pode ter até 100.</p>";
       list.querySelectorAll("[data-subject-folder]").forEach(button => button.addEventListener("click", () => selectActiveSubjectFolder(button.dataset.subjectFolder)));
       list.querySelectorAll("[data-subject-delete-folder]").forEach(button => button.addEventListener("click", () => deleteActiveSubjectFolder(button.dataset.subjectDeleteFolder)));
