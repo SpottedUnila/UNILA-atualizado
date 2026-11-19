@@ -2443,7 +2443,7 @@ gtag('config', 'G-FJT3X93608');
     // Atualização do PWA: rede primeiro; cache apenas como fallback offline.
     function setupPWAUpdate() {
       if (!('serviceWorker' in navigator)) return;
-      navigator.serviceWorker.register('./service-worker37.js?v=390', { updateViaCache: 'none' }).then(function(reg) {
+      navigator.serviceWorker.register('./service-worker37.js?v=391', { updateViaCache: 'none' }).then(function(reg) {
         reg.update();
         reg.addEventListener('updatefound', function() {
           var newWorker = reg.installing;
@@ -4442,8 +4442,26 @@ padding:0 2px;">↩ Responder</button>`;
         await waitForNotesAuth();
         const snapshot = await firestoreGet(activeSubjectsReference());
         const data = snapshot.exists ? snapshot.data() : {};
-        const record = Array.isArray(data.notes) ? data.notes.find(item => item && String(item.id) === ACTIVE_SUBJECTS_RECORD_ID) : null;
+        let record = Array.isArray(data.notes) ? data.notes.find(item => item && String(item.id) === ACTIVE_SUBJECTS_RECORD_ID) : null;
+        let recoveredFromLegacy = false;
+        if (!record) {
+          const legacySnapshot = await firestoreGet(db.collection("active_subjects").doc(firebaseUid));
+          const legacyData = legacySnapshot.exists ? legacySnapshot.data() : {};
+          if (Array.isArray(legacyData.folders) && legacyData.folders.length) {
+            record = { folders: legacyData.folders };
+            recoveredFromLegacy = true;
+          }
+        }
         activeSubjectsState = { folders: record && Array.isArray(record.folders) ? record.folders.slice(0, MAX_ACTIVE_SUBJECT_FOLDERS).map((folder, index) => Object.assign({ colorIndex: index }, folder)) : [] };
+        if (recoveredFromLegacy) {
+          try {
+            await saveActiveSubjectsState();
+            activeSubjectsStatus("Matérias recuperadas e sincronizadas.");
+          } catch (migrationError) {
+            console.warn("Matérias antigas recuperadas; a cópia para o formato atual não foi concluída:", migrationError);
+            activeSubjectsStatus("Matérias antigas recuperadas. A sincronização será tentada novamente depois.", true);
+          }
+        }
         activeSubjectFolderId = null;
         const workspace = document.getElementById("activeSubjectWorkspace");
         if (workspace) workspace.style.display = "none";
