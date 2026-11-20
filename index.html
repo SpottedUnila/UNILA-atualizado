@@ -4698,25 +4698,43 @@ padding:0 2px;">↩ Responder</button>`;
     }
 
     function noteCreatedAtMarkup(note) {
-      const raw = note && note.createdAt;
-      let date = null;
-      if (raw && typeof raw.toDate === "function") {
-        date = raw.toDate();
-      } else if (raw && typeof raw === "object" && Number.isFinite(Number(raw.seconds))) {
-        date = new Date(Number(raw.seconds) * 1000);
-      } else if (typeof raw === "string" && raw.trim() && !/^\d+$/.test(raw)) {
-        date = new Date(raw);
-      } else {
-        const timestamp = Number(raw) || Number(note && note.id);
-        if (Number.isFinite(timestamp) && timestamp > 0) date = new Date(timestamp);
+      try {
+        const raw = note && note.createdAt;
+        let date = null;
+        if (raw && typeof raw.toDate === "function") {
+          date = raw.toDate();
+        } else if (raw && typeof raw === "object" && Number.isFinite(Number(raw.seconds))) {
+          date = new Date(Number(raw.seconds) * 1000);
+        } else if (typeof raw === "string" && raw.trim() && !/^\d+$/.test(raw)) {
+          date = new Date(raw);
+        } else {
+          const timestamp = Number(raw) || Number(note && note.id);
+          if (Number.isFinite(timestamp) && timestamp > 0) date = new Date(timestamp);
+        }
+        if (!date || !Number.isFinite(date.getTime())) return "";
+        let language = "pt";
+        try {
+          if (typeof state !== "undefined" && state && typeof state.lang === "string") language = state.lang;
+        } catch (_) {}
+        const locale = ({ pt: "pt-BR", fr: "fr-FR", es: "es-ES", en: "en-US" })[language] || "pt-BR";
+        let formatted;
+        try {
+          formatted = new Intl.DateTimeFormat(locale, {
+            day: "2-digit", month: "2-digit", year: "numeric",
+            hour: "2-digit", minute: "2-digit", second: "2-digit"
+          }).format(date);
+        } catch (_) {
+          formatted = date.toLocaleString();
+        }
+        let label = "Criada em";
+        try {
+          if (typeof noteCreatedAtLabel === "function") label = noteCreatedAtLabel() || label;
+        } catch (_) {}
+        return `<time class="note-item-meta" datetime="${date.toISOString()}">${escapeHtml(label)} ${escapeHtml(formatted)}</time>`;
+      } catch (error) {
+        console.warn("Não foi possível formatar a data de criação de uma anotação:", error);
+        return "";
       }
-      if (!date || !Number.isFinite(date.getTime())) return "";
-      const locale = ({ pt: "pt-BR", fr: "fr-FR", es: "es-ES", en: "en-US" })[state.lang] || "pt-BR";
-      const formatted = new Intl.DateTimeFormat(locale, {
-        day: "2-digit", month: "2-digit", year: "numeric",
-        hour: "2-digit", minute: "2-digit", second: "2-digit"
-      }).format(date);
-      return `<time class="note-item-meta" datetime="${date.toISOString()}">${escapeHtml(noteCreatedAtLabel())} ${escapeHtml(formatted)}</time>`;
     }
 
     function updateNotesEditorControls() {
@@ -4853,6 +4871,7 @@ padding:0 2px;">↩ Responder</button>`;
         return;
       }
       notesStatus(notesCopy().saving);
+      let cloudSaveCompleted = false;
       try {
         await waitForNotesAuth();
         const now = Date.now();
@@ -4872,6 +4891,7 @@ padding:0 2px;">↩ Responder</button>`;
           }
           return mergeNotes(merged, [newNote]);
         }, now);
+        cloudSaveCompleted = true;
         writeNotesBackup(updated.notes);
         if (noteField) noteField.value = "";
         editingNoteId = null;
@@ -4879,6 +4899,11 @@ padding:0 2px;">↩ Responder</button>`;
         await loadNotes();
         notesStatus(noteIdToEdit !== null ? editorCopy.updated : notesCopy().saved);
       } catch (error) {
+        if (cloudSaveCompleted) {
+          console.error("A anotação foi salva, mas a tela não foi atualizada:", error);
+          notesStatus(noteIdToEdit !== null ? editorCopy.updated : notesCopy().saved);
+          return;
+        }
         console.error("Erro ao salvar anotação:", error);
         if (error && error.code === "note-not-found") { notesStatus(editorCopy.notFound, true); return; }
         notesStatus(notesCopy().errorSave + (error && error.code ? " (" + error.code + ")" : ""), true);
