@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate crawler-readable Open Graph pages for public Vida Unileira news."""
+"""Generate crawler-readable Open Graph pages for public Vida Unileira content."""
 
 from __future__ import annotations
 
@@ -12,14 +12,11 @@ from pathlib import Path
 from typing import Any
 
 PROJECT_ID = "app-unila"
-COLLECTION_URL = (
-    f"https://firestore.googleapis.com/v1/projects/{PROJECT_ID}"
-    "/databases/(default)/documents/news"
-)
+COLLECTIONS = {"news": "news", "conheca": "conhecaUnila"}
 SITE_URL = "https://spottedunila.github.io/UNILA-atualizado/"
 STORAGE_ORIGIN = "https://spottedash-g7yfwvxv.manus.space"
 FALLBACK_IMAGE_URL = urllib.parse.urljoin(SITE_URL, "icon-512.png")
-OUTPUT_ROOT = Path(__file__).resolve().parents[1] / "share" / "news"
+SHARE_ROOT = Path(__file__).resolve().parents[1] / "share"
 PAGE_SIZE = 300
 
 
@@ -52,7 +49,11 @@ def firestore_value(value: Any) -> Any:
     return None
 
 
-def fetch_public_news() -> list[dict[str, Any]]:
+def fetch_public_records(collection: str) -> list[dict[str, Any]]:
+    collection_url = (
+        f"https://firestore.googleapis.com/v1/projects/{PROJECT_ID}"
+        f"/databases/(default)/documents/{collection}"
+    )
     documents: list[dict[str, Any]] = []
     page_token: str | None = None
 
@@ -61,10 +62,10 @@ def fetch_public_news() -> list[dict[str, Any]]:
         if page_token:
             params["pageToken"] = page_token
         request = urllib.request.Request(
-            f"{COLLECTION_URL}?{urllib.parse.urlencode(params)}",
+            f"{collection_url}?{urllib.parse.urlencode(params)}",
             headers={
                 "Accept": "application/json",
-                "User-Agent": "VidaUnileira-NewsPreviewSync/1.0",
+                "User-Agent": "VidaUnileira-SharePreviewSync/1.0",
             },
         )
         with urllib.request.urlopen(request, timeout=30) as response:
@@ -73,7 +74,7 @@ def fetch_public_news() -> list[dict[str, Any]]:
         for document in payload.get("documents", []):
             document_id = document.get("name", "").rsplit("/", 1)[-1]
             if not document_id:
-                raise RuntimeError("Firestore returned a news document without an ID.")
+                raise RuntimeError(f"Firestore returned a {collection} document without an ID.")
             fields = document.get("fields", {})
             record = {key: firestore_value(value) for key, value in fields.items()}
             record["id"] = document_id
@@ -85,7 +86,9 @@ def fetch_public_news() -> list[dict[str, Any]]:
 
     # Do not delete all published preview pages if the endpoint unexpectedly returns empty.
     if not documents:
-        raise RuntimeError("No public news records returned; refusing to remove existing previews.")
+        raise RuntimeError(
+            f"No public {collection} records returned; refusing to remove existing previews."
+        )
     return documents
 
 
@@ -109,28 +112,56 @@ def public_image_url(value: Any) -> str:
     return candidate
 
 
-def news_token(document_id: str) -> str:
+def share_token(document_id: str) -> str:
     # Hex is URL-safe and deterministic, including for unusual Firestore document IDs.
     return document_id.encode("utf-8").hex()
 
 
-def render_page(record: dict[str, Any], document_id: str) -> str:
-    title = normalized_text(record.get("title")) or "Notícia Unileira"
-    description_source = record.get("content") or record.get("shareText") or title
+def conheca_image(record: dict[str, Any]) -> str:
+    has_modern_fields = "imageUrl" in record or "videoUrl" in record
+    legacy_image = record.get("mediaUrl") if record.get("mediaType") == "image" else ""
+    return (
+        public_image_url(record.get("imageUrl") if has_modern_fields else legacy_image)
+        or public_image_url(record.get("videoThumbUrl"))
+        or FALLBACK_IMAGE_URL
+    )
+
+
+def render_page(record: dict[str, Any], document_id: str, kind: str) -> str:
+    if kind == "news":
+        title = normalized_text(record.get("title")) or "Notícia Unileira"
+        description_source = record.get("content") or record.get("shareText") or title
+        image_url = (
+            public_image_url(record.get("imageUrl"))
+            or public_image_url(record.get("videoThumbUrl"))
+            or FALLBACK_IMAGE_URL
+        )
+        body_label = "Abrir notícia no Vida Unileira"
+    else:
+        title = (
+            normalized_text(record.get("title"))
+            or normalized_text(record.get("caption"))
+            or normalized_text(record.get("videoName"))
+            or "Conheça a UNILA"
+        )
+        description_source = (
+            record.get("imageCaption")
+            or record.get("videoCaption")
+            or record.get("caption")
+            or record.get("content")
+            or title
+        )
+        image_url = conheca_image(record)
+        body_label = "Abrir publicação em Conheça a UNILA"
     description = normalized_text(description_source)
     if len(description) > 240:
         description = description[:237].rsplit(" ", 1)[0].rstrip(".,;: ") + "…"
     if not description:
-        description = "Veja esta notícia no aplicativo Vida Unileira."
+        description = "Veja esta publicação no aplicativo Vida Unileira."
 
-    image_url = (
-        public_image_url(record.get("imageUrl"))
-        or public_image_url(record.get("videoThumbUrl"))
-        or FALLBACK_IMAGE_URL
-    )
-    token = news_token(document_id)
-    preview_url = urllib.parse.urljoin(SITE_URL, f"share/news/{token}/")
-    app_url = SITE_URL + "?" + urllib.parse.urlencode({"share": "news", "id": document_id})
+    token = share_token(document_id)
+    preview_url = urllib.parse.urljoin(SITE_URL, f"share/{kind}/{token}/")
+    app_url = SITE_URL + "?" + urllib.parse.urlencode({"share": kind, "id": document_id})
     escaped_title = meta_content(title)
     escaped_description = meta_content(description)
     escaped_image = meta_content(image_url)
@@ -174,7 +205,7 @@ def render_page(record: dict[str, Any], document_id: str) -> str:
     <img src="{escaped_image}" alt="{escaped_title}">
     <h1>{escaped_title}</h1>
     <p>{escaped_description}</p>
-    <a href="{escaped_app_url}">Abrir notícia no Vida Unileira</a>
+    <a href="{escaped_app_url}">{body_label}</a>
   </main>
   <script>window.location.replace({escaped_js_app_url});</script>
 </body>
@@ -182,28 +213,38 @@ def render_page(record: dict[str, Any], document_id: str) -> str:
 """
 
 
-def main() -> None:
-    records = fetch_public_news()
-    OUTPUT_ROOT.mkdir(parents=True, exist_ok=True)
+def sync_kind(kind: str, collection: str) -> tuple[int, int]:
+    records = fetch_public_records(collection)
+    output_root = SHARE_ROOT / kind
+    output_root.mkdir(parents=True, exist_ok=True)
     expected_directories: set[str] = set()
 
     for record in records:
         document_id = str(record["id"])
-        token = news_token(document_id)
+        token = share_token(document_id)
         expected_directories.add(token)
-        destination = OUTPUT_ROOT / token / "index.html"
+        destination = output_root / token / "index.html"
         destination.parent.mkdir(parents=True, exist_ok=True)
-        content = render_page(record, document_id)
+        content = render_page(record, document_id, kind)
         if not destination.exists() or destination.read_text(encoding="utf-8") != content:
             destination.write_text(content, encoding="utf-8", newline="\n")
 
     removed = 0
-    for index_file in OUTPUT_ROOT.glob("*/index.html"):
+    for index_file in output_root.glob("*/index.html"):
         if index_file.parent.name not in expected_directories:
             shutil.rmtree(index_file.parent)
             removed += 1
 
-    print(f"Sincronizadas {len(records)} páginas de prévia; removidas {removed} páginas obsoletas.")
+    return len(records), removed
+
+
+def main() -> None:
+    for kind, collection in COLLECTIONS.items():
+        synced, removed = sync_kind(kind, collection)
+        print(
+            f"{kind}: sincronizadas {synced} páginas de prévia; "
+            f"removidas {removed} páginas obsoletas."
+        )
 
 
 if __name__ == "__main__":

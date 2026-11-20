@@ -1,4 +1,4 @@
-name: Sincronizar prévias das notícias
+name: Sincronizar prévias de compartilhamento
 
 on:
   schedule:
@@ -16,11 +16,11 @@ permissions:
   pages: write
 
 concurrency:
-  group: news-share-previews
+  group: content-share-previews
   cancel-in-progress: false
 
 jobs:
-  sync-news-previews:
+  sync-content-previews:
     runs-on: ubuntu-latest
     steps:
       - name: Baixar o repositório
@@ -34,7 +34,7 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Gerar prévias estáticas das notícias públicas
+      - name: Gerar prévias estáticas dos conteúdos públicos
         run: python scripts/generate_news_previews.py
 
       - name: Publicar mudanças e solicitar build do Pages
@@ -42,7 +42,7 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           FORCE_BUILD: ${{ inputs.force_build }}
         run: |
-          git add -A -- share/news
+          git add -A -- share/news share/conheca
           if git diff --cached --quiet; then
             if [ "${FORCE_BUILD:-false}" != "true" ]; then
               echo "As prévias já estão atualizadas."
@@ -52,7 +52,7 @@ jobs:
           else
             git config user.name "github-actions[bot]"
             git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-            git commit -m "Atualiza prévias das notícias"
+            git commit -m "Atualiza prévias de compartilhamento"
             git push origin HEAD:main
           fi
 

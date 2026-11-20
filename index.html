@@ -2886,6 +2886,9 @@ gtag('config', 'G-FJT3X93608');
       if (kind === "news") {
         return new URL("share/news/" + newsSharePathToken(itemId) + "/", VIDA_UNILEIRA_SITE_URL).toString();
       }
+      if (kind === "conheca") {
+        return new URL("share/conheca/" + newsSharePathToken(itemId) + "/", VIDA_UNILEIRA_SITE_URL).toString();
+      }
       const baseUrl = /^https?:$/.test(window.location.protocol)
         ? window.location.origin + window.location.pathname
         : VIDA_UNILEIRA_SITE_URL;
@@ -3379,7 +3382,7 @@ gtag('config', 'G-FJT3X93608');
         if (!items.length) {
           if (box) box.innerHTML = '<p style="text-align:center;padding:20px;color:#94a3b8;">Nenhuma imagem ou vídeo publicado ainda.</p>';
         } else if (box) {
-          box.innerHTML = items.map(function(item){ return '<div class="news-card" style="background:rgba(30,41,59,.6);border-radius:12px;padding:10px;margin-bottom:15px;border:1px solid rgba(255,255,255,.1);">' + renderConhecaMedia(item) + '</div>'; }).join("");
+          box.innerHTML = items.map(function(item){ return '<div class="news-card" data-content-kind="conheca" data-content-id="' + escapeHtml(item.id || "") + '" style="background:rgba(30,41,59,.6);border-radius:12px;padding:10px;margin-bottom:15px;border:1px solid rgba(255,255,255,.1);">' + renderConhecaMedia(item) + '</div>'; }).join("");
         }
       } catch (error) {
         console.error("Erro ao exibir Conheça local:", error);
@@ -3432,8 +3435,13 @@ gtag('config', 'G-FJT3X93608');
       if (!itemId || (kind !== "news" && kind !== "conheca")) return;
       if (kind === "news") await openNewsPage();
       else await openConhecaUNILAPage();
-      const card = Array.from(document.querySelectorAll("[data-content-kind][data-content-id]"))
+      let card = Array.from(document.querySelectorAll("[data-content-kind][data-content-id]"))
         .find(element => element.dataset.contentKind === kind && element.dataset.contentId === itemId);
+      if (!card && kind === "conheca" && typeof window.loadConhecaUNILA === "function") {
+        await window.loadConhecaUNILA();
+        card = Array.from(document.querySelectorAll("[data-content-kind][data-content-id]"))
+          .find(element => element.dataset.contentKind === kind && element.dataset.contentId === itemId);
+      }
       if (!card) {
         if (typeof appAlert === "function") appAlert("Esta publicação não está mais disponível.");
         return;
