@@ -2469,7 +2469,7 @@ gtag('config', 'G-FJT3X93608');
     // Atualização do PWA: rede primeiro; cache apenas como fallback offline.
     function setupPWAUpdate() {
       if (!('serviceWorker' in navigator)) return;
-      navigator.serviceWorker.register('./service-worker37.js?v=417', { updateViaCache: 'none' }).then(function(reg) {
+      navigator.serviceWorker.register('./service-worker37.js?v=418', { updateViaCache: 'none' }).then(function(reg) {
         reg.update();
         reg.addEventListener('updatefound', function() {
           var newWorker = reg.installing;
@@ -2806,27 +2806,30 @@ gtag('config', 'G-FJT3X93608');
     }
     async function loadNewsRecords() {
       var bootstrap = Array.isArray(window.__NEWS_BOOTSTRAP__) ? window.__NEWS_BOOTSTRAP__ : [];
-      var projectId = (typeof firebaseConfig !== "undefined" && firebaseConfig.projectId) ? firebaseConfig.projectId : "app-unila";
-      var endpoint = "https://firestore.googleapis.com/v1/projects/" + encodeURIComponent(projectId) + "/databases/(default)/documents/news?pageSize=300";
-      var controller = typeof AbortController === "function" ? new AbortController() : null;
-      var timeoutId = window.setTimeout(function(){ if (controller) controller.abort(); }, 4000);
+      // O SDK autenticado é a fonte principal. A antiga consulta REST sofria
+      // com limites/erros intermitentes e acabava exibindo o catálogo antigo.
       try {
-        var response = await fetch(endpoint, { cache: "no-store", signal: controller ? controller.signal : undefined });
+        var snapshot = await db.collection("news").get({ source: "server" });
+        return snapshot.docs.map(function(doc){ return Object.assign({id:doc.id}, doc.data()); });
+      } catch (sdkError) {
+        console.warn("Firestore SDK indisponível para Notícias; tentando REST.", sdkError);
+      }
+      try {
+        var projectId = (typeof firebaseConfig !== "undefined" && firebaseConfig.projectId) ? firebaseConfig.projectId : "app-unila";
+        var endpoint = "https://firestore.googleapis.com/v1/projects/" + encodeURIComponent(projectId) + "/databases/(default)/documents/news?pageSize=300";
+        var response = await fetch(endpoint, { cache: "no-store" });
         if (!response.ok) throw new Error("Firestore REST HTTP " + response.status);
         var payload = await response.json();
-        var records = (payload.documents || []).map(function(document){
+        return (payload.documents || []).map(function(document){
           var parts = String(document.name || "").split("/");
           var item = {id: parts[parts.length - 1] || ""};
           Object.keys(document.fields || {}).forEach(function(key){ item[key] = newsRestValue(document.fields[key]); });
           return item;
         });
-        return records.length ? records : bootstrap;
       } catch (restError) {
         console.warn("Firestore indisponível para Notícias; usando catálogo local.", restError);
-        if (bootstrap.length) return bootstrap;
-        var snapshot = await db.collection("news").get();
-        return snapshot.docs.map(function(doc){ return Object.assign({id:doc.id}, doc.data()); });
-      } finally { window.clearTimeout(timeoutId); }
+        return bootstrap;
+      }
     }
     function toggleNewsDescription(button) {
       if (!button) return;
@@ -3332,26 +3335,27 @@ gtag('config', 'G-FJT3X93608');
     }
     async function loadConhecaRecords() {
       const bootstrap = Array.isArray(window.__CONHECA_BOOTSTRAP__) ? window.__CONHECA_BOOTSTRAP__ : [];
-      const projectId = (typeof firebaseConfig !== "undefined" && firebaseConfig.projectId) ? firebaseConfig.projectId : "app-unila";
-      const endpoint = "https://firestore.googleapis.com/v1/projects/" + encodeURIComponent(projectId) + "/databases/(default)/documents/conhecaUnila?pageSize=300";
-      const controller = typeof AbortController === "function" ? new AbortController() : null;
-      const timeoutId = window.setTimeout(function(){ if (controller) controller.abort(); }, 4000);
+      // Consultar a coleção pelo SDK garante os dados recém-publicados pelo
+      // AdminPanel. O catálogo embutido só deve ser usado sem conexão.
       try {
-        const response = await fetch(endpoint, { cache: "no-store", signal: controller ? controller.signal : undefined });
+        const snapshot = await db.collection("conhecaUnila").get({ source: "server" });
+        return snapshot.docs.map(function(doc){ return Object.assign({id:doc.id}, doc.data()); });
+      } catch (sdkError) {
+        console.warn("Firestore SDK indisponível para Conheça a UNILA; tentando REST.", sdkError);
+      }
+      try {
+        const projectId = (typeof firebaseConfig !== "undefined" && firebaseConfig.projectId) ? firebaseConfig.projectId : "app-unila";
+        const endpoint = "https://firestore.googleapis.com/v1/projects/" + encodeURIComponent(projectId) + "/databases/(default)/documents/conhecaUnila?pageSize=300";
+        const response = await fetch(endpoint, { cache: "no-store" });
         if (!response.ok) throw new Error("Firestore REST HTTP " + response.status);
         const payload = await response.json();
-        const records = (payload.documents || []).map(function(document){
+        return (payload.documents || []).map(function(document){
           const parts = String(document.name || "").split("/");
           return Object.assign({id: parts[parts.length - 1] || ""}, firestoreRestRecord(document.fields || {}));
         });
-        return records.length ? records : bootstrap;
       } catch (restError) {
         console.warn("Firestore indisponível; usando catálogo local de Conheça a UNILA.", restError);
-        if (bootstrap.length) return bootstrap;
-        const snapshot = await db.collection("conhecaUnila").get();
-        return snapshot.docs.map(function(doc){ return Object.assign({id:doc.id}, doc.data()); });
-      } finally {
-        window.clearTimeout(timeoutId);
+        return bootstrap;
       }
     }
     let conhecaLoadSequence = 0;
@@ -5247,7 +5251,9 @@ padding:0 2px;">↩ Responder</button>`;
       }, 900);
       // Escutar mudanças em notícias em tempo real
       db.collection('news').onSnapshot(snapshot => {
-        // Notícias serão recarregadas quando o usuário clicar no botão
+        if (window.__activeDynamicPage === "noticias" && typeof window.loadNews === "function") {
+          window.loadNews();
+        }
       });
       await openSharedContentFromUrl();
     };
