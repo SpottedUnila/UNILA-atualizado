@@ -4,6 +4,12 @@ on:
   schedule:
     - cron: "*/5 * * * *"
   workflow_dispatch:
+    inputs:
+      force_build:
+        description: "Solicitar build do Pages mesmo sem mudanças nas prévias"
+        type: boolean
+        required: false
+        default: false
 
 permissions:
   contents: write
@@ -34,17 +40,21 @@ jobs:
       - name: Publicar mudanças e solicitar build do Pages
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          FORCE_BUILD: ${{ inputs.force_build }}
         run: |
           git add -A -- share/news
           if git diff --cached --quiet; then
-            echo "As prévias já estão atualizadas."
-            exit 0
+            if [ "${FORCE_BUILD:-false}" != "true" ]; then
+              echo "As prévias já estão atualizadas."
+              exit 0
+            fi
+            echo "Build manual solicitado sem alteração das prévias."
+          else
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git commit -m "Atualiza prévias das notícias"
+            git push origin HEAD:main
           fi
-
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git commit -m "Atualiza prévias das notícias"
-          git push origin HEAD:main
 
           response_file="$(mktemp)"
           status="$(curl --silent --show-error --output "$response_file" --write-out "%{http_code}" \
