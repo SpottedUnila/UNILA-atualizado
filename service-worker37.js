@@ -1,4 +1,4 @@
-const CACHE_NAME = 'spotted-unila-cache-v410';
+const CACHE_NAME = 'spotted-unila-cache-v411';
 const APP_SHELL = [
   './',
   './index.html',
