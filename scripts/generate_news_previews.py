@@ -13,6 +13,11 @@ from typing import Any
 
 PROJECT_ID = "app-unila"
 COLLECTIONS = {"news": "news", "conheca": "conhecaUnila"}
+LEGACY_PREVIEW_ALIASES = {
+    "conheca": {
+        "1c68b1b7-2d44-40c7-8eea-c759bf1f7abc": "91fda52e-f78f-4aa5-bdf1-494eceb8489e",
+    },
+}
 SITE_URL = "https://spottedunila.github.io/UNILA-atualizado/"
 STORAGE_ORIGIN = "https://spottedash-g7yfwvxv.manus.space"
 FALLBACK_IMAGE_URL = urllib.parse.urljoin(SITE_URL, "icon-512.png")
@@ -127,7 +132,13 @@ def conheca_image(record: dict[str, Any]) -> str:
     )
 
 
-def render_page(record: dict[str, Any], document_id: str, kind: str) -> str:
+def render_page(
+    record: dict[str, Any],
+    document_id: str,
+    kind: str,
+    *,
+    preview_document_id: str | None = None,
+) -> str:
     if kind == "news":
         title = normalized_text(record.get("title")) or "Notícia Unileira"
         description_source = record.get("content") or record.get("shareText") or title
@@ -159,7 +170,7 @@ def render_page(record: dict[str, Any], document_id: str, kind: str) -> str:
     if not description:
         description = "Veja esta publicação no aplicativo Vida Unileira."
 
-    token = share_token(document_id)
+    token = share_token(preview_document_id or document_id)
     preview_url = urllib.parse.urljoin(SITE_URL, f"share/{kind}/{token}/")
     app_url = SITE_URL + "?" + urllib.parse.urlencode({"share": kind, "id": document_id})
     escaped_title = meta_content(title)
@@ -229,13 +240,33 @@ def sync_kind(kind: str, collection: str) -> tuple[int, int]:
         if not destination.exists() or destination.read_text(encoding="utf-8") != content:
             destination.write_text(content, encoding="utf-8", newline="\n")
 
+    records_by_id = {str(record["id"]): record for record in records}
+    aliases_synced = 0
+    for legacy_id, current_id in LEGACY_PREVIEW_ALIASES.get(kind, {}).items():
+        current_record = records_by_id.get(current_id)
+        if current_record is None:
+            continue
+        alias_token = share_token(legacy_id)
+        expected_directories.add(alias_token)
+        destination = output_root / alias_token / "index.html"
+        destination.parent.mkdir(parents=True, exist_ok=True)
+        content = render_page(
+            current_record,
+            current_id,
+            kind,
+            preview_document_id=legacy_id,
+        )
+        if not destination.exists() or destination.read_text(encoding="utf-8") != content:
+            destination.write_text(content, encoding="utf-8", newline="\n")
+        aliases_synced += 1
+
     removed = 0
     for index_file in output_root.glob("*/index.html"):
         if index_file.parent.name not in expected_directories:
             shutil.rmtree(index_file.parent)
             removed += 1
 
-    return len(records), removed
+    return len(records) + aliases_synced, removed
 
 
 def main() -> None:
