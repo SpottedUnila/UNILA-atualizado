@@ -4915,8 +4915,9 @@ padding:0 2px;">↩ Responder</button>`;
         notesStatus(notesCopy().noNickSave, true);
         return;
       }
-      // A exclusão é direta; nenhuma confirmação com nome, nick, e-mail ou endereço é exibida.
       try {
+        const confirmed = await appConfirm(noteDeleteConfirmText());
+        if (!confirmed) return;
         await waitForNotesAuth();
         const noteId = String(id);
         const updated = await updateNotesDocumentTransaction(current => mergeNotes(current, readNotesBackup()).filter(note => note && (note.kind === "activeSubjects" || String(note.id) !== noteId)), Date.now());
@@ -5462,6 +5463,13 @@ padding:0 2px;">↩ Responder</button>`;
     en: { notice:"Create a nickname in Chat to add your notes.", noNickLoad:"Set a nickname in Chat to load your notes.", noNotes:"No notes saved yet.", emptyStatus:"The notes you save will be linked to your nickname and stored in the cloud.", loading:"Loading your notes...", loaded:"Notes loaded, linked to your nickname, and stored in the cloud.", noNickSave:"Set a nickname in Chat before saving.", empty:"Write a note before saving.", saving:"Saving your note to the cloud...", saved:"Note saved and linked to your nickname in the cloud.", deleted:"Note deleted.", errorLoad:"Could not load notes right now.", errorTry:"Check your connection and try again.", errorSave:"Could not save right now. Check your connection and the Firestore rules.", errorDelete:"Could not delete right now. Please try again.", confirm:"Delete this note?" }
   };
   var NOTE_CREATED_AT_I18N = { pt:"Criada em", fr:"Créée le", es:"Creada el", en:"Created" };
+  var NOTE_DELETE_CONFIRM_I18N = {
+    pt:"Tem certeza que deseja excluir essa anotação?",
+    fr:"Êtes-vous sûr de vouloir supprimer cette note ?",
+    es:"¿Seguro que deseas eliminar esta anotación?",
+    en:"Are you sure you want to delete this note?"
+  };
+  function noteDeleteConfirmText(){ return NOTE_DELETE_CONFIRM_I18N[state.lang] || NOTE_DELETE_CONFIRM_I18N.pt; }
   function noteCreatedAtLabel(){ return NOTE_CREATED_AT_I18N[state.lang] || NOTE_CREATED_AT_I18N.pt; }
   function notesCopy(){ return NOTES_I18N[state.lang] || NOTES_I18N.pt; }
   window.academicCopy = academicCopy;
