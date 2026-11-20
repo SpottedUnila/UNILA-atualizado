@@ -2469,7 +2469,7 @@ gtag('config', 'G-FJT3X93608');
     // Atualização do PWA: rede primeiro; cache apenas como fallback offline.
     function setupPWAUpdate() {
       if (!('serviceWorker' in navigator)) return;
-      navigator.serviceWorker.register('./service-worker37.js?v=415', { updateViaCache: 'none' }).then(function(reg) {
+      navigator.serviceWorker.register('./service-worker37.js?v=416', { updateViaCache: 'none' }).then(function(reg) {
         reg.update();
         reg.addEventListener('updatefound', function() {
           var newWorker = reg.installing;
@@ -3168,10 +3168,10 @@ gtag('config', 'G-FJT3X93608');
       const normalizeShareText = value => value.replace(/\s+/g, " ").toLowerCase();
       if (title && description && normalizeShareText(title) === normalizeShareText(description)) description = "";
       const parts = [];
+      parts.push("Abrir esta publicação no Vida Unileira: " + (payload.articleUrl || payload.siteUrl));
       if (title) parts.push(title);
       if (description) parts.push(description);
-      if (payload.externalUrl) parts.push("Leia mais: " + payload.externalUrl);
-      parts.push("Abrir esta publicação no Vida Unileira: " + (payload.articleUrl || payload.siteUrl));
+      if (payload.externalUrl && payload.externalUrl !== payload.articleUrl) parts.push("Leia mais: " + payload.externalUrl);
       return parts.join("\n\n");
     }
     function renderContentActions(item, kind) {
@@ -3395,8 +3395,11 @@ gtag('config', 'G-FJT3X93608');
           });
         }
       } catch(e) {
+        if (loadSequence !== conhecaLoadSequence || window.__activeDynamicPage !== "conheca" || document.getElementById("dynamicContent") !== box) return;
         console.error("Erro ao carregar Conheça a UNILA:", e);
-        box.innerHTML = '<p style="color:#ef4444;">' + (typeof window.unilaTranslate === 'function' ? window.unilaTranslate('mediaError') : 'Error loading media.') + '</p>';
+        if (!box.querySelector('[data-content-kind="conheca"]')) {
+          box.innerHTML = '<p style="color:#ef4444;">' + (typeof window.unilaTranslate === 'function' ? window.unilaTranslate('mediaError') : 'Error loading media.') + '</p>';
+        }
       }
     }
     window.loadConhecaUNILA = loadConhecaUNILA;
