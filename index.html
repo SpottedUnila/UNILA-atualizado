@@ -2852,7 +2852,9 @@ gtag('config', 'G-FJT3X93608');
       if (!box) return;
       var expandedNewsIds = Array.from(box.querySelectorAll("details.news-card[open]"))
         .map(function(card){ return card.dataset.contentId || ""; }).filter(Boolean);
-      box.innerHTML = '<p style="text-align:center;padding:20px;color:#94a3b8;">' + (typeof window.unilaTranslate === "function" ? window.unilaTranslate("loading") : "Carregando...") + '</p>';
+      if (!box.querySelector("details.news-card")) {
+        box.innerHTML = '<p style="text-align:center;padding:20px;color:#94a3b8;">' + (typeof window.unilaTranslate === "function" ? window.unilaTranslate("loading") : "Carregando...") + '</p>';
+      }
       try {
         var records = (await loadNewsRecords()).sort(function(a,b){ return newsPublishedValue(b) - newsPublishedValue(a); });
         if (window.__activeDynamicPage === "noticias") box.innerHTML = renderNewsItems(records, expandedNewsIds);
@@ -3389,6 +3391,7 @@ gtag('config', 'G-FJT3X93608');
         console.error("Erro ao exibir Notícias locais:", error);
         if (box) box.innerHTML = '<p style="color:#ef4444;">Erro ao carregar notícias.</p>';
       }
+      if (typeof window.loadNews === "function") window.loadNews();
       return undefined;
     }
     function openConhecaUNILAPage() {
