@@ -2453,7 +2453,7 @@ gtag('config', 'G-FJT3X93608');
     // Atualização do PWA: rede primeiro; cache apenas como fallback offline.
     function setupPWAUpdate() {
       if (!('serviceWorker' in navigator)) return;
-      navigator.serviceWorker.register('./service-worker37.js?v=413', { updateViaCache: 'none' }).then(function(reg) {
+      navigator.serviceWorker.register('./service-worker37.js?v=414', { updateViaCache: 'none' }).then(function(reg) {
         reg.update();
         reg.addEventListener('updatefound', function() {
           var newWorker = reg.installing;
@@ -2875,9 +2875,17 @@ gtag('config', 'G-FJT3X93608');
       const url = String(value || "").trim();
       return /^https?:\/\//i.test(url) ? url : "";
     }
+    function newsSharePathToken(value) {
+      return Array.from(new TextEncoder().encode(String(value || "")), function(byte) {
+        return byte.toString(16).padStart(2, "0");
+      }).join("");
+    }
     function contentPermalink(record, kind) {
       const itemId = String(record && record.id || "").trim();
       if (!itemId) return VIDA_UNILEIRA_SITE_URL;
+      if (kind === "news") {
+        return new URL("share/news/" + newsSharePathToken(itemId) + "/", VIDA_UNILEIRA_SITE_URL).toString();
+      }
       const baseUrl = /^https?:$/.test(window.location.protocol)
         ? window.location.origin + window.location.pathname
         : VIDA_UNILEIRA_SITE_URL;

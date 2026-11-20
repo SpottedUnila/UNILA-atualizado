@@ -1,4 +1,4 @@
-const CACHE_NAME = 'spotted-unila-cache-v413';
+const CACHE_NAME = 'spotted-unila-cache-v414';
 const APP_SHELL = [
   './',
   './index.html',
@@ -47,14 +47,21 @@ self.addEventListener('fetch', event => {
   const url = new URL(request.url);
   if (url.origin !== self.location.origin) return;
 
+  const appRootPath = new URL('./', self.registration.scope).pathname;
+  const appIndexPath = new URL('./index.html', self.registration.scope).pathname;
+  const isAppShellNavigation = url.pathname === appRootPath || url.pathname === appIndexPath;
+
   if (request.mode === 'navigate') {
     event.respondWith(
       fetch(new Request(request, { cache: 'no-store' }))
         .then(response => {
-          if (response.ok) caches.open(CACHE_NAME).then(cache => cache.put('./index.html', response.clone()));
+          if (response.ok && isAppShellNavigation) caches.open(CACHE_NAME).then(cache => cache.put('./index.html', response.clone()));
           return response;
         })
-        .catch(() => caches.match('./index.html').then(cached => cached || Response.error()))
+        .catch(() => {
+          if (!isAppShellNavigation) return Response.error();
+          return caches.match('./index.html').then(cached => cached || Response.error());
+        })
     );
     return;
   }
