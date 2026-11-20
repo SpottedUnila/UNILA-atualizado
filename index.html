@@ -2469,7 +2469,7 @@ gtag('config', 'G-FJT3X93608');
     // Atualização do PWA: rede primeiro; cache apenas como fallback offline.
     function setupPWAUpdate() {
       if (!('serviceWorker' in navigator)) return;
-      navigator.serviceWorker.register('./service-worker37.js?v=416', { updateViaCache: 'none' }).then(function(reg) {
+      navigator.serviceWorker.register('./service-worker37.js?v=417', { updateViaCache: 'none' }).then(function(reg) {
         reg.update();
         reg.addEventListener('updatefound', function() {
           var newWorker = reg.installing;
@@ -3429,8 +3429,7 @@ gtag('config', 'G-FJT3X93608');
         console.error("Erro ao exibir Notícias locais:", error);
         if (box) box.innerHTML = '<p style="color:#ef4444;">Erro ao carregar notícias.</p>';
       }
-      if (typeof window.loadNews === "function") window.loadNews();
-      return undefined;
+      return typeof window.loadNews === "function" ? window.loadNews() : undefined;
     }
     function openConhecaUNILAPage() {
       window.__activeDynamicPage = "conheca";
