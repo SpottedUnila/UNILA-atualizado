@@ -6,12 +6,11 @@ from __future__ import annotations
 import html
 import json
 import shutil
+import subprocess
 import urllib.parse
-import urllib.request
 from pathlib import Path
 from typing import Any
 
-PROJECT_ID = "app-unila"
 COLLECTIONS = {"news": "news", "conheca": "conhecaUnila"}
 LEGACY_PREVIEW_ALIASES = {
     "conheca": {
@@ -22,79 +21,37 @@ SITE_URL = "https://spottedunila.github.io/UNILA-atualizado/"
 STORAGE_ORIGIN = "https://spottedash-g7yfwvxv.manus.space"
 FALLBACK_IMAGE_URL = urllib.parse.urljoin(SITE_URL, "icon-512.png")
 SHARE_ROOT = Path(__file__).resolve().parents[1] / "share"
-PAGE_SIZE = 300
+FETCH_PUBLIC_COLLECTIONS_SCRIPT = Path(__file__).with_name("fetch_public_collections.mjs")
 
 
-def firestore_value(value: Any) -> Any:
-    """Convert a Firestore REST Value to an ordinary Python value."""
-    if not isinstance(value, dict):
-        return None
-    if "stringValue" in value:
-        return value["stringValue"]
-    if "timestampValue" in value:
-        return value["timestampValue"]
-    if "integerValue" in value:
-        try:
-            return int(value["integerValue"])
-        except (TypeError, ValueError):
-            return value["integerValue"]
-    if "doubleValue" in value:
-        return value["doubleValue"]
-    if "booleanValue" in value:
-        return value["booleanValue"]
-    if "nullValue" in value:
-        return None
-    if "arrayValue" in value:
-        return [firestore_value(item) for item in value["arrayValue"].get("values", [])]
-    if "mapValue" in value:
-        return {
-            key: firestore_value(item)
-            for key, item in value["mapValue"].get("fields", {}).items()
-        }
-    return None
-
-
-def fetch_public_records(collection: str) -> list[dict[str, Any]]:
-    collection_url = (
-        f"https://firestore.googleapis.com/v1/projects/{PROJECT_ID}"
-        f"/databases/(default)/documents/{collection}"
+def fetch_public_collections() -> dict[str, list[dict[str, Any]]]:
+    """Fetch both collections before changing any generated preview pages."""
+    result = subprocess.run(
+        ["node", str(FETCH_PUBLIC_COLLECTIONS_SCRIPT)],
+        capture_output=True,
+        check=False,
+        text=True,
+        timeout=180,
     )
-    documents: list[dict[str, Any]] = []
-    page_token: str | None = None
+    if result.stderr:
+        print(result.stderr, end="")
+    if result.returncode != 0:
+        detail = result.stderr.strip() or result.stdout.strip() or "erro sem detalhes"
+        raise RuntimeError(f"Falha ao consultar o Firestore pelo SDK Firebase: {detail}")
+    try:
+        records_by_collection = json.loads(result.stdout)
+    except json.JSONDecodeError as error:
+        raise RuntimeError("O SDK Firebase não retornou um JSON válido.") from error
 
-    while True:
-        params = {"pageSize": str(PAGE_SIZE)}
-        if page_token:
-            params["pageToken"] = page_token
-        request = urllib.request.Request(
-            f"{collection_url}?{urllib.parse.urlencode(params)}",
-            headers={
-                "Accept": "application/json",
-                "User-Agent": "VidaUnileira-SharePreviewSync/1.0",
-            },
-        )
-        with urllib.request.urlopen(request, timeout=30) as response:
-            payload = json.load(response)
-
-        for document in payload.get("documents", []):
-            document_id = document.get("name", "").rsplit("/", 1)[-1]
-            if not document_id:
-                raise RuntimeError(f"Firestore returned a {collection} document without an ID.")
-            fields = document.get("fields", {})
-            record = {key: firestore_value(value) for key, value in fields.items()}
-            record["id"] = document_id
-            documents.append(record)
-
-        page_token = payload.get("nextPageToken")
-        if not page_token:
-            break
-
-    # Do not delete all published preview pages if the endpoint unexpectedly returns empty.
-    if not documents:
-        raise RuntimeError(
-            f"No public {collection} records returned; refusing to remove existing previews."
-        )
-    return documents
+    for collection in COLLECTIONS.values():
+        records = records_by_collection.get(collection)
+        if not isinstance(records, list) or not records:
+            raise RuntimeError(
+                f"A coleção {collection} não retornou registros; as prévias existentes foram preservadas."
+            )
+        if any(not isinstance(record, dict) or not record.get("id") for record in records):
+            raise RuntimeError(f"A coleção {collection} contém um registro sem ID válido.")
+    return records_by_collection
 
 
 def normalized_text(value: Any) -> str:
@@ -224,8 +181,7 @@ def render_page(
 """
 
 
-def sync_kind(kind: str, collection: str) -> tuple[int, int]:
-    records = fetch_public_records(collection)
+def sync_kind(kind: str, records: list[dict[str, Any]]) -> tuple[int, int]:
     output_root = SHARE_ROOT / kind
     output_root.mkdir(parents=True, exist_ok=True)
     expected_directories: set[str] = set()
@@ -270,8 +226,9 @@ def sync_kind(kind: str, collection: str) -> tuple[int, int]:
 
 
 def main() -> None:
+    records_by_collection = fetch_public_collections()
     for kind, collection in COLLECTIONS.items():
-        synced, removed = sync_kind(kind, collection)
+        synced, removed = sync_kind(kind, records_by_collection[collection])
         print(
             f"{kind}: sincronizadas {synced} páginas de prévia; "
             f"removidas {removed} páginas obsoletas."

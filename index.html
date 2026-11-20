@@ -3166,15 +3166,18 @@ gtag('config', 'G-FJT3X93608');
       return { title, description, externalUrl, articleUrl: contentPermalink(record, kind), siteUrl: VIDA_UNILEIRA_SITE_URL };
     }
     function contentShareText(payload) {
-      const title = String(payload.title || "").trim();
-      let description = String(payload.description || "").trim();
+      const removeLinks = value => String(value || "")
+        .replace(/\b(?:https?:\/\/|www\.)[^\s<>"']+/gi, " ")
+        .replace(/\s+/g, " ")
+        .trim();
+      const title = removeLinks(payload.title);
+      let description = removeLinks(payload.description);
       const normalizeShareText = value => value.replace(/\s+/g, " ").toLowerCase();
       if (title && description && normalizeShareText(title) === normalizeShareText(description)) description = "";
-      const parts = [];
-      parts.push("Abrir esta publicação no Vida Unileira: " + (payload.articleUrl || payload.siteUrl));
+      const articleUrl = safeExternalUrl(payload.articleUrl) || safeExternalUrl(payload.siteUrl) || VIDA_UNILEIRA_SITE_URL;
+      const parts = [articleUrl];
       if (title) parts.push(title);
       if (description) parts.push(description);
-      if (payload.externalUrl && payload.externalUrl !== payload.articleUrl) parts.push("Leia mais: " + payload.externalUrl);
       return parts.join("\n\n");
     }
     function renderContentActions(item, kind) {
