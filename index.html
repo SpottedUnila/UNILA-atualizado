@@ -2453,7 +2453,7 @@ gtag('config', 'G-FJT3X93608');
     // Atualização do PWA: rede primeiro; cache apenas como fallback offline.
     function setupPWAUpdate() {
       if (!('serviceWorker' in navigator)) return;
-      navigator.serviceWorker.register('./service-worker37.js?v=412', { updateViaCache: 'none' }).then(function(reg) {
+      navigator.serviceWorker.register('./service-worker37.js?v=413', { updateViaCache: 'none' }).then(function(reg) {
         reg.update();
         reg.addEventListener('updatefound', function() {
           var newWorker = reg.installing;
@@ -3776,7 +3776,7 @@ gtag('config', 'G-FJT3X93608');
         copyAndOpenApp("instagram://app");
       };
     }
-    async function shareApp() {
+    function shareApp() {
       const driveUrl = "https://drive.google.com/file/d/103mylmu6SsIXUJJyBBFPNrw0IeCuVxHN/view?usp=drivesdk";
       const siteUrl = window.location.protocol === "http:" || window.location.protocol === "https:"
         ? window.location.href.split("#")[0]
@@ -3784,29 +3784,8 @@ gtag('config', 'G-FJT3X93608');
       const shareText = "Confira o Vida Unileira!\n\n" +
         "Baixe o aplicativo para Android pelo Drive:\n" + driveUrl + "\n\n" +
         "Acesse também pelo navegador:\n" + siteUrl;
-      try {
-        if (navigator.clipboard && window.isSecureContext) {
-          await navigator.clipboard.writeText(shareText);
-        } else {
-          const helper = document.createElement("textarea");
-          helper.value = shareText;
-          helper.setAttribute("readonly", "");
-          helper.style.position = "fixed";
-          helper.style.opacity = "0";
-          document.body.appendChild(helper);
-          helper.select();
-          document.execCommand("copy");
-          helper.remove();
-        }
-        if (typeof appAlert === "function") {
-          appAlert("O link do aplicativo e do site foi copiado. Compartilhe no Facebook, Instagram, WhatsApp ou onde desejar.");
-        }
-      } catch (error) {
-        console.warn("Não foi possível copiar o link do app.", error);
-        if (typeof appAlert === "function") {
-          appAlert("Copie o link do app e do site para compartilhar no Facebook, Instagram, WhatsApp e onde quiser.");
-        }
-      }
+      const whatsappUrl = "https://wa.me/?text=" + encodeURIComponent(shareText);
+      window.location.assign(whatsappUrl);
     }
 
     // CHAT LOGIC
