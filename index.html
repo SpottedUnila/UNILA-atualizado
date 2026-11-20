@@ -3158,10 +3158,25 @@ gtag('config', 'G-FJT3X93608');
       showMusicShareOptions(url, title, shareDescription, shareText);
     }
     window.sharePodcastPlaylist = sharePodcastPlaylist;
+    function contentShareDescription(record, kind) {
+      const item = record || {};
+      const candidates = kind === "conheca"
+        ? [
+            item.imageUrl && item.imageCaption,
+            item.videoUrl && item.videoCaption,
+            item.caption,
+            item.shareText,
+            item.content
+          ]
+        : [item.content, item.shareText, item.caption, item.videoName];
+      const description = candidates.map(value => String(value || "").trim()).find(Boolean) || "";
+      if (description.length <= 360) return description;
+      return description.slice(0, 357).replace(/\s+\S*$/, "").trimEnd() + "…";
+    }
     function contentSharePayload(item, kind) {
       const record = item || {};
       const title = String(record.title || record.caption || (kind === "news" ? "Notícia do Vida Unileira" : "Publicação do Vida Unileira")).trim();
-      const description = String(record.shareText || record.content || record.caption || "").trim();
+      const description = contentShareDescription(record, kind);
       const externalUrl = safeExternalUrl(record.externalUrl || record.externalLink || record.link || record.sourceUrl);
       return { title, description, externalUrl, articleUrl: contentPermalink(record, kind), siteUrl: VIDA_UNILEIRA_SITE_URL };
     }
@@ -3202,7 +3217,7 @@ gtag('config', 'G-FJT3X93608');
       document.body.appendChild(modal);
       const close = function(){ modal.remove(); };
       const articleUrl = payload.articleUrl || payload.siteUrl || VIDA_UNILEIRA_SITE_URL;
-      const description = [payload.title, payload.description].filter(Boolean).join("\n\n");
+      const description = [payload.title, payload.description].filter(Boolean).join(" — ");
       modal.querySelector('[data-share="close"]').onclick = close;
       modal.addEventListener("keydown", function(event){ if (event.key === "Escape") close(); });
       modal.addEventListener("click", function(event){ if (event.target === modal) close(); });
