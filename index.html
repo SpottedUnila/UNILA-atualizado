@@ -3359,7 +3359,9 @@ gtag('config', 'G-FJT3X93608');
       const loadSequence = ++conhecaLoadSequence;
       const box = document.getElementById("dynamicContent");
       if (!box) return;
-      box.innerHTML = '<p style="text-align:center;padding:20px;color:#94a3b8;">' + (typeof window.unilaTranslate === 'function' ? window.unilaTranslate('loading') : 'Loading...') + '</p>';
+      if (!box.querySelector('[data-content-kind="conheca"]')) {
+        box.innerHTML = '<p style="text-align:center;padding:20px;color:#94a3b8;">' + (typeof window.unilaTranslate === 'function' ? window.unilaTranslate('loading') : 'Loading...') + '</p>';
+      }
       try {
         const records = await loadConhecaRecords();
         const items = records
@@ -3446,7 +3448,7 @@ gtag('config', 'G-FJT3X93608');
         console.error("Erro ao exibir Conheça local:", error);
         if (box) box.innerHTML = '<p style="color:#ef4444;">Erro ao carregar mídias.</p>';
       }
-      return undefined;
+      return typeof window.loadConhecaUNILA === "function" ? window.loadConhecaUNILA() : undefined;
     }
     // Exposição explícita para onclick inline, listeners do Firebase e wrappers de idioma.
     window.openConhecaUNILAPage = openConhecaUNILAPage;
