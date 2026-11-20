@@ -4562,7 +4562,7 @@ padding:0 2px;">↩ Responder</button>`;
         event.target.value = "";
         return;
       }
-      activeSubjectsStatus("Enviando arquivo para o Google Drive...");
+      activeSubjectsStatus("Enviando para a nuvem");
       try {
         const base64 = await fileAsBase64(file);
         const response = await fetch(ACTIVE_SUBJECTS_DRIVE_UPLOAD_URL, {
