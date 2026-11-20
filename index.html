@@ -2453,7 +2453,7 @@ gtag('config', 'G-FJT3X93608');
     // Atualização do PWA: rede primeiro; cache apenas como fallback offline.
     function setupPWAUpdate() {
       if (!('serviceWorker' in navigator)) return;
-      navigator.serviceWorker.register('./service-worker37.js?v=409', { updateViaCache: 'none' }).then(function(reg) {
+      navigator.serviceWorker.register('./service-worker37.js?v=410', { updateViaCache: 'none' }).then(function(reg) {
         reg.update();
         reg.addEventListener('updatefound', function() {
           var newWorker = reg.installing;
@@ -4577,7 +4577,10 @@ padding:0 2px;">↩ Responder</button>`;
         const now = Date.now(); folder.items = Array.isArray(folder.items) ? folder.items : [];
         folder.items.push({ id: String(now), kind: "file", name: data.name || file.name, originalName: file.name, description: description, type: data.mimeType || file.type || "application/octet-stream", mimeType: data.mimeType || file.type || "application/octet-stream", size: data.size || file.size, sizeBytes: data.size || file.size, url: data.url, downloadUrl: data.downloadUrl || data.url, driveFileId: data.id || "", insertedAt: data.insertedAt || now, createdAt: now });
         folder.updatedAt = now;
-        await waitForNotesAuth(); await saveActiveSubjectsState(); renderActiveSubjectFolders(); renderActiveSubjectItems(); activeSubjectsStatus("Arquivo salvo no Google Drive e vinculado ao seu nick.");
+        const successMessage = String(file.type || data.mimeType || "").toLowerCase().startsWith("image/")
+          ? "Arquivo salvo vinculado ao seu nick."
+          : "Arquivo salvo no Google Drive e vinculado ao seu nick.";
+        await waitForNotesAuth(); await saveActiveSubjectsState(); renderActiveSubjectFolders(); renderActiveSubjectItems(); activeSubjectsStatus(successMessage);
       } catch (error) { console.error("Erro ao anexar arquivo no Google Drive:", error); activeSubjectsStatus(activeSubjectSaveErrorMessage(error, "Não foi possível anexar o arquivo no Google Drive."), true); }
       event.target.value = "";
       if (descriptionField) descriptionField.value = "";
