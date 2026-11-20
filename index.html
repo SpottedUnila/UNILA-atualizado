@@ -396,6 +396,10 @@ button:hover{
 #dynamicContent .news-disclosure-icon { flex: 0 0 auto; color: #22c55e; font-size: 20px; line-height: 1; }
 #dynamicContent .news-card[open] .news-disclosure-icon { transform: rotate(45deg); }
 #dynamicContent .news-expanded-content { padding-top: 10px; }
+#dynamicContent .news-description-toggle { display: block; width: 100%; box-sizing: border-box; margin: 6px 0 4px !important; padding: 0 !important; border: 0 !important; border-radius: 0 !important; background: transparent !important; box-shadow: none !important; color: #e0e0e0 !important; text-align: left; font: inherit; line-height: 1.45; white-space: pre-wrap; overflow-wrap: anywhere; text-shadow: none !important; cursor: pointer; }
+#dynamicContent .news-description-toggle:hover { transform: none !important; box-shadow: none !important; }
+#dynamicContent .news-description-toggle:focus-visible { outline: 2px solid #22c55e; outline-offset: 3px; }
+#dynamicContent .news-description-label { display: block; margin-top: 5px; color: #22c55e; font-size: 12px; font-weight: 700; }
 #dynamicContent .news-card h3 { margin: 0 0 5px !important; line-height: 1.2; }
 #dynamicContent .news-card .news-media,
 #dynamicContent .news-card .news-media img,
@@ -2824,25 +2828,54 @@ gtag('config', 'G-FJT3X93608');
         return snapshot.docs.map(function(doc){ return Object.assign({id:doc.id}, doc.data()); });
       } finally { window.clearTimeout(timeoutId); }
     }
+    function toggleNewsDescription(button) {
+      if (!button) return;
+      var isExpanded = button.getAttribute("aria-expanded") === "true";
+      var brief = button.querySelector(".news-description-brief");
+      var full = button.querySelector(".news-description-full");
+      var label = button.querySelector(".news-description-label");
+      if (!brief || !full) return;
+      button.setAttribute("aria-expanded", isExpanded ? "false" : "true");
+      brief.hidden = !isExpanded;
+      full.hidden = isExpanded;
+      if (label) label.textContent = typeof window.unilaTranslate === "function"
+        ? window.unilaTranslate(isExpanded ? "showMore" : "showLess")
+        : (isExpanded ? "Mostrar mais" : "Mostrar menos");
+    }
+    window.toggleNewsDescription = toggleNewsDescription;
     function renderNewsItems(records, expandedNewsIds) {
       if (!records.length) return '<p style="text-align:center; padding:20px; color:#94a3b8;">' + (typeof window.unilaTranslate === "function" ? window.unilaTranslate("noNews") : "Nenhuma notícia publicada ainda.") + '</p>';
       expandedNewsIds = expandedNewsIds || [];
       var newsHtml = "";
-      records.forEach(function(news) {
+      records.forEach(function(news, recordIndex) {
         var date = newsDateText(news);
         var imageUrl = safeMediaUrl(news.imageUrl), videoUrl = safeMediaUrl(news.videoUrl), videoThumbUrl = safeMediaUrl(news.videoThumbUrl);
         var optimizedImg = optimizeCloudinary(imageUrl, "image"), optimizedVid = optimizeCloudinary(videoUrl, "video"), optimizedPoster = optimizeCloudinary(videoThumbUrl, "image");
-        var previewText = String(news.content || news.caption || news.videoName || "").replace(/\s+/g, " ").trim();
+        var fullDescription = String(news.content || news.caption || news.videoName || "").trim();
+        var previewText = fullDescription.replace(/\s+/g, " ").trim();
+        var hasLongDescription = previewText.length > 180;
         if (previewText.length > 180) previewText = previewText.slice(0, 177).trimEnd() + "…";
         var previewImage = optimizedImg || optimizedPoster;
+        var isLatest = recordIndex === 0;
         var isExpanded = Boolean(news.id) && expandedNewsIds.indexOf(String(news.id)) !== -1;
-        newsHtml += '<details class="news-card" data-content-kind="news" data-content-id="' + escapeHtml(news.id || "") + '"' + (isExpanded ? ' open' : '') + ' style="background:rgba(30,41,59,.6);border-radius:12px;padding:10px;margin-bottom:15px;border:1px solid rgba(255,255,255,.1);">' +
+        var mediaHtml =
+          (imageUrl ? '<div class="news-media"><img src="' + escapeHtml(optimizedImg) + '" alt="' + escapeHtml(news.title || "Imagem da notícia") + '" style="width:100%;height:auto;max-height:650px;object-fit:contain;display:block;border-radius:8px;background:#000;cursor:pointer;" onclick="window.open(this.src, \'_blank\')"></div>' : '') +
+          (videoUrl ? '<div class="news-media" style="width:100%;border-radius:8px;overflow:hidden;background:#000;"><video src="' + escapeHtml(optimizedVid) + '" poster="' + escapeHtml(optimizedPoster) + '" controls style="width:100%;height:auto;max-height:650px;display:block;object-fit:contain;background:#000;border-radius:8px;" preload="none" playsinline></video></div>' + (news.videoName ? '<p style="margin:6px 0;color:#cbd5e1;font-size:13px;">' + escapeHtml(news.videoName) + '</p>' : '') : '');
+        var cardStyle = ' style="background:rgba(30,41,59,.6);border-radius:12px;padding:10px;margin-bottom:15px;border:1px solid rgba(255,255,255,.1);"';
+        var cardData = ' data-content-kind="news" data-content-id="' + escapeHtml(news.id || "") + '"';
+        if (isLatest) {
+          var descriptionHtml = hasLongDescription
+            ? '<button type="button" class="news-description-toggle" aria-expanded="false" onclick="window.toggleNewsDescription(this)"><span class="news-description-brief">' + escapeHtml(previewText) + '</span><span class="news-description-full" hidden>' + escapeHtml(fullDescription) + '</span><span class="news-description-label">' + escapeHtml(typeof window.unilaTranslate === "function" ? window.unilaTranslate("showMore") : "Mostrar mais") + '</span></button>'
+            : '<p class="news-content" style="color:#e0e0e0;">' + escapeHtml(fullDescription) + '</p>';
+          newsHtml += '<article class="news-card news-card-latest"' + cardData + cardStyle + '><h3 style="color:#22c55e;">' + escapeHtml(news.title || "Notícia") + '</h3>' +
+            mediaHtml + descriptionHtml + '<p class="news-date" style="font-size:12px;color:#94a3b8;text-align:right;">' + escapeHtml(date) + '</p>' + renderContentActions(news, "news") + '</article>';
+          return;
+        }
+        newsHtml += '<details class="news-card"' + cardData + (isExpanded ? ' open' : '') + cardStyle + '>' +
           '<summary class="news-summary"><div class="news-summary-copy"><h3 style="color:#22c55e;">' + escapeHtml(news.title || "Notícia") + '</h3>' +
           '<p class="news-preview-text">' + escapeHtml(previewText || "Toque para abrir a notícia.") + '</p><p class="news-date">' + escapeHtml(date) + '</p></div>' +
           (previewImage ? '<img class="news-preview-image" src="' + escapeHtml(previewImage) + '" alt="Prévia da notícia: ' + escapeHtml(news.title || "Notícia") + '" loading="lazy">' : '') +
-          '<span class="news-disclosure-icon" aria-hidden="true">＋</span></summary><div class="news-expanded-content">' +
-          (imageUrl ? '<div class="news-media"><img src="' + escapeHtml(optimizedImg) + '" alt="' + escapeHtml(news.title || "Imagem da notícia") + '" style="width:100%;height:auto;max-height:650px;object-fit:contain;display:block;border-radius:8px;background:#000;cursor:pointer;" onclick="window.open(this.src, \'_blank\')"></div>' : '') +
-          (videoUrl ? '<div class="news-media" style="width:100%;border-radius:8px;overflow:hidden;background:#000;"><video src="' + escapeHtml(optimizedVid) + '" poster="' + escapeHtml(optimizedPoster) + '" controls style="width:100%;height:auto;max-height:650px;display:block;object-fit:contain;background:#000;border-radius:8px;" preload="none" playsinline></video></div>' + (news.videoName ? '<p style="margin:6px 0;color:#cbd5e1;font-size:13px;">' + escapeHtml(news.videoName) + '</p>' : '') : '') +
+          '<span class="news-disclosure-icon" aria-hidden="true">＋</span></summary><div class="news-expanded-content">' + mediaHtml +
           '<p class="news-content" style="color:#e0e0e0;">' + escapeHtml(news.content || '') + '</p><p class="news-date" style="font-size:12px;color:#94a3b8;text-align:right;">' + escapeHtml(date) + '</p>' + renderContentActions(news, "news") + '</div></details>';
       });
       return newsHtml;
