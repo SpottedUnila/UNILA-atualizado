@@ -2476,7 +2476,7 @@ gtag('config', 'G-FJT3X93608');
     // Atualização do PWA: rede primeiro; cache apenas como fallback offline.
     function setupPWAUpdate() {
       if (!('serviceWorker' in navigator)) return;
-      navigator.serviceWorker.register('./service-worker37.js?v=421', { updateViaCache: 'none' }).then(function(reg) {
+      navigator.serviceWorker.register('./service-worker37.js?v=422', { updateViaCache: 'none' }).then(function(reg) {
         reg.update();
         reg.addEventListener('updatefound', function() {
           var newWorker = reg.installing;
@@ -2860,6 +2860,9 @@ gtag('config', 'G-FJT3X93608');
       if (video) { try { video.pause(); } catch (_) {} }
       overlay.remove();
       document.body.style.overflow = "";
+      if (screen.orientation && typeof screen.orientation.unlock === "function") {
+        try { screen.orientation.unlock(); } catch (_) {}
+      }
     }
     function openVideoFullscreenFallback(video) {
       if (!video || !video.src) return;
@@ -2881,13 +2884,16 @@ gtag('config', 'G-FJT3X93608');
       closeButton.setAttribute("aria-label", "Fechar vídeo ampliado");
       closeButton.title = "Fechar vídeo ampliado";
       closeButton.textContent = "×";
-      closeButton.style.cssText = "position:absolute;top:12px;right:12px;z-index:2;width:46px;height:46px;padding:0;border:1px solid rgba(255,255,255,.65);border-radius:50%;background:rgba(0,0,0,.72);color:#fff;font-size:32px;line-height:1;cursor:pointer;";
+      closeButton.style.cssText = "position:absolute;top:auto;right:calc(12px + env(safe-area-inset-right));bottom:calc(12px + env(safe-area-inset-bottom));z-index:2;width:46px;height:46px;padding:0;border:1px solid rgba(255,255,255,.65);border-radius:50%;background:rgba(0,0,0,.72);color:#fff;font-size:32px;line-height:1;cursor:pointer;";
       closeButton.addEventListener("click", closeVideoFullscreenFallback);
       overlay.addEventListener("click", function(event){ if (event.target === overlay) closeVideoFullscreenFallback(); });
       overlay.appendChild(expandedVideo);
       overlay.appendChild(closeButton);
       document.body.appendChild(overlay);
       document.body.style.overflow = "hidden";
+      if (screen.orientation && typeof screen.orientation.unlock === "function") {
+        try { screen.orientation.unlock(); } catch (_) {}
+      }
       expandedVideo.addEventListener("loadedmetadata", function(){
         try { expandedVideo.currentTime = video.currentTime || 0; } catch (_) {}
         if (expandedVideo.autoplay) expandedVideo.play().catch(function(){});
