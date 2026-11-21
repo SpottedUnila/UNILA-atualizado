@@ -2476,7 +2476,7 @@ gtag('config', 'G-FJT3X93608');
     // Atualização do PWA: rede primeiro; cache apenas como fallback offline.
     function setupPWAUpdate() {
       if (!('serviceWorker' in navigator)) return;
-      navigator.serviceWorker.register('./service-worker37.js?v=420', { updateViaCache: 'none' }).then(function(reg) {
+      navigator.serviceWorker.register('./service-worker37.js?v=421', { updateViaCache: 'none' }).then(function(reg) {
         reg.update();
         reg.addEventListener('updatefound', function() {
           var newWorker = reg.installing;
@@ -2896,19 +2896,7 @@ gtag('config', 'G-FJT3X93608');
     }
     function openVideoFullscreen(video) {
       if (!video) return;
-      try {
-        if (typeof video.requestFullscreen === "function" && document.fullscreenEnabled !== false) {
-          var fullscreenPromise = video.requestFullscreen();
-          if (fullscreenPromise && typeof fullscreenPromise.catch === "function") fullscreenPromise.catch(function(){ openVideoFullscreenFallback(video); });
-          return;
-        }
-        if (typeof video.webkitEnterFullscreen === "function") {
-          video.webkitEnterFullscreen();
-          return;
-        }
-        if (typeof video.webkitRequestFullscreen === "function") video.webkitRequestFullscreen();
-        else openVideoFullscreenFallback(video);
-      } catch (_) { openVideoFullscreenFallback(video); }
+      openVideoFullscreenFallback(video);
     }
     window.openVideoFullscreen = openVideoFullscreen;
     function renderNewsItems(records, expandedNewsIds) {
@@ -6809,6 +6797,19 @@ padding:0 2px;">↩ Responder</button>`;
     if (event.key === "Escape") window.closeConhecaImage();
     if (event.key === "Escape") closeVideoFullscreenFallback();
   });
+  var lastVideoTapAt = 0;
+  document.addEventListener("touchend", function(event){
+    var video = event.target && event.target.closest ? event.target.closest("video") : null;
+    if (!video) return;
+    var now = Date.now();
+    if (now - lastVideoTapAt < 450) {
+      event.preventDefault();
+      lastVideoTapAt = 0;
+      openVideoFullscreen(video);
+    } else {
+      lastVideoTapAt = now;
+    }
+  }, { passive:false });
   })();
   </script>
   <div id="conhecaImageModal" role="dialog" aria-modal="true" aria-hidden="true" aria-label="Imagem ampliada de Conheça a UNILA" onclick="if(event.target === this) closeConhecaImage()">
