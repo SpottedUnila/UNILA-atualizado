@@ -2476,7 +2476,7 @@ gtag('config', 'G-FJT3X93608');
     // Atualização do PWA: rede primeiro; cache apenas como fallback offline.
     function setupPWAUpdate() {
       if (!('serviceWorker' in navigator)) return;
-      navigator.serviceWorker.register('./service-worker37.js?v=424', { updateViaCache: 'none' }).then(function(reg) {
+      navigator.serviceWorker.register('./service-worker37.js?v=425', { updateViaCache: 'none' }).then(function(reg) {
         reg.update();
         reg.addEventListener('updatefound', function() {
           var newWorker = reg.installing;
@@ -3835,15 +3835,11 @@ gtag('config', 'G-FJT3X93608');
     }
 
     function openShareOptions() {
-      const driveUrl = "https://drive.google.com/file/d/103mylmu6SsIXUJJyBBFPNrw0IeCuVxHN/view?usp=drivesdk";
-      const fallbackSiteUrl = "https://spottedunila.github.io/UNILA-atualizado/";
-      const siteUrl = window.location.protocol === "http:" || window.location.protocol === "https:"
-        ? window.location.href.split("#")[0]
-        : fallbackSiteUrl;
+      const playStoreUrl = "https://play.google.com/store/apps/details?id=com.spottedunila.rebuildfulltest&pcampaignid=web_share";
+      const siteUrl = "https://spottedunila.github.io/UNILA-atualizado/";
       const shareText = "Confira o Vida Unileira!\n\n" +
-        "Para Android, baixe pelo Drive ou entre pelo link no site.\n\n" +
-        "Download para Android (Drive):\n" + driveUrl + "\n\n" +
-        "Site para iOS e qualquer dispositivo:\n" + siteUrl;
+        "Baixe o aplicativo pela Play Store\n" + playStoreUrl + "\n\n" +
+        "Para iPhone (iOS) e navegador\n" + siteUrl;
       const encodedText = encodeURIComponent(shareText);
       const encodedSiteUrl = encodeURIComponent(siteUrl);
       const modal = document.createElement("div");
@@ -3940,13 +3936,11 @@ gtag('config', 'G-FJT3X93608');
       };
     }
     function shareApp() {
-      const driveUrl = "https://drive.google.com/file/d/103mylmu6SsIXUJJyBBFPNrw0IeCuVxHN/view?usp=drivesdk";
-      const siteUrl = window.location.protocol === "http:" || window.location.protocol === "https:"
-        ? window.location.href.split("#")[0]
-        : "https://spottedunila.github.io/UNILA-atualizado/";
+      const playStoreUrl = "https://play.google.com/store/apps/details?id=com.spottedunila.rebuildfulltest&pcampaignid=web_share";
+      const siteUrl = "https://spottedunila.github.io/UNILA-atualizado/";
       const shareText = "Confira o Vida Unileira!\n\n" +
-        "Baixe o aplicativo para Android pelo Drive:\n" + driveUrl + "\n\n" +
-        "Acesse também pelo navegador:\n" + siteUrl;
+        "Baixe o aplicativo pela Play Store\n" + playStoreUrl + "\n\n" +
+        "Para iPhone (iOS) e navegador\n" + siteUrl;
       const whatsappUrl = "https://wa.me/?text=" + encodeURIComponent(shareText);
       window.location.assign(whatsappUrl);
     }
